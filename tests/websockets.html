@@ -1,0 +1,118 @@
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <link href="http://thomasf.github.io/solarized-css/solarized-dark.min.css" rel="stylesheet"></link>
+  </head>
+
+  <body style="max-width:100%">
+    <h3>WebSocket Tat Test</h3>
+
+    Tat Engine :
+    <input type="text" id="scheme" placeholder="ws or wss" size="3" value="ws"> ://
+    <input type="text" id="host" placeholder="Tat Engine" size="25" value="localhost"> :
+    <input type="text" id="port" placeholder="Port Tat Engine" size="5" value="8080">
+    <button onclick="openws()">1 - Open WS</button>
+    <button onclick="closews()">Close WS</button>
+<br>
+    <input type="text" id="username" placeholder="username" size="20">
+    <input type="password" id="password" placeholder="password" size="18">
+    <button onclick="connect()">2 - Connect</button>
+<br><br>
+    <input type="text" id="treeView" placeholder="none, onetree or fulltree" size="25">
+    <input type="text" id="topic" placeholder="topicName or all" size="40">
+
+    <button onclick="subscribeMessages()">Subscribe Messages Events</button>
+    <button onclick="unsubscribeMessages()">Unsubscribe Messages Events</button>
+    <button onclick="subscribeMessagesNew()">Subscribe Messages New Events</button>
+    <button onclick="unsubscribeMessagesNew()">Unsubscribe Messages New Events</button>
+    <button onclick="subscribePresences()">Subscribe Presences Events</button>
+    <button onclick="unsubscribePresences()">Unsubscribe Presences Events</button>
+<br><br>
+    <input type="text" id="status" placeholder="status" size="10">
+    <input type="text" id="topicPresence" placeholder="topicName" size="40">
+    <button onclick="writePresence()">Write Presence</button> status : online, offline or busy
+<br><br>
+    Admin:
+    <input type="text" id="msg" placeholder="raw ws" size="50">
+    <button onclick="send($('#msg').val())">Send</button>
+    <button onclick="subscribeUsers()">Subscribe Users Events</button>
+    <button onclick="unsubscribeUsers()">Unsubscribe Users Events</button>
+
+    <br>
+    <h4>Output from Tat Engine</h4>
+    <button onclick="$('#output').empty()">Clear</button>
+    <pre id="output" style="font-size:80%"></pre>
+
+    <script>
+      closews = function() {
+        c.close();
+      }
+      
+      openws = function() {
+        url = $('#scheme').val()+'://'+$('#host').val()+':'+$('#port').val()+'/socket/ws';
+        c = new WebSocket(url);
+
+        c.onmessage = function(msg){
+            $("#output").prepend((new Date())+ " <== "+msg.data+"\n");
+        }
+      }
+
+      connect = function() {
+        var d = {"username": $('#username').val(), "password": $('#password').val()}
+        send(JSON.stringify(d))
+      }
+
+      subscribeMessages = function() {
+        var d = {"action": "subscribeMessages", "treeView": $('#treeView').val(), "topics": $('#topic').val().split(" ")}
+        console.log(JSON.stringify(d))
+        send(JSON.stringify(d))
+      }
+
+      unsubscribeMessages = function() {
+        var d = {"action": "unsubscribeMessages", "topics": $('#topic').val().split(" ")}
+        send(JSON.stringify(d))
+      }
+
+      subscribeMessagesNew = function() {
+        var d = {"action": "subscribeMessagesNew", "topics": $('#topic').val().split(" ")}
+        send(JSON.stringify(d))
+      }
+
+      unsubscribeMessagesNew = function() {
+        var d = {"action": "unsubscribeMessagesNew", "topics": $('#topic').val().split(" ")}
+        send(JSON.stringify(d))
+      }
+
+      subscribePresences = function() {
+        var d = {"action": "subscribePresences", "topics": $('#topic').val().split(" ")}
+        send(JSON.stringify(d))
+      }
+
+      unsubscribePresences = function() {
+        var d = {"action": "unsubscribePresences", "topics": $('#topic').val().split(" ")}
+        send(JSON.stringify(d))
+      }
+
+      writePresence = function() {
+        var d = {"action": "writePresence", "status": $('#status').val(), "topics": [$('#topicPresence').val()]}
+        send(JSON.stringify(d))
+      }
+
+      subscribeUsers = function() {
+        var d = {"action": "subscribeUsers"}
+        send(JSON.stringify(d))
+      }
+
+      unsubscribeUsers = function() {
+        var d = {"action": "unsubscribeUsers"}
+        send(JSON.stringify(d))
+      }
+
+      send = function(data){
+        $("#output").prepend((new Date())+ " ==> "+data+"\n")
+        c.send(data)
+      }
+
+    </script>
+  </body>
+</html>

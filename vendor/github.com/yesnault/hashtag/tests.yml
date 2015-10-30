@@ -1,0 +1,435 @@
+mentions:
+  - description: "Test fastpath exit without mentions"
+    text: "no mentions in this #text"
+    expected: []
+
+  - description: "Extract mention at the begining of a tweet"
+    text: "@username reply"
+    expected: ["username"]
+
+  - description: "Extract mention at the end of a tweet"
+    text: "mention @username"
+    expected: ["username"]
+
+  - description: "Extract mention in the middle of a tweet"
+    text: "mention @username in the middle"
+    expected: ["username"]
+
+  - description: "Extract mention of username with underscore"
+    text: "mention @user_name"
+    expected: ["user_name"]
+
+  - description: "Extract mention of all numeric username"
+    text: "mention @12345"
+    expected: ["12345"]
+
+  - description: "Extract mention or multiple usernames"
+    text: "mention @username1 @username2"
+    expected: ["username1", "username2"]
+
+  - description: "Extract mention in the middle of a Japanese tweet"
+    text: "の@usernameに到着を待っている"
+    expected: ["username"]
+
+  - description: "DO NOT extract username ending in @"
+    text: "Current Status: @_@ (cc: @username)"
+    expected: ["username"]
+
+  - description: "DO NOT extract username followed by accented latin characters"
+    text: "@aliceìnheiro something something"
+    expected: []
+
+  - description: "Extract lone metion but not @user@user (too close to an email)"
+    text: "@username email me @test@example.com"
+    expected: ["username"]
+
+  - description: "DO NOT extract 'http' in '@http://' as username"
+    text: "@http://twitter.com"
+    expected: []
+
+  - description: "Extract mentions before newline"
+    text: "@username\n@mention"
+    expected: ["username", "mention"]
+
+  - description: "Extract mentions after 'RT'"
+    text: "RT@username RT:@mention RT @test"
+    expected: ["username", "mention", "test"]
+
+  - description: "Extract mentions after 'rt'"
+    text: "rt@username rt:@mention rt @test"
+    expected: ["username", "mention", "test"]
+
+  - description: "Extract mentions after 'Rt'"
+    text: "Rt@username Rt:@mention Rt @test"
+    expected: ["username", "mention", "test"]
+
+  - description: "Extract mentions after 'rT'"
+    text: "rT@username rT:@mention rT @test"
+    expected: ["username", "mention", "test"]
+
+  - description: "DO NOT extract username preceded by !"
+    text: "f!@kn"
+    expected: []
+
+  - description: "DO NOT extract username preceded by @"
+    text: "f@@kn"
+    expected: []
+
+  - description: "DO NOT extract username preceded by #"
+    text: "f#@kn"
+    expected: []
+
+  - description: "DO NOT extract username preceded by $"
+    text: "f$@kn"
+    expected: []
+
+  - description: "DO NOT extract username preceded by %"
+    text: "f%@kn"
+    expected: []
+
+  - description: "DO NOT extract username preceded by &"
+    text: "f&@kn"
+    expected: []
+
+  - description: "DO NOT extract username preceded by *"
+    text: "f*@kn"
+    expected: []
+
+  - description: "Extract a mention at the start"
+    text: "@username yo!"
+    expected: ["username"]
+
+  - description: "Extract a mention that has the same thing mentioned at the start"
+    text: "username @username"
+    expected: ["username"]
+
+  - description: "Extract a mention in the middle of a Japanese tweet"
+    text: "の@usernameに到着を待っている"
+    expected: ["username"]
+
+replies:
+  - description: "Test fastpath exit without replies"
+    text: "no replies in this #text"
+    expected: []
+
+  - description: "Extract reply at the begining of a tweet"
+    text: "@username reply"
+    expected: ["username"]
+
+  - description: "Extract reply preceded by only a space"
+    text: " @username reply"
+    expected: ["username"]
+
+  - description: "Extract reply preceded by only a full-width space (U+3000)"
+    text: "　@username reply"
+    expected: ["username"]
+
+  - description: "DO NOT Extract reply when preceded by text"
+    text: "a @username mention, not a reply"
+    expected: []
+
+  - description: "DO NOT Extract reply when preceded by ."
+    text: ".@username mention, not a reply"
+    expected: []
+
+  - description: "DO NOT Extract reply when preceded by /"
+    text: "/@username mention, not a reply"
+    expected: []
+
+  - description: "DO NOT Extract reply when preceded by _"
+    text: "_@username mention, not a reply"
+    expected: []
+
+  - description: "DO NOT Extract reply when preceded by -"
+    text: "-@username mention, not a reply"
+    expected: []
+
+  - description: "DO NOT Extract reply when preceded by +"
+    text: "+@username mention, not a reply"
+    expected: []
+
+  - description: "DO NOT Extract reply when preceded by #"
+    text: "#@username mention, not a reply"
+    expected: []
+
+  - description: "DO NOT Extract reply when preceded by !"
+    text: "!@username mention, not a reply"
+    expected: []
+
+  - description: "DO NOT Extract reply when preceded by @"
+    text: "@@username mention, not a reply"
+    expected: []
+
+  - description: "DO NOT Extract reply when followed by URL"
+    text: "@http://twitter.com"
+    expected: []
+
+hashtags:
+  - description: "Test fastpath exit without hashtags"
+    text: "nothing like @hashtags in this text"
+    expected: []
+
+  - description: "Extract an all-alpha hashtag"
+    text: "a #hashtag here"
+    expected: ["hashtag"]
+
+  - description: "Extract a letter-then-number hashtag"
+    text: "this is #hashtag1"
+    expected: ["hashtag1"]
+
+  - description: "Extract a number-then-letter hashtag"
+    text: "#1hashtag is this"
+    expected: ["1hashtag"]
+
+  - description: "DO NOT Extract an all-numeric hashtag"
+    text: "On the #16 bus"
+    expected: []
+
+  - description: "DO NOT Extract a single numeric hashtag"
+    text: "#0"
+    expected: []
+
+  - description: "Extract hashtag after bracket"
+    text: "(#hashtag1 )#hashtag2 [#hashtag3 ]#hashtag4 ’#hashtag5’#hashtag6"
+    expected: ["hashtag1", "hashtag2", "hashtag3", "hashtag4", "hashtag5", "hashtag6"]
+
+  - description: "Extract a hashtag containing ñ"
+    text: "I'll write more tests #mañana"
+    expected: ["mañana"]
+
+  - description: "Extract a hashtag containing é"
+    text: "Working remotely #café"
+    expected: ["café"]
+
+  - description: "Extract a hashtag containing ü"
+    text: "Getting my Oktoberfest on #münchen"
+    expected: ["münchen"]
+
+  - description: "DO NOT Extract a hashtag containing Japanese"
+    text: "this is not valid: # 会議中 ハッシュ"
+    expected: []
+
+  - description: "Extract a hashtag in Korean"
+    text: "What is #트위터 anyway?"
+    expected: ["트위터"]
+
+  - description: "Extract a half-width Hangul hashtag"
+    text: "Just random half-width Hangul #ﾣﾦﾰ"
+    expected: ["ﾣﾦﾰ"]
+
+  - description: "Extract a hashtag in Russian"
+    text: "What is #ашок anyway?"
+    expected: ["ашок"]
+
+  - description: "Extract a starting katakana hashtag"
+    text: "#カタカナ is a hashtag"
+    expected: ["カタカナ"]
+
+  - description: "Extract a starting hiragana hashtag"
+    text: "#ひらがな FTW!"
+    expected: ["ひらがな"]
+
+  - description: "Extract a starting kanji hashtag"
+    text: "#漢字 is the future"
+    expected: ["漢字"]
+
+  - description: "Extract a trailing katakana hashtag"
+    text: "Hashtag #カタカナ"
+    expected: ["カタカナ"]
+
+  - description: "Extract a trailing hiragana hashtag"
+    text: "Japanese hashtags #ひらがな"
+    expected: ["ひらがな"]
+
+  - description: "Extract a trailing kanji hashtag"
+    text: "Study time #漢字"
+    expected: ["漢字"]
+
+  - description: "Extract a central katakana hashtag"
+    text: "See my #カタカナ hashtag?"
+    expected: ["カタカナ"]
+
+  - description: "Extract a central hiragana hashtag"
+    text: "Study #ひらがな for fun and profit"
+    expected: ["ひらがな"]
+
+  - description: "Extract a central kanji hashtag"
+    text: "Some say #漢字 is the past. what do they know?"
+    expected: ["漢字"]
+
+  - description: "Extract a Kanji/Katakana mixed hashtag"
+    text: "日本語ハッシュタグテスト #日本語ハッシュタグ"
+    expected: ["日本語ハッシュタグ"]
+
+  - description: "Extract a hashtag after a punctuation"
+    text: "日本語ハッシュテスト。#日本語ハッシュタグ"
+    expected: ["日本語ハッシュタグ"]
+
+  - description: "DO NOT include a punctuation in a hashtag"
+    text: "#日本語ハッシュタグ。"
+    expected: ["日本語ハッシュタグ"]
+
+  - description: "Extract a full-width Alnum hashtag"
+    text: "全角英数字ハッシュタグ ＃ｈａｓｈｔａｇ１２３"
+    expected: ["ｈａｓｈｔａｇ１２３"]
+
+  - description: "DO NOT extract a hashtag without a preceding space"
+    text: "日本語ハッシュタグ#日本語ハッシュタグ"
+    expected: []
+
+  - description: "Hashtag with chouon"
+    text: "長音ハッシュタグ。#サッカー"
+    expected: ["サッカー"]
+
+  - description: "Hashtag with half-width chouon"
+    text: "長音ハッシュタグ。#ｻｯｶｰ"
+    expected: ["ｻｯｶｰ"]
+
+  - description: "Hashtag with half-widh voiced sounds marks"
+    text: "#ﾊｯｼｭﾀｸﾞ #ﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ"
+    expected: ["ﾊｯｼｭﾀｸﾞ", "ﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ"]
+
+  - description: "Hashtag with half-width # after full-width ！"
+    text: "できましたよー！#日本語ハッシュタグ。"
+    expected: ["日本語ハッシュタグ"]
+
+  - description: "Hashtag with full-width ＃ after full-width ！"
+    text: "できましたよー！＃日本語ハッシュタグ。"
+    expected: ["日本語ハッシュタグ"]
+
+  - description: "Hashtag with ideographic iteration mark"
+    text: "#云々 #学問のすゝめ #いすゞ #各〻 #各〃"
+    expected: ["云々", "学問のすゝめ", "いすゞ", "各〻", "各〃"]
+
+  - description: "Hashtags with ş (U+015F)"
+    text: "Here’s a test tweet for you: #Ateş #qrşt #ştu #ş"
+    expected: ["Ateş", "qrşt", "ştu", "ş"]
+
+  - description: "Hashtags with İ (U+0130) and ı (U+0131)"
+    text: "Here’s a test tweet for you: #İn #ın"
+    expected: ["İn", "ın"]
+
+  - description: "Hashtag before punctuations, except :"
+    text: "#hashtag: #hashtag; #hashtag, #hashtag. #hashtag! #hashtag?"
+    expected: ["hashtag:", "hashtag", "hashtag", "hashtag", "hashtag", "hashtag"]
+
+  - description: "Hashtag with /"
+    text: "#From_dev/aa #From_aa/ff"
+    expected: ["From_dev/aa", "From_aa/ff"]
+
+  - description: "Hashtag with :"
+    text: "#From:dev/aa #From:aa/ff"
+    expected: ["From:dev/aa", "From:aa/ff"]
+
+  - description: "Hashtag after punctuations"
+    text: ":#hashtaga ;#hashtagb ,#hashtagc .#hashtagd !#hashtage ?#hashtagf"
+    expected: ["hashtaga", "hashtagb", "hashtagc", "hashtagd", "hashtage", "hashtagf"]
+
+  - description: "Hashtag before newline"
+    text: "#hashtag\ntest\n#hashtag2\ntest\n#hashtag3\n"
+    expected: ["hashtag", "hashtag2", "hashtag3"]
+
+  - description: "DO NOT extract hashtag when # is followed by URL"
+    text: "#http://twitter.com #https://twitter.com"
+    expected: []
+
+# Checking for overlap of hashtag with URL is not implemented currently
+#  - description: "DO NOT extract hashtag if it's a part of URL"
+#    text: "http://twitter.com/#hashtag twitter.com/#hashtag"
+#    expected: []
+
+  - description: "Extract hashtags with Latin extended characters"
+    text: "#Azərbaycanca #mûǁae #Čeština #Ċaoiṁín"
+    expected: ["Azərbaycanca", "mûǁae", "Čeština", "Ċaoiṁín"]
+
+  - description: "Extract Arabic hashtags"
+    text: "#سیاست #ایران #السياسة #السياح #لغات  #اتمی  #کنفرانس #العربية #الجزيرة #فارسی"
+    expected: ["سیاست", "ایران", "السياسة", "السياح", "لغات", "اتمی", "کنفرانس", "العربية", "الجزيرة", "فارسی"]
+
+  - description: "Extract Arabic hashtags with underscore"
+    text: "#برنامه_نویسی  #رییس_جمهور  #رئيس_الوزراء, #ثبت_نام. #لس_آنجلس"
+    expected: ["برنامه_نویسی", "رییس_جمهور", "رئيس_الوزراء", "ثبت_نام", "لس_آنجلس"]
+
+  - description: "Extract Hebrew hashtags"
+    text: "#עַל־יְדֵי #וכו׳ #מ״כ"
+    expected: ["עַל־יְדֵי", "וכו׳", "מ״כ"]
+
+  - description: "Extract Thai hashtags"
+    text: "#ผู้เริ่ม #การเมือง #รายละเอียด #นักท่องเที่ยว #ของขวัญ #สนามบิน #เดินทาง #ประธาน"
+    expected: ["ผู้เริ่ม", "การเมือง", "รายละเอียด", "นักท่องเที่ยว", "ของขวัญ", "สนามบิน", "เดินทาง", "ประธาน"]
+
+  - description: "Extract Arabic hashtags with Zero-Width Non-Joiner"
+    text: "#أي‌بي‌إم #می‌خواهم"
+    expected: ["أي‌بي‌إم", "می‌خواهم"]
+
+  - description: "Extract Amharic hashtag"
+    text: "የአላህ መልእክተኛ ሰለላሁ ዓለይሂ ወሰለም #ኢትዮሙስሊምስ"
+    expected: ["ኢትዮሙስሊምስ"]
+
+  - description: "Extract Sinhala hashtag with Zero-Width Joiner (U+200D)"
+    text: "#ශ්‍රීලංකා"
+    expected: ["ශ්‍රීලංකා"]
+
+  - description: "Extract Arabic and Persian hashtags with numbers"
+    text: "#۳۴۵هشتگ #هشتگ۶۷۸ #ســـلام_عليكم_٤٠٦"
+    expected: ["۳۴۵هشتگ","هشتگ۶۷۸","ســـلام_عليكم_٤٠٦"]
+
+  - description: "Extract Hindi hashtags"
+    text: "#महात्मा #महात्मा_१२३४ #१२३४ गांधी"
+    expected: ["महात्मा","महात्मा_१२३४"]
+
+  - description: "Extract Indic script hashtags"
+    text: "#বাংলা #ગુજરાતી #ಕನ್ನಡ #മലയാളം #ଓଡ଼ିଆ #ਪੰਜਾਬੀ #සිංහල #தமிழ் #తెలుగు"
+    expected: ["বাংলা","ગુજરાતી","ಕನ್ನಡ","മലയാളം","ଓଡ଼ିଆ","ਪੰਜਾਬੀ","සිංහල","தமிழ்","తెలుగు"]
+
+  - description: "Extract Tibetan hashtags"
+    text: "#བོད་སྐད་ #བོད་སྐད།"
+    expected: ["བོད་སྐད་","བོད་སྐད།"]
+
+  - description: "Extract Khmer, Burmese, Laotian hashtags"
+    text: "#មហាត្មះគន្ធី #မြင့်မြတ်သော #ຊີວະສາດ"
+    expected: ["មហាត្មះគន្ធី","မြင့်မြတ်သော","ຊີວະສາດ"]
+
+  - description: "Extract Greek hashtag"
+    text: "#Μαχάτμα_Γκάντι ήταν Ινδός πολιτικός"
+    expected: ["Μαχάτμα_Γκάντι"]
+
+  - description: "Extract Armenian and Georgian hashtags"
+    text: "#Մահաթմա #მაჰათმა"
+    expected: ["Մահաթմա","მაჰათმა"]
+
+  - description: "DO NOT extract hashtags without a letter"
+    text: "#_ #1_2 #122 #〃"
+    expected: []
+
+  - description: "Extract a hastag at the start"
+    text: "#hashtag here"
+    expected: ["hashtag"]
+
+  - description: "Extract a hastag at the end"
+    text: "test a #hashtag"
+    expected: ["hashtag"]
+
+  - description: "Extract a hastag in the middle"
+    text: "test a #hashtag in a string"
+    expected: ["hashtag"]
+
+  - description: "Extract only a valid hashtag"
+    text: "#123 a #hashtag in a string"
+    expected: ["hashtag"]
+
+  - description: "Extract a hashtag in a string of multi-byte characters"
+    text: "会議中 #hashtag 会議中"
+    expected: ["hashtag"]
+
+  - description: "Extract multiple valid hashtags"
+    text: "One #two three #four"
+    expected: ["two", "four"]
+
+  - description: "Extract a non-latin hashtag"
+    text: "Hashtags in #русский!"
+    expected: ["русский"]
+
+  - description: "Extract multiple non-latin hashtags"
+    text: "Hashtags in #中文, #日本語, #한국말, and #русский! Try it out!"
+    expected: ["中文", "日本語", "한국말", "русский"]
