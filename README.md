@@ -11,7 +11,9 @@ Some use cases:
 * Team Communication & Reporting facilities
 * ...
 
-Tat Engine exposes only an HTTP REST API. You can manipulate this API with Tat Command Line Interface, aka **tatcli**.
+Tat Engine exposes only an HTTP REST API.
+You can manipulate this API with Tat Command Line Interface, aka **tatcli**, see
+https://github.com/ovh/tatcli.
 
 A **WebUI** is also available, see https://github.com/ovh/tatwebui.
 
