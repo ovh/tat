@@ -69,7 +69,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text" }' \
-	http://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 If you use a `system user`, you can force message's date
@@ -79,7 +79,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text", "dateCreation": 11123232 }' \
-	http://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 ### Reply to a message
@@ -88,7 +88,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text", "idReference": "9797q87KJhqsfO7Usdqd", "action": "reply"}'\
-	http://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 ### Like a message
@@ -97,7 +97,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "like"}'\
-	http://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 ### Unlike a message
@@ -106,7 +106,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unlike"}'\
-	http://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 ### Add a label to a message
@@ -117,7 +117,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "label", "text": "myLabel", "option": "rgba(143,199,148,0.61)"}'\
-	http://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 ### Remove a label from a message
@@ -128,7 +128,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unlabel", "text": "myLabel"}'\
-	http://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 ### Add a tag to a message
@@ -139,7 +139,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "tag", "text": "myTag"}'\
-	http://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 ### Remove a tag from a message
@@ -150,7 +150,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "untag", "text": "myTag"}'\
-	http://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 ### Bookmark a message
@@ -159,7 +159,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "bookmark"}'\
-	http://<tatHostname>:<tatPort>/message/Private/username/Bookmarks/sub-topic
+	https://<tatHostname>:<tatPort>/message/Private/username/Bookmarks/sub-topic
 ```
 
 ### Remove a bookmark or a message from a private topic (except task)
@@ -167,7 +167,7 @@ curl -XPOST \
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	http://<tatHostname>:<tatPort>/message/9797q87KJhqsfO7Usdqd
+	https://<tatHostname>:<tatPort>/message/9797q87KJhqsfO7Usdqd
 ```
 
 
@@ -179,7 +179,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "task" }'\
-	http://<tatHostname>:<tatPort>/message/Private/username/Tasks
+	https://<tatHostname>:<tatPort>/message/Private/username/Tasks
 ```
 
 ### Remove a message from tasks
@@ -190,20 +190,20 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "untask" }'\
-	http://<tatHostname>:<tatPort>/message/Private/username/Tasks
+	https://<tatHostname>:<tatPort>/message/Private/username/Tasks
 ```
 
 ### Getting Messages List
 ```  
-curl -XGET http://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
-curl -XGET http://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
 
 Getting messages on one Public Topic (Read Only):
 
 ```  
-curl -XGET http://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
-curl -XGET http://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
 
 #### Parameters
@@ -232,8 +232,8 @@ curl -XGET http://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit>
 
 #### Examples
 ```
-curl -XGET http://<tatHostname>:<tatPort>/messages/topicA?skip=0&limit=100 | python -m json.tool
-curl -XGET http://<tatHostname>:<tatPort>/messages/topicA/subTopic?skip=0&limit=100&dateMinCreation=1405544146&dateMaxCreation=1405544146 | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/messages/topicA?skip=0&limit=100 | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/messages/topicA/subTopic?skip=0&limit=100&dateMinCreation=1405544146&dateMaxCreation=1405544146 | python -m json.tool
 ```
 
 ### Convert a user to a system user
@@ -251,7 +251,7 @@ curl -XPUT \
     -H "Tat_username: userAdmin" \
     -H "Tat_password: passwordAdmin" \
     -d '{ "username": "usernameToConvert", "canWriteNotifications": "true" }' \
-    http://<tatHostname>:<tatPort>/user/convert
+    https://<tatHostname>:<tatPort>/user/convert
 ```
 
 ### Reset a password for system user
@@ -265,7 +265,7 @@ curl -XPUT \
     -H "Tat_username: userAdmin" \
     -H "Tat_password: passwordAdmin" \
     -d '{ "username": "userameSystemToReset" }' \
-    http://<tatHostname>:<tatPort>/user/resetsystem
+    https://<tatHostname>:<tatPort>/user/resetsystem
 ```
 
 
@@ -278,7 +278,7 @@ curl -XPUT \
     -H "Tat_username: userAdmin" \
     -H "Tat_password: passwordAdmin" \
     -d '{ "username": "usernameToGrant" }' \
-    http://<tatHostname>:<tatPort>/user/setadmin
+    https://<tatHostname>:<tatPort>/user/setadmin
 ```
 
 ### Rename a username
@@ -290,7 +290,7 @@ curl -XPUT \
     -H "Tat_username: userAdmin" \
     -H "Tat_password: passwordAdmin" \
     -d '{ "username": "usernameToRename", "newUsername": "NewUsername" }' \
-    http://<tatHostname>:<tatPort>/user/rename
+    https://<tatHostname>:<tatPort>/user/rename
 ```
 
 ### Update fullname or email
@@ -302,7 +302,7 @@ curl -XPUT \
     -H "Tat_username: userAdmin" \
     -H "Tat_password: passwordAdmin" \
     -d '{ "username": "usernameToRename", "newFullname": "NewFullname", "newEmail": "NewEmail" }' \
-    http://<tatHostname>:<tatPort>/user/update
+    https://<tatHostname>:<tatPort>/user/update
 ```
 
 ### Archive a user
@@ -314,7 +314,7 @@ curl -XPUT \
     -H "Tat_username: userAdmin" \
     -H "Tat_password: passwordAdmin" \
     -d '{ "username": "usernameToRename" }' \
-    http://<tatHostname>:<tatPort>/user/archive
+    https://<tatHostname>:<tatPort>/user/archive
 ```
 
 ## Presence
@@ -326,13 +326,13 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "status": "online" }' \
-	http://<tatHostname>:<tatPort>/presenceget/topic/sub-topic
+	https://<tatHostname>:<tatPort>/presenceget/topic/sub-topic
 ```
 
 ### Getting Presences
 ```
-curl -XGET http://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
-curl -XGET http://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
 
 ### Parameters
@@ -344,8 +344,8 @@ curl -XGET http://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<l
 
 #### Examples
 ```
-curl -XGET http://<tatHostname>:<tatPort>/presences/topicA?skip=0&limit=100 | python -m json.tool
-curl -XGET http://<tatHostname>:<tatPort>/presences/topicA/subTopic?skip=0&limit=100&dateMinPresence=1405544146&dateMaxPresence=1405544146 | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/presences/topicA?skip=0&limit=100 | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/presences/topicA/subTopic?skip=0&limit=100&dateMinPresence=1405544146&dateMaxPresence=1405544146 | python -m json.tool
 ```
 
 ## User
@@ -363,7 +363,7 @@ Return a mail to user, with instruction to validate his account.
 curl -XPOST \
     -H "Content-Type: application/json" \
     -d '{"username": "userA", "fullname": "User AA", "email": "usera@foo.net", "callback": " Click on:scheme://:host:port/user/verify/:token to validate your account"}' \
-    http://<tatHostname>:<tatPort>/user
+    https://<tatHostname>:<tatPort>/user
 ```
 
 Callback is a string sent by mail, indicating to the user how to validate his account.
@@ -381,7 +381,7 @@ Available fields (automatically filled by Tat ):
 ### Verify a User
 ```
 curl -XGET \
-    http://<tatHostname>:<tatPort>/user/verify/yourUsername/tokenVerifyReceivedByMail
+    https://<tatHostname>:<tatPort>/user/verify/yourUsername/tokenVerifyReceivedByMail
 ```
 This url can be called only once per password and expired 30 minutes after querying create user with POST on `/user`
 
@@ -392,7 +392,7 @@ Returns: tokenVerify by email
 curl -XPOST \
     -H "Content-Type: application/json" \
     -d '{"username": "userA", "email": "usera@foo.net"}' \
-    http://<tatHostname>:<tatPort>/user/reset
+    https://<tatHostname>:<tatPort>/user/reset
 ```
 
 ### Get information about current User
@@ -401,7 +401,7 @@ curl -XGET \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
     -H "Tat_password: password" \
-    http://<tatHostname>:<tatPort>/user/me
+    https://<tatHostname>:<tatPort>/user/me
 ```
 
 
@@ -416,7 +416,7 @@ curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
     -H "Tat_password: password" \
-    http://<tatHostname>:<tatPort>/user/me/contacts/15
+    https://<tatHostname>:<tatPort>/user/me/contacts/15
 ```
 
 ### Add a contact
@@ -425,7 +425,7 @@ curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
     -H "Tat_password: password" \
-    http://<tatHostname>:<tatPort>/user/me/contact/username
+    https://<tatHostname>:<tatPort>/user/me/contact/username
 ```
 
 ### Remove a contact
@@ -434,7 +434,7 @@ curl -XDELETE \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
     -H "Tat_password: password" \
-    http://<tatHostname>:<tatPort>/user/me/contacts/username
+    https://<tatHostname>:<tatPort>/user/me/contacts/username
 ```
 
 
@@ -444,7 +444,7 @@ curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA \
     -H "Tat_password: password" \
-    http://<tatHostname>:<tatPort>/user/me/topics/myTopic/sub-topic
+    https://<tatHostname>:<tatPort>/user/me/topics/myTopic/sub-topic
 ```
 
 ### Remove a favorite topic
@@ -453,7 +453,7 @@ curl -XDELETE \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
     -H "Tat_password: password" \
-    http://<tatHostname>:<tatPort>/user/me/topics/myTopic/sub-topic
+    https://<tatHostname>:<tatPort>/user/me/topics/myTopic/sub-topic
 ```
 
 ### Enable notifications on one topic
@@ -462,7 +462,7 @@ curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA \
     -H "Tat_password: password" \
-    http://<tatHostname>:<tatPort>/user/me/enable/notifications/topics/myTopic/sub-topic
+    https://<tatHostname>:<tatPort>/user/me/enable/notifications/topics/myTopic/sub-topic
 ```
 
 ### Disable notifications on one topic
@@ -471,7 +471,7 @@ curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
     -H "Tat_password: password" \
-    http://<tatHostname>:<tatPort>/user/me/disable/notifications/topics/myTopic/sub-topic
+    https://<tatHostname>:<tatPort>/user/me/disable/notifications/topics/myTopic/sub-topic
 ```
 
 ### Add a favorite tag
@@ -480,7 +480,7 @@ curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
     -H "Tat_password: password" \
-    http://<tatHostname>:<tatPort>/user/me/tags/myTag
+    https://<tatHostname>:<tatPort>/user/me/tags/myTag
 ```
 
 ### Remove a favorite tag
@@ -489,18 +489,18 @@ curl -XDELETE \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
     -H "Tat_password: password" \
-    http://<tatHostname>:<tatPort>/user/me/tags/myTag
+    https://<tatHostname>:<tatPort>/user/me/tags/myTag
 ```
 
 ### Getting Users List
 ```  
-curl -XGET http://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit> | python -m json.tool
-curl -XGET http://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit> | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
 
 Users list with groups (admin only)
 ```  
-curl -XGET http://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&withGroups=true
+curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&withGroups=true
 ```
 
 #### Parameters
@@ -515,7 +515,7 @@ curl -XGET http://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&withGr
 
 #### Example
 ```
-curl -XGET http://<tatHostname>:<tatPort>/users?skip=0&limit=100 | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/users?skip=0&limit=100 | python -m json.tool
 ```
 
 ## Group
@@ -526,7 +526,7 @@ curl -XPOST \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"name": "groupName", "description": "Group Description"}' \
-    http://<tatHostname>:<tatPort>/group
+    https://<tatHostname>:<tatPort>/group
 ```
 
 ### Add a user to a group
@@ -536,7 +536,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"groupname": "groupName", "username": "usernameToAdd"}' \
-    http://<tatHostname>:<tatPort>/group/add/user
+    https://<tatHostname>:<tatPort>/group/add/user
 ```
 
 ### Delete a user from a group
@@ -546,7 +546,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"groupname": "groupName", "username": "usernameToAdd"}' \
-    http://<tatHostname>:<tatPort>/group/remove/user
+    https://<tatHostname>:<tatPort>/group/remove/user
 ```
 
 
@@ -557,7 +557,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"groupname": "groupName", "username": "usernameToAdd"}' \
-    http://<tatHostname>:<tatPort>/group/add/adminuser
+    https://<tatHostname>:<tatPort>/group/add/adminuser
 ```
 
 ### Delete an admin user from a group
@@ -567,7 +567,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"groupname": "groupName", "username": "usernameToAdd"}' \
-    http://<tatHostname>:<tatPort>/group/remove/adminuser
+    https://<tatHostname>:<tatPort>/group/remove/adminuser
 ```
 
 
@@ -587,7 +587,7 @@ curl -XPOST \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "description": "Topic Description"}' \
-    http://<tatHostname>:<tatPort>/topic
+    https://<tatHostname>:<tatPort>/topic
 ```
 
 ### Delete a topic
@@ -596,19 +596,19 @@ curl -XDELETE \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/topic/subtopic
+    https://<tatHostname>:<tatPort>/topic/subtopic
 ```
 
 ### Getting one Topic
 ```
-curl -XGET http://<tatHostname>:<tatPort>/topic/topicName | python -m json.tool
-curl -XGET http://<tatHostname>:<tatPort>/topic/topicName/subTopic | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/topic/topicName | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/topic/topicName/subTopic | python -m json.tool
 ```
 
 ### Getting Topics List
 ```  
-curl -XGET http://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit> | python -m json.tool
-curl -XGET http://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit> | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
 
 #### Parameters
@@ -624,7 +624,7 @@ curl -XGET http://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit>&argNa
 
 #### Example
 ```
-curl -XGET http://<tatHostname>:<tatPort>/topics?skip=0&limit=100 | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/topics?skip=0&limit=100 | python -m json.tool
 ```
 
 ### Add a parameter to a topic
@@ -637,7 +637,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "key": "keyOfParameter", "value": "valueOfParameter", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/add/parameter
+    https://<tatHostname>:<tatPort>/topic/add/parameter
 ```
 
 ### Remove a parameter to a topic
@@ -647,7 +647,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "key": "keyOfParameter", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/remove/parameter
+    https://<tatHostname>:<tatPort>/topic/remove/parameter
 ```
 
 ### Add a read only user to a topic
@@ -657,7 +657,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "username": "usernameToAdd", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/add/rouser
+    https://<tatHostname>:<tatPort>/topic/add/rouser
 ```
 
 ### Add a read write user to a topic
@@ -667,7 +667,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "username": "usernameToAdd", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/add/rwuser
+    https://<tatHostname>:<tatPort>/topic/add/rwuser
 ```
 
 ### Add an admin user to a topic
@@ -677,7 +677,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "username": "usernameToAdd", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/add/adminuser
+    https://<tatHostname>:<tatPort>/topic/add/adminuser
 ```
 
 ### Delete a read only user from a topic
@@ -687,7 +687,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "username": "usernameToRemove", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/remove/rouser
+    https://<tatHostname>:<tatPort>/topic/remove/rouser
 ```
 
 ### Delete a read write user from a topic
@@ -697,7 +697,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "username": "usernameToRemove", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/remove/wuser
+    https://<tatHostname>:<tatPort>/topic/remove/wuser
 ```
 
 ### Delete an admin user from a topic
@@ -707,7 +707,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "username": "usernameToRemove", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/remove/adminuser
+    https://<tatHostname>:<tatPort>/topic/remove/adminuser
 ```
 
 ### Add a read only group to a topic
@@ -717,7 +717,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "groupname": "groupnameToAdd", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/add/rogroup
+    https://<tatHostname>:<tatPort>/topic/add/rogroup
 ```
 
 ### Add a read write group to a topic
@@ -727,7 +727,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "groupname": "groupnameToAdd", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/add/rwgroup
+    https://<tatHostname>:<tatPort>/topic/add/rwgroup
 ```
 
 ### Add an admin group to a topic
@@ -737,7 +737,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "groupname": "groupnameToAdd", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/add/admingroup
+    https://<tatHostname>:<tatPort>/topic/add/admingroup
 ```
 
 
@@ -748,7 +748,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "groupname": "groupnameToRemove", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/remove/rogroup
+    https://<tatHostname>:<tatPort>/topic/remove/rogroup
 ```
 
 ### Delete a read write group from a topic
@@ -758,7 +758,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "groupname": "groupnameToRemove", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/remove/rwgroup
+    https://<tatHostname>:<tatPort>/topic/remove/rwgroup
 ```
 
 ### Delete an admin group from a topic
@@ -768,7 +768,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "groupname": "groupnameToRemove", "recursive": "false"}' \
-    http://<tatHostname>:<tatPort>/topic/remove/rwgroup
+    https://<tatHostname>:<tatPort>/topic/remove/rwgroup
 ```
 
 
@@ -779,7 +779,7 @@ curl -XPUT \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
     -d '{"topic": "/topicA", "recursive": "false", "maxlength": 140, "canForceDate": false, "canUpdateMsg": false, "canDeleteMsg": false, "canUpdateAllMsg": false, "canDeleteAllMsg": false, "isROPublic": false}' \
-    http://<tatHostname>:<tatPort>/topic/param
+    https://<tatHostname>:<tatPort>/topic/param
 ```
 
 ## Websockets
@@ -863,14 +863,14 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/sockets/dump
+    https://<tatHostname>:<tatPort>/sockets/dump
 ```
 
 ## System
 ### Version
 
 ```
-curl -XGET http://<tatHostname>:<tatPort>/version
+curl -XGET https://<tatHostname>:<tatPort>/version
 ```
 
 
@@ -885,7 +885,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/stats/count
+    https://<tatHostname>:<tatPort>/stats/count
 ```
 
 ### Instance
@@ -897,7 +897,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/stats/instance
+    https://<tatHostname>:<tatPort>/stats/instance
 ```
 
 ### Distribution
@@ -907,7 +907,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/stats/distribution
+    https://<tatHostname>:<tatPort>/stats/distribution
 ```
 
 ### DB Stats
@@ -917,7 +917,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/stats/db/stats
+    https://<tatHostname>:<tatPort>/stats/db/stats
 ```
 
 ### DB ServerStatus
@@ -927,7 +927,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/stats/db/serverStatus
+    https://<tatHostname>:<tatPort>/stats/db/serverStatus
 ```
 
 ### DB Replica Set Status
@@ -937,7 +937,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/stats/db/replSetGetStatus
+    https://<tatHostname>:<tatPort>/stats/db/replSetGetStatus
 ```
 
 ### DB Replica Set Config
@@ -947,7 +947,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/stats/db/replSetGetConfig
+    https://<tatHostname>:<tatPort>/stats/db/replSetGetConfig
 ```
 
 
@@ -959,7 +959,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/stats/db/collections
+    https://<tatHostname>:<tatPort>/stats/db/collections
 ```
 
 ### DB Stats slowest Queries
@@ -969,14 +969,14 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    http://<tatHostname>:<tatPort>/stats/db/slowestQueries
+    https://<tatHostname>:<tatPort>/stats/db/slowestQueries
 ```
 
 ### Capabilities
 
 Return `websocket-enabled` and `username-from-email` parameters. See Tat Flags below.
 ```
-curl -XGET http://<tatHostname>:<tatPort>/capabilities
+curl -XGET https://<tatHostname>:<tatPort>/capabilities
 ```
 
 # RUN
@@ -1070,7 +1070,7 @@ go get && go build && ./tat --no-smtp=true --help
 If you want to create a user with tatcli:
 
 ```
-tatcli --url="http://localhost:8080" user add yourUsername firstname.lastname@ovh.net Firstname Lastname
+tatcli --url="https://localhost:8080" user add yourUsername firstname.lastname@ovh.net Firstname Lastname
 ```
 
 
