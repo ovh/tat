@@ -156,7 +156,9 @@ func (u *UsersController) Verify(ctx *gin.Context) {
 	if username != "" && tokenVerify != "" {
 		isNewUser, password, err := user.Verify(username, tokenVerify)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"info": fmt.Sprintf("Error on verify token for username %s %s", username, err.Error())})
+			e := fmt.Sprintf("Error on verify token for username %s", username)
+			log.Errorf("%s %s", e, err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{"info": e})
 		} else {
 			ctx.JSON(http.StatusOK, gin.H{
 				"message":  "Verification successfull",
