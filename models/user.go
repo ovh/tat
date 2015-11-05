@@ -262,7 +262,7 @@ func (user *User) Verify(username, tokenVerify string) (bool, string, error) {
 	if !emailVerified {
 		log.Debugf("%s is a new user, ask to create his topics", username)
 		user.createTopics()
-		user.addDefaultGroup()
+		user.AddDefaultGroup()
 	}
 
 	return !emailVerified, password, err
@@ -844,60 +844,71 @@ func CountUsers() (int, error) {
 }
 
 func (user *User) createTopics() error {
-	topic := &Topic{
-		Topic:        "/Private/" + user.Username,
-		Description:  "Private Topics - " + user.Username,
-		CanUpdateMsg: true,
-		CanDeleteMsg: true,
-	}
-	err := topic.Insert(user)
+	err := user.CreatePrivateTopic("")
 	if err != nil {
 		return err
 	}
-	topic = &Topic{
-		Topic:       "/Private/" + user.Username + "/Bookmarks",
-		Description: "Private Topics - Bookmarks of " + user.Username,
-	}
-	err = topic.Insert(user)
+	err = user.CreatePrivateTopic("Bookmarks")
 	if err != nil {
 		return err
 	}
-	topic = &Topic{
-		Topic:       "/Private/" + user.Username + "/Tasks",
-		Description: "Private Topics - Tasks of " + user.Username,
-	}
-	err = topic.Insert(user)
+	err = user.CreatePrivateTopic("Tasks")
 	if err != nil {
 		return err
 	}
-	topic = &Topic{
-		Topic:       "/Private/" + user.Username + "/Notifications",
-		Description: "Private Topics - Notifications of " + user.Username,
-	}
-	err = topic.Insert(user)
+	err = user.CreatePrivateTopic("Notifications")
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (user *User) addDefaultGroup() {
+// CreatePrivateTopic creates a Private Topic. Name of topic will be :
+// /Private/username and if subTopic != "", it will be :
+// /Private/username/subTopic
+// CanUpdateMsg, CanDeleteMsg set to true
+func (user *User) CreatePrivateTopic(subTopic string) error {
+	topic := "/Private/" + user.Username
+	description := "Private Topic"
+
+	if subTopic != "" {
+		topic = fmt.Sprintf("%s/%s", topic, subTopic)
+		description = fmt.Sprintf("%s - %s of %s", description, subTopic, user.Username)
+	} else {
+		description = fmt.Sprintf("%s - %s", description, user.Username)
+	}
+	t := &Topic{
+		Topic:        topic,
+		Description:  description,
+		CanUpdateMsg: true,
+		CanDeleteMsg: true,
+	}
+	e := t.Insert(user)
+	if e != nil {
+		log.Errorf("Error while creating Private topic %s: %s", topic, e.Error())
+	}
+	return e
+}
+
+// AddDefaultGroup add default group to user
+func (user *User) AddDefaultGroup() error {
 	groupname := viper.GetString("default_group")
 
 	// no default group
 	if groupname == "" {
-		return
+		return nil
 	}
 
 	group := Group{}
 	errfinding := group.FindByName(groupname)
 	if errfinding != nil {
-		log.Errorf("Error while fetching default group : %s", errfinding.Error())
-		return
+		e := fmt.Errorf("Error while fetching default group : %s", errfinding.Error())
+		return e
 	}
 	err := group.AddUser("Tat", user.Username)
 	if err != nil {
-		log.Errorf("Error while adding user to default group : %s", err.Error())
-		return
+		e := fmt.Errorf("Error while adding user to default group : %s", err.Error())
+		return e
 	}
+	return nil
 }

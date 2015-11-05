@@ -601,13 +601,13 @@ func (*UsersController) Rename(ctx *gin.Context) {
 	var userToRename = models.User{}
 	err := userToRename.FindByUsername(renameJSON.Username)
 	if err != nil {
-		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", renameJSON.Username))
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("user with username %s does not exist", renameJSON.Username)})
 		return
 	}
 
 	err = userToRename.Rename(renameJSON.NewUsername)
 	if err != nil {
-		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("Rename %s user to %s failed", renameJSON.Username, renameJSON.NewUsername))
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("Rename %s user to %s failed", renameJSON.Username, renameJSON.NewUsername)})
 		return
 	}
 
@@ -644,4 +644,87 @@ func (*UsersController) Update(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, "")
+}
+
+type checkTopicsUserJSON struct {
+	Username         string `json:"username"  binding:"required"`
+	FixPrivateTopics bool   `json:"fixPrivateTopics"  binding:"required"`
+	FixDefaultGroup  bool   `json:"fixDefaultGroup"  binding:"required"`
+}
+
+// Check if user have his Private topics
+// /Private/username, /Private/username/Tasks, /Private/username/Bookmarks
+func (u *UsersController) Check(ctx *gin.Context) {
+
+	var userJSON checkTopicsUserJSON
+	ctx.Bind(&userJSON)
+
+	var userToCheck = models.User{}
+	err := userToCheck.FindByUsername(userJSON.Username)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("user with username %s does not exist", userJSON.Username)})
+		return
+	}
+
+	topicsInfo := u.checkTopics(userJSON.FixPrivateTopics, userToCheck)
+	defaultGroupInfo := u.checkDefaultGroup(userJSON.FixDefaultGroup, userToCheck)
+
+	ctx.JSON(http.StatusCreated, gin.H{"topics": topicsInfo, "defaultGroup": defaultGroupInfo})
+}
+
+func (*UsersController) checkDefaultGroup(fixDefaultGroup bool, userToCheck models.User) string {
+	defaultGroupInfo := ""
+
+	userGroups, err := userToCheck.GetGroupsOnlyName()
+	if err != nil {
+		return "Error while fetching user groups"
+	}
+
+	find := false
+	for _, g := range userGroups {
+		if g == viper.GetString("default_group") {
+			find = true
+			defaultGroupInfo = fmt.Sprintf("user in %s OK", viper.GetString("default_group"))
+			break
+		}
+	}
+	if !find {
+		if fixDefaultGroup {
+			err = userToCheck.AddDefaultGroup()
+			if err != nil {
+				return err.Error()
+			}
+			defaultGroupInfo = fmt.Sprintf("user added in default group %s", viper.GetString("default_group"))
+		} else {
+			defaultGroupInfo = fmt.Sprintf("user in default group %s KO", viper.GetString("default_group"))
+		}
+	}
+	return defaultGroupInfo
+}
+
+func (*UsersController) checkTopics(fixTopics bool, userToCheck models.User) string {
+	topicsInfo := ""
+	topicNames := [...]string{"", "Tasks", "Bookmarks", "Notifications"}
+	for _, shortName := range topicNames {
+		topicName := fmt.Sprintf("/Private/%s", userToCheck.Username)
+		if shortName != "" {
+			topicName = fmt.Sprintf("%s/%s", topicName, shortName)
+		}
+		topic := &models.Topic{}
+		errfinding := topic.FindByTopic(topicName, false)
+		if errfinding != nil {
+			topicsInfo = fmt.Sprintf("%s %s KO : not exist; ", topicsInfo, topicName)
+			if fixTopics {
+				err := userToCheck.CreatePrivateTopic(shortName)
+				if err != nil {
+					topicsInfo = fmt.Sprintf("%s Error while creating %s; ", topicsInfo, topicName)
+				} else {
+					topicsInfo = fmt.Sprintf("%s %s created; ", topicsInfo, topicName)
+				}
+			}
+		} else {
+			topicsInfo = fmt.Sprintf("%s %s OK; ", topicsInfo, topicName)
+		}
+	}
+	return topicsInfo
 }

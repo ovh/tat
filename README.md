@@ -317,6 +317,18 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/user/archive
 ```
 
+### Check Private Topics and Default Group on one user
+Only for Tat Admin
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: userAdmin" \
+    -H "Tat_password: passwordAdmin" \
+    -d '{ "username": "usernameToRename",  "fixPrivateTopics": true, "fixDefaultGroup": true }' \
+    https://<tatHostname>:<tatPort>/user/check
+```
+
 ## Presence
 ### Add presence
 Status could be: `online`, `offline`, `busy`.
