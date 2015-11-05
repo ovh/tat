@@ -253,8 +253,16 @@ func (topic *Topic) Insert(user *User) error {
 		topic.AdminGroups = parentTopic.AdminGroups
 		topic.MaxLength = parentTopic.MaxLength
 		topic.CanForceDate = parentTopic.CanForceDate
-		topic.CanUpdateMsg = parentTopic.CanUpdateMsg
-		topic.CanDeleteMsg = parentTopic.CanDeleteMsg
+		// topic.CanUpdateMsg can be set by user.createTopics for new users
+		// with CanUpdateMsg=true
+		if !topic.CanUpdateMsg {
+			topic.CanUpdateMsg = parentTopic.CanUpdateMsg
+		}
+		// topic.CanDeleteMsg can be set by user.createTopics for new users
+		// with CanDeleteMsg=true
+		if !topic.CanDeleteMsg {
+			topic.CanDeleteMsg = parentTopic.CanDeleteMsg
+		}
 		topic.CanUpdateAllMsg = parentTopic.CanUpdateAllMsg
 		topic.CanDeleteAllMsg = parentTopic.CanDeleteAllMsg
 		topic.IsROPublic = parentTopic.IsROPublic

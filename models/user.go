@@ -848,6 +848,7 @@ func (user *User) createTopics() error {
 		Topic:        "/Private/" + user.Username,
 		Description:  "Private Topics - " + user.Username,
 		CanUpdateMsg: true,
+		CanDeleteMsg: true,
 	}
 	err := topic.Insert(user)
 	if err != nil {
