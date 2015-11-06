@@ -251,6 +251,13 @@ func ListMessages(criteria *MessageCriteria) ([]Message, error) {
 	if err != nil {
 		log.Errorf("Error while Find All Messages %s", err)
 	}
+
+	if criteria.TreeView == "onetree" || criteria.TreeView == "fulltree" {
+		messages, err = initTree(messages, criteria)
+		if err != nil {
+			log.Errorf("Error while Find All Messages (getTree) %s", err)
+		}
+	}
 	if criteria.TreeView == "onetree" {
 		return oneTreeMessages(messages, 1, criteria)
 	} else if criteria.TreeView == "fulltree" {
@@ -258,6 +265,31 @@ func ListMessages(criteria *MessageCriteria) ([]Message, error) {
 	}
 
 	return messages, err
+}
+
+func initTree(messages []Message, criteria *MessageCriteria) ([]Message, error) {
+	var ids []string
+	idMessages := ""
+	for i := 0; i <= len(messages)-1; i++ {
+		if utils.ArrayContains(ids, messages[i].ID) {
+			continue
+		}
+		ids = append(ids, messages[i].ID)
+		idMessages += messages[i].ID + ","
+	}
+
+	c := &MessageCriteria{
+		AllIDMessage: idMessages[:len(idMessages)-1],
+		NotLabel:     criteria.NotLabel,
+		NotTag:       criteria.NotTag,
+	}
+	var msgs []Message
+	err := Store().clMessages.Find(buildMessageCriteria(c)).Sort("-dateCreation").All(&msgs)
+	if err != nil {
+		log.Errorf("Error while Find Messages in getTree %s", err)
+		return messages, err
+	}
+	return msgs, nil
 }
 
 func oneTreeMessages(messages []Message, nloop int, criteria *MessageCriteria) ([]Message, error) {
