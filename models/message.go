@@ -252,6 +252,10 @@ func ListMessages(criteria *MessageCriteria) ([]Message, error) {
 		log.Errorf("Error while Find All Messages %s", err)
 	}
 
+	if len(messages) == 0 {
+		return messages, nil
+	}
+
 	if criteria.TreeView == "onetree" || criteria.TreeView == "fulltree" {
 		messages, err = initTree(messages, criteria)
 		if err != nil {
@@ -276,6 +280,10 @@ func initTree(messages []Message, criteria *MessageCriteria) ([]Message, error) 
 		}
 		ids = append(ids, messages[i].ID)
 		idMessages += messages[i].ID + ","
+	}
+
+	if idMessages == "" {
+		return messages, nil
 	}
 
 	c := &MessageCriteria{
