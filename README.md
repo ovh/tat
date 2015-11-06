@@ -131,6 +131,17 @@ curl -XPUT \
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
+### Update a message
+
+```
+curl -XPUT \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "update", "text": "my New Mesage updated"}'\
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
+
 ### Add a tag to a message
 Only for `system user`. A `system user` can add tags on his messages only.
 
