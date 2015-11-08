@@ -239,6 +239,8 @@ curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit
 * `notTag`: tagA,tagB
 * `username`: usernameA,usernameB
 * `treeView`: onetree or fulltree. "onetree": replies are under root message. "fulltree": replies are under their parent. Default: no tree
+* `limitMinNbReplies` : in onetree mode, filter root messages with more or equals minNbReplies
+* `limitMaxNbReplies` : in onetree mode, filter root messages with min or equals maxNbReplies
 
 
 #### Examples

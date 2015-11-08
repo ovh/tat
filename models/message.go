@@ -51,26 +51,28 @@ type Message struct {
 
 // MessageCriteria are used to list messages
 type MessageCriteria struct {
-	Skip            int
-	Limit           int
-	TreeView        string
-	IDMessage       string
-	InReplyOfID     string
-	InReplyOfIDRoot string
-	AllIDMessage    string // search in IDMessage OR InReplyOfID OR InReplyOfIDRoot
-	Text            string
-	Topic           string
-	Label           string
-	NotLabel        string
-	AndLabel        string
-	Tag             string
-	NotTag          string
-	AndTag          string
-	Username        string
-	DateMinCreation string
-	DateMaxCreation string
-	DateMinUpdate   string
-	DateMaxUpdate   string
+	Skip              int
+	Limit             int
+	TreeView          string
+	IDMessage         string
+	InReplyOfID       string
+	InReplyOfIDRoot   string
+	AllIDMessage      string // search in IDMessage OR InReplyOfID OR InReplyOfIDRoot
+	Text              string
+	Topic             string
+	Label             string
+	NotLabel          string
+	AndLabel          string
+	Tag               string
+	NotTag            string
+	AndTag            string
+	Username          string
+	DateMinCreation   string
+	DateMaxCreation   string
+	DateMinUpdate     string
+	DateMaxUpdate     string
+	LimitMinNbReplies string
+	LimitMaxNbReplies string
 }
 
 func buildMessageCriteria(criteria *MessageCriteria) bson.M {
@@ -263,12 +265,54 @@ func ListMessages(criteria *MessageCriteria) ([]Message, error) {
 		}
 	}
 	if criteria.TreeView == "onetree" {
-		return oneTreeMessages(messages, 1, criteria)
+		messages, err = oneTreeMessages(messages, 1, criteria)
 	} else if criteria.TreeView == "fulltree" {
-		return fullTreeMessages(messages, 1, criteria)
+		messages, err = fullTreeMessages(messages, 1, criteria)
+	}
+	if err != nil {
+		return messages, err
+	}
+
+	if criteria.TreeView == "onetree" &&
+		(criteria.LimitMinNbReplies != "" || criteria.LimitMaxNbReplies != "") {
+		return filterNbReplies(messages, criteria)
 	}
 
 	return messages, err
+}
+
+func filterNbReplies(messages []Message, criteria *MessageCriteria) ([]Message, error) {
+	var messagesFiltered []Message
+	minReplies := -1
+
+	if criteria.LimitMinNbReplies != "" {
+		limitMinNbReplies, err := strconv.Atoi(criteria.LimitMinNbReplies)
+		if err != nil {
+			log.Errorf("Error while converting LimitMinNbReplies (%s) to int", criteria.LimitMinNbReplies)
+		} else {
+			minReplies = limitMinNbReplies
+		}
+	}
+
+	maxReplies := -1
+	if criteria.LimitMaxNbReplies != "" {
+		limitMaxNbReplies, err := strconv.Atoi(criteria.LimitMaxNbReplies)
+		if err != nil {
+			log.Errorf("Error while converting LimitMaxNbReplies (%s) to int", criteria.LimitMaxNbReplies)
+		} else {
+			maxReplies = limitMaxNbReplies
+		}
+	}
+
+	for _, msg := range messages {
+		if (minReplies >= 0 && len(msg.Replies) >= minReplies) ||
+			(maxReplies >= 0 && len(msg.Replies) <= maxReplies) ||
+			(minReplies >= 0 && maxReplies >= 0 && len(msg.Replies) >= minReplies && len(msg.Replies) <= maxReplies) {
+			messagesFiltered = append(messagesFiltered, msg)
+		}
+	}
+
+	return messagesFiltered, nil
 }
 
 func initTree(messages []Message, criteria *MessageCriteria) ([]Message, error) {

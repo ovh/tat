@@ -66,6 +66,8 @@ func (*MessagesController) buildCriteria(ctx *gin.Context) *models.MessageCriter
 	c.DateMinUpdate = ctx.Query("dateMinUpdate")
 	c.DateMaxUpdate = ctx.Query("dateMaxUpdate")
 	c.Username = ctx.Query("username")
+	c.LimitMinNbReplies = ctx.Query("limitMinNbReplies")
+	c.LimitMaxNbReplies = ctx.Query("limitMaxNbReplies")
 	return &c
 }
 
