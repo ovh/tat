@@ -643,6 +643,7 @@ curl -XGET https://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit>&argN
 * dateMinCreation: filter result on dateCreation, timestamp Unix format
 * dateMaxCreation: filter result on dateCreation, timestamp Unix Format
 * getNbMsgUnread: if true, add new array to return, topicsMsgUnread with topic:nbUnreadMsgSinceLastPresenceOnTopic
+* getForTatAdmin: if true, and requester is a Tat Admin, returns all topics (except /Private/*) without checking user access
 
 
 #### Example

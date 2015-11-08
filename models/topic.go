@@ -52,6 +52,7 @@ type TopicCriteria struct {
 	DateMinCreation string
 	DateMaxCreation string
 	GetNbMsgUnread  string
+	GetForTatAdmin  string
 }
 
 func buildTopicCriteria(criteria *TopicCriteria, user *User) bson.M {
@@ -114,20 +115,28 @@ func buildTopicCriteria(criteria *TopicCriteria, user *User) bson.M {
 		query = append(query, bson.M{"dateCreation": bsonDate})
 	}
 
-	//groups := user.GetGroups()
-	bsonUser := []bson.M{}
-	bsonUser = append(bsonUser, bson.M{"roUsers": bson.M{"$in": [1]string{user.Username}}})
-	bsonUser = append(bsonUser, bson.M{"rwUsers": bson.M{"$in": [1]string{user.Username}}})
-	bsonUser = append(bsonUser, bson.M{"adminUsers": bson.M{"$in": [1]string{user.Username}}})
-	userGroups, err := user.GetGroupsOnlyName()
-	if err != nil {
-		log.Errorf("Error with getting groups for user %s", err)
+	if criteria.GetForTatAdmin == "true" && user.IsAdmin {
+		// requester is tat Admin and wants all topics, except /Private/* topics
+		query = append(query, bson.M{
+			"topic": bson.M{"$not": bson.RegEx{Pattern: "^\\/Private\\/.*", Options: "i"}},
+		})
+	} else if criteria.GetForTatAdmin == "true" && !user.IsAdmin {
+		log.Warnf("User %s (not a TatAdmin) try to list all topics as an admin", user.Username)
 	} else {
-		bsonUser = append(bsonUser, bson.M{"roGroups": bson.M{"$in": userGroups}})
-		bsonUser = append(bsonUser, bson.M{"rwGroups": bson.M{"$in": userGroups}})
-		bsonUser = append(bsonUser, bson.M{"adminGroups": bson.M{"$in": userGroups}})
+		bsonUser := []bson.M{}
+		bsonUser = append(bsonUser, bson.M{"roUsers": bson.M{"$in": [1]string{user.Username}}})
+		bsonUser = append(bsonUser, bson.M{"rwUsers": bson.M{"$in": [1]string{user.Username}}})
+		bsonUser = append(bsonUser, bson.M{"adminUsers": bson.M{"$in": [1]string{user.Username}}})
+		userGroups, err := user.GetGroupsOnlyName()
+		if err != nil {
+			log.Errorf("Error with getting groups for user %s", err)
+		} else {
+			bsonUser = append(bsonUser, bson.M{"roGroups": bson.M{"$in": userGroups}})
+			bsonUser = append(bsonUser, bson.M{"rwGroups": bson.M{"$in": userGroups}})
+			bsonUser = append(bsonUser, bson.M{"adminGroups": bson.M{"$in": userGroups}})
+		}
+		query = append(query, bson.M{"$or": bsonUser})
 	}
-	query = append(query, bson.M{"$or": bsonUser})
 
 	if len(query) > 0 {
 		return bson.M{"$and": query}

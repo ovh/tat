@@ -66,6 +66,7 @@ func (*TopicsController) buildCriteria(ctx *gin.Context) *models.TopicCriteria {
 	c.DateMinCreation = ctx.Query("dateMinCreation")
 	c.DateMaxCreation = ctx.Query("dateMaxCreation")
 	c.GetNbMsgUnread = ctx.Query("getNbMsgUnread")
+	c.GetForTatAdmin = ctx.Query("getForTatAdmin")
 	return &c
 }
 
