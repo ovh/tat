@@ -72,6 +72,16 @@ curl -XPOST \
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
+You can add labels from the creation
+
+```
+curl -XPOST \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "text": "text", "dateCreation": 11123232, "labels": [{"text": "labelA", "color": "#eeeeee"}, {"text": "labelB", "color": "#ffffff"}] }' \
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
 If you use a `system user`, you can force message's date
 
 ```  

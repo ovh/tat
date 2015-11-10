@@ -18,6 +18,8 @@ import (
 // DefaultMessageMaxSize is max size of message, can be overrided by topic
 var DefaultMessageMaxSize = 140
 
+const lengthLabel = 100
+
 // Author struct
 type Author struct {
 	Username string `bson:"username" json:"username"`
@@ -467,7 +469,7 @@ func getTree(messagesIn map[string][]Message, criteria *MessageCriteria) ([]Mess
 }
 
 // Insert a new message on one topic
-func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation int64) error {
+func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation int64, labels []Label) error {
 	message.Text = text
 	err := message.CheckAndFixText(topic)
 	if err != nil {
@@ -536,11 +538,26 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	message.UserMentions = hashtag.ExtractMentions(message.Text)
 	message.Urls = xurls.Strict.FindAllString(message.Text, -1)
 
+	if labels != nil {
+		message.Labels = checkLabels(labels)
+	}
+
 	err = Store().clMessages.Insert(message)
 	if err != nil {
 		log.Errorf("Error while inserting new message %s", err)
 	}
 	return err
+}
+
+func checkLabels(labels []Label) []Label {
+	var labelsChecked []Label
+	for _, l := range labels {
+		if len(l.Text) > lengthLabel {
+			l.Text = l.Text[0:lengthLabel]
+		}
+		labelsChecked = append(labelsChecked, l)
+	}
+	return labelsChecked
 }
 
 // CheckAndFixText truncates to maxLength (parameter on topic) characters
@@ -645,8 +662,8 @@ func (message *Message) containsTag(tag string) bool {
 //AddLabel add a label to a message
 //truncated to 100 char in text label
 func (message *Message) AddLabel(label string, color string) (Label, error) {
-	if len(label) > 100 {
-		label = label[0:100]
+	if len(label) > lengthLabel {
+		label = label[0:lengthLabel]
 	}
 
 	if message.containsLabel(label) {
@@ -782,7 +799,7 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 	if action == "pull" {
 		text = "Remove this thread from my tasks"
 	}
-	return msgReply.Insert(user, topic, text, idRoot, -1)
+	return msgReply.Insert(user, topic, text, idRoot, -1, nil)
 }
 
 // AddToTasks add a message to user's tasks Topic

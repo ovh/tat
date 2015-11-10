@@ -31,9 +31,10 @@ type messageJSON struct {
 	Text         string `json:"text"`
 	Option       string `json:"option"`
 	Topic        string
-	IDReference  string `json:"idReference"`
-	Action       string `json:"action"`
-	DateCreation int64  `json:"dateCreation"`
+	IDReference  string         `json:"idReference"`
+	Action       string         `json:"action"`
+	DateCreation int64          `json:"dateCreation"`
+	Labels       []models.Label `json:"labels"`
 }
 
 func (*MessagesController) buildCriteria(ctx *gin.Context) *models.MessageCriteria {
@@ -250,7 +251,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 			ctx.AbortWithError(http.StatusInternalServerError, errors.New("Error while fetching original user."))
 			return
 		}
-		err = message.Insert(originalUser, topic, messageReference.Text, "", -1)
+		err = message.Insert(originalUser, topic, messageReference.Text, "", -1, messageReference.Labels)
 		if err != nil {
 			log.Errorf("Error while InsertMessage with action %s : %s", messageIn.Action, err)
 			ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
@@ -258,7 +259,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 		}
 		info = fmt.Sprintf("New Bookmark created in %s", topic.Topic)
 	} else {
-		err := message.Insert(user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation)
+		err := message.Insert(user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels)
 		if err != nil {
 			log.Errorf("Error while InsertMessage %s", err)
 			ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
