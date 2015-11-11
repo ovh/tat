@@ -66,6 +66,7 @@ to upload file and store URL on Tat. This workflow should be done by UI.
 ### Store new message
 ```  
 curl -XPOST \
+    -H "Content-Type: application/json" \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text" }' \
@@ -76,6 +77,7 @@ You can add labels from the creation
 
 ```
 curl -XPOST \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text", "dateCreation": 11123232, "labels": [{"text": "labelA", "color": "#eeeeee"}, {"text": "labelB", "color": "#ffffff"}] }' \
@@ -86,6 +88,7 @@ If you use a `system user`, you can force message's date
 
 ```  
 curl -XPOST \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text", "dateCreation": 11123232 }' \
@@ -95,6 +98,7 @@ curl -XPOST \
 ### Reply to a message
 ```
 curl -XPOST \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text", "idReference": "9797q87KJhqsfO7Usdqd", "action": "reply"}'\
@@ -104,6 +108,7 @@ curl -XPOST \
 ### Like a message
 ```
 curl -XPUT \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "like"}'\
@@ -113,6 +118,7 @@ curl -XPUT \
 ### Unlike a message
 ```
 curl -XPUT \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unlike"}'\
@@ -124,6 +130,7 @@ Only author of the message can add a label on it. *option* is the background col
 
 ```
 curl -XPUT \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "label", "text": "myLabel", "option": "rgba(143,199,148,0.61)"}'\
@@ -135,6 +142,7 @@ Only author of the message can remove a label from it.
 
 ```
 curl -XPUT \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unlabel", "text": "myLabel"}'\
@@ -145,6 +153,7 @@ curl -XPUT \
 
 ```
 curl -XPUT \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "update", "text": "my New Mesage updated"}'\
@@ -157,6 +166,7 @@ Only for `system user`. A `system user` can add tags on his messages only.
 
 ```
 curl -XPUT \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "tag", "text": "myTag"}'\
@@ -168,6 +178,7 @@ Only for `system user`. A `system user` can remove tags on his messages only.
 
 ```
 curl -XPUT \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "untag", "text": "myTag"}'\
@@ -177,6 +188,7 @@ curl -XPUT \
 ### Bookmark a message
 ```
 curl -XPOST \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "bookmark"}'\
@@ -197,6 +209,7 @@ Add a message to topic: `/Private/username/Tasks`.
 
 ```
 curl -XPUT \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "task" }'\
@@ -208,6 +221,7 @@ Remove a message from the topic: /Private/username/Tasks
 
 ```
 curl -XPUT \
+    -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "untask" }'\
@@ -358,6 +372,7 @@ Status could be: `online`, `offline`, `busy`.
 
 ```
 curl -XPOST \
+    -H "Content-Type: application/json" \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "status": "online" }' \
