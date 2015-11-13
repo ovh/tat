@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ovh/tat.svg?branch=master)](https://travis-ci.org/ovh/tat)
+
 # Tat Engine
 
 Tat, aka Text And Tags, is a communication tool - Human & Robot all together.
