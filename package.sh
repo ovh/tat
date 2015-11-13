@@ -9,6 +9,6 @@ for GOOS in darwin linux ; do
         echo "Building ${architecture} ${path}"
         export GOOS=$GOOS
         export GOARCH=$GOARCH
-        go build -ldflags -o bin/tat-${architecture}
+        go build -o bin/tat-${architecture}
     done
 done
