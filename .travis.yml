@@ -1,0 +1,25 @@
+language: go
+go:
+- 1.5.1
+env:
+  global:
+  - GO15VENDOREXPERIMENT=1
+  - PROJECT_NAME="tat"
+  - PROJECT_PATH="github.com/ovh"
+install: true
+
+script: chmod +x package.sh && ./package.sh
+
+deploy:
+  provider: releases
+  api_key:
+    secure: M1PxW1EBwrxglPCHgtilsm5WJlXw/EszE0V6dYBP+FIUxMklT+I6iGI8OlRksxdFpMkL0ZJxc7jcFjJ4Tmx9Lc+g7SY5qsqWaB+aLKWLFjWD/UDbbJ0DAuLDbl67Gq9kF6mJXKiEtMJh+dp+tAdxc56//9vjDvrqOZn9rarXM4HUx1uBhXHUFMWtiE9ZMfhzKhTMXJI5YUvnpcaQQbfuQVtqia0AiTcDzp5hFjbMQAhnYE7z6sNAIT+O5Kgs7cRf6IVW/dXeZ4ybkVxAf0RZeMDVMJHcUKGhoQCevFXT8tP5vFIIVQ2dGP9VQ9+3qUspX+BLYzaQkQNdPUuCeBEVXUICyizcB11WDFg0RIzewYQmFK/2x/EJ+X67thEv3M81KMMBOeAh3R46ID6qT9U4YkvCNa0rssE4+UOy4Dg7upaDxbtf9u/jpPrZbu35QXad9nndcgB871bysrfa0RkzTfZ8d1ve1CCBL2kXezokBRf/REl/2XSKKH2EpURGyOPFWRsw4lkJePmZiD5FRCIMSkdBUB4oloGWbcq0AKgL1FuyS7Kvxxwf0UYfQq+gmeCjfd5ATCKksZtpL7Uhwtk/w3lYsmqnEDh97Py5TGu1MMN0U/Kxt8cc2ztNNtwUWSTkhBzHnm0Rl4gobek56rr9h2BK6eI25HKD9FcfQ86DO2I=
+  file:
+    - bin/tat-darwin-386
+    - bin/tat-darwin-amd64
+    - bin/tat-linux-386
+    - bin/tat-linux-amd64
+    - bin/tat-windows-386
+    - bin/tat-windows-amd64
+  on:
+    tags: true
