@@ -69,6 +69,7 @@ func (*MessagesController) buildCriteria(ctx *gin.Context) *models.MessageCriter
 	c.Username = ctx.Query("username")
 	c.LimitMinNbReplies = ctx.Query("limitMinNbReplies")
 	c.LimitMaxNbReplies = ctx.Query("limitMaxNbReplies")
+	c.OnlyMsgRoot = ctx.Query("onlyMsgRoot")
 	return &c
 }
 

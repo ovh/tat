@@ -75,6 +75,7 @@ type MessageCriteria struct {
 	DateMaxUpdate     string
 	LimitMinNbReplies string
 	LimitMaxNbReplies string
+	OnlyMsgRoot       string
 }
 
 func buildMessageCriteria(criteria *MessageCriteria) bson.M {
@@ -103,6 +104,10 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 			queryIDMessages["$or"] = append(queryIDMessages["$or"].([]bson.M), bson.M{"inReplyOfIDRoot": val})
 		}
 		query = append(query, queryIDMessages)
+	}
+	if criteria.OnlyMsgRoot == "true" {
+		queryOnlyMsgRoot := bson.M{"inReplyOfIDRoot": bson.M{"$eq": ""}}
+		query = append(query, queryOnlyMsgRoot)
 	}
 
 	if criteria.AllIDMessage != "" {
