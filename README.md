@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/ovh/tat.svg?branch=master)](https://travis-ci.org/ovh/tat)
+[![GoDoc](https://godoc.org/github.com/ovh/tat?status.svg)](https://godoc.org/github.com/ovh/tat)
 
 # Tat Engine
 
