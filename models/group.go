@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -212,6 +213,55 @@ func (group *Group) IsUserAdmin(user *User) bool {
 // CountGroups returns the total number of groups in db
 func CountGroups() (int, error) {
 	return Store().clGroups.Count()
+}
+
+// Update updates a group : name and description
+func (group *Group) Update(newGroupname, description string, user *User) error {
+
+	// Check if name already exists -> checked in controller
+	err := Store().clGroups.Update(
+		bson.M{"_id": group.ID},
+		bson.M{"$set": bson.M{"name": newGroupname, "description": description}})
+
+	if err != nil {
+		log.Errorf("Error while update group %s to %s:%s", group.Name, newGroupname, err.Error())
+		return fmt.Errorf("Error while update group")
+	}
+
+	if newGroupname != group.Name {
+		changeGroupnameOnTopics(group.Name, newGroupname)
+	}
+
+	return err
+}
+
+// Delete deletes a group
+func (group *Group) Delete(user *User) error {
+	if len(group.Users) > 0 {
+		return fmt.Errorf("Could not delete this group, this group have Users")
+	}
+	if len(group.AdminUsers) > 0 {
+		return fmt.Errorf("Could not delete this group, this group have Admin Users")
+	}
+
+	c := TopicCriteria{}
+	c.Skip = 0
+	c.Limit = 10
+	c.Group = group.Name
+
+	count, topics, err := ListTopics(&c, user)
+	if err != nil {
+		log.Errorf("Error while getting topics associated to group %s:%s", group.Name, err.Error())
+		return fmt.Errorf("Error while getting topics associated to group")
+	}
+
+	if len(topics) > 0 {
+		e := fmt.Sprintf("Group %s associated to %d topic, you can't delete it", group.Name, count)
+		log.Errorf(e)
+		return fmt.Errorf(e)
+	}
+
+	return Store().clGroups.Remove(bson.M{"_id": group.ID})
 }
 
 func changeUsernameOnGroups(oldUsername, newUsername string) {

@@ -119,6 +119,86 @@ func (*GroupsController) preCheckUser(ctx *gin.Context, paramJSON *paramUserJSON
 	return group, nil
 }
 
+type groupUpdateJSON struct {
+	Name        string `json:"newName" binding:"required"`
+	Description string `json:"newDescription" binding:"required"`
+}
+
+// Update a group
+// only for Tat admin
+func (g *GroupsController) Update(ctx *gin.Context) {
+	var paramJSON groupUpdateJSON
+	ctx.Bind(&paramJSON)
+
+	group, err := GetParam(ctx, "group")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Group in query"})
+		return
+	}
+
+	groupToUpdate := models.Group{}
+	err = groupToUpdate.FindByName(group)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Group"})
+		return
+	}
+
+	if paramJSON.Name != groupToUpdate.Name {
+		groupnameExists := models.IsGroupnameExists(paramJSON.Name)
+
+		if groupnameExists {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Group Name already exists"})
+			return
+		}
+	}
+
+	user, err := PreCheckUser(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Error while fetching user"})
+		return
+	}
+
+	err = groupToUpdate.Update(paramJSON.Name, paramJSON.Description, &user)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Error while update group"})
+		return
+	}
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// Delete deletes requested group
+// only for Tat admin
+func (g *GroupsController) Delete(ctx *gin.Context) {
+	var paramJSON groupUpdateJSON
+	ctx.Bind(&paramJSON)
+
+	group, err := GetParam(ctx, "group")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Group in query"})
+		return
+	}
+
+	groupToDelete := models.Group{}
+	err = groupToDelete.FindByName(group)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Group"})
+		return
+	}
+
+	user, err := PreCheckUser(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Error while fetching user"})
+		return
+	}
+
+	err = groupToDelete.Delete(&user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error while deleting Group: %s", err.Error())})
+		return
+	}
+	ctx.JSON(http.StatusOK, "")
+}
+
 // AddUser add a user to a group
 func (g *GroupsController) AddUser(ctx *gin.Context) {
 	var paramJSON paramUserJSON

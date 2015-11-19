@@ -53,6 +53,7 @@ type TopicCriteria struct {
 	DateMaxCreation string
 	GetNbMsgUnread  string
 	GetForTatAdmin  string
+	Group           string
 }
 
 func buildTopicCriteria(criteria *TopicCriteria, user *User) bson.M {
@@ -81,6 +82,14 @@ func buildTopicCriteria(criteria *TopicCriteria, user *User) bson.M {
 			queryDescriptions["$or"] = append(queryDescriptions["$or"].([]bson.M), bson.M{"description": val})
 		}
 		query = append(query, queryDescriptions)
+	}
+	if criteria.Group != "" {
+		queryGroups := bson.M{}
+		queryGroups["$or"] = []bson.M{}
+		queryGroups["$or"] = append(queryGroups["$or"].([]bson.M), bson.M{"adminGroups": bson.M{"$in": strings.Split(criteria.Group, ",")}})
+		queryGroups["$or"] = append(queryGroups["$or"].([]bson.M), bson.M{"roGroups": bson.M{"$in": strings.Split(criteria.Group, ",")}})
+		queryGroups["$or"] = append(queryGroups["$or"].([]bson.M), bson.M{"rwGroups": bson.M{"$in": strings.Split(criteria.Group, ",")}})
+		query = append(query, queryGroups)
 	}
 
 	var bsonDate = bson.M{}
@@ -676,19 +685,25 @@ func (topic *Topic) CheckAndFixName() error {
 }
 
 func changeUsernameOnTopics(oldUsername, newUsername string) {
-	changeUsernameOnSet("roUsers", oldUsername, newUsername)
-	changeUsernameOnSet("rwUsers", oldUsername, newUsername)
-	changeUsernameOnSet("adminUsers", oldUsername, newUsername)
+	changeNameOnSet("username", "roUsers", oldUsername, newUsername)
+	changeNameOnSet("username", "rwUsers", oldUsername, newUsername)
+	changeNameOnSet("username", "adminUsers", oldUsername, newUsername)
 	changeUsernameOnPrivateTopics(oldUsername, newUsername)
 }
 
-func changeUsernameOnSet(set, oldUsername, newUsername string) {
+func changeGroupnameOnTopics(oldGroupname, newGroupname string) {
+	changeNameOnSet("groupname", "roGroups", oldGroupname, newGroupname)
+	changeNameOnSet("groupname", "rwGroups", oldGroupname, newGroupname)
+	changeNameOnSet("groupname", "adminGroups", oldGroupname, newGroupname)
+}
+
+func changeNameOnSet(typeChange, set, oldname, newname string) {
 	_, err := Store().clTopics.UpdateAll(
-		bson.M{set: oldUsername},
-		bson.M{"$set": bson.M{set + ".$": newUsername}})
+		bson.M{set: oldname},
+		bson.M{"$set": bson.M{set + ".$": newname}})
 
 	if err != nil {
-		log.Errorf("Error while changes username from %s to %s on Topics (%s) %s", oldUsername, newUsername, set, err)
+		log.Errorf("Error while changes %s from %s to %s on Topics (%s) %s", typeChange, oldname, newname, set, err)
 	}
 }
 

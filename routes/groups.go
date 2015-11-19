@@ -24,6 +24,8 @@ func InitRoutesGroups(router *gin.Engine) {
 		admin.Use(CheckPassword(), CheckAdmin())
 		{
 			admin.POST("", groupsCtrl.Create)
+			admin.DELETE("edit/:group", groupsCtrl.Delete)
+			admin.PUT("edit/:group", groupsCtrl.Update)
 		}
 	}
 }

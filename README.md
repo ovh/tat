@@ -574,6 +574,9 @@ curl -XGET https://<tatHostname>:<tatPort>/users?skip=0&limit=100 | python -m js
 
 ## Group
 ### Create a group
+
+Only for Tat Admin
+
 ```
 curl -XPOST \
     -H "Content-Type: application/json" \
@@ -581,6 +584,31 @@ curl -XPOST \
     -H "Tat_password: passwordAdmin" \
     -d '{"name": "groupName", "description": "Group Description"}' \
     https://<tatHostname>:<tatPort>/group
+```
+
+### Update a group
+
+Only for Tat Admin
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    -d '{"newName": "groupName", "newDescription": "Group Description"}' \
+    https://<tatHostname>:<tatPort>/group/<groupName>
+```
+
+### Delete a group
+
+Only for Tat Admin
+
+```
+curl -XDELETE \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    https://<tatHostname>:<tatPort>/group/<groupName>
 ```
 
 ### Add a user to a group
