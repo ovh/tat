@@ -609,6 +609,42 @@ func (message *Message) Update(user User, topic Topic) error {
 	return nil
 }
 
+// Move moves a message to another topic
+func (message *Message) Move(user User, newTopic Topic) error {
+
+	// check Delete and RW are done in controller
+	c := &MessageCriteria{
+		IDMessage: message.ID,
+		TreeView:  "onetree",
+	}
+
+	msgs, err := ListMessages(c)
+	if err != nil {
+		return fmt.Errorf("Error while list Messages in Delete %s", err)
+	}
+	if len(msgs) != 1 {
+		return fmt.Errorf("Error while list Messages in Delete (%s not unique!)", message.ID)
+	}
+
+	for _, e := range msgs[0].Replies {
+		if len(e.Topics) != 1 {
+			return fmt.Errorf("A reply belongs more than one topic, you can't move this thread.")
+		}
+	}
+
+	// here, ok, we can move
+	topicUpdate := []string{newTopic.Topic}
+	_, err = Store().clMessages.UpdateAll(
+		bson.M{"$or": []bson.M{bson.M{"_id": message.ID}, bson.M{"inReplyOfIDRoot": message.ID}}},
+		bson.M{"$set": bson.M{"topics": topicUpdate}})
+
+	if err != nil {
+		log.Errorf("Error while update messages (move topic to %s) idMsgRoot:%s err:%s", newTopic.Topic, message.ID, err)
+	}
+
+	return nil
+}
+
 // Delete deletes a message from database
 func (message *Message) Delete() error {
 

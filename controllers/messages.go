@@ -191,6 +191,8 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 			messageIn.Action == "label" || messageIn.Action == "unlabel" ||
 			messageIn.Action == "tag" || messageIn.Action == "untag" {
 			topicName = m.inverseIfDMTopic(ctx, message.Topics[0])
+		} else if messageIn.Action == "move" {
+			topicName = topicIn
 		} else if messageIn.Action == "task" || messageIn.Action == "untask" {
 			topicName, err = m.getTopicNonPrivateTasks(ctx, message.Topics)
 			if err != nil {
@@ -317,6 +319,11 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 		return
 	}
 
+	if messageIn.Action == "move" {
+		m.moveMessage(ctx, &messageIn, messageReference, user, topic)
+		return
+	}
+
 	ctx.JSON(http.StatusBadRequest, gin.H{"error": "Action invalid."})
 }
 
@@ -339,38 +346,10 @@ func (m *MessagesController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	topic := models.Topic{}
-	err = topic.FindByTopic(message.Topics[0], true)
+	topic, err := m.checkBeforeDelete(ctx, message, user)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Topic %s does not exist", message.Topics[0])})
+		// ctx writes in checkBeforeDelete
 		return
-	}
-	isRw := topic.IsUserRW(&user)
-	if !isRw {
-		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No RW Access to topic %s", message.Topics[0])})
-		return
-	}
-
-	if !strings.HasPrefix(message.Topics[0], "/Private/"+user.Username) && !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
-		if !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("You can't delete a message on this topic %s", topic.Topic)})
-			return
-		}
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Could not delete a message in a non private topic %s", message.Topics[0])})
-		return
-	}
-
-	if !topic.CanDeleteAllMsg && message.Author.Username != user.Username {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Could not delete a message from another user %s than you %s", message.Author.Username, user.Username)})
-		return
-	}
-
-	for _, topicName := range message.Topics {
-		// if msg is only in tasks topic, ok to delete it
-		if strings.HasPrefix(topicName, "/Private/") && strings.HasSuffix(topicName, "/Tasks") && len(message.Topics) > 1 {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Could not delete a message in a tasks topic")})
-			return
-		}
 	}
 
 	err = message.Delete()
@@ -382,6 +361,49 @@ func (m *MessagesController) Delete(ctx *gin.Context) {
 
 	go models.WSMessage(&models.WSMessageJSON{Action: "delete", Username: user.Username, Message: message})
 	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("Message deleted from %s", topic.Topic)})
+}
+
+func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.Message, user models.User) (models.Topic, error) {
+	topic := models.Topic{}
+	err := topic.FindByTopic(message.Topics[0], true)
+	if err != nil {
+		e := fmt.Sprintf("Topic %s does not exist", message.Topics[0])
+		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
+		return topic, fmt.Errorf(e)
+	}
+	isRw := topic.IsUserRW(&user)
+	if !isRw {
+		e := fmt.Sprintf("No RW Access to topic %s", message.Topics[0])
+		ctx.JSON(http.StatusForbidden, gin.H{"error": e})
+		return topic, fmt.Errorf(e)
+	}
+
+	if !strings.HasPrefix(message.Topics[0], "/Private/"+user.Username) && !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
+		if !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
+			e := fmt.Sprintf("You can't delete a message from topic %s", topic.Topic)
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
+			return topic, fmt.Errorf(e)
+		}
+		e := fmt.Sprintf("Could not delete a message in a non private topic %s", message.Topics[0])
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
+		return topic, fmt.Errorf(e)
+	}
+
+	if !topic.CanDeleteAllMsg && message.Author.Username != user.Username {
+		e := fmt.Sprintf("Could not delete a message from another user %s than you %s", message.Author.Username, user.Username)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
+		return topic, fmt.Errorf(e)
+	}
+
+	for _, topicName := range message.Topics {
+		// if msg is only in tasks topic, ok to delete it
+		if strings.HasPrefix(topicName, "/Private/") && strings.HasSuffix(topicName, "/Tasks") && len(message.Topics) > 1 {
+			e := fmt.Sprintf("Could not delete a message in a tasks topic")
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
+			return topic, fmt.Errorf(e)
+		}
+	}
+	return topic, nil
 }
 
 func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, message models.Message, topic models.Topic, user models.User) {
@@ -535,6 +557,44 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *messageJ
 	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
 	out := &messageJSONOut{Message: message, Info: info}
 	ctx.JSON(http.StatusOK, out)
+}
+
+func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
+	// Check if user can delete msg on from topic
+	_, err := m.checkBeforeDelete(ctx, message, user)
+	if err != nil {
+		// ctx writes in checkBeforeDelete
+		return
+	}
+
+	// Check if user can write msg from dest topic
+	isRw := topic.IsUserRW(&user)
+	if !isRw {
+		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No RW Access to topic %s", topic.Topic)})
+		return
+	}
+
+	// check if message is a reply -> not possible
+	if message.InReplyOfIDRoot != "" {
+		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("You can't move a reply message")})
+		return
+	}
+
+	info := ""
+	if messageIn.Action == "move" {
+		err := message.Move(user, topic)
+		if err != nil {
+			log.Errorf("Error while move a message to topic: %s err: %s", topic.Topic, err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error while move a message to topic %s", topic.Topic)})
+			return
+		}
+		info = fmt.Sprintf("Message move to %s", topic.Topic)
+	} else {
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action : "+messageIn.Action))
+		return
+	}
+	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
+	ctx.JSON(http.StatusCreated, gin.H{"info": info})
 }
 
 func (m *MessagesController) getTopicNameFromAction(username, action string) string {
