@@ -13,6 +13,9 @@ func InitRoutesMessages(router *gin.Engine) {
 	g.Use(CheckPassword())
 	{
 		g.GET("/*topic", messagesCtrl.List)
+
+		// Delete a message and its replies
+		g.DELETE("/cascade/:idMessage", messagesCtrl.DeleteCascade)
 	}
 
 	r := router.Group("/read")
@@ -30,9 +33,8 @@ func InitRoutesMessages(router *gin.Engine) {
 		// Like, Unlike, Label, Unlabel a message, mark as task
 		gm.PUT("/*topic", messagesCtrl.Update)
 
-		// Delete a bookmark
+		// Delete a message
 		gm.DELETE("/:idMessage", messagesCtrl.Delete)
-
 	}
 
 }

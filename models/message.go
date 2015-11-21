@@ -646,23 +646,12 @@ func (message *Message) Move(user User, newTopic Topic) error {
 }
 
 // Delete deletes a message from database
-func (message *Message) Delete() error {
-
-	c := &MessageCriteria{
-		InReplyOfID: message.ID,
-		TreeView:    "onetree",
+func (message *Message) Delete(cascade bool) error {
+	if cascade {
+		return Store().clMessages.Remove(bson.M{"$or": []bson.M{bson.M{"_id": message.ID}, bson.M{"inReplyOfIDRoot": message.ID}}})
 	}
-
-	msgs, err := ListMessages(c)
-	if err != nil {
-		return fmt.Errorf("Error while list Messages in Delete %s", err)
-	}
-
-	if len(msgs) > 0 {
-		return fmt.Errorf("Could not delete this message, this message have replies")
-	}
-
 	return Store().clMessages.Remove(bson.M{"_id": message.ID})
+
 }
 
 func (message *Message) getLabel(label string) (int, Label, error) {

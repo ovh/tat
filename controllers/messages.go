@@ -329,6 +329,15 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 
 // Delete a message
 func (m *MessagesController) Delete(ctx *gin.Context) {
+	m.messageDelete(ctx, false)
+}
+
+// DeleteCascade deletes a message and its replies
+func (m *MessagesController) DeleteCascade(ctx *gin.Context) {
+	m.messageDelete(ctx, true)
+}
+
+func (m *MessagesController) messageDelete(ctx *gin.Context, cascade bool) {
 	idMessageIn, err := GetParam(ctx, "idMessage")
 	if err != nil {
 		return
@@ -352,7 +361,32 @@ func (m *MessagesController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	err = message.Delete()
+	c := &models.MessageCriteria{
+		InReplyOfID: message.ID,
+		TreeView:    "onetree",
+	}
+
+	msgs, err := models.ListMessages(c)
+	if err != nil {
+		log.Errorf("Error while list Messages in Delete %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while list Messages in Delete"})
+		return
+	}
+
+	if cascade {
+		for _, r := range msgs {
+			_, err := m.checkBeforeDelete(ctx, r, user)
+			if err != nil {
+				// ctx writes in checkBeforeDelete
+				return
+			}
+		}
+	} else if len(msgs) > 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Could not delete this message, this message have replies"})
+		return
+	}
+
+	err = message.Delete(cascade)
 	if err != nil {
 		log.Errorf("Error while delete a message %s", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -363,6 +397,9 @@ func (m *MessagesController) Delete(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("Message deleted from %s", topic.Topic)})
 }
 
+// checkBeforeDelete checks
+// - if user is RW on topic
+// - if topic is Private OR is CanDeleteMsg or CanDeleteAllMsg
 func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.Message, user models.User) (models.Topic, error) {
 	topic := models.Topic{}
 	err := topic.FindByTopic(message.Topics[0], true)
