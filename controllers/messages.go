@@ -327,7 +327,7 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 	ctx.JSON(http.StatusBadRequest, gin.H{"error": "Action invalid."})
 }
 
-// Delete a message, works only on /Private/username/... topics
+// Delete a message
 func (m *MessagesController) Delete(ctx *gin.Context) {
 	idMessageIn, err := GetParam(ctx, "idMessage")
 	if err != nil {

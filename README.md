@@ -209,14 +209,13 @@ curl -XPOST \
 	https://<tatHostname>:<tatPort>/message/Private/username/Bookmarks/sub-topic
 ```
 
-### Remove a bookmark or a message from a private topic (except task)
+### Delete a message
 ```
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	https://<tatHostname>:<tatPort>/message/9797q87KJhqsfO7Usdqd
 ```
-
 
 ### Create a task from a message
 Add a message to topic: `/Private/username/Tasks`.
