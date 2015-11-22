@@ -22,7 +22,6 @@ deploy:
     - bin/tat-darwin-amd64
     - bin/tat-linux-386
     - bin/tat-linux-amd64
-    - bin/tat-windows-386
-    - bin/tat-windows-amd64
+    - bin/tat-linux-arm
   on:
     tags: true
