@@ -10,6 +10,9 @@ install: true
 
 script: chmod +x package.sh && ./package.sh
 
+before_deploy:
+  - gem install mime-types -v 2.6.2
+
 deploy:
   provider: releases
   api_key:
