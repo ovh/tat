@@ -355,6 +355,9 @@ func oneTreeMessages(messages []Message, nloop int, criteria *MessageCriteria) (
 	var tree []Message
 	if nloop > 25 {
 		e := "Infinite loop detected in oneTreeMessages"
+		for i := 0; i <= len(messages)-1; i++ {
+			e += " id:" + messages[i].ID
+		}
 		log.Errorf(e)
 		return tree, errors.New(e)
 	}
@@ -394,6 +397,9 @@ func fullTreeMessages(messages []Message, nloop int, criteria *MessageCriteria) 
 	var tree []Message
 	if nloop > 10 {
 		e := "Infinite loop detected in fullTreeMessages"
+		for i := 0; i <= len(messages)-1; i++ {
+			e += " id:" + messages[i].ID
+		}
 		log.Errorf(e)
 		return tree, errors.New(e)
 	}
