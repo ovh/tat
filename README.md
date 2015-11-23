@@ -1087,14 +1087,18 @@ curl -XGET https://<tatHostname>:<tatPort>/capabilities
 
 ```
       --allowed-domains="": Users have to use theses emails domains. Empty: no-restriction. Ex: --allowed-domains=domainA.org,domainA.com
-      --db-addr="localhost:27017": Address of the mongodb server
-      --db-password="": Password to authenticate with the mongodb server
-      --db-user="": User to authenticate with the mongodb server
+      --db-addr="127.0.0.1:27017": Address of the mongodb server
+      --db-password="": Password to authenticate with the mongodb server. If "false", db-password is not used
+      --db-rs-tags="": Link hostname with tag on mongodb replica set - Optional: hostnameA:tagName:value,hostnameB:tagName:value. If "false", db-rs-tags is not used
+      --db-user="": User to authenticate with the mongodb server. If "false", db-user is not used
+      --default-domain="": Default domains for mail for trusted username
+      --default-group="": Default Group for new user
       --exposed-host="localhost": Tat Engine Hostname exposed to client
-      --exposed-port="8080": Tat Engine Port exposed to client
       --exposed-path="": Tat Engine Path exposed to client, ex: host:port/tat/engine /tat/engine is exposed path
+      --exposed-port="8080": Tat Engine Port exposed to client
       --exposed-scheme="http": Tat URI Scheme http or https exposed to client
-  -h, --help=false: help for tat
+      --header-trust-username="": Header Trust Username: for example, if X-Remote-User and X-Remote-User received in header -> auto accept user without testing tat_password. Use it with precaution
+ -h, --help=false: help for tat
       --listen-port="8080": Tat Engine Listen Port
       --no-smtp=false: No SMTP mode
       --production=false: Production mode
@@ -1102,12 +1106,13 @@ curl -XGET https://<tatHostname>:<tatPort>/capabilities
       --smtp-host="": SMTP Host
       --smtp-password="": SMTP Password
       --smtp-port="": SMTP Port
-      --smtp-user="": SMTP Username
       --smtp-tls=false: SMTP TLS
-      --default-group="": Default Group for new user
+      --smtp-user="": SMTP Username
       --tat-log-level="": Tat Log Level: debug, info or warn
-      --username-from-email=false: Username is extracted from first part of email. first.lastame@domainA.org -> username: first.lastname
+      --trusted-usernames-emails-fullnames="": Tuples trusted username / email / fullname. Example: username:email:Firstname1_Fullname1,username2:email2:Firstname2_Fullname2
+      --username-from-email=false: Username are extracted from first part of email. first.lastame@domainA.org -> username: first.lastname
       --websocket-enabled=false: Enable or not websockets on this instance
+
 ```
 
 ## Run with Docker

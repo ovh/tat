@@ -46,10 +46,11 @@ func NewStore() {
 	var session *mgo.Session
 	var err error
 
-	username := viper.GetString("db_user")
-	password := viper.GetString("db_password")
+	username := getDbParameter("db_user")
+	password := getDbParameter("db_password")
+	replicaSetHostnamesTags := getDbParameter("db_rs_tags")
+
 	address := viper.GetString("db_addr")
-	replicaSetHostnamesTags := viper.GetString("db_rs_tags")
 
 	if username != "" && password != "" {
 		session, err = mgo.Dial("mongodb://" + username + ":" + password + "@" + address)
@@ -100,6 +101,17 @@ func NewStore() {
 
 	initDb()
 	ensureIndexes(_instance)
+}
+
+// getDbParameter gets value of tat parameter
+// return values if not "" AND not "false"
+// used by db_user, db_password and db_rs_tags
+func getDbParameter(key string) string {
+	value := ""
+	if viper.GetString(key) != "" && viper.GetString(key) != "false" {
+		value = viper.GetString(key)
+	}
+	return value
 }
 
 func initDb() {
