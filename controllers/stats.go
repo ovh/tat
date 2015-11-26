@@ -124,11 +124,11 @@ func externalIP() string {
 
 // Distribution returns total number of messages
 func (*StatsController) Distribution(ctx *gin.Context) {
-	ru, err := models.DistributionMessages("topics")
+	rt, err := models.DistributionMessages("topics")
 	if err != nil {
 		log.Errorf("Error while get distributions of messages per topic %s", err)
 	}
-	rt, err := models.DistributionMessages("author.username")
+	ru, err := models.DistributionMessages("author.username")
 	if err != nil {
 		log.Errorf("Error while get distributions of messages per user %s", err)
 	}
