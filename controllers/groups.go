@@ -56,7 +56,12 @@ func (g *GroupsController) List(ctx *gin.Context) {
 	var criteria models.GroupCriteria
 	ctx.Bind(&criteria)
 
-	count, groups, err := models.ListGroups(g.buildCriteria(ctx), utils.IsTatAdmin(ctx))
+	user, err := PreCheckUser(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching current user"})
+		return
+	}
+	count, groups, err := models.ListGroups(g.buildCriteria(ctx), &user, utils.IsTatAdmin(ctx))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return

@@ -19,7 +19,7 @@ type Group struct {
 	Description  string   `bson:"description"  json:"description"`
 	Users        []string `bson:"users"        json:"users,omitempty"`
 	AdminUsers   []string `bson:"adminUsers"   json:"adminUsers,omitempty"`
-	DateCreation int64    `bson:"dateCreation" json:"dateCreation"`
+	DateCreation int64    `bson:"dateCreation" json:"dateCreation,omitempty"`
 }
 
 // GroupCriteria is used by List all Groups
@@ -102,10 +102,10 @@ func buildGroupCriteria(criteria *GroupCriteria) bson.M {
 }
 
 // ListGroups return all groups matching given criterias
-func ListGroups(criteria *GroupCriteria, isAdmin bool) (int, []Group, error) {
+func ListGroups(criteria *GroupCriteria, user *User, isAdmin bool) (int, []Group, error) {
 	var groups []Group
 
-	cursor := listGroupsCursor(criteria, isAdmin)
+	cursor := listGroupsCursor(criteria)
 	count, err := cursor.Count()
 	if err != nil {
 		log.Errorf("Error while count Groups %s", err)
@@ -124,10 +124,45 @@ func ListGroups(criteria *GroupCriteria, isAdmin bool) (int, []Group, error) {
 	if err != nil {
 		log.Errorf("Error while Find All Groups %s", err)
 	}
-	return count, groups, err
+	if isAdmin {
+		return count, groups, err
+	}
+
+	var groupsUser []Group
+	// Get all groups where user is admin
+	groupsAdmin, err := getGroupsForAdminUser(user)
+	if err != nil {
+		return count, groups, err
+	}
+
+	for _, groupAdmin := range groupsAdmin {
+		for _, group := range groups {
+			if group.ID == groupAdmin.ID {
+				groupsUser = append(groupsUser, groupAdmin)
+			} else {
+				groupsUser = append(groupsUser, group)
+			}
+		}
+	}
+
+	return count, groupsUser, err
 }
 
-func listGroupsCursor(criteria *GroupCriteria, isAdmin bool) *mgo.Query {
+// getGroupsForAdminUser where user is an admin
+func getGroupsForAdminUser(user *User) ([]Group, error) {
+	var groups []Group
+	err := Store().clGroups.
+		Find(bson.M{"adminUsers": bson.M{"$in": [1]string{user.Username}}}).
+		All(&groups)
+
+	if err != nil {
+		log.Errorf("Error while getting groups for admin user: %s", err.Error())
+	}
+
+	return groups, err
+}
+
+func listGroupsCursor(criteria *GroupCriteria) *mgo.Query {
 	return Store().clGroups.Find(buildGroupCriteria(criteria))
 }
 
@@ -195,19 +230,15 @@ func (group *Group) RemoveAdminUser(admin string, username string) error {
 
 func (group *Group) addToHistory(user string, historyToAdd string) error {
 	toAdd := strconv.FormatInt(time.Now().Unix(), 10) + " " + user + " " + historyToAdd
-	err := Store().clGroups.Update(
+	return Store().clGroups.Update(
 		bson.M{"_id": group.ID},
 		bson.M{"$addToSet": bson.M{"history": toAdd}},
 	)
-	return err
 }
 
 // IsUserAdmin return true if user is admin on this group
 func (group *Group) IsUserAdmin(user *User) bool {
-	if utils.ArrayContains(group.AdminUsers, user.Username) {
-		return true
-	}
-	return false
+	return utils.ArrayContains(group.AdminUsers, user.Username)
 }
 
 // CountGroups returns the total number of groups in db
