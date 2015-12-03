@@ -196,7 +196,66 @@ func ListTopics(criteria *TopicCriteria, user *User) (int, []Topic, error) {
 	if err != nil {
 		log.Errorf("Error while Find Topics %s", err)
 	}
-	return count, topics, err
+
+	if user.IsAdmin {
+		return count, topics, err
+	}
+
+	var topicsUser []Topic
+	// Get all topics where user is admin
+	topicsMember, err := getTopicsForMemberUser(user)
+	if err != nil {
+		return count, topics, err
+	}
+
+	log.Infof("LEN:%d", len(topicsMember))
+	//log.Infof("DET:%+v", topicsMember)
+
+	for _, topic := range topics {
+		added := false
+		for _, topicMember := range topicsMember {
+			if topic.ID == topicMember.ID {
+				topic.AdminGroups = topicMember.AdminGroups
+				topic.AdminUsers = topicMember.AdminUsers
+				topic.ROUsers = topicMember.ROUsers
+				topic.RWUsers = topicMember.RWUsers
+				topic.RWGroups = topicMember.RWGroups
+				topic.ROGroups = topicMember.ROGroups
+				topicsUser = append(topicsUser, topic)
+				added = true
+				break
+			}
+		}
+		if !added {
+			topicsUser = append(topicsUser, topic)
+		}
+	}
+
+	return count, topicsUser, err
+}
+
+// getTopicsForMemberUser where user is an admin or a member
+func getTopicsForMemberUser(user *User) ([]Topic, error) {
+	var topics []Topic
+
+	userGroups, err := user.GetGroupsOnlyName()
+	c := bson.M{}
+	c["$or"] = []bson.M{}
+	c["$or"] = append(c["$or"].([]bson.M), bson.M{"adminUsers": bson.M{"$in": [1]string{user.Username}}})
+	c["$or"] = append(c["$or"].([]bson.M), bson.M{"roUsers": bson.M{"$in": [1]string{user.Username}}})
+	c["$or"] = append(c["$or"].([]bson.M), bson.M{"rwUsers": bson.M{"$in": [1]string{user.Username}}})
+	if len(userGroups) > 0 {
+		c["$or"] = append(c["$or"].([]bson.M), bson.M{"adminGroups": bson.M{"$in": userGroups}})
+		c["$or"] = append(c["$or"].([]bson.M), bson.M{"roGroups": bson.M{"$in": userGroups}})
+		c["$or"] = append(c["$or"].([]bson.M), bson.M{"rwGroups": bson.M{"$in": userGroups}})
+	}
+
+	err = Store().clTopics.Find(c).All(&topics)
+	if err != nil {
+		log.Errorf("Error while getting topics for member user: %s", err.Error())
+	}
+
+	return topics, err
 }
 
 func listTopicsCursor(criteria *TopicCriteria, user *User) *mgo.Query {

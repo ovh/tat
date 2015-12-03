@@ -130,31 +130,37 @@ func ListGroups(criteria *GroupCriteria, user *User, isAdmin bool) (int, []Group
 
 	var groupsUser []Group
 	// Get all groups where user is admin
-	groupsAdmin, err := getGroupsForAdminUser(user)
+	groupsMember, err := getGroupsForMemberUser(user)
 	if err != nil {
 		return count, groups, err
 	}
 
-	for _, groupAdmin := range groupsAdmin {
-		for _, group := range groups {
-			if group.ID == groupAdmin.ID {
-				groupsUser = append(groupsUser, groupAdmin)
-			} else {
-				groupsUser = append(groupsUser, group)
+	for _, group := range groups {
+		added := false
+		for _, groupMember := range groupsMember {
+			if group.ID == groupMember.ID {
+				groupsUser = append(groupsUser, groupMember)
+				added = true
+				break
 			}
+		}
+		if !added {
+			groupsUser = append(groupsUser, group)
 		}
 	}
 
 	return count, groupsUser, err
 }
 
-// getGroupsForAdminUser where user is an admin
-func getGroupsForAdminUser(user *User) ([]Group, error) {
+// getGroupsForMemberUser where user is an admin or a member
+func getGroupsForMemberUser(user *User) ([]Group, error) {
 	var groups []Group
-	err := Store().clGroups.
-		Find(bson.M{"adminUsers": bson.M{"$in": [1]string{user.Username}}}).
-		All(&groups)
+	c := bson.M{}
+	c["$or"] = []bson.M{}
+	c["$or"] = append(c["$or"].([]bson.M), bson.M{"adminUsers": bson.M{"$in": [1]string{user.Username}}})
+	c["$or"] = append(c["$or"].([]bson.M), bson.M{"users": bson.M{"$in": [1]string{user.Username}}})
 
+	err := Store().clGroups.Find(c).All(&groups)
 	if err != nil {
 		log.Errorf("Error while getting groups for admin user: %s", err.Error())
 	}
