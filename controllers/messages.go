@@ -254,7 +254,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 			ctx.AbortWithError(http.StatusInternalServerError, errors.New("Error while fetching original user."))
 			return
 		}
-		err = message.Insert(originalUser, topic, messageReference.Text, "", -1, messageReference.Labels)
+		err = message.Insert(originalUser, topic, messageReference.Text, "", -1, messageReference.Labels, false)
 		if err != nil {
 			log.Errorf("Error while InsertMessage with action %s : %s", messageIn.Action, err)
 			ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
@@ -262,10 +262,10 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 		}
 		info = fmt.Sprintf("New Bookmark created in %s", topic.Topic)
 	} else {
-		err := message.Insert(user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels)
+		err := message.Insert(user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, false)
 		if err != nil {
-			log.Errorf("Error while InsertMessage %s", err)
-			ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+			log.Errorf("%s", err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		go models.WSMessageNew(&models.WSMessageNewJSON{Topic: topic.Topic})

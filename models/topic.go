@@ -208,9 +208,6 @@ func ListTopics(criteria *TopicCriteria, user *User) (int, []Topic, error) {
 		return count, topics, err
 	}
 
-	log.Infof("LEN:%d", len(topicsMember))
-	//log.Infof("DET:%+v", topicsMember)
-
 	for _, topic := range topics {
 		added := false
 		for _, topicMember := range topicsMember {

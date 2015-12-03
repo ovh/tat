@@ -480,7 +480,15 @@ func getTree(messagesIn map[string][]Message, criteria *MessageCriteria) ([]Mess
 }
 
 // Insert a new message on one topic
-func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation int64, labels []Label) error {
+func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation int64, labels []Label, isNotification bool) error {
+
+	if !isNotification {
+		notificationsTopic := fmt.Sprintf("/Private/%s/Notifications", user.Username)
+		if strings.HasPrefix(topic.Topic, notificationsTopic) {
+			return fmt.Errorf("You can't write on your notifications topic")
+		}
+	}
+
 	message.Text = text
 	err := message.CheckAndFixText(topic)
 	if err != nil {
@@ -546,8 +554,13 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	message.DateCreation = dateToStore
 	message.DateUpdate = time.Now().Unix()
 	message.Tags = hashtag.ExtractHashtags(message.Text)
-	message.UserMentions = hashtag.ExtractMentions(message.Text)
 	message.Urls = xurls.Strict.FindAllString(message.Text, -1)
+
+	topicPrivate := "/Private/"
+	if !strings.HasPrefix(topic.Topic, topicPrivate) {
+		usernamesMentions := extractUsersMentions(message.Text)
+		message.UserMentions = usernamesMentions
+	}
 
 	if labels != nil {
 		message.Labels = checkLabels(labels)
@@ -556,8 +569,50 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	err = Store().clMessages.Insert(message)
 	if err != nil {
 		log.Errorf("Error while inserting new message %s", err)
+		return err
 	}
-	return err
+
+	if !strings.HasPrefix(topic.Topic, topicPrivate) {
+		message.insertNotifications(user)
+	}
+	return nil
+}
+
+func extractUsersMentions(text string) []string {
+	usernames := hashtag.ExtractMentions(text)
+	var usernamesChecked []string
+
+	for _, username := range usernames {
+		var user = User{}
+		if err := user.FindByUsername(username); err == nil {
+			usernamesChecked = append(usernamesChecked, user.Username)
+		}
+	}
+	return usernamesChecked
+}
+
+func (message *Message) insertNotifications(author User) {
+	if len(message.UserMentions) == 0 {
+		return
+	}
+	for _, userMention := range message.UserMentions {
+		message.insertNotification(author, userMention)
+	}
+}
+
+func (message *Message) insertNotification(author User, usernameMention string) {
+	notif := Message{}
+	text := fmt.Sprintf("#mention #idMessage:%s #topic:%s %s", message.ID, message.Topics[0], message.Text)
+	topicname := fmt.Sprintf("/Private/%s/Notifications", usernameMention)
+	var topic = Topic{}
+	if err := topic.FindByTopic(topicname, false); err != nil {
+		return
+	}
+
+	if err := notif.Insert(author, topic, text, "", -1, nil, true); err != nil {
+		// not throw err here, just log
+		log.Errorf("Error while inserting notification message for %s, error: %s", usernameMention, err.Error())
+	}
 }
 
 func checkLabels(labels []Label) []Label {
@@ -835,7 +890,7 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 	if action == "pull" {
 		text = "Remove this thread from my tasks"
 	}
-	return msgReply.Insert(user, topic, text, idRoot, -1, nil)
+	return msgReply.Insert(user, topic, text, idRoot, -1, nil, false)
 }
 
 // AddToTasks add a message to user's tasks Topic
