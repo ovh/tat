@@ -480,12 +480,16 @@ func getTree(messagesIn map[string][]Message, criteria *MessageCriteria) ([]Mess
 }
 
 // Insert a new message on one topic
-func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation int64, labels []Label, isNotification bool) error {
+func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation int64, labels []Label, isNotificationFromMention bool) error {
 
-	if !isNotification {
+	if !isNotificationFromMention {
 		notificationsTopic := fmt.Sprintf("/Private/%s/Notifications", user.Username)
 		if strings.HasPrefix(topic.Topic, notificationsTopic) {
-			return fmt.Errorf("You can't write on your notifications topic")
+			if !user.IsSystem {
+				return fmt.Errorf("You can't write on your notifications topic")
+			} else if user.IsSystem && !user.CanWriteNotifications {
+				return fmt.Errorf("This user system %s has no right to write on notifications topic", user.Username)
+			}
 		}
 	}
 
