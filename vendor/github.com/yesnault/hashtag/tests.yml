@@ -23,6 +23,10 @@ mentions:
     text: "mention @12345"
     expected: ["12345"]
 
+  - description: "Extract mention with dot"
+    text: "mention @aaa.bbb"
+    expected: ["aaa.bbb"]
+
   - description: "Extract mention or multiple usernames"
     text: "mention @username1 @username2"
     expected: ["username1", "username2"]
@@ -309,15 +313,19 @@ hashtags:
     text: "Here’s a test tweet for you: #İn #ın"
     expected: ["İn", "ın"]
 
-  - description: "Hashtag before punctuations, except :"
+  - description: "Hashtag before punctuations, except:"
     text: "#hashtag: #hashtag; #hashtag, #hashtag. #hashtag! #hashtag?"
-    expected: ["hashtag:", "hashtag", "hashtag", "hashtag", "hashtag", "hashtag"]
+    expected: ["hashtag:", "hashtag", "hashtag", "hashtag.", "hashtag", "hashtag"]
+
+  - description: "Hashtag with dot:"
+    text: "#hashtag.dot"
+    expected: ["hashtag.dot"]
 
   - description: "Hashtag with /"
     text: "#From_dev/aa #From_aa/ff"
     expected: ["From_dev/aa", "From_aa/ff"]
 
-  - description: "Hashtag with :"
+  - description: "Hashtag with:"
     text: "#From:dev/aa #From:aa/ff"
     expected: ["From:dev/aa", "From:aa/ff"]
 
