@@ -608,12 +608,13 @@ func (message *Message) insertNotification(author User, usernameMention string) 
 	notif := Message{}
 	text := fmt.Sprintf("#mention #idMessage:%s #topic:%s %s", message.ID, message.Topics[0], message.Text)
 	topicname := fmt.Sprintf("/Private/%s/Notifications", usernameMention)
+	labels := []Label{Label{Text: "unread", Color: "d04437"}}
 	var topic = Topic{}
 	if err := topic.FindByTopic(topicname, false); err != nil {
 		return
 	}
 
-	if err := notif.Insert(author, topic, text, "", -1, nil, true); err != nil {
+	if err := notif.Insert(author, topic, text, "", -1, labels, true); err != nil {
 		// not throw err here, just log
 		log.Errorf("Error while inserting notification message for %s, error: %s", usernameMention, err.Error())
 	}
