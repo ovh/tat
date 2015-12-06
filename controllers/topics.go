@@ -516,15 +516,16 @@ func (t *TopicsController) RemoveAdminGroup(ctx *gin.Context) {
 }
 
 type paramJSON struct {
-	Topic           string `json:"topic"`
-	MaxLength       int    `json:"maxlength"`
-	CanForceDate    bool   `json:"canForceDate"`
-	CanUpdateMsg    bool   `json:"canUpdateMsg"`
-	CanDeleteMsg    bool   `json:"canDeleteMsg"`
-	CanUpdateAllMsg bool   `json:"canUpdateAllMsg"`
-	CanDeleteAllMsg bool   `json:"canDeleteAllMsg"`
-	IsROPublic      bool   `json:"isROPublic"`
-	Recursive       bool   `json:"recursive"`
+	Topic           string                  `json:"topic"`
+	MaxLength       int                     `json:"maxlength"`
+	CanForceDate    bool                    `json:"canForceDate"`
+	CanUpdateMsg    bool                    `json:"canUpdateMsg"`
+	CanDeleteMsg    bool                    `json:"canDeleteMsg"`
+	CanUpdateAllMsg bool                    `json:"canUpdateAllMsg"`
+	CanDeleteAllMsg bool                    `json:"canDeleteAllMsg"`
+	IsROPublic      bool                    `json:"isROPublic"`
+	Recursive       bool                    `json:"recursive"`
+	Parameters      []models.TopicParameter `json:"parameters"`
 }
 
 // SetParam update Topic Parameters : MaxLength, CanForeceDate, CanUpdateMsg, CanDeleteMsg, CanUpdateAllMsg, CanDeleteAllMsg, IsROPublic
@@ -557,11 +558,12 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 		paramJSON.CanDeleteMsg,
 		paramJSON.CanUpdateAllMsg,
 		paramJSON.CanDeleteAllMsg,
-		paramJSON.IsROPublic)
+		paramJSON.IsROPublic,
+		paramJSON.Parameters)
 
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
 		return
 	}
-	ctx.JSON(http.StatusCreated, "")
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("Topic %s updated", topic.Topic)})
 }

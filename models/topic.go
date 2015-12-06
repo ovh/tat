@@ -436,8 +436,10 @@ func (topic *Topic) FindByID(id string, isAdmin bool) error {
 	return err
 }
 
-// SetParam update param maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, isROPublic on topic
-func (topic *Topic) SetParam(username string, recursive bool, maxLength int, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, isROPublic bool) error {
+// SetParam update param maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, isROPublic, parameters on topic
+func (topic *Topic) SetParam(username string, recursive bool, maxLength int,
+	canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg,
+	isROPublic bool, parameters []TopicParameter) error {
 
 	var selector bson.M
 
@@ -451,22 +453,23 @@ func (topic *Topic) SetParam(username string, recursive bool, maxLength int, can
 		maxLength = DefaultMessageMaxSize
 	}
 
-	_, err := Store().clTopics.UpdateAll(
-		selector,
-		bson.M{
-			"$set": bson.M{
-				"maxlength":       maxLength,
-				"canForceDate":    canForceDate,
-				"canUpdateMsg":    canUpdateMsg,
-				"canDeleteMsg":    canDeleteMsg,
-				"canUpdateAllMsg": canUpdateAllMsg,
-				"canDeleteAllMsg": canDeleteAllMsg,
-				"isROPublic":      isROPublic,
-			},
-		},
-	)
+	update := bson.M{
+		"maxlength":       maxLength,
+		"canForceDate":    canForceDate,
+		"canUpdateMsg":    canUpdateMsg,
+		"canDeleteMsg":    canDeleteMsg,
+		"canUpdateAllMsg": canUpdateAllMsg,
+		"canDeleteAllMsg": canDeleteAllMsg,
+		"isROPublic":      isROPublic,
+	}
+
+	if parameters != nil {
+		update["parameters"] = parameters
+	}
+	_, err := Store().clTopics.UpdateAll(selector, bson.M{"$set": update})
 
 	if err != nil {
+		log.Errorf("Error while updateAll parameters : %s", err.Error())
 		return err
 	}
 	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, isROPublic:%t", maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, isROPublic)
@@ -585,7 +588,6 @@ func (topic *Topic) RemoveRwGroup(admin string, username string, recursive bool)
 
 // AddParameter add a parameter to the topic
 func (topic *Topic) AddParameter(admin string, parameterKey string, parameterValue string, recursive bool) error {
-
 	return topic.actionOnSetParameter("$addToSet", "parameters", admin, TopicParameter{Key: parameterKey, Value: parameterValue}, recursive, "add to parameter")
 }
 
@@ -621,11 +623,7 @@ func (topic *Topic) IsUserRW(user *User) bool {
 		groups = append(groups, g.Name)
 	}
 
-	if utils.ItemInBothArrays(topic.RWGroups, groups) {
-		return true
-	}
-
-	return false
+	return utils.ItemInBothArrays(topic.RWGroups, groups)
 }
 
 // IsUserReadAccess  return true if user has read access to topic
@@ -661,13 +659,9 @@ func (topic *Topic) IsUserReadAccess(user User) bool {
 		groups = append(groups, g.Name)
 	}
 
-	if utils.ItemInBothArrays(currentTopic.RWGroups, groups) ||
+	return utils.ItemInBothArrays(currentTopic.RWGroups, groups) ||
 		utils.ItemInBothArrays(currentTopic.ROGroups, groups) ||
-		utils.ItemInBothArrays(currentTopic.AdminGroups, groups) {
-		return true
-	}
-
-	return false
+		utils.ItemInBothArrays(currentTopic.AdminGroups, groups)
 }
 
 // IsUserAdmin return true if user is Tat admin or is admin on this topic
@@ -698,11 +692,7 @@ func (topic *Topic) IsUserAdmin(user *User) bool {
 	}
 
 	// user is "Admin" on his /Private/usrname topics
-	if strings.HasPrefix(topic.Topic, "/Private/"+user.Username) {
-		return true
-	}
-
-	return false
+	return strings.HasPrefix(topic.Topic, "/Private/"+user.Username)
 }
 
 // CheckAndFixNameTopic Add a / to topic name is it is not present

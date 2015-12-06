@@ -884,6 +884,20 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/param
 ```
 
+Parameters key is optional.
+
+Example with key parameters :
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    -d '{"topic":"/Internal/Alerts","recursive":false,"maxlength":300,"canForceDate":false,"canUpdateMsg":false,"canDeleteMsg":true,"canUpdateAllMsg":false,"canDeleteAllMsg":false,"isROPublic":false,"parameters":[{"key":"agileview","value":"qsdf#qsdf"},{"key":"tatwebui.view.default","value":"standardview-list"},{"key":"tatwebui.view.forced","value":""}]}' \
+    https://<tatHostname>:<tatPort>/topic/param
+```
+
+
 ## Websockets
 ### Socket
 ```
