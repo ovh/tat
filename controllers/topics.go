@@ -52,9 +52,9 @@ func (*TopicsController) buildCriteria(ctx *gin.Context) *models.TopicCriteria {
 		skip = 0
 	}
 	c.Skip = skip
-	limit, e2 := strconv.Atoi(ctx.DefaultQuery("limit", "200"))
+	limit, e2 := strconv.Atoi(ctx.DefaultQuery("limit", "500"))
 	if e2 != nil {
-		limit = 200
+		limit = 500
 	}
 	c.Limit = limit
 	c.IDTopic = ctx.Query("idTopic")
