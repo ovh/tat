@@ -27,6 +27,10 @@ mentions:
     text: "mention @aaa.bbb"
     expected: ["aaa.bbb"]
 
+  - description: "Extract mention with -"
+    text: "mention @aaa-bbb"
+    expected: ["aaa-bbb"]
+
   - description: "Extract mention or multiple usernames"
     text: "mention @username1 @username2"
     expected: ["username1", "username2"]

@@ -80,7 +80,7 @@ const (
 		"\\x{1e00}-\\x{1eff}" // Latin Extended Additional (mostly for Vietnamese)
 )
 
-var validMention = regexp.MustCompile("([^A-Za-z0-9_!#$%&*" + atSignsChars + "]|^|[Rr][tT]:?)(" + atSigns + "+)([A-Za-z0-9_\\.]{1,20})")
+var validMention = regexp.MustCompile("([^A-Za-z0-9_!#$%&*" + atSignsChars + "]|^|[Rr][tT]:?)(" + atSigns + "+)([A-Za-z0-9_\\.\\-]{1,20})")
 
 var invalidMentionMatchEnd = regexp.MustCompile("^(?:[" + atSignsChars + latinAccentsChars + "]|://)")
 

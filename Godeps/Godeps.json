@@ -90,7 +90,7 @@
 		},
 		{
 			"ImportPath": "github.com/yesnault/hashtag",
-			"Rev": "a048a2cf11a7ae72c8dc7f7e259fac9ba58dc6ea"
+			"Rev": "a57a7d79e1535b97b103dfc96c05591ecad9ba11"
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
