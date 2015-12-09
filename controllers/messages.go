@@ -665,7 +665,7 @@ func (m *MessagesController) getTopicNonPrivateTasks(ctx *gin.Context, topics []
 			return name, nil
 		}
 	}
-	return "", errors.New("Could not get non private task topic ")
+	return "", errors.New("Could not get non private task topic")
 }
 
 func (m *MessagesController) checkDMTopic(ctx *gin.Context, topicName string) (models.Topic, string, error) {

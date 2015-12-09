@@ -714,10 +714,10 @@ func (message *Message) Move(user User, newTopic Topic) error {
 // Delete deletes a message from database
 func (message *Message) Delete(cascade bool) error {
 	if cascade {
-		return Store().clMessages.Remove(bson.M{"$or": []bson.M{bson.M{"_id": message.ID}, bson.M{"inReplyOfIDRoot": message.ID}}})
+		_, err := Store().clMessages.RemoveAll(bson.M{"$or": []bson.M{bson.M{"_id": message.ID}, bson.M{"inReplyOfIDRoot": message.ID}}})
+		return err
 	}
 	return Store().clMessages.Remove(bson.M{"_id": message.ID})
-
 }
 
 func (message *Message) getLabel(label string) (int, Label, error) {
