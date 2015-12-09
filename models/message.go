@@ -730,12 +730,10 @@ func (message *Message) getLabel(label string) (int, Label, error) {
 	return -1, l, fmt.Errorf("label %s not found", label)
 }
 
-func (message *Message) containsLabel(label string) bool {
+// ContainsLabel returns true if message contains label
+func (message *Message) ContainsLabel(label string) bool {
 	_, _, err := message.getLabel(label)
-	if err == nil {
-		return true
-	}
-	return false
+	return err == nil
 }
 
 func (message *Message) getTag(tag string) (int, string, error) {
@@ -749,10 +747,7 @@ func (message *Message) getTag(tag string) (int, string, error) {
 
 func (message *Message) containsTag(tag string) bool {
 	_, _, err := message.getTag(tag)
-	if err == nil {
-		return true
-	}
-	return false
+	return err == nil
 }
 
 //AddLabel add a label to a message
@@ -762,7 +757,7 @@ func (message *Message) AddLabel(label string, color string) (Label, error) {
 		label = label[0:lengthLabel]
 	}
 
-	if message.containsLabel(label) {
+	if message.ContainsLabel(label) {
 		return Label{}, fmt.Errorf("AddLabel not possible, %s is already a label of this message", label)
 	}
 	var newLabel = Label{Text: label, Color: color}

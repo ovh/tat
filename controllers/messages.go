@@ -435,9 +435,12 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 	for _, topicName := range message.Topics {
 		// if msg is only in tasks topic, ok to delete it
 		if strings.HasPrefix(topicName, "/Private/") && strings.HasSuffix(topicName, "/Tasks") && len(message.Topics) > 1 {
-			e := fmt.Sprintf("Could not delete a message in a tasks topic")
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
-			return topic, fmt.Errorf(e)
+			// if label done on msg, can delete it
+			if !message.ContainsLabel("done") {
+				e := fmt.Sprintf("Could not delete a message in a tasks topic")
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
+				return topic, fmt.Errorf(e)
+			}
 		}
 	}
 	return topic, nil
