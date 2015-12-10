@@ -435,6 +435,10 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 	for _, topicName := range message.Topics {
 		// if msg is only in tasks topic, ok to delete it
 		if strings.HasPrefix(topicName, "/Private/") && strings.HasSuffix(topicName, "/Tasks") && len(message.Topics) > 1 {
+			// if message is in user's tasks, can delete it
+			if topicName == "/Private/"+user.Username+"/Tasks" {
+				continue
+			}
 			// if label done on msg, can delete it
 			if !message.ContainsLabel("done") {
 				e := fmt.Sprintf("Could not delete a message in a tasks topic")
@@ -545,10 +549,15 @@ func (m *MessagesController) addOrRemoveTag(ctx *gin.Context, messageIn *message
 func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
 	info := ""
 	if messageIn.Action == "task" {
+		if message.InReplyOfIDRoot != "" {
+			log.Warnf("This message is a reply, you can't task it (%s)", message.ID)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "This message is a reply, you can't task it"})
+			return
+		}
 		err := message.AddToTasks(user, topic)
 		if err != nil {
 			log.Errorf("Error while adding a message to tasks %s", err)
-			ctx.AbortWithError(http.StatusInternalServerError, err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while adding a message to tasks"})
 			return
 		}
 		info = fmt.Sprintf("New Task created in %s", models.GetPrivateTopicTaskName(user))
