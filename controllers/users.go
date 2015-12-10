@@ -52,7 +52,19 @@ func (*UsersController) buildCriteria(ctx *gin.Context) *models.UserCriteria {
 // List list all users matching Criteria
 func (u *UsersController) List(ctx *gin.Context) {
 	criteria := u.buildCriteria(ctx)
-	count, users, err := models.ListUsers(criteria, utils.IsTatAdmin(ctx))
+
+	listAsAdmin := false
+	if utils.IsTatAdmin(ctx) {
+		listAsAdmin = true
+	} else {
+		user, e := PreCheckUser(ctx)
+		if e != nil {
+			ctx.AbortWithError(http.StatusInternalServerError, e)
+			return
+		}
+		listAsAdmin = user.CanListUsersAsAdmin
+	}
+	count, users, err := models.ListUsers(criteria, listAsAdmin)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -454,6 +466,7 @@ func (*UsersController) RemoveFavoriteTag(ctx *gin.Context) {
 type convertUserJSON struct {
 	Username              string `json:"username"  binding:"required"`
 	CanWriteNotifications bool   `json:"canWriteNotifications"  binding:"required"`
+	CanListUsersAsAdmin   bool   `json:"canListUsersAsAdmin"  binding:"required"`
 }
 
 // Convert a "normal" user to a "system" user
@@ -478,7 +491,7 @@ func (*UsersController) Convert(ctx *gin.Context) {
 		return
 	}
 
-	newPassword, err := userToConvert.ConvertToSystem(utils.GetCtxUsername(ctx), convertJSON.CanWriteNotifications)
+	newPassword, err := userToConvert.ConvertToSystem(utils.GetCtxUsername(ctx), convertJSON.CanWriteNotifications, convertJSON.CanListUsersAsAdmin)
 	if err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("Convert %s to system user failed", convertJSON.Username))
 		return
@@ -494,6 +507,37 @@ func (*UsersController) Convert(ctx *gin.Context) {
 
 type resetSystemUserJSON struct {
 	Username string `json:"username"  binding:"required"`
+}
+
+// UpdateSystemUser updates flags CanWriteNotifications and CanListUsersAsAdmin
+func (*UsersController) UpdateSystemUser(ctx *gin.Context) {
+	var convertJSON convertUserJSON
+	ctx.Bind(&convertJSON)
+
+	if !strings.HasPrefix(convertJSON.Username, "tat.system") {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Username does not begin with tat.system (%s), it's not possible to update this user", convertJSON.Username)})
+		return
+	}
+
+	var userToConvert = models.User{}
+	err := userToConvert.FindByUsername(convertJSON.Username)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("user with username %s does not exist", convertJSON.Username)})
+		return
+	}
+
+	if !userToConvert.IsSystem {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("user with username %s is not a system user", convertJSON.Username)})
+		return
+	}
+
+	err = userToConvert.UpdateSystemUser(convertJSON.CanWriteNotifications, convertJSON.CanListUsersAsAdmin)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error while update system user %s", convertJSON.Username)})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"message": "Update successfull"})
 }
 
 // ResetSystemUser reset password for a system user

@@ -39,6 +39,7 @@ func InitRoutesUsers(router *gin.Engine) {
 		admin.PUT("/update", usersCtrl.Update)
 		admin.PUT("/setadmin", usersCtrl.SetAdmin)
 		admin.PUT("/resetsystem", usersCtrl.ResetSystemUser)
+		admin.PUT("/updatesystem", usersCtrl.UpdateSystemUser)
 		admin.PUT("/check", usersCtrl.Check)
 	}
 

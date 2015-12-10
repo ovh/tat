@@ -305,13 +305,27 @@ Warning: it is an irreversible action.
 
 Flag `canWriteNotifications` allows (or not if false) the `system user` to write inside private topics of user `/Private/username/Notifications`
 
+Flag `canListUsersAsAdmin` allows this `system user` to view all user's fields (email, etc...)
+
 ```
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
     -H "Tat_password: passwordAdmin" \
-    -d '{ "username": "usernameToConvert", "canWriteNotifications": "true" }' \
+    -d '{ "username": "usernameToConvert", "canWriteNotifications": "true", "canListUsersAsAdmin": "true" }' \
     https://<tatHostname>:<tatPort>/user/convert
+```
+
+### Update flags on system user
+Only for Tat Admin.
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: userAdmin" \
+    -H "Tat_password: passwordAdmin" \
+    -d '{ "username": "userSystem", "canWriteNotifications": "true", "canListUsersAsAdmin": "true" }' \
+    https://<tatHostname>:<tatPort>/user/updatesystem
 ```
 
 ### Reset a password for system user

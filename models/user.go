@@ -40,6 +40,7 @@ type User struct {
 	IsSystem               bool      `bson:"isSystem"          json:"isSystem,omitempty"`
 	IsArchived             bool      `bson:"isArchived"        json:"isArchived,omitempty"`
 	CanWriteNotifications  bool      `bson:"canWriteNotifications" json:"canWriteNotifications,omitempty"`
+	CanListUsersAsAdmin    bool      `bson:"canListUsersAsAdmin"    json:"canListUsersAsAdmin,omitempty"`
 	FavoritesTopics        []string  `bson:"favoritesTopics"   json:"favoritesTopics,omitempty"`
 	OffNotificationsTopics []string  `bson:"offNotificationsTopics"   json:"offNotificationsTopics,omitempty"`
 	FavoritesTags          []string  `bson:"favoritesTags"     json:"favoritesTags,omitempty"`
@@ -195,6 +196,7 @@ func (user *User) Insert() (string, error) {
 	user.IsSystem = false
 	user.IsArchived = false
 	user.CanWriteNotifications = false
+	user.CanListUsersAsAdmin = false
 	nbUsers, err := CountUsers()
 	if err != nil {
 		log.Errorf("Error while count all users%s", err)
@@ -299,6 +301,7 @@ func (user *User) getFieldsExceptAuth() bson.M {
 		"isSystem":               1,
 		"isArchived":             1,
 		"canWriteNotifications":  1,
+		"canListUsersAsAdmin":    1,
 		"dateCreation":           1,
 		"favoritesTopics":        1,
 		"offNotificationsTopics": 1,
@@ -739,8 +742,9 @@ func (user *User) RemoveContact(contactUsername string) error {
 
 // ConvertToSystem set attribute IsSysetm to true and suffix mail with a random string. If
 // canWriteNotifications is true, this system user can write into /Private/username/Notifications topics
+// canListUsersAsAdmin is true, this system user can view all user's fields as an admin (email, etc...)
 // returns password, err
-func (user *User) ConvertToSystem(userAdmin string, canWriteNotifications bool) (string, error) {
+func (user *User) ConvertToSystem(userAdmin string, canWriteNotifications, canListUsersAsAdmin bool) (string, error) {
 	email := fmt.Sprintf("%s$system$by$%s$%d", user.Email, userAdmin, time.Now().Unix())
 	err := Store().clUsers.Update(
 		bson.M{"_id": user.ID},
@@ -748,6 +752,7 @@ func (user *User) ConvertToSystem(userAdmin string, canWriteNotifications bool) 
 			"email":                 email,
 			"isSystem":              true,
 			"canWriteNotifications": canWriteNotifications,
+			"canListUsersAsAdmin":   canListUsersAsAdmin,
 			"auth.emailVerified":    true,
 		}})
 
@@ -756,6 +761,16 @@ func (user *User) ConvertToSystem(userAdmin string, canWriteNotifications bool) 
 	}
 
 	return user.regenerateAndStoreAuth()
+}
+
+// UpdateSystemUser updates flags CanWriteNotifications and CanListUsersAsAdmin
+func (user *User) UpdateSystemUser(canWriteNotifications, canListUsersAsAdmin bool) error {
+	return Store().clUsers.Update(
+		bson.M{"_id": user.ID},
+		bson.M{"$set": bson.M{
+			"canWriteNotifications": canWriteNotifications,
+			"canListUsersAsAdmin":   canListUsersAsAdmin,
+		}})
 }
 
 // ResetSystemUserPassword reset a password for a system user
