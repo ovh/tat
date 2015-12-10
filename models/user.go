@@ -40,7 +40,7 @@ type User struct {
 	IsSystem               bool      `bson:"isSystem"          json:"isSystem,omitempty"`
 	IsArchived             bool      `bson:"isArchived"        json:"isArchived,omitempty"`
 	CanWriteNotifications  bool      `bson:"canWriteNotifications" json:"canWriteNotifications,omitempty"`
-	CanListUsersAsAdmin    bool      `bson:"canListUsersAsAdmin"    json:"canListUsersAsAdmin,omitempty"`
+	CanListUsersAsAdmin    bool      `bson:"canListUsersAsAdmin"   json:"canListUsersAsAdmin,omitempty"`
 	FavoritesTopics        []string  `bson:"favoritesTopics"   json:"favoritesTopics,omitempty"`
 	OffNotificationsTopics []string  `bson:"offNotificationsTopics"   json:"offNotificationsTopics,omitempty"`
 	FavoritesTags          []string  `bson:"favoritesTags"     json:"favoritesTags,omitempty"`
@@ -133,10 +133,12 @@ func buildUserCriteria(criteria *UserCriteria) bson.M {
 func getUserListField(isAdmin bool) bson.M {
 	if isAdmin {
 		return bson.M{"username": 1,
-			"fullname":     1,
-			"email":        1,
-			"isAdmin":      1,
-			"dateCreation": 1,
+			"fullname":              1,
+			"email":                 1,
+			"isAdmin":               1,
+			"dateCreation":          1,
+			"canWriteNotifications": 1,
+			"canListUsersAsAdmin":   1,
 		}
 	}
 	return bson.M{"username": 1,
