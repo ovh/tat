@@ -146,7 +146,7 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 		query = append(query, queryLabels)
 	}
 	if criteria.AndLabel != "" {
-		queryLabels := bson.M{"labels": bson.M{"$elemMatch": bson.M{"text": bson.M{"$all": strings.Split(criteria.AndLabel, ",")}}}}
+		queryLabels := bson.M{"labels.text": bson.M{"$all": strings.Split(criteria.AndLabel, ",")}}
 		query = append(query, queryLabels)
 	}
 	if criteria.NotLabel != "" {
