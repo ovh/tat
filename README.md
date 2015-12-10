@@ -618,6 +618,23 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/group/<groupName>
 ```
 
+### Getting groups List
+
+```
+curl -XGET https://<tatHostname>:<tatPort>/groups?skip=<skip>&limit=<limit> | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/groups?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
+```
+
+#### Parameters
+
+* skip: Skip skips over the n initial documents from the query results
+* limit: Limit restricts the maximum number of documents retrieved
+* idGroup: Id Group
+* name: Name of group
+* description: Description of group
+* dateMinCreation: filter result on dateCreation, timestamp Unix format
+* dateMaxCreation: filter result on dateCreation, timestamp Unix Format
+
 ### Delete a group
 
 Only for Tat Admin
