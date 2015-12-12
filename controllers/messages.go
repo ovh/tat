@@ -76,6 +76,15 @@ func (*MessagesController) buildCriteria(ctx *gin.Context) *models.MessageCriter
 // List messages on one topic, with given criterias
 func (m *MessagesController) List(ctx *gin.Context) {
 	var criteria = m.buildCriteria(ctx)
+
+	// we can't use NotLabel or NotTag with fulltree or onetree
+	// this avoid potential wrong results associated with a short param limit
+	if (criteria.NotLabel != "" || criteria.NotTag != "") &&
+		(criteria.TreeView == "fulltree" || criteria.TreeView == "onetree") {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "You can't use fulltree or onetree with NotLabel or NotTag"})
+		return
+	}
+
 	presenceArg := ctx.Query("presence")
 	topicIn, err := GetParam(ctx, "topic")
 	if err != nil {
