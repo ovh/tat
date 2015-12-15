@@ -161,6 +161,7 @@ func getTopicSelectedFields(isAdmin bool) bson.M {
 			"topic":           1,
 			"description":     1,
 			"isROPublic":      1,
+			"canForceDate":    1,
 			"canUpdateMsg":    1,
 			"canDeleteMsg":    1,
 			"canUpdateAllMsg": 1,
