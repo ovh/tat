@@ -80,7 +80,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	// we can't use NotLabel or NotTag with fulltree or onetree
 	// this avoid potential wrong results associated with a short param limit
 	if (criteria.NotLabel != "" || criteria.NotTag != "") &&
-		(criteria.TreeView == "fulltree" || criteria.TreeView == "onetree") {
+		(criteria.TreeView == "fulltree" || criteria.TreeView == "onetree") && criteria.OnlyMsgRoot == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "You can't use fulltree or onetree with NotLabel or NotTag"})
 		return
 	}
