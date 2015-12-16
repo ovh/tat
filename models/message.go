@@ -556,7 +556,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	message.Author = author
 
 	message.DateCreation = dateToStore
-	message.DateUpdate = time.Now().Unix()
+	message.DateUpdate = dateToStore
 	message.Tags = hashtag.ExtractHashtags(message.Text)
 	message.Urls = xurls.Strict.FindAllString(message.Text, -1)
 
