@@ -731,6 +731,21 @@ curl -XDELETE \
     https://<tatHostname>:<tatPort>/topic/subtopic
 ```
 
+### Truncate a topic
+
+Only for Tat Admin of administrators on topic.
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    -d '{"topic": "/topicA"}' \
+    https://<tatHostname>:<tatPort>/topic/truncate
+```
+
+
+
 ### Getting one Topic
 ```
 curl -XGET https://<tatHostname>:<tatPort>/topic/topicName | python -m json.tool

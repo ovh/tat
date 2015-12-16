@@ -384,6 +384,12 @@ func (topic *Topic) Delete(user *User) error {
 	return Store().clTopics.Remove(bson.M{"_id": topic.ID})
 }
 
+// Truncate removes all messages in a topic
+func (topic *Topic) Truncate() (int, error) {
+	changeInfo, err := Store().clMessages.RemoveAll(bson.M{"topics": bson.M{"$in": topic.Topic}})
+	return changeInfo.Removed, err
+}
+
 // Get parent topic
 // If it is a "root topic", like /myTopic, return true, nil, nil
 func (topic *Topic) getParentTopic() (bool, *Topic, error) {

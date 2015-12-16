@@ -27,6 +27,7 @@ func InitRoutesTopics(router *gin.Engine) {
 		g.PUT("/topic/add/adminuser", topicsCtrl.AddAdminUser)
 		g.PUT("/topic/remove/adminuser", topicsCtrl.RemoveAdminUser)
 
+		g.PUT("/topic/truncate", topicsCtrl.Truncate)
 		g.PUT("/topic/add/rogroup", topicsCtrl.AddRoGroup)
 		g.PUT("/topic/remove/rogroup", topicsCtrl.RemoveRoGroup)
 		g.PUT("/topic/add/rwgroup", topicsCtrl.AddRwGroup)
