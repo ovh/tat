@@ -215,8 +215,17 @@ func (t *TopicsController) Delete(ctx *gin.Context) {
 // Truncate deletes all messages in a topic only if user is Tat admin, or admin on topic
 func (t *TopicsController) Truncate(ctx *gin.Context) {
 
+	var user = models.User{}
+	err := user.FindByUsername(utils.GetCtxUsername(ctx))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
+		return
+	}
+
 	var paramJSON paramTopicUserJSON
 	ctx.Bind(&paramJSON)
+	paramJSON.Username = user.Username
+
 	topic, e := t.preCheckUser(ctx, &paramJSON)
 	if e != nil {
 		return
@@ -228,7 +237,8 @@ func (t *TopicsController) Truncate(ctx *gin.Context) {
 		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("%d messages removed", nbRemoved)})
+	// 201 returns
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("%d messages removed", nbRemoved)})
 }
 
 func (t *TopicsController) preCheckUser(ctx *gin.Context, paramJSON *paramTopicUserJSON) (models.Topic, error) {

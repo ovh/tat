@@ -386,7 +386,10 @@ func (topic *Topic) Delete(user *User) error {
 
 // Truncate removes all messages in a topic
 func (topic *Topic) Truncate() (int, error) {
-	changeInfo, err := Store().clMessages.RemoveAll(bson.M{"topics": bson.M{"$in": topic.Topic}})
+	changeInfo, err := Store().clMessages.RemoveAll(bson.M{"topics": bson.M{"$in": [1]string{topic.Topic}}})
+	if err != nil {
+		return 0, err
+	}
 	return changeInfo.Removed, err
 }
 
