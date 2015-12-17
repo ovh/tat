@@ -608,7 +608,7 @@ func (message *Message) insertNotification(author User, usernameMention string) 
 	notif := Message{}
 	text := fmt.Sprintf("#mention #idMessage:%s #topic:%s %s", message.ID, message.Topics[0], message.Text)
 	topicname := fmt.Sprintf("/Private/%s/Notifications", usernameMention)
-	labels := []Label{Label{Text: "unread", Color: "d04437"}}
+	labels := []Label{Label{Text: "unread", Color: "#d04437"}}
 	var topic = Topic{}
 	if err := topic.FindByTopic(topicname, false); err != nil {
 		return
