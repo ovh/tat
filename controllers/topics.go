@@ -174,7 +174,7 @@ func (*TopicsController) Create(ctx *gin.Context) {
 	err = topic.Insert(&user)
 	if err != nil {
 		log.Errorf("Error while InsertTopic %s", err)
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusCreated, topic)
@@ -206,7 +206,7 @@ func (t *TopicsController) Delete(ctx *gin.Context) {
 	}
 	err = topic.Delete(&user)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, "")
@@ -233,8 +233,8 @@ func (t *TopicsController) Truncate(ctx *gin.Context) {
 
 	nbRemoved, err := topic.Truncate()
 	if err != nil {
+		log.Errorf("Error while truncate topic %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error while truncate topic " + topic.Topic})
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
 		return
 	}
 	// 201 returns
@@ -302,7 +302,8 @@ func (t *TopicsController) AddRoUser(ctx *gin.Context) {
 	}
 	err := topic.AddRoUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while adding read only user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusCreated, "")
@@ -319,7 +320,8 @@ func (t *TopicsController) AddRwUser(ctx *gin.Context) {
 
 	err := topic.AddRwUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while adding read write user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -337,7 +339,8 @@ func (t *TopicsController) AddAdminUser(ctx *gin.Context) {
 
 	err := topic.AddAdminUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while adding admin user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -355,7 +358,8 @@ func (t *TopicsController) RemoveRoUser(ctx *gin.Context) {
 
 	err := topic.RemoveRoUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while removing read only user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, "")
@@ -372,7 +376,8 @@ func (t *TopicsController) RemoveRwUser(ctx *gin.Context) {
 
 	err := topic.RemoveRwUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while removing read write user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusCreated, "")
@@ -389,7 +394,8 @@ func (t *TopicsController) RemoveAdminUser(ctx *gin.Context) {
 
 	err := topic.RemoveAdminUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while removing admin user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusCreated, "")
@@ -411,7 +417,8 @@ func (t *TopicsController) AddRoGroup(ctx *gin.Context) {
 	}
 	err := topic.AddRoGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while adding admin read only group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -430,7 +437,8 @@ func (t *TopicsController) AddRwGroup(ctx *gin.Context) {
 
 	err := topic.AddRwGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while adding admin read write group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -448,7 +456,8 @@ func (t *TopicsController) AddAdminGroup(ctx *gin.Context) {
 
 	err := topic.AddAdminGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while adding admin admin group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -466,7 +475,8 @@ func (t *TopicsController) AddParameter(ctx *gin.Context) {
 
 	err := topic.AddParameter(utils.GetCtxUsername(ctx), topicParameterJSON.Key, topicParameterJSON.Value, topicParameterJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while adding parameter: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -485,7 +495,8 @@ func (t *TopicsController) RemoveParameter(ctx *gin.Context) {
 
 	err := topic.RemoveParameter(utils.GetCtxUsername(ctx), topicParameterJSON.Key, topicParameterJSON.Value, topicParameterJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while removing parameter: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -503,7 +514,8 @@ func (t *TopicsController) RemoveRoGroup(ctx *gin.Context) {
 
 	err := topic.RemoveRoGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while removing read only group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, "")
@@ -520,7 +532,8 @@ func (t *TopicsController) RemoveRwGroup(ctx *gin.Context) {
 
 	err := topic.RemoveRwGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while removing read write group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, "")
@@ -537,7 +550,8 @@ func (t *TopicsController) RemoveAdminGroup(ctx *gin.Context) {
 
 	err := topic.RemoveAdminGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while removing admin group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, "")
@@ -590,7 +604,8 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 		paramJSON.Parameters)
 
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+		log.Errorf("Error while setting parameters: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("Topic %s updated", topic.Topic)})
