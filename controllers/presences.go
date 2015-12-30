@@ -156,7 +156,7 @@ func (m *PresencesController) create(ctx *gin.Context) {
 	if !isReadAccess {
 		e := errors.New("No Read Access to topic " + presenceIn.Topic + " for user " + user.Username)
 		ctx.AbortWithError(http.StatusForbidden, e)
-		ctx.JSON(http.StatusForbidden, e)
+		ctx.JSON(http.StatusForbidden, gin.H{"error": e.Error()})
 		return
 	}
 
@@ -165,7 +165,7 @@ func (m *PresencesController) create(ctx *gin.Context) {
 	if err != nil {
 		log.Errorf("Error while InsertPresence %s", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

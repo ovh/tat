@@ -266,7 +266,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 		err = message.Insert(originalUser, topic, messageReference.Text, "", -1, messageReference.Labels, false)
 		if err != nil {
 			log.Errorf("Error while InsertMessage with action %s : %s", messageIn.Action, err)
-			ctx.AbortWithError(http.StatusInternalServerError, errors.New(err.Error()))
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		info = fmt.Sprintf("New Bookmark created in %s", topic.Topic)
@@ -471,20 +471,20 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 		err := message.Like(user)
 		if err != nil {
 			log.Errorf("Error while like a message %s", err)
-			ctx.AbortWithError(http.StatusInternalServerError, err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		info = "like added"
 	} else if action == "unlike" {
 		err := message.Unlike(user)
 		if err != nil {
-			log.Errorf("Error while like a message %s", err)
-			ctx.AbortWithError(http.StatusInternalServerError, err)
+			log.Errorf("Error while unlike a message %s", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		info = "like removed"
 	} else {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid action : " + action)})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid action: " + action)})
 		return
 	}
 	go models.WSMessage(&models.WSMessageJSON{Action: action, Username: user.Username, Message: message})
@@ -501,7 +501,7 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messa
 		addedLabel, err := message.AddLabel(messageIn.Text, messageIn.Option)
 		if err != nil {
 			log.Errorf("Error while adding a label to a message %s", err)
-			ctx.AbortWithError(http.StatusInternalServerError, err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		info = gin.H{"info": fmt.Sprintf("label %s added to message", addedLabel.Text), "label": addedLabel, "message": message}
@@ -509,12 +509,12 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messa
 		err := message.RemoveLabel(messageIn.Text)
 		if err != nil {
 			log.Errorf("Error while remove a label from a message %s", err)
-			ctx.AbortWithError(http.StatusInternalServerError, err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		info = gin.H{"info": fmt.Sprintf("label %s removed from message", messageIn.Text), "message": message}
 	} else {
-		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action : "+messageIn.Action))
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action: "+messageIn.Action))
 		return
 	}
 	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
@@ -537,18 +537,18 @@ func (m *MessagesController) addOrRemoveTag(ctx *gin.Context, messageIn *message
 		err := message.AddTag(messageIn.Text)
 		if err != nil {
 			log.Errorf("Error while adding a tag to a message %s", err)
-			ctx.AbortWithError(http.StatusInternalServerError, err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 	} else if messageIn.Action == "untag" {
 		err := message.RemoveTag(messageIn.Text)
 		if err != nil {
 			log.Errorf("Error while remove a tag from a message %s", err)
-			ctx.AbortWithError(http.StatusInternalServerError, err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 	} else {
-		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action : "+messageIn.Action))
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
 	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
@@ -574,12 +574,12 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *messag
 		err := message.RemoveFromTasks(user, topic)
 		if err != nil {
 			log.Errorf("Error while remove a message from tasks %s", err)
-			ctx.AbortWithError(http.StatusInternalServerError, err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		info = fmt.Sprintf("Task removed from %s", models.GetPrivateTopicTaskName(user))
 	} else {
-		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action : "+messageIn.Action))
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
 	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
@@ -604,12 +604,12 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *messageJ
 		err := message.Update(user, topic)
 		if err != nil {
 			log.Errorf("Error while update a message %s", err)
-			ctx.AbortWithError(http.StatusInternalServerError, err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		info = fmt.Sprintf("Message updated in %s", topic.Topic)
 	} else {
-		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action : "+messageIn.Action))
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
 	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
@@ -648,7 +648,7 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *messageJSO
 		}
 		info = fmt.Sprintf("Message move to %s", topic.Topic)
 	} else {
-		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action : "+messageIn.Action))
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
 	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})

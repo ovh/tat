@@ -212,7 +212,7 @@ func (u *UsersController) Reset(ctx *gin.Context) {
 	tokenVerify, err := userIn.AskReset()
 	if err != nil {
 		log.Errorf("Error while AskReset %s", err)
-		ctx.AbortWithError(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
