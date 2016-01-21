@@ -424,8 +424,10 @@ func (topic *Topic) FindByTopic(topicIn string, isAdmin bool, user *User) error 
 	err = Store().clTopics.Find(bson.M{"topic": topic.Topic}).
 		Select(getTopicSelectedFields(isAdmin)).
 		One(&topic)
+
 	if err != nil {
 		log.Debugf("Error while fetching topic %s", topic.Topic)
+		// TODO DM
 		return err
 	}
 

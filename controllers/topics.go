@@ -142,8 +142,11 @@ func (t *TopicsController) OneTopic(ctx *gin.Context) {
 	topic := &models.Topic{}
 	errfinding := topic.FindByTopic(topicRequest, user.IsAdmin, &user)
 	if errfinding != nil {
-		ctx.JSON(http.StatusInternalServerError, errfinding)
-		return
+		topic, _, err = checkDMTopic(ctx, topicRequest)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + topicRequest + " does not exist"})
+			return
+		}
 	}
 
 	isReadAccess := topic.IsUserReadAccess(user)

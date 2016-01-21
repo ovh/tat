@@ -102,7 +102,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	err = topic.FindByTopic(criteria.Topic, true, nil)
 	if err != nil {
 		topicCriteria := ""
-		_, topicCriteria, err = m.checkDMTopic(ctx, criteria.Topic)
+		_, topicCriteria, err = checkDMTopic(ctx, criteria.Topic)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + criteria.Topic + " does not exist"})
 			return
@@ -177,12 +177,13 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 	if messageIn.IDReference == "" || messageIn.Action == "" {
 		err := topic.FindByTopic(messageIn.Topic, true, nil)
 		if err != nil {
-			topic, _, err = m.checkDMTopic(ctx, messageIn.Topic)
+			topica, _, err := checkDMTopic(ctx, messageIn.Topic)
 			if err != nil {
 				e := errors.New("Topic " + messageIn.Topic + " does not exist")
 				ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 				return messageIn, message, topic, e
 			}
+			topic = *topica
 		}
 	} else if messageIn.IDReference != "" {
 		err := message.FindByID(messageIn.IDReference)
@@ -689,59 +690,59 @@ func (m *MessagesController) getTopicNonPrivateTasks(ctx *gin.Context, topics []
 	return "", errors.New("Could not get non private task topic")
 }
 
-func (m *MessagesController) checkDMTopic(ctx *gin.Context, topicName string) (models.Topic, string, error) {
+func checkDMTopic(ctx *gin.Context, topicName string) (*models.Topic, string, error) {
 	var topic = models.Topic{}
 
 	topicParentName := "/Private/" + utils.GetCtxUsername(ctx) + "/DM"
 	if !strings.HasPrefix(topicName, topicParentName+"/") {
 		log.Errorf("wrong topic name for DM:" + topicName)
-		return topic, "", errors.New("Wrong tpic name for DM:" + topicName)
+		return &topic, "", errors.New("Wrong tpic name for DM:" + topicName)
 	}
 
 	// /Private/usernameFrom/DM/usernameTO
 	part := strings.Split(topicName, "/")
 	if len(part) != 5 {
 		log.Errorf("wrong topic name for DM")
-		return topic, "", errors.New("Wrong topic name for DM:" + topicName)
+		return &topic, "", errors.New("Wrong topic name for DM:" + topicName)
 	}
 
 	var userFrom = models.User{}
 	err := userFrom.FindByUsername(utils.GetCtxUsername(ctx))
 	if err != nil {
-		return topic, "", errors.New("Error while fetching user.")
+		return &topic, "", errors.New("Error while fetching user.")
 	}
 	var userTo = models.User{}
 	usernameTo := part[4]
 	err = userTo.FindByUsername(usernameTo)
 	if err != nil {
-		return topic, "", errors.New("Error while fetching user.")
+		return &topic, "", errors.New("Error while fetching user.")
 	}
 
-	err = m.checkTopicParentDM(userFrom)
+	err = checkTopicParentDM(userFrom)
 	if err != nil {
-		return topic, "", errors.New(err.Error())
+		return &topic, "", errors.New(err.Error())
 	}
 
-	err = m.checkTopicParentDM(userTo)
+	err = checkTopicParentDM(userTo)
 	if err != nil {
-		return topic, "", errors.New(err.Error())
+		return &topic, "", errors.New(err.Error())
 	}
 
-	topic, err = m.insertTopicDM(userFrom, userTo)
+	topic, err = insertTopicDM(userFrom, userTo)
 	if err != nil {
-		return topic, "", errors.New(err.Error())
+		return &topic, "", errors.New(err.Error())
 	}
 
-	_, err = m.insertTopicDM(userTo, userFrom)
+	_, err = insertTopicDM(userTo, userFrom)
 	if err != nil {
-		return topic, "", errors.New(err.Error())
+		return &topic, "", errors.New(err.Error())
 	}
 
 	topicCriteria := topicName + "," + "/Private/" + usernameTo + "/DM/" + userFrom.Username
-	return topic, topicCriteria, nil
+	return &topic, topicCriteria, nil
 }
 
-func (*MessagesController) insertTopicDM(userFrom, userTo models.User) (models.Topic, error) {
+func insertTopicDM(userFrom, userTo models.User) (models.Topic, error) {
 	var topic = models.Topic{}
 	topicName := "/Private/" + userFrom.Username + "/DM/" + userTo.Username
 	topic.Topic = topicName
@@ -754,7 +755,7 @@ func (*MessagesController) insertTopicDM(userFrom, userTo models.User) (models.T
 	return topic, nil
 }
 
-func (*MessagesController) checkTopicParentDM(user models.User) error {
+func checkTopicParentDM(user models.User) error {
 	topicName := "/Private/" + user.Username + "/DM"
 	var topicParent = models.Topic{}
 	err := topicParent.FindByTopic(topicName, false, nil)
