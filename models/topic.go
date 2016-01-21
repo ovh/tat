@@ -204,7 +204,7 @@ func ListTopics(criteria *TopicCriteria, user *User) (int, []Topic, error) {
 
 	var topicsUser []Topic
 	// Get all topics where user is admin
-	topicsMember, err := getTopicsForMemberUser(user)
+	topicsMember, err := getTopicsForMemberUser(user, nil)
 	if err != nil {
 		return count, topics, err
 	}
@@ -233,7 +233,7 @@ func ListTopics(criteria *TopicCriteria, user *User) (int, []Topic, error) {
 }
 
 // getTopicsForMemberUser where user is an admin or a member
-func getTopicsForMemberUser(user *User) ([]Topic, error) {
+func getTopicsForMemberUser(user *User, topic *Topic) ([]Topic, error) {
 	var topics []Topic
 
 	userGroups, err := user.GetGroupsOnlyName()
@@ -246,6 +246,11 @@ func getTopicsForMemberUser(user *User) ([]Topic, error) {
 		c["$or"] = append(c["$or"].([]bson.M), bson.M{"adminGroups": bson.M{"$in": userGroups}})
 		c["$or"] = append(c["$or"].([]bson.M), bson.M{"roGroups": bson.M{"$in": userGroups}})
 		c["$or"] = append(c["$or"].([]bson.M), bson.M{"rwGroups": bson.M{"$in": userGroups}})
+	}
+
+	if topic != nil {
+		c["$and"] = []bson.M{}
+		c["$and"] = append(c["$and"].([]bson.M), bson.M{"topic": topic.Topic})
 	}
 
 	err = Store().clTopics.Find(c).All(&topics)
@@ -308,7 +313,7 @@ func (topic *Topic) Insert(user *User) error {
 	}
 
 	var existing = &Topic{}
-	err = existing.FindByTopic(topic.Topic, true)
+	err = existing.FindByTopic(topic.Topic, true, nil)
 	if err == nil {
 		return fmt.Errorf("Topic Already Exists : %s", topic.Topic)
 	}
@@ -402,7 +407,7 @@ func (topic *Topic) getParentTopic() (bool, *Topic, error) {
 	}
 	var nameParent = topic.Topic[0:index]
 	var parentTopic = &Topic{}
-	err := parentTopic.FindByTopic(nameParent, true)
+	err := parentTopic.FindByTopic(nameParent, true, nil)
 	if err != nil {
 		log.Errorf("Error while fetching parent topic %s", err)
 	}
@@ -410,7 +415,7 @@ func (topic *Topic) getParentTopic() (bool, *Topic, error) {
 }
 
 // FindByTopic returns topic by topicName.
-func (topic *Topic) FindByTopic(topicIn string, isAdmin bool) error {
+func (topic *Topic) FindByTopic(topicIn string, isAdmin bool, user *User) error {
 	topic.Topic = topicIn
 	err := topic.CheckAndFixName()
 	if err != nil {
@@ -421,6 +426,24 @@ func (topic *Topic) FindByTopic(topicIn string, isAdmin bool) error {
 		One(&topic)
 	if err != nil {
 		log.Debugf("Error while fetching topic %s", topic.Topic)
+		return err
+	}
+
+	if user != nil {
+		// Get all topics where user is admin
+		topicsMember, err := getTopicsForMemberUser(user, topic)
+		if err != nil {
+			return err
+		}
+
+		if len(topicsMember) == 1 {
+			topic.AdminGroups = topicsMember[0].AdminGroups
+			topic.AdminUsers = topicsMember[0].AdminUsers
+			topic.ROUsers = topicsMember[0].ROUsers
+			topic.RWUsers = topicsMember[0].RWUsers
+			topic.RWGroups = topicsMember[0].RWGroups
+			topic.ROGroups = topicsMember[0].ROGroups
+		}
 	}
 	return err
 }
@@ -428,11 +451,7 @@ func (topic *Topic) FindByTopic(topicIn string, isAdmin bool) error {
 // IsTopicExists return true if topic exists, false otherwise
 func IsTopicExists(topic string) bool {
 	var t = Topic{}
-	err := t.FindByTopic(topic, false)
-	if err != nil {
-		return false // topic does not exist
-	}
-	return true // topic exists
+	return t.FindByTopic(topic, false, nil) == nil // no error, return true
 }
 
 // FindByID return topic, matching given id

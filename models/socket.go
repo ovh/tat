@@ -296,7 +296,7 @@ func (socket *Socket) preCheckWSTopics(msg WSJSON) ([]Topic, User, error) {
 
 	for i, topicName := range msg.Topics {
 		var topic = Topic{}
-		err := topic.FindByTopic(strings.Trim(topicName, " "), true)
+		err := topic.FindByTopic(strings.Trim(topicName, " "), true, nil)
 		if err != nil {
 			m := fmt.Sprintf("Invalid topic (%s) for action %s", topicName, msg.Action)
 			log.Errorf("%s error:%s", m, err.Error())

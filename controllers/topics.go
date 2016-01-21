@@ -140,7 +140,7 @@ func (t *TopicsController) OneTopic(ctx *gin.Context) {
 		return
 	}
 	topic := &models.Topic{}
-	errfinding := topic.FindByTopic(topicRequest, user.IsAdmin)
+	errfinding := topic.FindByTopic(topicRequest, user.IsAdmin, &user)
 	if errfinding != nil {
 		ctx.JSON(http.StatusInternalServerError, errfinding)
 		return
@@ -267,7 +267,7 @@ func (t *TopicsController) preCheckGroup(ctx *gin.Context, paramJSON *paramGroup
 
 func (t *TopicsController) preCheckUserAdminOnTopic(ctx *gin.Context, topicName string) (models.Topic, error) {
 	topic := models.Topic{}
-	errfinding := topic.FindByTopic(topicName, true)
+	errfinding := topic.FindByTopic(topicName, true, nil)
 	if errfinding != nil {
 		e := errors.New(errfinding.Error())
 		ctx.AbortWithError(http.StatusInternalServerError, e)
@@ -579,7 +579,7 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 	topic := models.Topic{}
 	var err error
 	if strings.HasPrefix(paramJSON.Topic, "/Private/"+utils.GetCtxUsername(ctx)) {
-		err := topic.FindByTopic(paramJSON.Topic, false)
+		err := topic.FindByTopic(paramJSON.Topic, false, nil)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching topic /Private/" + utils.GetCtxUsername(ctx)})
 			return

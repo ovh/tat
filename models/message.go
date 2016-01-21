@@ -610,7 +610,7 @@ func (message *Message) insertNotification(author User, usernameMention string) 
 	topicname := fmt.Sprintf("/Private/%s/Notifications", usernameMention)
 	labels := []Label{Label{Text: "unread", Color: "#d04437"}}
 	var topic = Topic{}
-	if err := topic.FindByTopic(topicname, false); err != nil {
+	if err := topic.FindByTopic(topicname, false, nil); err != nil {
 		return
 	}
 

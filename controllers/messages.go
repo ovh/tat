@@ -99,7 +99,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	}
 
 	var topic = models.Topic{}
-	err = topic.FindByTopic(criteria.Topic, true)
+	err = topic.FindByTopic(criteria.Topic, true, nil)
 	if err != nil {
 		topicCriteria := ""
 		_, topicCriteria, err = m.checkDMTopic(ctx, criteria.Topic)
@@ -108,7 +108,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 			return
 		}
 		// hack to get new created DM Topic
-		err := topic.FindByTopic(criteria.Topic, true)
+		err := topic.FindByTopic(criteria.Topic, true, nil)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + criteria.Topic + " does not exist (2)"})
 			return
@@ -175,7 +175,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 	messageIn.Topic = topicIn
 
 	if messageIn.IDReference == "" || messageIn.Action == "" {
-		err := topic.FindByTopic(messageIn.Topic, true)
+		err := topic.FindByTopic(messageIn.Topic, true, nil)
 		if err != nil {
 			topic, _, err = m.checkDMTopic(ctx, messageIn.Topic)
 			if err != nil {
@@ -221,7 +221,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
 			return messageIn, message, topic, e
 		}
-		err = topic.FindByTopic(topicName, true)
+		err = topic.FindByTopic(topicName, true, nil)
 		if err != nil {
 			e := errors.New("Topic " + topicName + " does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
@@ -411,7 +411,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade bool) {
 // - if topic is Private OR is CanDeleteMsg or CanDeleteAllMsg
 func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.Message, user models.User) (models.Topic, error) {
 	topic := models.Topic{}
-	err := topic.FindByTopic(message.Topics[0], true)
+	err := topic.FindByTopic(message.Topics[0], true, nil)
 	if err != nil {
 		e := fmt.Sprintf("Topic %s does not exist", message.Topics[0])
 		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
@@ -757,7 +757,7 @@ func (*MessagesController) insertTopicDM(userFrom, userTo models.User) (models.T
 func (*MessagesController) checkTopicParentDM(user models.User) error {
 	topicName := "/Private/" + user.Username + "/DM"
 	var topicParent = models.Topic{}
-	err := topicParent.FindByTopic(topicName, false)
+	err := topicParent.FindByTopic(topicName, false, nil)
 	if err != nil {
 		topicParent.Topic = topicName
 		topicParent.Description = "DM Topics"
