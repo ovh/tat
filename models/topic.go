@@ -731,12 +731,12 @@ func (topic *Topic) IsUserAdmin(user *User) bool {
 func CheckAndFixNameTopic(topicName string) (string, error) {
 	name := strings.TrimSpace(topicName)
 
-	if len(name) < 4 {
-		return topicName, fmt.Errorf("Invalid topic lenght (3 or more characters): %s", topicName)
-	}
-
 	if len(name) > 1 && string(name[0]) != "/" {
 		name = "/" + name
+	}
+
+	if len(name) < 4 {
+		return topicName, fmt.Errorf("Invalid topic length (3 or more characters, beginning with slash. Ex: /ABC): %s", topicName)
 	}
 
 	if len(name)-1 == strings.LastIndex(name, "/") {
@@ -744,7 +744,7 @@ func CheckAndFixNameTopic(topicName string) (string, error) {
 	}
 
 	if len(name) > 100 {
-		return topicName, fmt.Errorf("Invalid topic lenght (max 100 characters):%s", topicName)
+		return topicName, fmt.Errorf("Invalid topic length (max 100 characters):%s", topicName)
 	}
 
 	return name, nil
