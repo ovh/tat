@@ -792,6 +792,16 @@ func (message *Message) RemoveLabel(label string) error {
 	return nil
 }
 
+// RemoveAllAndAddNewLabel removes all labels and add new label on message
+func (message *Message) RemoveAllAndAddNewLabel(labels []Label) error {
+	message.Labels = checkLabels(labels)
+	return Store().clMessages.Update(
+		bson.M{"_id": message.ID},
+		bson.M{"$set": bson.M{
+			"dateUpdate": time.Now().Unix(),
+			"labels":     message.Labels}})
+}
+
 //AddTag add a tag to a message
 func (message *Message) AddTag(tag string) error {
 	if message.containsTag(tag) {

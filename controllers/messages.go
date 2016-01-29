@@ -199,6 +199,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 		} else if messageIn.Action == "reply" || messageIn.Action == "unbookmark" ||
 			messageIn.Action == "like" || messageIn.Action == "unlike" ||
 			messageIn.Action == "label" || messageIn.Action == "unlabel" ||
+			messageIn.Action == "relabel" ||
 			messageIn.Action == "tag" || messageIn.Action == "untag" {
 			topicName = m.inverseIfDMTopic(ctx, message.Topics[0])
 		} else if messageIn.Action == "move" {
@@ -309,7 +310,7 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 		return
 	}
 
-	if messageIn.Action == "label" || messageIn.Action == "unlabel" {
+	if messageIn.Action == "label" || messageIn.Action == "unlabel" || messageIn.Action == "relabel" {
 		m.addOrRemoveLabel(ctx, &messageIn, messageReference, user)
 		return
 	}
@@ -493,7 +494,7 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 }
 
 func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User) {
-	if messageIn.Text == "" {
+	if messageIn.Text == "" && messageIn.Action != "relabel" {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid Text for label"))
 		return
 	}
@@ -501,19 +502,28 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messa
 	if messageIn.Action == "label" {
 		addedLabel, err := message.AddLabel(messageIn.Text, messageIn.Option)
 		if err != nil {
-			log.Errorf("Error while adding a label to a message %s", err)
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			errInfo := fmt.Sprintf("Error while adding a label to a message %s", err.Error())
+			log.Errorf(errInfo)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
 			return
 		}
 		info = gin.H{"info": fmt.Sprintf("label %s added to message", addedLabel.Text), "label": addedLabel, "message": message}
 	} else if messageIn.Action == "unlabel" {
-		err := message.RemoveLabel(messageIn.Text)
-		if err != nil {
-			log.Errorf("Error while remove a label from a message %s", err)
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		if err := message.RemoveLabel(messageIn.Text); err != nil {
+			errInfo := fmt.Sprintf("Error while removing a label from a message %s", err.Error())
+			log.Errorf(errInfo)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
 			return
 		}
 		info = gin.H{"info": fmt.Sprintf("label %s removed from message", messageIn.Text), "message": message}
+	} else if messageIn.Action == "relabel" {
+		if err := message.RemoveAllAndAddNewLabel(messageIn.Labels); err != nil {
+			errInfo := fmt.Sprintf("Error while removing all labels and add new ones for a message %s", err.Error())
+			log.Errorf(errInfo)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
+			return
+		}
+		info = gin.H{"info": fmt.Sprintf("all labels removed and new labels %s added to message", messageIn.Text), "message": message}
 	} else {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action: "+messageIn.Action))
 		return
@@ -544,7 +554,7 @@ func (m *MessagesController) addOrRemoveTag(ctx *gin.Context, messageIn *message
 	} else if messageIn.Action == "untag" {
 		err := message.RemoveTag(messageIn.Text)
 		if err != nil {
-			log.Errorf("Error while remove a tag from a message %s", err)
+			log.Errorf("Error while removing a tag from a message %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -574,7 +584,7 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *messag
 	} else if messageIn.Action == "untask" {
 		err := message.RemoveFromTasks(user, topic)
 		if err != nil {
-			log.Errorf("Error while remove a message from tasks %s", err)
+			log.Errorf("Error while removing a message from tasks %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}

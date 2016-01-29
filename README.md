@@ -129,7 +129,7 @@ curl -XPUT \
 ```
 
 ### Add a label to a message
-Only author of the message can add a label on it. *option* is the background color of the label.
+*option* is the background color of the label.
 
 ```
 curl -XPUT \
@@ -141,7 +141,6 @@ curl -XPUT \
 ```
 
 ### Remove a label from a message
-Only author of the message can remove a label from it.
 
 ```
 curl -XPUT \
@@ -149,6 +148,17 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unlabel", "text": "myLabel"}'\
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
+### Remove all labels and add new ones
+
+```
+curl -XPUT \
+    -H 'Content-Type: application/json' \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "relabel", "labels": [{"text": "labelA", "color": "#eeeeee"}, {"text": "labelB", "color": "#ffffff"}]}'\
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
