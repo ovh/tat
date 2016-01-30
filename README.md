@@ -173,6 +173,17 @@ curl -XPUT \
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
+### Concat a message : adding additional text to one message
+
+```
+curl -XPUT \
+    -H 'Content-Type: application/json' \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "concat", "text": " additional text"}'\
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
 ### Move a message to another topic
 
 ```
@@ -182,31 +193,6 @@ curl -XPUT \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "move"}'\
 	https://<tatHostname>:<tatPort>/message/newTopic/newSub-topic
-```
-
-
-### Add a tag to a message
-Only for `system user`. A `system user` can add tags on his messages only.
-
-```
-curl -XPUT \
-    -H 'Content-Type: application/json' \
-    -H "Tat_username: username" \
-    -H "Tat_password: passwordOfUser" \
-	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "tag", "text": "myTag"}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
-```
-
-### Remove a tag from a message
-Only for `system user`. A `system user` can remove tags on his messages only.
-
-```
-curl -XPUT \
-    -H 'Content-Type: application/json' \
-    -H "Tat_username: username" \
-    -H "Tat_password: passwordOfUser" \
-	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "untag", "text": "myTag"}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 ### Bookmark a message

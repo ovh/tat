@@ -652,7 +652,14 @@ func (message *Message) CheckAndFixText(topic Topic) error {
 }
 
 // Update updates a message from database
-func (message *Message) Update(user User, topic Topic) error {
+// action could be concat (for adding additional text to message or update)
+func (message *Message) Update(user User, topic Topic, newText string, action string) error {
+
+	if action == "concat" {
+		message.Text += newText
+	} else {
+		message.Text = newText
+	}
 
 	err := message.CheckAndFixText(topic)
 	if err != nil {
@@ -800,42 +807,6 @@ func (message *Message) RemoveAllAndAddNewLabel(labels []Label) error {
 		bson.M{"$set": bson.M{
 			"dateUpdate": time.Now().Unix(),
 			"labels":     message.Labels}})
-}
-
-//AddTag add a tag to a message
-func (message *Message) AddTag(tag string) error {
-	if message.containsTag(tag) {
-		return fmt.Errorf("AddTag not possible, %s is already a tag of this message", tag)
-	}
-
-	err := Store().clMessages.Update(
-		bson.M{"_id": message.ID},
-		bson.M{"$set": bson.M{"dateUpdate": time.Now().Unix()}, "$push": bson.M{"tags": tag}})
-
-	if err != nil {
-		return err
-	}
-	message.Tags = append(message.Tags, tag)
-	return nil
-}
-
-// RemoveTag removes tag from on message
-func (message *Message) RemoveTag(tag string) error {
-	idxTag, l, err := message.getTag(tag)
-	if err != nil {
-		return fmt.Errorf("Remove tag is not possible, %s is not a tag of this message", tag)
-	}
-
-	err = Store().clMessages.Update(
-		bson.M{"_id": message.ID},
-		bson.M{"$set": bson.M{"dateUpdate": time.Now().Unix()}, "$pull": bson.M{"tags": l}})
-
-	if err != nil {
-		return err
-	}
-
-	message.Tags = append(message.Tags[:idxTag], message.Tags[idxTag+1:]...)
-	return nil
 }
 
 // Like add a like to a message

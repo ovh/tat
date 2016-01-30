@@ -199,8 +199,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 		} else if messageIn.Action == "reply" || messageIn.Action == "unbookmark" ||
 			messageIn.Action == "like" || messageIn.Action == "unlike" ||
 			messageIn.Action == "label" || messageIn.Action == "unlabel" ||
-			messageIn.Action == "relabel" ||
-			messageIn.Action == "tag" || messageIn.Action == "untag" {
+			messageIn.Action == "relabel" || messageIn.Action == "concat" {
 			topicName = m.inverseIfDMTopic(ctx, message.Topics[0])
 		} else if messageIn.Action == "move" {
 			topicName = topicIn
@@ -315,17 +314,12 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 		return
 	}
 
-	if messageIn.Action == "tag" || messageIn.Action == "untag" {
-		m.addOrRemoveTag(ctx, &messageIn, messageReference, user)
-		return
-	}
-
 	if messageIn.Action == "task" || messageIn.Action == "untask" {
 		m.addOrRemoveTask(ctx, &messageIn, messageReference, user, topic)
 		return
 	}
 
-	if messageIn.Action == "update" {
+	if messageIn.Action == "update" || messageIn.Action == "concat" {
 		m.updateMessage(ctx, &messageIn, messageReference, user, topic)
 		return
 	}
@@ -532,40 +526,6 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messa
 	ctx.JSON(http.StatusCreated, info)
 }
 
-func (m *MessagesController) addOrRemoveTag(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User) {
-
-	if !user.IsSystem {
-		ctx.JSON(http.StatusForbidden, gin.H{"error": "Invalid Action for non-system user"})
-		return
-	}
-
-	if messageIn.Text == "" {
-		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid Text for tag"))
-		return
-	}
-
-	if messageIn.Action == "tag" {
-		err := message.AddTag(messageIn.Text)
-		if err != nil {
-			log.Errorf("Error while adding a tag to a message %s", err)
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-	} else if messageIn.Action == "untag" {
-		err := message.RemoveTag(messageIn.Text)
-		if err != nil {
-			log.Errorf("Error while removing a tag from a message %s", err)
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-	} else {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
-		return
-	}
-	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
-	ctx.JSON(http.StatusCreated, "")
-}
-
 func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
 	info := ""
 	if messageIn.Action == "task" {
@@ -599,30 +559,25 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *messag
 
 func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
 	info := ""
-	if messageIn.Action == "update" {
 
-		if !topic.CanUpdateMsg && !topic.CanUpdateAllMsg {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("You can't update a message on topic %s", topic.Topic)})
-			return
-		}
-
-		if !topic.CanUpdateAllMsg && message.Author.Username != user.Username {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Could not update a message from another user %s than you %s", message.Author.Username, user.Username)})
-			return
-		}
-
-		message.Text = messageIn.Text
-		err := message.Update(user, topic)
-		if err != nil {
-			log.Errorf("Error while update a message %s", err)
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		info = fmt.Sprintf("Message updated in %s", topic.Topic)
-	} else {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
+	if !topic.CanUpdateMsg && !topic.CanUpdateAllMsg {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("You can't update a message on topic %s", topic.Topic)})
 		return
 	}
+
+	if !topic.CanUpdateAllMsg && message.Author.Username != user.Username {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Could not update a message from another user %s than you %s", message.Author.Username, user.Username)})
+		return
+	}
+
+	err := message.Update(user, topic, messageIn.Text, messageIn.Action)
+	if err != nil {
+		log.Errorf("Error while update a message %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	info = fmt.Sprintf("Message updated in %s", topic.Topic)
+
 	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
 	out := &messageJSONOut{Message: message, Info: info}
 	ctx.JSON(http.StatusOK, out)
