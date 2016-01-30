@@ -3,6 +3,8 @@
 
 # Tat Engine
 
+<img align="right" src="https://raw.githubusercontent.com/ovh/tat/master/tat.png">
+
 Tat, aka Text And Tags, is a communication tool - Human & Robot all together.
 
 This is a pre-alpha version, but already known to be used in production.
