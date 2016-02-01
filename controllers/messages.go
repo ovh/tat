@@ -272,6 +272,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 		}
 		info = fmt.Sprintf("New Bookmark created in %s", topic.Topic)
 	} else {
+		// New root message or reply
 		err := message.Insert(user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, false)
 		if err != nil {
 			log.Errorf("%s", err.Error())
@@ -329,7 +330,7 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusBadRequest, gin.H{"error": "Action invalid."})
+	ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Action"})
 }
 
 // Delete a message

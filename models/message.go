@@ -517,10 +517,9 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 		dateToStore = dateCreation
 	}
 
-	if inReplyOfID != "" {
+	if inReplyOfID != "" { // reply
 		var messageReference = &Message{}
-		err = messageReference.FindByID(inReplyOfID)
-		if err != nil {
+		if err := messageReference.FindByID(inReplyOfID); err != nil {
 			return err
 		}
 		if messageReference.InReplyOfID != "" {
@@ -534,9 +533,19 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 		if dateToStore <= messageReference.DateCreation {
 			dateToStore = messageReference.DateCreation + 1
 		}
-	} else {
-		message.Topics = append(message.Topics, topic.Topic)
+		messageReference.DateUpdate = dateToStore
 
+		err := Store().clMessages.Update(
+			bson.M{"_id": messageReference.ID},
+			bson.M{"$set": bson.M{"dateUpdate": dateToStore}})
+
+		if err != nil {
+			log.Errorf("Error while updating root message for reply %s", err.Error())
+			return fmt.Errorf("Error while updating dateUpdate or root message for reply %s", err.Error())
+		}
+
+	} else { // root message
+		message.Topics = append(message.Topics, topic.Topic)
 		topicDM := "/Private/" + user.Username + "/DM/"
 		if strings.HasPrefix(topic.Topic, topicDM) {
 			part := strings.Split(topic.Topic, "/")
@@ -570,8 +579,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 		message.Labels = checkLabels(labels)
 	}
 
-	err = Store().clMessages.Insert(message)
-	if err != nil {
+	if err := Store().clMessages.Insert(message); err != nil {
 		log.Errorf("Error while inserting new message %s", err)
 		return err
 	}
