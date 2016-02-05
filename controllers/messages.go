@@ -33,7 +33,7 @@ type messageJSON struct {
 	Topic        string
 	IDReference  string         `json:"idReference"`
 	Action       string         `json:"action"`
-	DateCreation int64          `json:"dateCreation"`
+	DateCreation float64        `json:"dateCreation"`
 	Labels       []models.Label `json:"labels"`
 }
 

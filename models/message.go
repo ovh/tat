@@ -45,8 +45,8 @@ type Message struct {
 	UserMentions    []string  `bson:"userMentions"    json:"userMentions,omitempty"`
 	Urls            []string  `bson:"urls"            json:"urls,omitempty"`
 	Tags            []string  `bson:"tags"            json:"tags,omitempty"`
-	DateCreation    int64     `bson:"dateCreation"    json:"dateCreation"`
-	DateUpdate      int64     `bson:"dateUpdate"      json:"dateUpdate"`
+	DateCreation    float64   `bson:"dateCreation"    json:"dateCreation"`
+	DateUpdate      float64   `bson:"dateUpdate"      json:"dateUpdate"`
 	Author          Author    `bson:"author"          json:"author"`
 	Replies         []Message `bson:"-"               json:"replies,omitempty"`
 }
@@ -170,26 +170,23 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 
 	var bsonDate = bson.M{}
 	if criteria.DateMinCreation != "" {
-		i, err := strconv.ParseInt(criteria.DateMinCreation, 10, 64)
+		i, err := strconv.ParseFloat(criteria.DateMinCreation, 64)
 		if err != nil {
 			log.Errorf("Error while parsing dateMinCreation %s", err)
-		}
-		tm := time.Unix(i, 0)
-
-		if err == nil {
-			bsonDate["$gte"] = tm.Unix()
 		} else {
-			log.Errorf("Error while parsing dateMinCreation %s", err)
+			tm := utils.DateFromFloat(i)
+			bsonDate["$gte"] = tm.Unix()
 		}
 	}
 	if criteria.DateMaxCreation != "" {
-		i, err := strconv.ParseInt(criteria.DateMaxCreation, 10, 64)
+		i, err := strconv.ParseFloat(criteria.DateMaxCreation, 64)
 		if err != nil {
 			log.Errorf("Error while parsing dateMaxCreation %s", err)
 		}
-		tm := time.Unix(i, 0)
+		tm := utils.DateFromFloat(i)
 
 		if err == nil {
+			// TODO use floating point
 			bsonDate["$lte"] = tm.Unix()
 		} else {
 			log.Errorf("Error while parsing dateMaxCreation %s", err)
@@ -201,26 +198,28 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 
 	var bsonDateUpdate = bson.M{}
 	if criteria.DateMinUpdate != "" {
-		i, err := strconv.ParseInt(criteria.DateMinUpdate, 10, 64)
+		i, err := strconv.ParseFloat(criteria.DateMinUpdate, 64)
 		if err != nil {
 			log.Errorf("Error while parsing dateMinUpdate %s", err)
 		}
-		tm := time.Unix(i, 0)
+		tm := utils.DateFromFloat(i)
 
 		if err == nil {
+			// TODO use floating point
 			bsonDateUpdate["$gte"] = tm.Unix()
 		} else {
 			log.Errorf("Error while parsing dateMinUpdate %s", err)
 		}
 	}
 	if criteria.DateMaxUpdate != "" {
-		i, err := strconv.ParseInt(criteria.DateMaxUpdate, 10, 64)
+		i, err := strconv.ParseFloat(criteria.DateMaxUpdate, 64)
 		if err != nil {
 			log.Errorf("Error while parsing dateMaxUpdate %s", err)
 		}
-		tm := time.Unix(i, 0)
+		tm := utils.DateFromFloat(i)
 
 		if err == nil {
+			// TODO use floating point
 			bsonDateUpdate["$lte"] = tm.Unix()
 		} else {
 			log.Errorf("Error while parsing dateMaxUpdate %s", err)
@@ -480,7 +479,7 @@ func getTree(messagesIn map[string][]Message, criteria *MessageCriteria) ([]Mess
 }
 
 // Insert a new message on one topic
-func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation int64, labels []Label, isNotificationFromMention bool) error {
+func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation float64, labels []Label, isNotificationFromMention bool) error {
 
 	if !isNotificationFromMention {
 		notificationsTopic := fmt.Sprintf("/Private/%s/Notifications", user.Username)
@@ -500,7 +499,11 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	}
 	message.ID = bson.NewObjectId().Hex()
 	message.InReplyOfID = inReplyOfID
-	dateToStore := time.Now().Unix()
+
+	// 1257894123.456789
+	// store ms before comma, 6 after
+	now := time.Now()
+	dateToStore := utils.TatTSFromDate(now)
 
 	if dateCreation > 0 {
 		if !topic.CanForceDate {
@@ -512,7 +515,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 		}
 
 		if !topic.CanForceDate {
-			return fmt.Errorf("Error while converting dateCreation %d - error:%s", dateCreation, err.Error())
+			return fmt.Errorf("Error while converting dateCreation %f - error:%s", dateCreation, err.Error())
 		}
 		dateToStore = dateCreation
 	}
@@ -678,7 +681,7 @@ func (message *Message) Update(user User, topic Topic, newText string, action st
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{
 			"text":         message.Text,
-			"dateUpdate":   time.Now().Unix(),
+			"dateUpdate":   utils.TatTSFromNow(),
 			"tags":         hashtag.ExtractHashtags(message.Text),
 			"userMentions": hashtag.ExtractMentions(message.Text),
 			"urls":         xurls.Strict.FindAllString(message.Text, -1),
@@ -779,7 +782,8 @@ func (message *Message) AddLabel(label string, color string) (Label, error) {
 
 	err := Store().clMessages.Update(
 		bson.M{"_id": message.ID},
-		bson.M{"$set": bson.M{"dateUpdate": time.Now().Unix()}, "$push": bson.M{"labels": newLabel}})
+		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
+			"$push": bson.M{"labels": newLabel}})
 
 	if err != nil {
 		return Label{}, err
@@ -797,7 +801,8 @@ func (message *Message) RemoveLabel(label string) error {
 
 	err = Store().clMessages.Update(
 		bson.M{"_id": message.ID},
-		bson.M{"$set": bson.M{"dateUpdate": time.Now().Unix()}, "$pull": bson.M{"labels": l}})
+		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
+			"$pull": bson.M{"labels": l}})
 
 	if err != nil {
 		return err
@@ -813,7 +818,7 @@ func (message *Message) RemoveAllAndAddNewLabel(labels []Label) error {
 	return Store().clMessages.Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{
-			"dateUpdate": time.Now().Unix(),
+			"dateUpdate": utils.TatTSFromNow(),
 			"labels":     message.Labels}})
 }
 
@@ -824,7 +829,7 @@ func (message *Message) Like(user User) error {
 	}
 	err := Store().clMessages.Update(
 		bson.M{"_id": message.ID},
-		bson.M{"$set": bson.M{"dateUpdate": time.Now().Unix()},
+		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbLikes": 1},
 			"$push": bson.M{"likers": user.Username}})
 
@@ -841,7 +846,7 @@ func (message *Message) Unlike(user User) error {
 	}
 	err := Store().clMessages.Update(
 		bson.M{"_id": message.ID},
-		bson.M{"$set": bson.M{"dateUpdate": time.Now().Unix()},
+		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbLikes": -1},
 			"$pull": bson.M{"likers": user.Username}})
 
@@ -976,6 +981,5 @@ func DistributionMessages(col string) ([]bson.M, error) {
 	results := []bson.M{}
 
 	err := pipe.All(&results)
-
 	return results, err
 }
