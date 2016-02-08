@@ -131,17 +131,17 @@ func (t *TopicsController) List(ctx *gin.Context) {
 func (t *TopicsController) OneTopic(ctx *gin.Context) {
 	topicRequest, err := GetParam(ctx, "topic")
 	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while getting topic in param"})
 		return
 	}
 	var user = models.User{}
-	err = user.FindByUsername(utils.GetCtxUsername(ctx))
-	if err != nil {
+	if err = user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
 		return
 	}
 	topic := &models.Topic{}
-	errfinding := topic.FindByTopic(topicRequest, user.IsAdmin, &user)
-	if errfinding != nil {
+
+	if errfind := topic.FindByTopic(topicRequest, user.IsAdmin, true, true, &user); errfind != nil {
 		topic, _, err = checkDMTopic(ctx, topicRequest)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + topicRequest + " does not exist"})
@@ -149,11 +149,11 @@ func (t *TopicsController) OneTopic(ctx *gin.Context) {
 		}
 	}
 
-	isReadAccess := topic.IsUserReadAccess(user)
-	if !isReadAccess {
-		ctx.JSON(http.StatusInternalServerError, errors.New("No Read Access to this topic: "+user.Username+" "+topic.Topic))
+	if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "No Read Access to this topic: " + user.Username + " " + topic.Topic})
 		return
 	}
+
 	out := &topicJSON{Topic: topic}
 	ctx.JSON(http.StatusOK, out)
 }
@@ -217,19 +217,9 @@ func (t *TopicsController) Delete(ctx *gin.Context) {
 
 // Truncate deletes all messages in a topic only if user is Tat admin, or admin on topic
 func (t *TopicsController) Truncate(ctx *gin.Context) {
-
-	var user = models.User{}
-	err := user.FindByUsername(utils.GetCtxUsername(ctx))
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
-		return
-	}
-
 	var paramJSON paramTopicUserJSON
 	ctx.Bind(&paramJSON)
-	paramJSON.Username = user.Username
-
-	topic, e := t.preCheckUser(ctx, &paramJSON)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
 		return
 	}
@@ -244,35 +234,100 @@ func (t *TopicsController) Truncate(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("%d messages removed", nbRemoved)})
 }
 
-func (t *TopicsController) preCheckUser(ctx *gin.Context, paramJSON *paramTopicUserJSON) (models.Topic, error) {
-	usernameExists := models.IsUsernameExists(paramJSON.Username)
+// ComputeTags computes tags on one topic
+func (t *TopicsController) ComputeTags(ctx *gin.Context) {
+	var paramJSON paramTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+	if e != nil {
+		return
+	}
 
-	if !usernameExists {
+	nbComputed, err := topic.ComputeTags()
+	if err != nil {
+		log.Errorf("Error while compute tags on topic %s: %s", topic.Topic, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error while compute tags on topic " + topic.Topic})
+		return
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("%d tags computed", nbComputed)})
+}
+
+// ComputeLabels computes labels on one topic
+func (t *TopicsController) ComputeLabels(ctx *gin.Context) {
+	var paramJSON paramTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+	if e != nil {
+		return
+	}
+
+	nbComputed, err := topic.ComputeLabels()
+	if err != nil {
+		log.Errorf("Error while compute labels on topic %s: %s", topic.Topic, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error while compute labels on topic " + topic.Topic})
+		return
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("%d labels computed", nbComputed)})
+}
+
+// TruncateTags clear tags on one topic
+func (t *TopicsController) TruncateTags(ctx *gin.Context) {
+	var paramJSON paramTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+	if e != nil {
+		return
+	}
+
+	if err := topic.TruncateTags(); err != nil {
+		log.Errorf("Error while clear tags on topic %s: %s", topic.Topic, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error while clear tags on topic " + topic.Topic})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("%d tags cleared", len(topic.Tags))})
+}
+
+// TruncateLabels clear labels on one topic
+func (t *TopicsController) TruncateLabels(ctx *gin.Context) {
+	var paramJSON paramTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+	if e != nil {
+		return
+	}
+
+	if err := topic.TruncateLabels(); err != nil {
+		log.Errorf("Error while clear labels on topic %s: %s", topic.Topic, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error while clear labels on topic " + topic.Topic})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("%d labels cleared", len(topic.Labels))})
+}
+
+// preCheckUser checks if user in paramJSON exists and if current user is admin on topic
+func (t *TopicsController) preCheckUser(ctx *gin.Context, paramJSON *paramTopicUserJSON) (models.Topic, error) {
+	if userExists := models.IsUsernameExists(paramJSON.Username); !userExists {
 		e := errors.New("username " + paramJSON.Username + " does not exist")
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return models.Topic{}, e
 	}
-
 	return t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 }
 
+// preCheckGroup checks if group exists and is admin on topic
 func (t *TopicsController) preCheckGroup(ctx *gin.Context, paramJSON *paramGroupJSON) (models.Topic, error) {
-	groupnameExists := models.IsGroupnameExists(paramJSON.Groupname)
-
-	if !groupnameExists {
+	if groupExists := models.IsGroupnameExists(paramJSON.Groupname); !groupExists {
 		e := errors.New("groupname" + paramJSON.Groupname + " does not exist")
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return models.Topic{}, e
 	}
-
 	return t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 }
 
 func (t *TopicsController) preCheckUserAdminOnTopic(ctx *gin.Context, topicName string) (models.Topic, error) {
 	topic := models.Topic{}
-	errfinding := topic.FindByTopic(topicName, true, nil)
-	if errfinding != nil {
-		e := errors.New(errfinding.Error())
+	if errfind := topic.FindByTopic(topicName, true, false, false, nil); errfind != nil {
+		e := errors.New(errfind.Error())
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return topic, e
 	}
@@ -424,9 +479,7 @@ func (t *TopicsController) AddRoGroup(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	ctx.JSON(http.StatusCreated, "")
-
 }
 
 // AddRwGroup add a read write group on selected topic
@@ -560,35 +613,37 @@ func (t *TopicsController) RemoveAdminGroup(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "")
 }
 
-type paramJSON struct {
-	Topic           string                  `json:"topic"`
-	MaxLength       int                     `json:"maxlength"`
-	CanForceDate    bool                    `json:"canForceDate"`
-	CanUpdateMsg    bool                    `json:"canUpdateMsg"`
-	CanDeleteMsg    bool                    `json:"canDeleteMsg"`
-	CanUpdateAllMsg bool                    `json:"canUpdateAllMsg"`
-	CanDeleteAllMsg bool                    `json:"canDeleteAllMsg"`
-	IsROPublic      bool                    `json:"isROPublic"`
-	Recursive       bool                    `json:"recursive"`
-	Parameters      []models.TopicParameter `json:"parameters"`
+type paramsJSON struct {
+	Topic               string                  `json:"topic"`
+	MaxLength           int                     `json:"maxlength"`
+	CanForceDate        bool                    `json:"canForceDate"`
+	CanUpdateMsg        bool                    `json:"canUpdateMsg"`
+	CanDeleteMsg        bool                    `json:"canDeleteMsg"`
+	CanUpdateAllMsg     bool                    `json:"canUpdateAllMsg"`
+	CanDeleteAllMsg     bool                    `json:"canDeleteAllMsg"`
+	IsROPublic          bool                    `json:"isROPublic"`
+	IsAutoComputeTags   bool                    `json:"isAutoComputeTags"`
+	IsAutoComputeLabels bool                    `json:"isAutoComputeLabels"`
+	Recursive           bool                    `json:"recursive"`
+	Parameters          []models.TopicParameter `json:"parameters"`
 }
 
 // SetParam update Topic Parameters : MaxLength, CanForeceDate, CanUpdateMsg, CanDeleteMsg, CanUpdateAllMsg, CanDeleteAllMsg, IsROPublic
 // admin only, except on Private topic
 func (t *TopicsController) SetParam(ctx *gin.Context) {
-	var paramJSON paramJSON
-	ctx.Bind(&paramJSON)
+	var paramsJSON paramsJSON
+	ctx.Bind(&paramsJSON)
 
 	topic := models.Topic{}
 	var err error
-	if strings.HasPrefix(paramJSON.Topic, "/Private/"+utils.GetCtxUsername(ctx)) {
-		err := topic.FindByTopic(paramJSON.Topic, false, nil)
+	if strings.HasPrefix(paramsJSON.Topic, "/Private/"+utils.GetCtxUsername(ctx)) {
+		err := topic.FindByTopic(paramsJSON.Topic, false, false, false, nil)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching topic /Private/" + utils.GetCtxUsername(ctx)})
 			return
 		}
 	} else {
-		topic, err = t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+		topic, err = t.preCheckUserAdminOnTopic(ctx, paramsJSON.Topic)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, err)
 			return
@@ -596,15 +651,17 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 	}
 
 	err = topic.SetParam(utils.GetCtxUsername(ctx),
-		paramJSON.Recursive,
-		paramJSON.MaxLength,
-		paramJSON.CanForceDate,
-		paramJSON.CanUpdateMsg,
-		paramJSON.CanDeleteMsg,
-		paramJSON.CanUpdateAllMsg,
-		paramJSON.CanDeleteAllMsg,
-		paramJSON.IsROPublic,
-		paramJSON.Parameters)
+		paramsJSON.Recursive,
+		paramsJSON.MaxLength,
+		paramsJSON.CanForceDate,
+		paramsJSON.CanUpdateMsg,
+		paramsJSON.CanDeleteMsg,
+		paramsJSON.CanUpdateAllMsg,
+		paramsJSON.CanDeleteAllMsg,
+		paramsJSON.IsROPublic,
+		paramsJSON.IsAutoComputeTags,
+		paramsJSON.IsAutoComputeLabels,
+		paramsJSON.Parameters)
 
 	if err != nil {
 		log.Errorf("Error while setting parameters: %s", err)
@@ -612,4 +669,45 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("Topic %s updated", topic.Topic)})
+}
+
+// AllComputeTags Compute tags on all topics
+func (t *TopicsController) AllComputeTags(ctx *gin.Context) {
+	// It's only for admin, admin already checked in route
+	info, err := models.AllTopicsComputeTags()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": info})
+}
+
+// AllComputeLabels Compute tags on all topics
+func (t *TopicsController) AllComputeLabels(ctx *gin.Context) {
+	// It's only for admin, admin already checked in route
+	info, err := models.AllTopicsComputeLabels()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": info})
+}
+
+type attributeJSON struct {
+	ParamName  string `json:"paramName"`
+	ParamValue string `json:"paramValue"`
+}
+
+// AllSetParam set a param on all topics
+func (t *TopicsController) AllSetParam(ctx *gin.Context) {
+	// It's only for admin, admin already checked in route
+	var param attributeJSON
+	ctx.Bind(&param)
+
+	info, err := models.AllTopicsSetParam(param.ParamName, param.ParamValue)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": info})
 }

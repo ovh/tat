@@ -68,14 +68,12 @@ func (m *PresencesController) listWithCriteria(ctx *gin.Context, criteria *model
 		return
 	}
 	var topic = models.Topic{}
-	err := topic.FindByTopic(criteria.Topic, true, nil)
-	if err != nil {
+	if err := topic.FindByTopic(criteria.Topic, true, false, false, nil); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("topic "+criteria.Topic+" does not exist"))
 		return
 	}
 
-	isReadAccess := topic.IsUserReadAccess(user)
-	if !isReadAccess {
+	if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("No Read Access to this topic."))
 		return
 	}
@@ -120,7 +118,7 @@ func (m *PresencesController) preCheckTopic(ctx *gin.Context) (presenceJSON, mod
 	}
 	presenceIn.Topic = topicIn
 
-	err = topic.FindByTopic(presenceIn.Topic, true, nil)
+	err = topic.FindByTopic(presenceIn.Topic, true, false, false, nil)
 	if err != nil {
 		e := errors.New("Topic " + presenceIn.Topic + " does not exist")
 		ctx.AbortWithError(http.StatusInternalServerError, e)

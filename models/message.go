@@ -493,8 +493,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	}
 
 	message.Text = text
-	err := message.CheckAndFixText(topic)
-	if err != nil {
+	if err := message.CheckAndFixText(topic); err != nil {
 		return err
 	}
 	message.ID = bson.NewObjectId().Hex()
@@ -515,7 +514,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 		}
 
 		if !topic.CanForceDate {
-			return fmt.Errorf("Error while converting dateCreation %f - error:%s", dateCreation, err.Error())
+			return fmt.Errorf("Error while converting dateCreation %f - CanForceDate=false on topic %s", dateCreation, topic.Topic)
 		}
 		dateToStore = dateCreation
 	}
@@ -590,6 +589,8 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	if !strings.HasPrefix(topic.Topic, topicPrivate) {
 		message.insertNotifications(user)
 	}
+	go topic.UpdateTopicTags(message.Tags)
+	go topic.UpdateTopicLabels(message.Labels)
 	return nil
 }
 
@@ -621,7 +622,7 @@ func (message *Message) insertNotification(author User, usernameMention string) 
 	topicname := fmt.Sprintf("/Private/%s/Notifications", usernameMention)
 	labels := []Label{Label{Text: "unread", Color: "#d04437"}}
 	var topic = Topic{}
-	if err := topic.FindByTopic(topicname, false, nil); err != nil {
+	if err := topic.FindByTopic(topicname, false, false, false, nil); err != nil {
 		return
 	}
 
@@ -689,6 +690,8 @@ func (message *Message) Update(user User, topic Topic, newText string, action st
 	if err != nil {
 		log.Errorf("Error while update a message %s", err)
 	}
+
+	go topic.UpdateTopicTags(message.Tags)
 
 	return nil
 }
@@ -770,7 +773,7 @@ func (message *Message) containsTag(tag string) bool {
 
 //AddLabel add a label to a message
 //truncated to 100 char in text label
-func (message *Message) AddLabel(label string, color string) (Label, error) {
+func (message *Message) AddLabel(topic Topic, label string, color string) (Label, error) {
 	if len(label) > lengthLabel {
 		label = label[0:lengthLabel]
 	}
@@ -789,6 +792,8 @@ func (message *Message) AddLabel(label string, color string) (Label, error) {
 		return Label{}, err
 	}
 	message.Labels = append(message.Labels, newLabel)
+
+	go topic.UpdateTopicLabels(message.Labels)
 	return newLabel, nil
 }
 
@@ -904,6 +909,30 @@ func CountMsgSinceDate(topic string, date int64) (int, error) {
 		log.Errorf("Error while count message with topic %s and dateCreation lte:%d", topic, date)
 	}
 	return nb, err
+}
+
+// ListTags returns all tags on one topic
+func ListTags(topic string) ([]string, error) {
+	var tags []string
+	err := Store().clMessages.
+		Find(bson.M{"topics": bson.M{"$in": [1]string{topic}}}).
+		Distinct("tags", &tags)
+	if err != nil {
+		log.Errorf("Error while getting tags on topic %s", topic)
+	}
+	return tags, err
+}
+
+// ListLabels returns all labels on one topic
+func ListLabels(topic string) ([]Label, error) {
+	var labels []Label
+	err := Store().clMessages.
+		Find(bson.M{"topics": bson.M{"$in": [1]string{topic}}}).
+		Distinct("labels", &labels)
+	if err != nil {
+		log.Errorf("Error while getting labels on topic %s", topic)
+	}
+	return labels, err
 }
 
 func changeUsernameOnMessages(oldUsername, newUsername string) {

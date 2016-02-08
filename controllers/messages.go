@@ -99,7 +99,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	}
 
 	var topic = models.Topic{}
-	err = topic.FindByTopic(criteria.Topic, true, nil)
+	err = topic.FindByTopic(criteria.Topic, true, false, false, nil)
 	if err != nil {
 		topicCriteria := ""
 		_, topicCriteria, err = checkDMTopic(ctx, criteria.Topic)
@@ -108,7 +108,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 			return
 		}
 		// hack to get new created DM Topic
-		err := topic.FindByTopic(criteria.Topic, true, nil)
+		err := topic.FindByTopic(criteria.Topic, true, false, false, nil)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + criteria.Topic + " does not exist (2)"})
 			return
@@ -175,7 +175,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 	messageIn.Topic = topicIn
 
 	if messageIn.IDReference == "" || messageIn.Action == "" {
-		err := topic.FindByTopic(messageIn.Topic, true, nil)
+		err := topic.FindByTopic(messageIn.Topic, true, true, true, nil)
 		if err != nil {
 			topica, _, err := checkDMTopic(ctx, messageIn.Topic)
 			if err != nil {
@@ -222,7 +222,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
 			return messageIn, message, topic, e
 		}
-		err = topic.FindByTopic(topicName, true, nil)
+		err = topic.FindByTopic(topicName, true, true, true, nil)
 		if err != nil {
 			e := errors.New("Topic " + topicName + " does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
@@ -311,7 +311,7 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 	}
 
 	if messageIn.Action == "label" || messageIn.Action == "unlabel" || messageIn.Action == "relabel" {
-		m.addOrRemoveLabel(ctx, &messageIn, messageReference, user)
+		m.addOrRemoveLabel(ctx, &messageIn, messageReference, user, topic)
 		return
 	}
 
@@ -408,7 +408,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade bool) {
 // - if topic is Private OR is CanDeleteMsg or CanDeleteAllMsg
 func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.Message, user models.User) (models.Topic, error) {
 	topic := models.Topic{}
-	err := topic.FindByTopic(message.Topics[0], true, nil)
+	err := topic.FindByTopic(message.Topics[0], true, false, false, nil)
 	if err != nil {
 		e := fmt.Sprintf("Topic %s does not exist", message.Topics[0])
 		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
@@ -488,14 +488,14 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 	ctx.JSON(http.StatusCreated, gin.H{"info": info})
 }
 
-func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User) {
+func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
 	if messageIn.Text == "" && messageIn.Action != "relabel" {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid Text for label"))
 		return
 	}
 	info := gin.H{}
 	if messageIn.Action == "label" {
-		addedLabel, err := message.AddLabel(messageIn.Text, messageIn.Option)
+		addedLabel, err := message.AddLabel(topic, messageIn.Text, messageIn.Option)
 		if err != nil {
 			errInfo := fmt.Sprintf("Error while adding a label to a message %s", err.Error())
 			log.Errorf(errInfo)
@@ -724,7 +724,7 @@ func insertTopicDM(userFrom, userTo models.User) (models.Topic, error) {
 func checkTopicParentDM(user models.User) error {
 	topicName := "/Private/" + user.Username + "/DM"
 	var topicParent = models.Topic{}
-	err := topicParent.FindByTopic(topicName, false, nil)
+	err := topicParent.FindByTopic(topicName, false, false, false, nil)
 	if err != nil {
 		topicParent.Topic = topicName
 		topicParent.Description = "DM Topics"

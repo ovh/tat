@@ -333,7 +333,7 @@ func (*UsersController) AddFavoriteTopic(ctx *gin.Context) {
 	}
 
 	var topic = models.Topic{}
-	err = topic.FindByTopic(topicIn, true, nil)
+	err = topic.FindByTopic(topicIn, true, false, false, nil)
 	if err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, errors.New("topic "+topicIn+" does not exist"))
 		return
@@ -385,7 +385,7 @@ func (*UsersController) EnableNotificationsTopic(ctx *gin.Context) {
 	}
 
 	var topic = models.Topic{}
-	err = topic.FindByTopic(topicIn, true, nil)
+	err = topic.FindByTopic(topicIn, true, false, false, nil)
 	if err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, errors.New("topic "+topicIn+" does not exist"))
 		return
@@ -755,7 +755,7 @@ func (*UsersController) checkTopics(fixTopics bool, userToCheck models.User) str
 			topicName = fmt.Sprintf("%s/%s", topicName, shortName)
 		}
 		topic := &models.Topic{}
-		errfinding := topic.FindByTopic(topicName, false, nil)
+		errfinding := topic.FindByTopic(topicName, false, false, false, nil)
 		if errfinding != nil {
 			topicsInfo = fmt.Sprintf("%s %s KO : not exist; ", topicsInfo, topicName)
 			if fixTopics {

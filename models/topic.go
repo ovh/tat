@@ -14,26 +14,30 @@ import (
 
 // Topic struct
 type Topic struct {
-	ID               string           `bson:"_id"          json:"_id,omitempty"`
-	Topic            string           `bson:"topic"        json:"topic"`
-	Description      string           `bson:"description"  json:"description"`
-	ROGroups         []string         `bson:"roGroups"     json:"roGroups,omitempty"`
-	RWGroups         []string         `bson:"rwGroups"     json:"rwGroups,omitempty"`
-	ROUsers          []string         `bson:"roUsers"      json:"roUsers,omitempty"`
-	RWUsers          []string         `bson:"rwUsers"      json:"rwUsers,omitempty"`
-	AdminUsers       []string         `bson:"adminUsers"   json:"adminUsers,omitempty"`
-	AdminGroups      []string         `bson:"adminGroups"  json:"adminGroups,omitempty"`
-	History          []string         `bson:"history"      json:"history"`
-	MaxLength        int              `bson:"maxlength"    json:"maxlength"`
-	CanForceDate     bool             `bson:"canForceDate" json:"canForceDate"`
-	CanUpdateMsg     bool             `bson:"canUpdateMsg" json:"canUpdateMsg"`
-	CanDeleteMsg     bool             `bson:"canDeleteMsg" json:"canDeleteMsg"`
-	CanUpdateAllMsg  bool             `bson:"canUpdateAllMsg" json:"canUpdateAllMsg"`
-	CanDeleteAllMsg  bool             `bson:"canDeleteAllMsg" json:"canDeleteAllMsg"`
-	IsROPublic       bool             `bson:"isROPublic"   json:"isROPublic"`
-	DateModification int64            `bson:"dateModification" json:"dateModificationn,omitempty"`
-	DateCreation     int64            `bson:"dateCreation" json:"dateCreation,omitempty"`
-	Parameters       []TopicParameter `bson:"parameters" json:"parameters,omitempty"`
+	ID                  string           `bson:"_id"          json:"_id,omitempty"`
+	Topic               string           `bson:"topic"        json:"topic"`
+	Description         string           `bson:"description"  json:"description"`
+	ROGroups            []string         `bson:"roGroups"     json:"roGroups,omitempty"`
+	RWGroups            []string         `bson:"rwGroups"     json:"rwGroups,omitempty"`
+	ROUsers             []string         `bson:"roUsers"      json:"roUsers,omitempty"`
+	RWUsers             []string         `bson:"rwUsers"      json:"rwUsers,omitempty"`
+	AdminUsers          []string         `bson:"adminUsers"   json:"adminUsers,omitempty"`
+	AdminGroups         []string         `bson:"adminGroups"  json:"adminGroups,omitempty"`
+	History             []string         `bson:"history"      json:"history"`
+	MaxLength           int              `bson:"maxlength"    json:"maxlength"`
+	CanForceDate        bool             `bson:"canForceDate" json:"canForceDate"`
+	CanUpdateMsg        bool             `bson:"canUpdateMsg" json:"canUpdateMsg"`
+	CanDeleteMsg        bool             `bson:"canDeleteMsg" json:"canDeleteMsg"`
+	CanUpdateAllMsg     bool             `bson:"canUpdateAllMsg" json:"canUpdateAllMsg"`
+	CanDeleteAllMsg     bool             `bson:"canDeleteAllMsg" json:"canDeleteAllMsg"`
+	IsAutoComputeTags   bool             `bson:"isAutoComputeTags" json:"isAutoComputeTags"`
+	IsAutoComputeLabels bool             `bson:"isAutoComputeLabels" json:"isAutoComputeLabels"`
+	IsROPublic          bool             `bson:"isROPublic"   json:"isROPublic"`
+	DateModification    int64            `bson:"dateModification" json:"dateModificationn,omitempty"`
+	DateCreation        int64            `bson:"dateCreation" json:"dateCreation,omitempty"`
+	Parameters          []TopicParameter `bson:"parameters" json:"parameters,omitempty"`
+	Tags                []string         `bson:"tags" json:"tags,omitempty"`
+	Labels              []Label          `bson:"labels" json:"labels,omitempty"`
 }
 
 // TopicParameter struct, parameter on topics
@@ -155,9 +159,36 @@ func buildTopicCriteria(criteria *TopicCriteria, user *User) bson.M {
 	return bson.M{}
 }
 
-func getTopicSelectedFields(isAdmin bool) bson.M {
-	if !isAdmin {
-		return bson.M{
+func getTopicSelectedFields(isAdmin, withTags, withLabels bool) bson.M {
+	b := bson.M{}
+
+	if isAdmin {
+		b = bson.M{
+			"_id":                 1,
+			"topic":               1,
+			"description":         1,
+			"roGroups":            1,
+			"rwGroups":            1,
+			"roUsers":             1,
+			"rwUsers":             1,
+			"adminUsers":          1,
+			"adminGroups":         1,
+			"history":             1,
+			"maxlength":           1,
+			"canForceDate":        1,
+			"canUpdateMsg":        1,
+			"canDeleteMsg":        1,
+			"canUpdateAllMsg":     1,
+			"canDeleteAllMsg":     1,
+			"isAutoComputeTags":   1,
+			"isAutoComputeLabels": 1,
+			"isROPublic":          1,
+			"dateModificationn":   1,
+			"dateCreation":        1,
+			"parameters":          1,
+		}
+	} else {
+		b = bson.M{
 			"topic":           1,
 			"description":     1,
 			"isROPublic":      1,
@@ -170,7 +201,13 @@ func getTopicSelectedFields(isAdmin bool) bson.M {
 			"parameters":      1,
 		}
 	}
-	return bson.M{}
+	if withTags {
+		b["tags"] = 1
+	}
+	if withLabels {
+		b["labels"] = 1
+	}
+	return b
 }
 
 // CountTopics return the total number of topics in db
@@ -188,7 +225,7 @@ func ListTopics(criteria *TopicCriteria, user *User) (int, []Topic, error) {
 		log.Errorf("Error while count Topics %s", err)
 	}
 
-	err = cursor.Select(getTopicSelectedFields(user.IsAdmin)).
+	err = cursor.Select(getTopicSelectedFields(user.IsAdmin, false, false)).
 		Sort("topic").
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
@@ -253,8 +290,7 @@ func getTopicsForMemberUser(user *User, topic *Topic) ([]Topic, error) {
 		c["$and"] = append(c["$and"].([]bson.M), bson.M{"topic": topic.Topic})
 	}
 
-	err = Store().clTopics.Find(c).All(&topics)
-	if err != nil {
+	if err = Store().clTopics.Find(c).All(&topics); err != nil {
 		log.Errorf("Error while getting topics for member user: %s", err.Error())
 	}
 
@@ -268,17 +304,19 @@ func listTopicsCursor(criteria *TopicCriteria, user *User) *mgo.Query {
 // InitPrivateTopic insert topic "/Private"
 func InitPrivateTopic() {
 	topic := &Topic{
-		ID:              bson.NewObjectId().Hex(),
-		Topic:           "/Private",
-		Description:     "Private Topics",
-		DateCreation:    time.Now().Unix(),
-		MaxLength:       DefaultMessageMaxSize,
-		CanForceDate:    false,
-		CanUpdateMsg:    false,
-		CanDeleteMsg:    false,
-		CanUpdateAllMsg: false,
-		CanDeleteAllMsg: false,
-		IsROPublic:      false,
+		ID:                  bson.NewObjectId().Hex(),
+		Topic:               "/Private",
+		Description:         "Private Topics",
+		DateCreation:        time.Now().Unix(),
+		MaxLength:           DefaultMessageMaxSize,
+		CanForceDate:        false,
+		CanUpdateMsg:        false,
+		CanDeleteMsg:        false,
+		CanUpdateAllMsg:     false,
+		CanDeleteAllMsg:     false,
+		IsROPublic:          false,
+		IsAutoComputeTags:   true,
+		IsAutoComputeLabels: true,
 	}
 	err := Store().clTopics.Insert(topic)
 	log.Infof("Initialize /Private Topic")
@@ -313,8 +351,7 @@ func (topic *Topic) Insert(user *User) error {
 	}
 
 	var existing = &Topic{}
-	err = existing.FindByTopic(topic.Topic, true, nil)
-	if err == nil {
+	if err = existing.FindByTopic(topic.Topic, true, false, false, nil); err == nil {
 		return fmt.Errorf("Topic Already Exists : %s", topic.Topic)
 	}
 
@@ -323,6 +360,8 @@ func (topic *Topic) Insert(user *User) error {
 	topic.MaxLength = DefaultMessageMaxSize // topic MaxLenth messages
 	topic.CanForceDate = false
 	topic.IsROPublic = false
+	topic.IsAutoComputeLabels = true
+	topic.IsAutoComputeTags = true
 
 	if !isParentRootTopic {
 		topic.ROGroups = parentTopic.ROGroups
@@ -346,11 +385,12 @@ func (topic *Topic) Insert(user *User) error {
 		topic.CanUpdateAllMsg = parentTopic.CanUpdateAllMsg
 		topic.CanDeleteAllMsg = parentTopic.CanDeleteAllMsg
 		topic.IsROPublic = parentTopic.IsROPublic
+		topic.IsAutoComputeTags = parentTopic.IsAutoComputeTags
+		topic.IsAutoComputeLabels = parentTopic.IsAutoComputeLabels
 		topic.Parameters = parentTopic.Parameters
 	}
 
-	err = Store().clTopics.Insert(topic)
-	if err != nil {
+	if err = Store().clTopics.Insert(topic); err != nil {
 		log.Errorf("Error while inserting new topic %s", err)
 	}
 
@@ -359,9 +399,8 @@ func (topic *Topic) Insert(user *User) error {
 	if err != nil {
 		log.Errorf("Error while inserting history for new topic %s", err)
 	}
-	err = topic.AddRwUser(user.Username, user.Username, false)
 
-	return err
+	return topic.AddRwUser(user.Username, user.Username, false)
 }
 
 // Delete deletes a topic from database
@@ -398,6 +437,237 @@ func (topic *Topic) Truncate() (int, error) {
 	return changeInfo.Removed, err
 }
 
+// ComputeTags computes "cached" tags in topic
+// initialize tags, one entry per tag (unique)
+func (topic *Topic) ComputeTags() (int, error) {
+	tags, err := ListTags(topic.Topic)
+	if err != nil {
+		return 0, err
+	}
+
+	err = Store().clTopics.Update(
+		bson.M{"_id": topic.ID},
+		bson.M{"$set": bson.M{"tags": tags}})
+
+	return len(tags), err
+}
+
+// ComputeLabels computes "cached" labels on a topic
+// initialize labels, one entry per label (unicity with text & color)
+func (topic *Topic) ComputeLabels() (int, error) {
+	labels, err := ListLabels(topic.Topic)
+	if err != nil {
+		return 0, err
+	}
+
+	err = Store().clTopics.Update(
+		bson.M{"_id": topic.ID},
+		bson.M{"$set": bson.M{"labels": labels}})
+
+	return len(labels), err
+}
+
+// TruncateTags clears "cached" tags in topic
+func (topic *Topic) TruncateTags() error {
+	return Store().clTopics.Update(
+		bson.M{"_id": topic.ID},
+		bson.M{"$unset": bson.M{"tags": ""}})
+}
+
+// TruncateLabels clears "cached" labels on a topic
+func (topic *Topic) TruncateLabels() error {
+	return Store().clTopics.Update(
+		bson.M{"_id": topic.ID},
+		bson.M{"$unset": bson.M{"labels": ""}})
+}
+
+// UpdateTopicTags updates tags on topic
+func (topic *Topic) UpdateTopicTags(tags []string) {
+	if !topic.IsAutoComputeTags || len(tags) == 0 {
+		return
+	}
+
+	update := false
+	newTags := topic.Tags
+	for _, tag := range tags {
+		if !utils.ArrayContains(topic.Tags, tag) {
+			update = true
+			newTags = append(newTags, tag)
+		}
+	}
+
+	if update {
+		err := Store().clTopics.Update(
+			bson.M{"_id": topic.ID},
+			bson.M{"$set": bson.M{"tags": newTags}})
+
+		if err != nil {
+			log.Errorf("UpdateTopicTags> Error while updating tags on topic")
+		} else {
+			log.Debugf("UpdateTopicTags> Topic %s ", topic.Topic)
+		}
+	}
+}
+
+// UpdateTopicLabels updates labels on topic
+func (topic *Topic) UpdateTopicLabels(labels []Label) {
+	if !topic.IsAutoComputeLabels || len(labels) == 0 {
+		return
+	}
+
+	update := false
+	newLabels := topic.Labels
+	for _, label := range labels {
+		find := false
+		for _, tlabel := range topic.Labels {
+			if label.Text == tlabel.Text {
+				find = true
+				continue
+			}
+		}
+		if !find {
+			newLabels = append(newLabels, label)
+			update = true
+		}
+	}
+
+	if update {
+		err := Store().clTopics.Update(
+			bson.M{"_id": topic.ID},
+			bson.M{"$set": bson.M{"labels": newLabels}})
+
+		if err != nil {
+			log.Errorf("UpdateTopicLabels> Error while updating labels on topic")
+		} else {
+			log.Debugf("UpdateTopicLabels> Topic %s ", topic.Topic)
+		}
+	}
+}
+
+// AllTopicsComputeLabels computes Labels on all topics
+func AllTopicsComputeLabels() (string, error) {
+	var topics []Topic
+	err := Store().clTopics.Find(bson.M{}).
+		Select(getTopicSelectedFields(true, false, false)).
+		All(&topics)
+
+	if err != nil {
+		log.Errorf("Error while getting all topics for compute labels")
+		return "", err
+	}
+
+	errTxt := ""
+	infoTxt := ""
+	for _, topic := range topics {
+		if topic.IsAutoComputeLabels {
+			n, err := topic.ComputeLabels()
+			if err != nil {
+				log.Errorf("Error while compute labels on topic %s: %s", topic.Topic, err.Error())
+				errTxt += fmt.Sprintf(" Error compute labels on topic %s", topic.Topic)
+			} else {
+				infoTxt += fmt.Sprintf(" %d labels computed on topic %s", n, topic.Topic)
+				log.Infof(infoTxt)
+			}
+		}
+	}
+
+	if errTxt != "" {
+		return infoTxt, fmt.Errorf(errTxt)
+	}
+	return infoTxt, nil
+}
+
+// AllTopicsComputeTags computes Tags on all topics
+func AllTopicsComputeTags() (string, error) {
+	var topics []Topic
+	err := Store().clTopics.Find(bson.M{}).
+		Select(getTopicSelectedFields(true, false, false)).
+		All(&topics)
+
+	if err != nil {
+		log.Errorf("Error while getting all topics for compute tags")
+		return "", err
+	}
+
+	errTxt := ""
+	infoTxt := ""
+	for _, topic := range topics {
+		if topic.IsAutoComputeTags {
+			n, err := topic.ComputeTags()
+			if err != nil {
+				log.Errorf("Error while compute tags on topic %s: %s", topic.Topic, err.Error())
+				errTxt += fmt.Sprintf(" Error compute tags on topic %s", topic.Topic)
+			} else {
+				infoTxt += fmt.Sprintf(" %d tags computed on topic %s", n, topic.Topic)
+				log.Infof(infoTxt)
+			}
+		}
+	}
+
+	if errTxt != "" {
+		return infoTxt, fmt.Errorf(errTxt)
+	}
+	return infoTxt, nil
+}
+
+// AllTopicsSetParam computes Tags on all topics
+func AllTopicsSetParam(key, value string) (string, error) {
+	var topics []Topic
+	err := Store().clTopics.Find(bson.M{}).
+		Select(getTopicSelectedFields(true, false, false)).
+		All(&topics)
+
+	if err != nil {
+		log.Errorf("Error while getting all topics for set a param")
+		return "", err
+	}
+
+	errTxt := ""
+	nOk := 1
+	for _, topic := range topics {
+		if err := topic.setAParam(key, value); err != nil {
+			log.Errorf("Error while set param %s on topic %s: %s", key, topic.Topic, err.Error())
+			errTxt += fmt.Sprintf(" Error set param %s on topic %s", key, topic.Topic)
+		} else {
+			log.Infof(" %s param setted on topic %s", key, topic.Topic)
+			nOk++
+		}
+	}
+
+	if errTxt != "" {
+		return "", fmt.Errorf(errTxt)
+	}
+
+	return fmt.Sprintf("Param setted on %d topics", nOk), nil
+}
+
+// setAParam sets a param on one topic. Limited only of some attributes
+func (topic *Topic) setAParam(key, value string) error {
+	if key == "isAutoComputeTags" || key == "isAutoComputeLabels" {
+		v, err := strconv.ParseBool(value)
+		if err != nil {
+			return fmt.Errorf("Error while set param %s whith value %s", key, value)
+		}
+		return topic.setABoolParam(key, v)
+	}
+	return fmt.Errorf("set param %s is an invalid action", key)
+}
+
+func (topic *Topic) setABoolParam(key string, value bool) error {
+	if key != "isAutoComputeTags" && key != "isAutoComputeLabels" {
+		return fmt.Errorf("set param %s is an invalid action", key)
+	}
+
+	err := Store().clTopics.Update(
+		bson.M{"_id": topic.ID},
+		bson.M{"$set": bson.M{key: value}},
+	)
+	if err != nil {
+		log.Errorf("Error while update topic %s, param %s with new value %t", topic.Topic, key, value)
+	}
+	return nil
+}
+
 // Get parent topic
 // If it is a "root topic", like /myTopic, return true, nil, nil
 func (topic *Topic) getParentTopic() (bool, *Topic, error) {
@@ -407,7 +677,7 @@ func (topic *Topic) getParentTopic() (bool, *Topic, error) {
 	}
 	var nameParent = topic.Topic[0:index]
 	var parentTopic = &Topic{}
-	err := parentTopic.FindByTopic(nameParent, true, nil)
+	err := parentTopic.FindByTopic(nameParent, true, false, false, nil)
 	if err != nil {
 		log.Errorf("Error while fetching parent topic %s", err)
 	}
@@ -415,18 +685,17 @@ func (topic *Topic) getParentTopic() (bool, *Topic, error) {
 }
 
 // FindByTopic returns topic by topicName.
-func (topic *Topic) FindByTopic(topicIn string, isAdmin bool, user *User) error {
+func (topic *Topic) FindByTopic(topicIn string, isAdmin, withTags, withLabels bool, user *User) error {
 	topic.Topic = topicIn
-	err := topic.CheckAndFixName()
-	if err != nil {
+	if err := topic.CheckAndFixName(); err != nil {
 		return err
 	}
-	err = Store().clTopics.Find(bson.M{"topic": topic.Topic}).
-		Select(getTopicSelectedFields(isAdmin)).
+	err := Store().clTopics.Find(bson.M{"topic": topic.Topic}).
+		Select(getTopicSelectedFields(isAdmin, withTags, withLabels)).
 		One(&topic)
 
-	if err != nil {
-		log.Debugf("Error while fetching topic %s", topic.Topic)
+	if err != nil || topic.Topic == "" {
+		log.Debugf("FindByTopic> Error while fetching topic %s, isAdmin:", topic.Topic, isAdmin)
 		// TODO DM
 		return err
 	}
@@ -453,13 +722,13 @@ func (topic *Topic) FindByTopic(topicIn string, isAdmin bool, user *User) error 
 // IsTopicExists return true if topic exists, false otherwise
 func IsTopicExists(topic string) bool {
 	var t = Topic{}
-	return t.FindByTopic(topic, false, nil) == nil // no error, return true
+	return t.FindByTopic(topic, false, false, false, nil) == nil // no error, return true
 }
 
 // FindByID return topic, matching given id
 func (topic *Topic) FindByID(id string, isAdmin bool) error {
 	err := Store().clTopics.Find(bson.M{"_id": id}).
-		Select(getTopicSelectedFields(isAdmin)).
+		Select(getTopicSelectedFields(isAdmin, false, false)).
 		One(&topic)
 	if err != nil {
 		log.Errorf("Error while fecthing topic with id:%s", id)
@@ -470,7 +739,7 @@ func (topic *Topic) FindByID(id string, isAdmin bool) error {
 // SetParam update param maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, isROPublic, parameters on topic
 func (topic *Topic) SetParam(username string, recursive bool, maxLength int,
 	canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg,
-	isROPublic bool, parameters []TopicParameter) error {
+	isROPublic, isAutoComputeTags, isAutoComputeLabels bool, parameters []TopicParameter) error {
 
 	var selector bson.M
 
@@ -485,13 +754,15 @@ func (topic *Topic) SetParam(username string, recursive bool, maxLength int,
 	}
 
 	update := bson.M{
-		"maxlength":       maxLength,
-		"canForceDate":    canForceDate,
-		"canUpdateMsg":    canUpdateMsg,
-		"canDeleteMsg":    canDeleteMsg,
-		"canUpdateAllMsg": canUpdateAllMsg,
-		"canDeleteAllMsg": canDeleteAllMsg,
-		"isROPublic":      isROPublic,
+		"maxlength":           maxLength,
+		"canForceDate":        canForceDate,
+		"canUpdateMsg":        canUpdateMsg,
+		"canDeleteMsg":        canDeleteMsg,
+		"canUpdateAllMsg":     canUpdateAllMsg,
+		"canDeleteAllMsg":     canDeleteAllMsg,
+		"isROPublic":          isROPublic,
+		"isAutoComputeTags":   isAutoComputeTags,
+		"isAutoComputeLabels": isAutoComputeLabels,
 	}
 
 	if parameters != nil {
@@ -503,7 +774,7 @@ func (topic *Topic) SetParam(username string, recursive bool, maxLength int,
 		log.Errorf("Error while updateAll parameters : %s", err.Error())
 		return err
 	}
-	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, isROPublic:%t", maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, isROPublic)
+	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, isROPublic:%t, isAutoComputeTags:%t, isAutoComputeLabels:%t", maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, isROPublic, isAutoComputeTags, isAutoComputeLabels)
 	return topic.addToHistory(selector, username, h)
 }
 
@@ -668,8 +939,7 @@ func (topic *Topic) IsUserReadAccess(user User) bool {
 	// if user not admin, reload topic with admin rights
 	if !user.IsAdmin {
 		currentTopic = &Topic{}
-		e := currentTopic.FindByID(topic.ID, true)
-		if e != nil {
+		if e := currentTopic.FindByID(topic.ID, true); e != nil {
 			return false
 		}
 	}

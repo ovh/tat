@@ -27,6 +27,10 @@ func InitRoutesTopics(router *gin.Engine) {
 		g.PUT("/topic/add/adminuser", topicsCtrl.AddAdminUser)
 		g.PUT("/topic/remove/adminuser", topicsCtrl.RemoveAdminUser)
 
+		g.PUT("/topic/compute/tags", topicsCtrl.ComputeTags)
+		g.PUT("/topic/truncate/tags", topicsCtrl.TruncateTags)
+		g.PUT("/topic/compute/labels", topicsCtrl.ComputeLabels)
+		g.PUT("/topic/truncate/labels", topicsCtrl.TruncateLabels)
 		g.PUT("/topic/truncate", topicsCtrl.Truncate)
 		g.PUT("/topic/add/rogroup", topicsCtrl.AddRoGroup)
 		g.PUT("/topic/remove/rogroup", topicsCtrl.RemoveRoGroup)
@@ -35,5 +39,13 @@ func InitRoutesTopics(router *gin.Engine) {
 		g.PUT("/topic/add/admingroup", topicsCtrl.AddAdminGroup)
 		g.PUT("/topic/remove/admingroup", topicsCtrl.RemoveAdminGroup)
 		g.PUT("/topic/param", topicsCtrl.SetParam)
+	}
+
+	admin := router.Group("/topics")
+	admin.Use(CheckPassword(), CheckAdmin())
+	{
+		admin.PUT("/compute/tags", topicsCtrl.AllComputeTags)
+		admin.PUT("/compute/labels", topicsCtrl.AllComputeLabels)
+		admin.PUT("/param", topicsCtrl.AllSetParam)
 	}
 }

@@ -734,7 +734,7 @@ curl -XDELETE \
 
 ### Truncate a topic
 
-Only for Tat Admin of administrators on topic.
+Only for Tat Admin and administrators on topic.
 
 ```
 curl -XPUT \
@@ -745,7 +745,77 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/truncate
 ```
 
+### Compute tags on a topic
 
+Only for Tat Admin and administrators on topic.
+
+Set "tags" attribute on topic, with an array of all tags used in this topic.
+One entry in "tags" attribute per text of tag.
+
+Topic's tags are showed with :
+GET https://<tatHostname>:<tatPort>/topic/topicName
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    -d '{"topic": "/topicA"}' \
+    https://<tatHostname>:<tatPort>/topic/compute/tags
+```
+
+Example of usage of tags attribute: autocompletion of tag on UI when written new message on a topic
+
+### Compute labels on a topic
+
+Only for Tat Admin and administrators on topic.
+
+Set "labels" attribute on topic, with an array of all labels used in this topic.
+One entry in "labels" attribute per text & color of label.
+
+Topic's labels are showed with :
+GET https://<tatHostname>:<tatPort>/topic/topicName
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    -d '{"topic": "/topicA"}' \
+    https://<tatHostname>:<tatPort>/topic/compute/labels
+```
+
+Example of usage of labels attribute: label autocompletion on UI when adding new label
+
+### Truncate cached tags on a topic
+
+Only for Tat Admin and administrators on topic.
+
+Truncate "tags" attribute on topic.
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    -d '{"topic": "/topicA"}' \
+    https://<tatHostname>:<tatPort>/topic/tags/truncate
+```
+
+### Truncate cached labels on a topic
+
+Only for Tat Admin and administrators on topic.
+
+Truncate "labels" attribute on topic.
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    -d '{"topic": "/topicA"}' \
+    https://<tatHostname>:<tatPort>/topic/labels/truncate
+```
 
 ### Getting one Topic
 ```
