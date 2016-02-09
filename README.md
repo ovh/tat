@@ -425,10 +425,14 @@ curl -XGET https://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<
 
 ### Parameters
 
-* topic: /yourTopic/subTopic
-* skip: Skip skips over the n initial presences from the query results
-* limit: Limit restricts the maximum number of presences retrieved
-* status: status: `online`, `offline`, `busy`
+* `topic:` /yourTopic/subTopic
+* `skip`: Skip skips over the n initial presences from the query results
+* `limit`: Limit restricts the maximum number of presences retrieved
+* `status`: status: `online`, `offline`, `busy`
+* `dateMinPresence`: filter result on datePresence, timestamp Unix format
+* `dateMaxPresence`: filter result on datePresence, timestamp Unix Format
+* `username`: username to search
+
 
 #### Examples
 ```

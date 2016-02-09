@@ -118,8 +118,7 @@ func (m *PresencesController) preCheckTopic(ctx *gin.Context) (presenceJSON, mod
 	}
 	presenceIn.Topic = topicIn
 
-	err = topic.FindByTopic(presenceIn.Topic, true, false, false, nil)
-	if err != nil {
+	if err = topic.FindByTopic(presenceIn.Topic, true, false, false, nil); err != nil {
 		e := errors.New("Topic " + presenceIn.Topic + " does not exist")
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return presenceIn, topic, e
@@ -129,8 +128,7 @@ func (m *PresencesController) preCheckTopic(ctx *gin.Context) (presenceJSON, mod
 
 func (*PresencesController) preCheckUser(ctx *gin.Context) (models.User, error) {
 	var user = models.User{}
-	err := user.FindByUsername(utils.GetCtxUsername(ctx))
-	if err != nil {
+	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
 		e := errors.New("Error while fetching user.")
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return user, e
@@ -150,8 +148,7 @@ func (m *PresencesController) create(ctx *gin.Context) {
 		return
 	}
 
-	isReadAccess := topic.IsUserReadAccess(user)
-	if !isReadAccess {
+	if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
 		e := errors.New("No Read Access to topic " + presenceIn.Topic + " for user " + user.Username)
 		ctx.AbortWithError(http.StatusForbidden, e)
 		ctx.JSON(http.StatusForbidden, gin.H{"error": e.Error()})
