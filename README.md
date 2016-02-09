@@ -787,6 +787,44 @@ curl -XPUT \
 
 Example of usage of labels attribute: label autocompletion on UI when adding new label
 
+### Compute tags on all topics
+
+Only for Tat Admin.
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    https://<tatHostname>:<tatPort>/topics/compute/tags
+```
+
+### Compute labels on all topics
+
+Only for Tat Admin.
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    https://<tatHostname>:<tatPort>/topics/compute/labels
+```
+
+### Set a param on all topics
+
+Only for Tat Admin and for attributes isAutoComputeTags and isAutoComputeLabels.
+
+```
+curl -XPUT \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: admin" \
+    -H "Tat_password: passwordAdmin" \
+    -d '{"paramName":"isAutoComputeLabels","paramValue":"false"}' \
+    https://<tatHostname>:<tatPort>/topics/param
+```
+
+
 ### Truncate cached tags on a topic
 
 Only for Tat Admin and administrators on topic.
