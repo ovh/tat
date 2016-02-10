@@ -251,6 +251,50 @@ curl -XPUT \
 	https://<tatHostname>:<tatPort>/message/Private/username/Tasks
 ```
 
+### Vote UP a message
+
+```
+curl -XPUT \
+    -H 'Content-Type: application/json' \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "voteup" }'\
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
+### Remove a Vote UP from a message
+
+```
+curl -XPUT \
+    -H 'Content-Type: application/json' \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unvoteup" }'\
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
+### Vote Down a message
+
+```
+curl -XPUT \
+    -H 'Content-Type: application/json' \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "votedown" }'\
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
+### Remove Vote Down from a message
+
+```
+curl -XPUT \
+    -H 'Content-Type: application/json' \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unvotedown" }'\
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
 ### Getting Messages List
 ```  
 curl -XGET https://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
@@ -278,6 +322,10 @@ curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit
 * `dateMaxCreation`: filter result on dateCreation, timestamp Unix Format
 * `dateMinUpdate`: filter result on dateUpdate, timestamp Unix format
 * `dateMaxUpdate`: filter result on dateUpdate, timestamp Unix Format
+* `limitMinNbVotesUP`: filter result on nbVotesUP
+* `limitMaxNbVotesUP`: filter result on nbVotesUP
+* `limitMinNbVotesDown`: filter result on nbVotesDown
+* `limitMaxNbVotesDown`: filter result on nbVotesDown
 * `label`: Search by label: could be labelA,labelB
 * `andLabel`: Search by label (exclude): could be labelA,labelB
 * `notLabel`: Search by label (and): could be labelA,labelB

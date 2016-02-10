@@ -30,7 +30,7 @@ func InitRoutesMessages(router *gin.Engine) {
 		//Create a message, a reply, a bookmark
 		gm.POST("/*topic", messagesCtrl.Create)
 
-		// Like, Unlike, Label, Unlabel a message, mark as task
+		// Like, Unlike, Label, Unlabel a message, mark as task, voteup, votedown, unvoteup, unvotedown
 		gm.PUT("/*topic", messagesCtrl.Update)
 
 		// Delete a message

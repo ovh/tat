@@ -66,6 +66,10 @@ func (*MessagesController) buildCriteria(ctx *gin.Context) *models.MessageCriter
 	c.DateMaxCreation = ctx.Query("dateMaxCreation")
 	c.DateMinUpdate = ctx.Query("dateMinUpdate")
 	c.DateMaxUpdate = ctx.Query("dateMaxUpdate")
+	c.LimitMinNbVotesUP = ctx.Query("limitMinNbVotesUP")
+	c.LimitMaxNbVotesUP = ctx.Query("limitMaxNbVotesUP")
+	c.LimitMinNbVotesDown = ctx.Query("limitMinNbVotesDown")
+	c.LimitMaxNbVotesDown = ctx.Query("limitMaxNbVotesDown")
 	c.Username = ctx.Query("username")
 	c.LimitMinNbReplies = ctx.Query("limitMinNbReplies")
 	c.LimitMaxNbReplies = ctx.Query("limitMaxNbReplies")
@@ -99,8 +103,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	}
 
 	var topic = models.Topic{}
-	err = topic.FindByTopic(criteria.Topic, true, false, false, nil)
-	if err != nil {
+	if topic.FindByTopic(criteria.Topic, true, false, false, nil); err != nil {
 		topicCriteria := ""
 		_, topicCriteria, err = checkDMTopic(ctx, criteria.Topic)
 		if err != nil {
@@ -108,8 +111,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 			return
 		}
 		// hack to get new created DM Topic
-		err := topic.FindByTopic(criteria.Topic, true, false, false, nil)
-		if err != nil {
+		if err := topic.FindByTopic(criteria.Topic, true, false, false, nil); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + criteria.Topic + " does not exist (2)"})
 			return
 		}
@@ -125,8 +127,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 		if e != nil {
 			return
 		}
-		isReadAccess := topic.IsUserReadAccess(user)
-		if !isReadAccess {
+		if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
 			ctx.JSON(http.StatusForbidden, gin.H{"error": "No Read Access to this topic"})
 			return
 		}
@@ -175,8 +176,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 	messageIn.Topic = topicIn
 
 	if messageIn.IDReference == "" || messageIn.Action == "" {
-		err := topic.FindByTopic(messageIn.Topic, true, true, true, nil)
-		if err != nil {
+		if err := topic.FindByTopic(messageIn.Topic, true, true, true, nil); err != nil {
 			topica, _, err := checkDMTopic(ctx, messageIn.Topic)
 			if err != nil {
 				e := errors.New("Topic " + messageIn.Topic + " does not exist")
@@ -186,8 +186,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 			topic = *topica
 		}
 	} else if messageIn.IDReference != "" {
-		err := message.FindByID(messageIn.IDReference)
-		if err != nil {
+		if err := message.FindByID(messageIn.IDReference); err != nil {
 			e := errors.New("Message " + messageIn.IDReference + " does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 			return messageIn, message, topic, e
@@ -199,6 +198,8 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 		} else if messageIn.Action == "reply" || messageIn.Action == "unbookmark" ||
 			messageIn.Action == "like" || messageIn.Action == "unlike" ||
 			messageIn.Action == "label" || messageIn.Action == "unlabel" ||
+			messageIn.Action == "voteup" || messageIn.Action == "votedown" ||
+			messageIn.Action == "unvoteup" || messageIn.Action == "unvotedown" ||
 			messageIn.Action == "relabel" || messageIn.Action == "concat" {
 			topicName = m.inverseIfDMTopic(ctx, message.Topics[0])
 		} else if messageIn.Action == "move" {
@@ -222,8 +223,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
 			return messageIn, message, topic, e
 		}
-		err = topic.FindByTopic(topicName, true, true, true, nil)
-		if err != nil {
+		if err = topic.FindByTopic(topicName, true, true, true, nil); err != nil {
 			e := errors.New("Topic " + topicName + " does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 			return messageIn, message, topic, e
@@ -248,8 +248,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 		return
 	}
 
-	isRw := topic.IsUserRW(&user)
-	if !isRw {
+	if isRw := topic.IsUserRW(&user); !isRw {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No RW Access to topic " + messageIn.Topic)})
 		return
 	}
@@ -259,12 +258,11 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 	info := ""
 	if messageIn.Action == "bookmark" {
 		var originalUser = models.User{}
-		err := originalUser.FindByUsername(utils.GetCtxUsername(ctx))
-		if err != nil {
+		if err := originalUser.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
 			ctx.AbortWithError(http.StatusInternalServerError, errors.New("Error while fetching original user."))
 			return
 		}
-		err = message.Insert(originalUser, topic, messageReference.Text, "", -1, messageReference.Labels, false)
+		err := message.Insert(originalUser, topic, messageReference.Text, "", -1, messageReference.Labels, false)
 		if err != nil {
 			log.Errorf("Error while InsertMessage with action %s : %s", messageIn.Action, err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -315,6 +313,12 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 		return
 	}
 
+	if messageIn.Action == "voteup" || messageIn.Action == "votedown" ||
+		messageIn.Action == "unvoteup" || messageIn.Action == "unvotedown" {
+		m.voteMessage(ctx, &messageIn, messageReference, user, topic)
+		return
+	}
+
 	if messageIn.Action == "task" || messageIn.Action == "untask" {
 		m.addOrRemoveTask(ctx, &messageIn, messageReference, user, topic)
 		return
@@ -350,8 +354,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade bool) {
 	}
 
 	message := models.Message{}
-	err = message.FindByID(idMessageIn)
-	if err != nil {
+	if err = message.FindByID(idMessageIn); err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Message %s does not exist", idMessageIn)})
 		return
 	}
@@ -392,8 +395,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade bool) {
 		return
 	}
 
-	err = message.Delete(cascade)
-	if err != nil {
+	if err = message.Delete(cascade); err != nil {
 		log.Errorf("Error while delete a message %s", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -414,8 +416,8 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
 		return topic, fmt.Errorf(e)
 	}
-	isRw := topic.IsUserRW(&user)
-	if !isRw {
+
+	if isRw := topic.IsUserRW(&user); !isRw {
 		e := fmt.Sprintf("No RW Access to topic %s", message.Topics[0])
 		ctx.JSON(http.StatusForbidden, gin.H{"error": e})
 		return topic, fmt.Errorf(e)
@@ -465,16 +467,14 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 
 	info := ""
 	if action == "like" {
-		err := message.Like(user)
-		if err != nil {
+		if err := message.Like(user); err != nil {
 			log.Errorf("Error while like a message %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		info = "like added"
 	} else if action == "unlike" {
-		err := message.Unlike(user)
-		if err != nil {
+		if err := message.Unlike(user); err != nil {
 			log.Errorf("Error while unlike a message %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -527,6 +527,42 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messa
 	ctx.JSON(http.StatusCreated, info)
 }
 
+func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
+	info := gin.H{}
+	errInfo := ""
+	if messageIn.Action == "voteup" {
+		if err := message.VoteUP(user); err != nil {
+			errInfo = fmt.Sprintf("Error while vote up a message %s", err.Error())
+		}
+		info = gin.H{"info": fmt.Sprint("Vote UP added to message"), "message": message}
+	} else if messageIn.Action == "votedown" {
+		if err := message.VoteDown(user); err != nil {
+			errInfo = fmt.Sprintf("Error while vote down a message %s", err.Error())
+		}
+		info = gin.H{"info": fmt.Sprint("Vote Down added to message"), "message": message}
+	} else if messageIn.Action == "unvoteup" {
+		if err := message.UnVoteUP(user); err != nil {
+			errInfo = fmt.Sprintf("Error while remove vote up from message %s", err.Error())
+		}
+		info = gin.H{"info": fmt.Sprint("Vote UP removed from message"), "message": message}
+	} else if messageIn.Action == "unvotedown" {
+		if err := message.UnVoteDown(user); err != nil {
+			errInfo = fmt.Sprintf("Error while remove vote down from message %s", err.Error())
+		}
+		info = gin.H{"info": fmt.Sprint("Vote Down removed from message"), "message": message}
+	} else {
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action: "+messageIn.Action))
+		return
+	}
+	if errInfo != "" {
+		log.Errorf(errInfo)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
+		return
+	}
+	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
+	ctx.JSON(http.StatusCreated, info)
+}
+
 func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
 	info := ""
 	if messageIn.Action == "task" {
@@ -535,16 +571,14 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *messag
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "This message is a reply, you can't task it"})
 			return
 		}
-		err := message.AddToTasks(user, topic)
-		if err != nil {
+		if err := message.AddToTasks(user, topic); err != nil {
 			log.Errorf("Error while adding a message to tasks %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while adding a message to tasks"})
 			return
 		}
 		info = fmt.Sprintf("New Task created in %s", models.GetPrivateTopicTaskName(user))
 	} else if messageIn.Action == "untask" {
-		err := message.RemoveFromTasks(user, topic)
-		if err != nil {
+		if err := message.RemoveFromTasks(user, topic); err != nil {
 			log.Errorf("Error while removing a message from tasks %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -684,13 +718,11 @@ func checkDMTopic(ctx *gin.Context, topicName string) (*models.Topic, string, er
 		return &topic, "", errors.New("Error while fetching user.")
 	}
 
-	err = checkTopicParentDM(userFrom)
-	if err != nil {
+	if err = checkTopicParentDM(userFrom); err != nil {
 		return &topic, "", errors.New(err.Error())
 	}
 
-	err = checkTopicParentDM(userTo)
-	if err != nil {
+	if err = checkTopicParentDM(userTo); err != nil {
 		return &topic, "", errors.New(err.Error())
 	}
 
@@ -713,8 +745,7 @@ func insertTopicDM(userFrom, userTo models.User) (models.Topic, error) {
 	topicName := "/Private/" + userFrom.Username + "/DM/" + userTo.Username
 	topic.Topic = topicName
 	topic.Description = userTo.Fullname
-	err := topic.Insert(&userFrom)
-	if err != nil {
+	if err := topic.Insert(&userFrom); err != nil {
 		log.Errorf("Error while InsertTopic %s", err)
 		return topic, err
 	}

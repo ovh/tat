@@ -42,6 +42,10 @@ type Message struct {
 	NbLikes         int64     `bson:"nbLikes"         json:"nbLikes"`
 	Labels          []Label   `bson:"labels"          json:"labels,omitempty"`
 	Likers          []string  `bson:"likers"          json:"likers,omitempty"`
+	VotersUP        []string  `bson:"votersUP"        json:"votersUP,omitempty"`
+	VotersDown      []string  `bson:"votersDown"      json:"votersDown,omitempty"`
+	NbVotesUP       int64     `bson:"nbVotesUP"       json:"nbVotesUP"`
+	NbVotesDown     int64     `bson:"nbVotesDown"     json:"nbVotesDown"`
 	UserMentions    []string  `bson:"userMentions"    json:"userMentions,omitempty"`
 	Urls            []string  `bson:"urls"            json:"urls,omitempty"`
 	Tags            []string  `bson:"tags"            json:"tags,omitempty"`
@@ -53,29 +57,33 @@ type Message struct {
 
 // MessageCriteria are used to list messages
 type MessageCriteria struct {
-	Skip              int
-	Limit             int
-	TreeView          string
-	IDMessage         string
-	InReplyOfID       string
-	InReplyOfIDRoot   string
-	AllIDMessage      string // search in IDMessage OR InReplyOfID OR InReplyOfIDRoot
-	Text              string
-	Topic             string
-	Label             string
-	NotLabel          string
-	AndLabel          string
-	Tag               string
-	NotTag            string
-	AndTag            string
-	Username          string
-	DateMinCreation   string
-	DateMaxCreation   string
-	DateMinUpdate     string
-	DateMaxUpdate     string
-	LimitMinNbReplies string
-	LimitMaxNbReplies string
-	OnlyMsgRoot       string
+	Skip                int
+	Limit               int
+	TreeView            string
+	IDMessage           string
+	InReplyOfID         string
+	InReplyOfIDRoot     string
+	AllIDMessage        string // search in IDMessage OR InReplyOfID OR InReplyOfIDRoot
+	Text                string
+	Topic               string
+	Label               string
+	NotLabel            string
+	AndLabel            string
+	Tag                 string
+	NotTag              string
+	AndTag              string
+	Username            string
+	DateMinCreation     string
+	DateMaxCreation     string
+	DateMinUpdate       string
+	DateMaxUpdate       string
+	LimitMinNbReplies   string
+	LimitMaxNbReplies   string
+	LimitMinNbVotesUP   string
+	LimitMinNbVotesDown string
+	LimitMaxNbVotesUP   string
+	LimitMaxNbVotesDown string
+	OnlyMsgRoot         string
 }
 
 func buildMessageCriteria(criteria *MessageCriteria) bson.M {
@@ -174,22 +182,15 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 		if err != nil {
 			log.Errorf("Error while parsing dateMinCreation %s", err)
 		} else {
-			tm := utils.DateFromFloat(i)
-			bsonDate["$gte"] = tm.Unix()
+			bsonDate["$gte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 		}
 	}
 	if criteria.DateMaxCreation != "" {
 		i, err := strconv.ParseFloat(criteria.DateMaxCreation, 64)
 		if err != nil {
 			log.Errorf("Error while parsing dateMaxCreation %s", err)
-		}
-		tm := utils.DateFromFloat(i)
-
-		if err == nil {
-			// TODO use floating point
-			bsonDate["$lte"] = tm.Unix()
 		} else {
-			log.Errorf("Error while parsing dateMaxCreation %s", err)
+			bsonDate["$lte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 		}
 	}
 	if len(bsonDate) > 0 {
@@ -201,32 +202,62 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 		i, err := strconv.ParseFloat(criteria.DateMinUpdate, 64)
 		if err != nil {
 			log.Errorf("Error while parsing dateMinUpdate %s", err)
-		}
-		tm := utils.DateFromFloat(i)
-
-		if err == nil {
-			// TODO use floating point
-			bsonDateUpdate["$gte"] = tm.Unix()
 		} else {
-			log.Errorf("Error while parsing dateMinUpdate %s", err)
+			bsonDateUpdate["$gte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 		}
 	}
 	if criteria.DateMaxUpdate != "" {
 		i, err := strconv.ParseFloat(criteria.DateMaxUpdate, 64)
 		if err != nil {
 			log.Errorf("Error while parsing dateMaxUpdate %s", err)
-		}
-		tm := utils.DateFromFloat(i)
-
-		if err == nil {
-			// TODO use floating point
-			bsonDateUpdate["$lte"] = tm.Unix()
 		} else {
-			log.Errorf("Error while parsing dateMaxUpdate %s", err)
+			bsonDateUpdate["$lte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 		}
 	}
 	if len(bsonDateUpdate) > 0 {
 		query = append(query, bson.M{"dateUpdate": bsonDateUpdate})
+	}
+
+	var bsonNbVotesUP = bson.M{}
+	if criteria.LimitMinNbVotesUP != "" {
+		i, err := strconv.ParseFloat(criteria.LimitMinNbVotesUP, 64)
+		if err != nil {
+			log.Errorf("Error while parsing limitMinNbVotesUP %s", err)
+		} else {
+			bsonNbVotesUP["$gte"] = i
+		}
+	}
+	if criteria.LimitMaxNbVotesUP != "" {
+		i, err := strconv.ParseFloat(criteria.LimitMaxNbVotesUP, 64)
+		if err != nil {
+			log.Errorf("Error while parsing limitMaxNbVotesUP %s", err)
+		} else {
+			bsonNbVotesUP["$lte"] = i
+		}
+	}
+	if len(bsonNbVotesUP) > 0 {
+		query = append(query, bson.M{"nbVotesUP": bsonNbVotesUP})
+	}
+
+	var bsonNbVotesDown = bson.M{}
+	if criteria.LimitMinNbVotesDown != "" {
+		i, err := strconv.ParseFloat(criteria.LimitMinNbVotesDown, 64)
+		if err != nil {
+			log.Errorf("Error while parsing limitMinNbVotesDown %s", err)
+		} else {
+			bsonNbVotesDown["$gte"] = i
+		}
+	}
+	if criteria.LimitMaxNbVotesDown != "" {
+		i, err := strconv.ParseFloat(criteria.LimitMaxNbVotesDown, 64)
+		if err != nil {
+			log.Errorf("Error while parsing limitMaxNbVotesDown %s", err)
+		} else {
+			bsonNbVotesDown["$lte"] = i
+		}
+	}
+	if len(bsonNbVotesDown) > 0 {
+		query = append(query, bson.M{"nbVotesDown": bsonNbVotesDown})
 	}
 
 	if len(query) > 0 {
@@ -832,16 +863,11 @@ func (message *Message) Like(user User) error {
 	if utils.ArrayContains(message.Likers, user.Username) {
 		return fmt.Errorf("Like not possible, %s is already a liker of this message", user.Username)
 	}
-	err := Store().clMessages.Update(
+	return Store().clMessages.Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbLikes": 1},
 			"$push": bson.M{"likers": user.Username}})
-
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // Unlike removes a like from one message
@@ -849,16 +875,61 @@ func (message *Message) Unlike(user User) error {
 	if !utils.ArrayContains(message.Likers, user.Username) {
 		return fmt.Errorf("Unlike not possible, %s is not a liker of this message", user.Username)
 	}
-	err := Store().clMessages.Update(
+	return Store().clMessages.Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbLikes": -1},
 			"$pull": bson.M{"likers": user.Username}})
+}
 
-	if err != nil {
-		return err
+// VoteUP add a vote UP to a message
+func (message *Message) VoteUP(user User) error {
+	if utils.ArrayContains(message.VotersUP, user.Username) {
+		return fmt.Errorf("Vote UP not possible, %s is already a voters UP of this message", user.Username)
 	}
-	return nil
+	message.UnVoteDown(user)
+	return Store().clMessages.Update(
+		bson.M{"_id": message.ID},
+		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
+			"$inc":  bson.M{"nbVotesUP": 1},
+			"$push": bson.M{"votersUP": user.Username}})
+}
+
+// VoteDown add a vote Down to a message
+func (message *Message) VoteDown(user User) error {
+	if utils.ArrayContains(message.VotersDown, user.Username) {
+		return fmt.Errorf("Vote Down not possible, %s is already a voters Down of this message", user.Username)
+	}
+	message.UnVoteUP(user)
+	return Store().clMessages.Update(
+		bson.M{"_id": message.ID},
+		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
+			"$inc":  bson.M{"nbVotesDown": 1},
+			"$push": bson.M{"votersDown": user.Username}})
+}
+
+// UnVoteUP removes a vote up from a message
+func (message *Message) UnVoteUP(user User) error {
+	if !utils.ArrayContains(message.VotersUP, user.Username) {
+		return fmt.Errorf("Add Vote UP not possible, %s is not a voters UP of this message", user.Username)
+	}
+	return Store().clMessages.Update(
+		bson.M{"_id": message.ID},
+		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
+			"$inc":  bson.M{"nbVotesUP": -1},
+			"$pull": bson.M{"votersUP": user.Username}})
+}
+
+// UnVoteDown removes a vote down from a message
+func (message *Message) UnVoteDown(user User) error {
+	if !utils.ArrayContains(message.VotersDown, user.Username) {
+		return fmt.Errorf("Remove Vote Down not possible, %s is not a voters Down of this message", user.Username)
+	}
+	return Store().clMessages.Update(
+		bson.M{"_id": message.ID},
+		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
+			"$inc":  bson.M{"nbVotesDown": -1},
+			"$pull": bson.M{"votersDown": user.Username}})
 }
 
 // GetPrivateTopicTaskName return Tasks Topic name of user
