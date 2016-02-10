@@ -528,28 +528,28 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messa
 }
 
 func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
-	info := gin.H{}
+	info := ""
 	errInfo := ""
 	if messageIn.Action == "voteup" {
 		if err := message.VoteUP(user); err != nil {
 			errInfo = fmt.Sprintf("Error while vote up a message %s", err.Error())
 		}
-		info = gin.H{"info": fmt.Sprint("Vote UP added to message"), "message": message}
+		info = "Vote UP added to message"
 	} else if messageIn.Action == "votedown" {
 		if err := message.VoteDown(user); err != nil {
 			errInfo = fmt.Sprintf("Error while vote down a message %s", err.Error())
 		}
-		info = gin.H{"info": fmt.Sprint("Vote Down added to message"), "message": message}
+		info = "Vote Down added to message"
 	} else if messageIn.Action == "unvoteup" {
 		if err := message.UnVoteUP(user); err != nil {
 			errInfo = fmt.Sprintf("Error while remove vote up from message %s", err.Error())
 		}
-		info = gin.H{"info": fmt.Sprint("Vote UP removed from message"), "message": message}
+		info = "Vote UP removed from message"
 	} else if messageIn.Action == "unvotedown" {
 		if err := message.UnVoteDown(user); err != nil {
 			errInfo = fmt.Sprintf("Error while remove vote down from message %s", err.Error())
 		}
-		info = gin.H{"info": fmt.Sprint("Vote Down removed from message"), "message": message}
+		info = "Vote Down removed from message"
 	} else {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action: "+messageIn.Action))
 		return
@@ -559,8 +559,12 @@ func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *messageJSO
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
 		return
 	}
+	if err := message.FindByID(messageIn.IDReference); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching message after voting"})
+		return
+	}
 	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
-	ctx.JSON(http.StatusCreated, info)
+	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
 func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
