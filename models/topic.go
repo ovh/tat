@@ -668,6 +668,34 @@ func (topic *Topic) setABoolParam(key string, value bool) error {
 	return nil
 }
 
+// AllTopicsComputeReplies computes Replies on all topics
+func AllTopicsComputeReplies() (string, error) {
+	var topics []Topic
+	err := Store().clTopics.Find(bson.M{}).
+		Select(getTopicSelectedFields(true, false, false)).
+		All(&topics)
+
+	if err != nil {
+		log.Errorf("Error while getting all topics for compute replies")
+		return "", err
+	}
+
+	errTxt := ""
+	nOk := 1
+	for _, topic := range topics {
+		nbCompute, err := ComputeReplies(topic.Topic)
+		if err != nil {
+			log.Errorf("Error while compute replies on topic %s: %s", topic.Topic, err.Error())
+			errTxt += fmt.Sprintf(" Error compute replies on topic %s", topic.Topic)
+		} else {
+			log.Infof(" %d replies compute on topic %s", nbCompute, topic.Topic)
+			nOk++
+		}
+	}
+
+	return fmt.Sprintf("Replies computed on %d topics", nOk), nil
+}
+
 // Get parent topic
 // If it is a "root topic", like /myTopic, return true, nil, nil
 func (topic *Topic) getParentTopic() (bool, *Topic, error) {

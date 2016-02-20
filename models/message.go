@@ -53,6 +53,7 @@ type Message struct {
 	DateUpdate      float64   `bson:"dateUpdate"      json:"dateUpdate"`
 	Author          Author    `bson:"author"          json:"author"`
 	Replies         []Message `bson:"-"               json:"replies,omitempty"`
+	NbReplies       int64     `bson:"nbReplies"       json:"nbReplies"`
 }
 
 // MessageCriteria are used to list messages
@@ -580,7 +581,8 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 
 		err := Store().clMessages.Update(
 			bson.M{"_id": messageReference.ID},
-			bson.M{"$set": bson.M{"dateUpdate": dateToStore}})
+			bson.M{"$set": bson.M{"dateUpdate": dateToStore},
+				"$inc": bson.M{"nbReplies": 1}})
 
 		if err != nil {
 			log.Errorf("Error while updating root message for reply %s", err.Error())
@@ -775,6 +777,20 @@ func (message *Message) Move(user User, newTopic Topic) error {
 
 // Delete deletes a message from database
 func (message *Message) Delete(cascade bool) error {
+	if message.InReplyOfID != "" {
+		var messageParent = &Message{}
+		if err := messageParent.FindByID(message.InReplyOfID); err != nil {
+			log.Errorf("message > Delete > Error while fetching message parent:%s", err.Error())
+			return err
+		}
+		if err := Store().clMessages.Update(
+			bson.M{"_id": messageParent.ID},
+			bson.M{"$inc": bson.M{"nbReplies": -1}}); err != nil {
+			log.Errorf("message > Delete > Error while updating message parent:%s", err.Error())
+			return err
+		}
+	}
+
 	if cascade {
 		_, err := Store().clMessages.RemoveAll(bson.M{"$or": []bson.M{bson.M{"_id": message.ID}, bson.M{"inReplyOfIDRoot": message.ID}}})
 		return err
@@ -1068,6 +1084,39 @@ func changeUsernameOnMessagesTopics(oldUsername, newUsername string) error {
 // CountAllMessages returns the total number of messages in db
 func CountAllMessages() (int, error) {
 	return Store().clMessages.Count()
+}
+
+// ComputeReplies re-compute replies for all messages in one topic
+func ComputeReplies(topicName string) (int, error) {
+
+	log.Debugf("ComputeReplies on topic %s", topicName)
+
+	nbCompute := 0
+	var messages []Message
+
+	var query = []bson.M{}
+	query = append(query, bson.M{"topics": bson.M{"$in": strings.Split(topicName, ",")}})
+	b := bson.M{"inReplyOfID": bson.M{"$exists": true, "$ne": ""}}
+	query = append(query, b)
+	if err := Store().clMessages.Find(query).All(&messages); err != nil {
+		log.Errorf("Error while find messages for compute replies on topic %s: %s", topicName, err)
+	}
+
+	for _, msg := range messages {
+		c := &MessageCriteria{InReplyOfID: msg.InReplyOfID}
+		if nb, err := CountMessages(c); err == nil {
+			err := Store().clMessages.Update(
+				bson.M{"_id": msg.ID},
+				bson.M{"$inc": bson.M{"nbReplies": nb}})
+			if err != nil {
+				log.Errorf("Error while updating message for compute replies:%s", err.Error())
+			} else {
+				nbCompute++
+			}
+		}
+	}
+
+	return nbCompute, nil
 }
 
 // DistributionMessages returns distribution of messages per topic

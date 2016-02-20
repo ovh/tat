@@ -711,3 +711,17 @@ func (t *TopicsController) AllSetParam(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"info": info})
 }
+
+// AllComputeReplies computes replies on all topics
+func (t *TopicsController) AllComputeReplies(ctx *gin.Context) {
+	// It's only for admin, admin already checked in route
+	var param attributeJSON
+	ctx.Bind(&param)
+
+	info, err := models.AllTopicsComputeReplies()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": info})
+}
