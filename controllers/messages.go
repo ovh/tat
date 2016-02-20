@@ -339,15 +339,21 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 
 // Delete a message
 func (m *MessagesController) Delete(ctx *gin.Context) {
-	m.messageDelete(ctx, false)
+	m.messageDelete(ctx, false, false)
 }
 
 // DeleteCascade deletes a message and its replies
 func (m *MessagesController) DeleteCascade(ctx *gin.Context) {
-	m.messageDelete(ctx, true)
+	m.messageDelete(ctx, true, false)
 }
 
-func (m *MessagesController) messageDelete(ctx *gin.Context, cascade bool) {
+// DeleteCascadeForce deletes a message and its replies, event if a msg is in a
+// tasks topic of one user
+func (m *MessagesController) DeleteCascadeForce(ctx *gin.Context) {
+	m.messageDelete(ctx, true, true)
+}
+
+func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool) {
 	idMessageIn, err := GetParam(ctx, "idMessage")
 	if err != nil {
 		return
@@ -364,7 +370,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade bool) {
 		return
 	}
 
-	topic, err := m.checkBeforeDelete(ctx, message, user)
+	topic, err := m.checkBeforeDelete(ctx, message, user, force)
 	if err != nil {
 		// ctx writes in checkBeforeDelete
 		return
@@ -384,7 +390,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade bool) {
 
 	if cascade {
 		for _, r := range msgs {
-			_, err := m.checkBeforeDelete(ctx, r, user)
+			_, err := m.checkBeforeDelete(ctx, r, user, force)
 			if err != nil {
 				// ctx writes in checkBeforeDelete
 				return
@@ -408,10 +414,9 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade bool) {
 // checkBeforeDelete checks
 // - if user is RW on topic
 // - if topic is Private OR is CanDeleteMsg or CanDeleteAllMsg
-func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.Message, user models.User) (models.Topic, error) {
+func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.Message, user models.User, force bool) (models.Topic, error) {
 	topic := models.Topic{}
-	err := topic.FindByTopic(message.Topics[0], true, false, false, nil)
-	if err != nil {
+	if err := topic.FindByTopic(message.Topics[0], true, false, false, nil); err != nil {
 		e := fmt.Sprintf("Topic %s does not exist", message.Topics[0])
 		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
 		return topic, fmt.Errorf(e)
@@ -448,7 +453,7 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 				continue
 			}
 			// if label done on msg, can delete it
-			if !message.ContainsLabel("done") {
+			if !force && !message.ContainsLabel("done") {
 				e := fmt.Sprintf("Could not delete a message in a tasks topic")
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
 				return topic, fmt.Errorf(e)
@@ -624,7 +629,7 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *messageJ
 
 func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
 	// Check if user can delete msg on from topic
-	_, err := m.checkBeforeDelete(ctx, message, user)
+	_, err := m.checkBeforeDelete(ctx, message, user, true)
 	if err != nil {
 		// ctx writes in checkBeforeDelete
 		return

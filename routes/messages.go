@@ -16,6 +16,9 @@ func InitRoutesMessages(router *gin.Engine) {
 
 		// Delete a message and its replies
 		g.DELETE("/cascade/:idMessage", messagesCtrl.DeleteCascade)
+
+		// Delete a message and its replies, event if it's in a Tasks Topic of one user
+		g.DELETE("/cascadeforce/:idMessage", messagesCtrl.DeleteCascadeForce)
 	}
 
 	r := router.Group("/read")

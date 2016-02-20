@@ -226,6 +226,13 @@ curl -XDELETE \
 	https://<tatHostname>:<tatPort>/messages/cascade/9797q87KJhqsfO7Usdqd
 ```
 
+### Delete a message and its replies, even if it's in Tasks Topic of one user
+```
+curl -XDELETE \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	https://<tatHostname>:<tatPort>/messages/cascadeforce/9797q87KJhqsfO7Usdqd
+```
 
 ### Create a task from a message
 Add a message to topic: `/Private/username/Tasks`.
