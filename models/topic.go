@@ -673,6 +673,7 @@ func AllTopicsComputeReplies() (string, error) {
 	var topics []Topic
 	err := Store().clTopics.Find(bson.M{}).
 		Select(getTopicSelectedFields(true, false, false)).
+		Sort("topic").
 		All(&topics)
 
 	if err != nil {

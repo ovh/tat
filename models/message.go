@@ -1095,19 +1095,23 @@ func ComputeReplies(topicName string) (int, error) {
 	var messages []Message
 
 	var query = []bson.M{}
-	query = append(query, bson.M{"topics": bson.M{"$in": strings.Split(topicName, ",")}})
-	b := bson.M{"inReplyOfID": bson.M{"$exists": true, "$ne": ""}}
-	query = append(query, b)
-	if err := Store().clMessages.Find(query).All(&messages); err != nil {
+	query = append(query, bson.M{"topics": bson.M{"$in": [1]string{topicName}}})
+	query = append(query, bson.M{"inReplyOfID": bson.M{"$exists": true, "$ne": ""}})
+	if err := Store().clMessages.Find(bson.M{"$and": query}).All(&messages); err != nil {
 		log.Errorf("Error while find messages for compute replies on topic %s: %s", topicName, err)
 	}
+	log.Debugf("ComputeReplies query %s", query)
+	log.Debugf("ComputeReplies on topic %s, %d msg", topicName, len(messages))
 
 	for _, msg := range messages {
+		if msg.InReplyOfID == "" {
+			continue
+		}
 		c := &MessageCriteria{InReplyOfID: msg.InReplyOfID}
 		if nb, err := CountMessages(c); err == nil {
 			err := Store().clMessages.Update(
-				bson.M{"_id": msg.ID},
-				bson.M{"$inc": bson.M{"nbReplies": nb}})
+				bson.M{"_id": msg.InReplyOfID},
+				bson.M{"$set": bson.M{"nbReplies": nb}})
 			if err != nil {
 				log.Errorf("Error while updating message for compute replies:%s", err.Error())
 			} else {
