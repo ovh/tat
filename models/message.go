@@ -84,6 +84,7 @@ type MessageCriteria struct {
 	LimitMaxNbVotesUP   string
 	LimitMaxNbVotesDown string
 	OnlyMsgRoot         string
+	OnlyCount           string
 }
 
 func buildMessageCriteria(criteria *MessageCriteria) bson.M {
@@ -316,6 +317,15 @@ func ListMessages(criteria *MessageCriteria) ([]Message, error) {
 	}
 
 	return messages, err
+}
+
+// CountMessages list messages with given criterias
+func CountMessages(criteria *MessageCriteria) (int, error) {
+	count, err := Store().clMessages.Find(buildMessageCriteria(criteria)).Count()
+	if err != nil {
+		log.Errorf("Error while Count Messages %s", err)
+	}
+	return count, err
 }
 
 func filterNbReplies(messages []Message, criteria *MessageCriteria) ([]Message, error) {
@@ -1055,8 +1065,8 @@ func changeUsernameOnMessagesTopics(oldUsername, newUsername string) error {
 	return err
 }
 
-// CountMessages returns the total number of messages in db
-func CountMessages() (int, error) {
+// CountAllMessages returns the total number of messages in db
+func CountAllMessages() (int, error) {
 	return Store().clMessages.Count()
 }
 

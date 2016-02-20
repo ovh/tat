@@ -21,6 +21,10 @@ type messagesJSON struct {
 	IsTopicRw bool             `json:"isTopicRw"`
 }
 
+type messagesCountJSON struct {
+	Count int `json:"count"`
+}
+
 type messageJSONOut struct {
 	Message models.Message `json:"message"`
 	Info    string         `json:"info"`
@@ -74,6 +78,7 @@ func (*MessagesController) buildCriteria(ctx *gin.Context) *models.MessageCriter
 	c.LimitMinNbReplies = ctx.Query("limitMinNbReplies")
 	c.LimitMaxNbReplies = ctx.Query("limitMaxNbReplies")
 	c.OnlyMsgRoot = ctx.Query("onlyMsgRoot")
+	c.OnlyCount = ctx.Query("onlyCount")
 	return &c
 }
 
@@ -140,6 +145,16 @@ func (m *MessagesController) List(ctx *gin.Context) {
 		return
 	}
 
+	if criteria.OnlyCount == "true" {
+		count, err := models.CountMessages(criteria)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		ctx.JSON(http.StatusOK, &messagesCountJSON{Count: count})
+		return
+	}
+
 	// send presence
 	if presenceArg != "" && !user.IsSystem {
 		go func() {
@@ -150,7 +165,6 @@ func (m *MessagesController) List(ctx *gin.Context) {
 			}
 			go models.WSPresence(&models.WSPresenceJSON{Action: "create", Presence: presence})
 		}()
-
 	}
 
 	messages, err := models.ListMessages(criteria)

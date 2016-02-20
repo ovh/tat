@@ -24,7 +24,7 @@ func (*StatsController) Count(ctx *gin.Context) {
 		nbGroups = -1
 	}
 
-	nbMessages, err := models.CountMessages()
+	nbMessages, err := models.CountAllMessages()
 	if err != nil {
 		log.Errorf("Error while count all messages %s", err)
 		nbMessages = -1
