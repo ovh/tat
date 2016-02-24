@@ -1361,41 +1361,6 @@ docker run -it --rm --name tat-instance1 --link tat-mongo:mongodb \
   -e production=true -p 8080:8080 tat
 ```
 
-## Run with Sailabove
-### Mongo DB Service
-```
-docker pull mongo:3.1.6
-docker tag mongo:3.1.6 sailabove.io/<yourSailaboveUsername>/tat-mongo:3.1.6
-docker push sailabove.io/<yourSailaboveUsername>/tat-mongo:3.1.6
-sail services add --network private --volume /data/db:12 <yourSailaboveUsername>/tat-mongo:3.1.6 tat-mongo
-```
-
-### Tat Engine Service
-```
-git clone https://github.com/ovh/tat.git && cd tat
-docker build -t tat .
-docker tag -f tat sailabove.io/<yourSailaboveUsername>/tat
-docker push sailabove.io/<yourSailaboveUsername>/tat
-
-sail services add <yourSailaboveUsername>/tat \
-  --network predictor \
-  --network private \
-  --link tat-mongo:mongodb \
-  -e TAT_DB_ADDR=mongodb:27017 \
-  -e TAT_LISTEN_PORT=80
-  -e TAT_EXPOSED_HOST=tat-engine.<yourSailaboveUsername>.app.sailabove.io \
-  -e TAT_EXPOSED_PORT=443 \
-  -e TAT_EXPOSED_SCHEME=https \
-  -e TAT_SMTP_HOST=yourSMTPHost \
-  -e TAT_SMTP_FROM=yourSMTPUser \
-  -e TAT_SMTP_PORT=yourSMTPPort \
-  -e TAT_SMTP_USER=yourSMTPUser \
-  -e TAT_USERNAME_FROM_EMAIL=true \
-  -e TAT_SMTP_TLS=false \
-  -e TAT_WEBSOCKET_ENABLED=false \
-  -e TAT_PRODUCTION=true -p 80:80 tat-engine
-```
-
 ## Dev RUN
 
 ```
@@ -1427,16 +1392,13 @@ is same than
 
 # Hacking
 
-Tat is written in Go 1.5, using the experimental vendoring
-mechanism introduced in this version. Make sure you are using at least
-version 1.5.
+Best with go >= 1.6.
 
 ```bash
 mkdir -p $GOPATH/src/github.com/ovh
 cd $GOPATH/src/github.com/ovh
 git clone git@github.com:ovh/tat.git
 cd $GOPATH/src/github.com/ovh/tat
-export GO15VENDOREXPERIMENT=1
 go build
 ```
 
