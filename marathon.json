@@ -6,7 +6,7 @@
       "network": "BRIDGE",
       "portMappings": [
         {
-          "containerPort": 8080,
+          "containerPort": {{.tat_listen_port}},
           "hostPort": 0,
           "protocol": "tcp"
         }
