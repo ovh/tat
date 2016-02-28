@@ -224,6 +224,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, model
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return messageIn, message, topic, err
 			}
+			topicName = m.inverseIfDMTopic(ctx, topicName)
 		} else if messageIn.Action == "bookmark" {
 			topicAction := m.getTopicNameFromAction(utils.GetCtxUsername(ctx), messageIn.Action)
 			if !strings.HasPrefix(messageIn.Topic, topicAction) {
@@ -316,8 +317,7 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 		return
 	}
 
-	isRw := topic.IsUserRW(&user)
-	if !isRw {
+	if !topic.IsUserRW(&user) {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("No RW Access to topic : "+messageIn.Topic))
 		return
 	}
@@ -650,8 +650,7 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *messageJSO
 	}
 
 	// Check if user can write msg from dest topic
-	isRw := topic.IsUserRW(&user)
-	if !isRw {
+	if !topic.IsUserRW(&user) {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No RW Access to topic %s", topic.Topic)})
 		return
 	}
