@@ -320,7 +320,7 @@ curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit
 * `topic`: /yourTopic/subTopic
 * `skip`: Skip skips over the n initial documents from the query results
 * `limit`: Limit restricts the maximum number of documents retrieved
-* `text`: you text
+* `text`: your text
 * `idMessage`: message Id
 * `inReplyOfID`: message Id replied
 * `inReplyOfIDRoot`: message Id root replied

@@ -132,12 +132,7 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 	}
 
 	if criteria.Text != "" {
-		queryTexts := bson.M{}
-		queryTexts["$or"] = []bson.M{}
-		for _, val := range strings.Split(criteria.Text, ",") {
-			queryTexts["$or"] = append(queryTexts["$or"].([]bson.M), bson.M{"text": bson.RegEx{Pattern: "^.*" + regexp.QuoteMeta(val) + ".*$", Options: "im"}})
-		}
-		query = append(query, queryTexts)
+		query = append(query, bson.M{"text": bson.RegEx{Pattern: "^.*" + regexp.QuoteMeta(criteria.Text) + ".*$", Options: "im"}})
 	}
 	if criteria.Topic != "" {
 		queryTopics := bson.M{}
