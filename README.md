@@ -621,6 +621,24 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/me/disable/notifications/topics/myTopic/sub-topic
 ```
 
+### Enable notifications on all topics
+```
+curl -XPOST \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: userA \
+    -H "Tat_password: password" \
+    https://<tatHostname>:<tatPort>/user/me/enable/notifications/alltopics
+```
+
+### Disable notifications on all topics
+```
+curl -XPOST \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: userA" \
+    -H "Tat_password: password" \
+    https://<tatHostname>:<tatPort>/user/me/disable/notifications/alltopics
+```
+
 ### Add a favorite tag
 ```
 curl -XPOST \

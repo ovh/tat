@@ -416,13 +416,42 @@ func (*UsersController) DisableNotificationsTopic(ctx *gin.Context) {
 		return
 	}
 
-	err = user.DisableNotificationsTopic(topicIn)
-	if err != nil {
+	if err := user.DisableNotificationsTopic(topicIn); err != nil {
 		e := fmt.Errorf("Error while disable notications on topic %s to user:%s err:%s", topicIn, user.Username, err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("Notications disabled on topic %s", topicIn)})
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("Notications disabled on topic %s", topicIn)})
+}
+
+// EnableNotificationsAllTopics enables notifications on all topics
+func (*UsersController) EnableNotificationsAllTopics(ctx *gin.Context) {
+	user, err := PreCheckUser(ctx)
+	if err != nil {
+		return
+	}
+
+	if err := user.EnableNotificationsAllTopics(); err != nil {
+		e := fmt.Errorf("Error while enable notications on all topics to user:%s err:%s", user.Username, err.Error())
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("Notications enabled on all topics")})
+}
+
+// DisableNotificationsAllTopics disables notifications on all topics
+func (*UsersController) DisableNotificationsAllTopics(ctx *gin.Context) {
+	user, err := PreCheckUser(ctx)
+	if err != nil {
+		return
+	}
+
+	if err := user.DisableNotificationsAllTopics(); err != nil {
+		e := fmt.Errorf("Error while disable notications on all topics to user:%s err:%s", user.Username, err.Error())
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("Notications disabled on all topics")})
 }
 
 // AddFavoriteTag add a favorite tag to user

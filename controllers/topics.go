@@ -74,8 +74,7 @@ func (*TopicsController) buildCriteria(ctx *gin.Context) *models.TopicCriteria {
 func (t *TopicsController) List(ctx *gin.Context) {
 	criteria := t.buildCriteria(ctx)
 	var user = &models.User{}
-	err := user.FindByUsername(utils.GetCtxUsername(ctx))
-	if err != nil {
+	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
 		return
 	}

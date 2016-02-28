@@ -28,6 +28,9 @@ func InitRoutesUsers(router *gin.Engine) {
 
 		g.POST("/me/enable/notifications/topics/*topic", usersCtrl.EnableNotificationsTopic)
 		g.POST("/me/disable/notifications/topics/*topic", usersCtrl.DisableNotificationsTopic)
+
+		g.POST("/me/enable/notifications/alltopics", usersCtrl.EnableNotificationsAllTopics)
+		g.POST("/me/disable/notifications/alltopics", usersCtrl.DisableNotificationsAllTopics)
 	}
 
 	admin := router.Group("/user")

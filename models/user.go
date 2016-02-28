@@ -615,14 +615,9 @@ func (user *User) EnableNotificationsTopic(topic string) error {
 		return fmt.Errorf("Enable notifications on topic %s is not possible, notifications are already enabled", topicName)
 	}
 
-	err = Store().clUsers.Update(
+	return Store().clUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$pull": bson.M{"offNotificationsTopics": t}})
-
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // DisableNotificationsTopic add topic to user list offNotificationsTopics
@@ -631,14 +626,37 @@ func (user *User) DisableNotificationsTopic(topic string) error {
 		return fmt.Errorf("DisableNotificationsTopic not possible, notifications are already off on topic %s", topic)
 	}
 
-	err := Store().clUsers.Update(
+	return Store().clUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$push": bson.M{"offNotificationsTopics": topic}})
+}
+
+// EnableNotificationsAllTopics removes all topics from user list offNotificationsTopics
+func (user *User) EnableNotificationsAllTopics() error {
+	return Store().clUsers.Update(
+		bson.M{"_id": user.ID},
+		bson.M{"$set": bson.M{"offNotificationsTopics": []bson.M{}}})
+}
+
+// DisableNotificationsAllTopics add all topics to user list offNotificationsTopics
+func (user *User) DisableNotificationsAllTopics() error {
+	criteria := &TopicCriteria{
+		Skip:  0,
+		Limit: 9000000,
+	}
+	_, topics, err := ListTopics(criteria, user)
 	if err != nil {
 		return err
 	}
-	return nil
 
+	topicsToSet := []string{}
+	for _, topic := range topics {
+		topicsToSet = append(topicsToSet, topic.Topic)
+	}
+
+	return Store().clUsers.Update(
+		bson.M{"_id": user.ID},
+		bson.M{"$set": bson.M{"offNotificationsTopics": topicsToSet}})
 }
 
 func (user *User) getFavoriteTag(tag string) (string, error) {
@@ -664,13 +682,9 @@ func (user *User) AddFavoriteTag(tag string) error {
 	if user.containsFavoriteTag(tag) {
 		return fmt.Errorf("AddFavoriteTag not possible, %s is already a favorite tag", tag)
 	}
-	err := Store().clUsers.Update(
+	return Store().clUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$push": bson.M{"favoritesTags": tag}})
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // RemoveFavoriteTag remove a favorite tag from user
@@ -680,14 +694,9 @@ func (user *User) RemoveFavoriteTag(tag string) error {
 		return fmt.Errorf("Remove favorite tag is not possible, %s is not a favorite of this user", tag)
 	}
 
-	err = Store().clUsers.Update(
+	return Store().clUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$pull": bson.M{"favoritesTags": t}})
-
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func (user *User) getContact(contactUsername string) (Contact, error) {
@@ -715,14 +724,9 @@ func (user *User) AddContact(contactUsername string, contactFullname string) err
 	}
 	var newContact = &Contact{Username: contactUsername, Fullname: contactFullname}
 
-	err := Store().clUsers.Update(
+	return Store().clUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$push": bson.M{"contacts": newContact}})
-
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // RemoveContact removes a contact from user
@@ -732,14 +736,9 @@ func (user *User) RemoveContact(contactUsername string) error {
 		return fmt.Errorf("Remove Contact is not possible, %s is not a contact of this user", contactUsername)
 	}
 
-	err = Store().clUsers.Update(
+	return Store().clUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$pull": bson.M{"contacts": l}})
-
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // ConvertToSystem set attribute IsSysetm to true and suffix mail with a random string. If
@@ -787,14 +786,9 @@ func (user *User) ResetSystemUserPassword() (string, error) {
 // ConvertToAdmin set attribute IsAdmin to true
 func (user *User) ConvertToAdmin(userAdmin string) error {
 	log.Warnf("%s grant %s to admin", userAdmin, user.Username)
-	err := Store().clUsers.Update(
+	return Store().clUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$set": bson.M{"isAdmin": true}})
-
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // Archive changes username of one user and set attribute email, username to random string
@@ -845,14 +839,9 @@ func (user *User) Update(newFullname, newEmail string) error {
 		return fmt.Errorf("Fullname %s already exists", newFullname)
 	}
 
-	err := Store().clUsers.Update(
+	return Store().clUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$set": bson.M{"fullname": newFullname, "email": newEmail}})
-
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // CountUsers returns the total number of users in db
