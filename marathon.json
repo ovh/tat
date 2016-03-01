@@ -37,6 +37,18 @@
     "TAT_HEADER_TRUST_USERNAME": "{{.tat_header_trust_username}}",
     "TAT_PRODUCTION": "{{.tat_production}}"
   },
+  "healthChecks": [
+    {
+        "path": "/version",
+        "protocol": "HTTP",
+        "portIndex": 0,
+        "gracePeriodSeconds": 15,
+        "intervalSeconds": 60,
+        "timeoutSeconds": 10,
+        "maxConsecutiveFailures": 3,
+        "ignoreHttp1xx": false
+    }
+  ],
   "id": "/{{.id}}",
   "instances": {{.nb_instances}},
   "labels": {
