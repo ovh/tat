@@ -55,5 +55,6 @@
     "HAPROXY_0_MODE": "{{.haproxy_0_mode}}",
     "HAPROXY_0_VHOST": "{{.haproxy_0_vhost}}"
   },
+  "constraints": [["hostname", "UNIQUE"]],
   "mem": {{.mem}}
 }

@@ -1,14 +1,10 @@
 #!/bin/bash
 
 for GOOS in darwin linux ; do
-    for GOARCH in 386 amd64 arm; do
-        if [[ $GOARCH == "arm" && $GOOS != "linux" ]]; then
-          continue;
-        fi;
-        architecture="${GOOS}-${GOARCH}"
-        echo "Building ${architecture} ${path}"
-        export GOOS=$GOOS
-        export GOARCH=$GOARCH
-        go build -o bin/tat-${architecture}
-    done
+    GOARCH=amd64
+    architecture="${GOOS}-${GOARCH}"
+    echo "Building ${architecture} ${path}"
+    export GOOS=$GOOS
+    export GOARCH=$GOARCH
+    CGO_ENABLED=0 go build -a -installsuffix cgo -o bin/tat-${architecture}
 done

@@ -1,11 +1,11 @@
-FROM golang:1.5.1
-
-RUN mkdir -p /go/src/github.com/ovh/tat
-WORKDIR /go/src/github.com/ovh/tat
-
-# this will ideally be built by the ONBUILD below ;)
-CMD ["go-wrapper", "run"]
-
-COPY . /go/src/github.com/ovh/tat
-RUN go-wrapper download
-RUN go-wrapper install
+FROM alpine
+MAINTAINER yvonnick.esnault@corp.ovh.com
+RUN apk add --update -t deps wget ca-certificates && \
+    mkdir /app && cd /app && \
+    TAT_VERSION=1.1.0 && \
+    wget https://github.com/ovh/tat/releases/download/v${TAT_VERSION}/tat-linux-amd64 && \
+    chmod +x tat-linux-amd64 && \
+    chown -R nobody:nogroup /app && \
+    apk del --purge deps
+USER nobody
+CMD ["/app/tat-linux-amd64"]

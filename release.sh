@@ -40,6 +40,10 @@ then
 else
     sed -i.bak "s/const VERSION =.*/const VERSION = \"$version\"/g" controllers/system.go
     rm -f controllers/system.go.bak
+
+    sed -i.bak "s/TAT_VERSION=.*/TAT_VERSION=\"$version\" \&\& \\\/g" Dockerfile
+    rm -f Dockerfile.bak
+
     git commit -am "[auto] bump version to v$version"
     git tag -s "v$version"
 fi
