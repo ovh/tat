@@ -147,6 +147,7 @@ func ensureIndexes(store *MongoStore) {
 	ensureIndex(store.clUsers, mgo.Index{Key: []string{"username"}, Unique: true})
 	ensureIndex(store.clUsers, mgo.Index{Key: []string{"email"}, Unique: true})
 	ensureIndex(store.clPresences, mgo.Index{Key: []string{"topic", "-dateTimePresence"}})
+	ensureIndex(store.clPresences, mgo.Index{Key: []string{"userPresence.username", "-datePresence"}})
 }
 
 func listIndex(col *mgo.Collection, drop bool) {
@@ -157,8 +158,7 @@ func listIndex(col *mgo.Collection, drop bool) {
 	for _, index := range indexes {
 		log.Warnf("Info Index : Col %s : %+v", col.Name, index)
 		if drop {
-			err := col.DropIndex(index.Key...)
-			if err != nil {
+			if err := col.DropIndex(index.Key...); err != nil {
 				log.Warnf("Error while dropping index : %s", err)
 			}
 		}
@@ -166,8 +166,7 @@ func listIndex(col *mgo.Collection, drop bool) {
 }
 
 func ensureIndex(col *mgo.Collection, index mgo.Index) {
-	err := col.EnsureIndex(index)
-	if err != nil {
+	if err := col.EnsureIndex(index); err != nil {
 		log.Fatalf("Error while creating index on %s:%s", col.Name, err)
 		return
 	}
@@ -191,8 +190,7 @@ func createDefaultGroup() {
 		Description: "Default Group",
 	}
 
-	err := group.Insert()
-	if err != nil {
+	if err := group.Insert(); err != nil {
 		log.Errorf("Error while Inserting default group %s", err)
 	}
 
