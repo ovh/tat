@@ -58,7 +58,6 @@ func (m *PresencesController) List(ctx *gin.Context) {
 	}
 	criteria := m.buildCriteria(ctx)
 	criteria.Topic = topicIn
-
 	m.listWithCriteria(ctx, criteria)
 }
 
@@ -156,8 +155,7 @@ func (m *PresencesController) create(ctx *gin.Context) {
 	}
 
 	var presence = models.Presence{}
-	err := presence.Upsert(user, topic, presenceIn.Status)
-	if err != nil {
+	if err := presence.Upsert(user, topic, presenceIn.Status); err != nil {
 		log.Errorf("Error while InsertPresence %s", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -604,7 +604,6 @@ func (user *User) getOffNotificationsTopic(topic string) (string, error) {
 
 // EnableNotificationsTopic remove topic from user list offNotificationsTopics
 func (user *User) EnableNotificationsTopic(topic string) error {
-
 	topicName, err := CheckAndFixNameTopic(topic)
 	if err != nil {
 		return err
@@ -638,7 +637,7 @@ func (user *User) EnableNotificationsAllTopics() error {
 		bson.M{"$set": bson.M{"offNotificationsTopics": []bson.M{}}})
 }
 
-// DisableNotificationsAllTopics add all topics to user list offNotificationsTopics
+// DisableNotificationsAllTopics add all topics to user list offNotificationsTopics, except /Private/*
 func (user *User) DisableNotificationsAllTopics() error {
 	criteria := &TopicCriteria{
 		Skip:  0,
@@ -651,7 +650,9 @@ func (user *User) DisableNotificationsAllTopics() error {
 
 	topicsToSet := []string{}
 	for _, topic := range topics {
-		topicsToSet = append(topicsToSet, topic.Topic)
+		if !strings.HasPrefix(topic.Topic, "/Private") {
+			topicsToSet = append(topicsToSet, topic.Topic)
+		}
 	}
 
 	return Store().clUsers.Update(

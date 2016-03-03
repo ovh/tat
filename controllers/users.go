@@ -100,8 +100,7 @@ func (u *UsersController) Create(ctx *gin.Context) {
 		return
 	}
 
-	err := u.checkAllowedDomains(userJSON)
-	if err != nil {
+	if err := u.checkAllowedDomains(userJSON); err != nil {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
@@ -227,8 +226,7 @@ type userJSON struct {
 // Me retrieves all information about me (exception information about Authentication)
 func (*UsersController) Me(ctx *gin.Context) {
 	var user = models.User{}
-	err := user.FindByUsername(utils.GetCtxUsername(ctx))
-	if err != nil {
+	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
 		AbortWithReturnError(ctx, http.StatusInternalServerError, errors.New("Error while fetching user"))
 		return
 	}
@@ -256,8 +254,7 @@ func (*UsersController) Contacts(ctx *gin.Context) {
 	}
 
 	var user = models.User{}
-	err = user.FindByUsername(utils.GetCtxUsername(ctx))
-	if err != nil {
+	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
 		ctx.JSON(http.StatusInternalServerError, errors.New("Error while fetching user"))
 		return
 	}
@@ -288,14 +285,12 @@ func (*UsersController) AddContact(ctx *gin.Context) {
 	}
 
 	var contact = models.User{}
-	err = contact.FindByUsername(contactIn)
-	if err != nil {
+	if err := contact.FindByUsername(contactIn); err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", contactIn))
 		return
 	}
 
-	err = user.AddContact(contact.Username, contact.Fullname)
-	if err != nil {
+	if err := user.AddContact(contact.Username, contact.Fullname); err != nil {
 		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while add contact %s to user:%s", contact.Username, user.Username))
 		return
 	}
@@ -313,8 +308,7 @@ func (*UsersController) RemoveContact(ctx *gin.Context) {
 		return
 	}
 
-	err = user.RemoveContact(contactIn)
-	if err != nil {
+	if err := user.RemoveContact(contactIn); err != nil {
 		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while remove contact %s to user:%s", contactIn, user.Username))
 		return
 	}
@@ -333,20 +327,17 @@ func (*UsersController) AddFavoriteTopic(ctx *gin.Context) {
 	}
 
 	var topic = models.Topic{}
-	err = topic.FindByTopic(topicIn, true, false, false, nil)
-	if err != nil {
+	if err := topic.FindByTopic(topicIn, true, false, false, nil); err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, errors.New("topic "+topicIn+" does not exist"))
 		return
 	}
 
-	isReadAccess := topic.IsUserReadAccess(user)
-	if !isReadAccess {
+	if !topic.IsUserReadAccess(user) {
 		AbortWithReturnError(ctx, http.StatusForbidden, errors.New("No Read Access to this topic"))
 		return
 	}
 
-	err = user.AddFavoriteTopic(topic.Topic)
-	if err != nil {
+	if err := user.AddFavoriteTopic(topic.Topic); err != nil {
 		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while add favorite topic to user:%s", user.Username))
 		return
 	}
@@ -364,8 +355,7 @@ func (*UsersController) RemoveFavoriteTopic(ctx *gin.Context) {
 		return
 	}
 
-	err = user.RemoveFavoriteTopic(topicIn)
-	if err != nil {
+	if err := user.RemoveFavoriteTopic(topicIn); err != nil {
 		e := fmt.Errorf("Error while remove favorite topic %s to user:%s err:%s", topicIn, user.Username, err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
 		return
@@ -385,27 +375,24 @@ func (*UsersController) EnableNotificationsTopic(ctx *gin.Context) {
 	}
 
 	var topic = models.Topic{}
-	err = topic.FindByTopic(topicIn, true, false, false, nil)
-	if err != nil {
+	if err := topic.FindByTopic(topicIn, true, false, false, nil); err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, errors.New("topic "+topicIn+" does not exist"))
 		return
 	}
 
-	isReadAccess := topic.IsUserReadAccess(user)
-	if !isReadAccess {
+	if !topic.IsUserReadAccess(user) {
 		AbortWithReturnError(ctx, http.StatusForbidden, errors.New("No Read Access to this topic"))
 		return
 	}
 
-	err = user.EnableNotificationsTopic(topic.Topic)
-	if err != nil {
+	if err := user.EnableNotificationsTopic(topic.Topic); err != nil {
 		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while enable notication on topic %s to user:%s", topic.Topic, user.Username))
 		return
 	}
 	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("Notications enabled on Topic %s", topic.Topic)})
 }
 
-// DisableNotificationsTopic disable notifications on one topic
+// DisableNotificationsTopic disable notifications on one topic, except /Private/*
 func (*UsersController) DisableNotificationsTopic(ctx *gin.Context) {
 	topicIn, err := GetParam(ctx, "topic")
 	if err != nil {
@@ -465,8 +452,7 @@ func (*UsersController) AddFavoriteTag(ctx *gin.Context) {
 		return
 	}
 
-	err = user.AddFavoriteTag(tagIn)
-	if err != nil {
+	if err = user.AddFavoriteTag(tagIn); err != nil {
 		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while add favorite tag to user:%s", user.Username))
 		return
 	}
@@ -484,8 +470,7 @@ func (*UsersController) RemoveFavoriteTag(ctx *gin.Context) {
 		return
 	}
 
-	err = user.RemoveFavoriteTag(tagIn)
-	if err != nil {
+	if err := user.RemoveFavoriteTag(tagIn); err != nil {
 		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while remove favorite tag to user:%s", user.Username))
 		return
 	}
@@ -509,8 +494,7 @@ func (*UsersController) Convert(ctx *gin.Context) {
 	}
 
 	var userToConvert = models.User{}
-	err := userToConvert.FindByUsername(convertJSON.Username)
-	if err != nil {
+	if err := userToConvert.FindByUsername(convertJSON.Username); err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", convertJSON.Username))
 		return
 	}
@@ -549,8 +533,7 @@ func (*UsersController) UpdateSystemUser(ctx *gin.Context) {
 	}
 
 	var userToConvert = models.User{}
-	err := userToConvert.FindByUsername(convertJSON.Username)
-	if err != nil {
+	if err := userToConvert.FindByUsername(convertJSON.Username); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("user with username %s does not exist", convertJSON.Username)})
 		return
 	}
@@ -560,7 +543,7 @@ func (*UsersController) UpdateSystemUser(ctx *gin.Context) {
 		return
 	}
 
-	err = userToConvert.UpdateSystemUser(convertJSON.CanWriteNotifications, convertJSON.CanListUsersAsAdmin)
+	err := userToConvert.UpdateSystemUser(convertJSON.CanWriteNotifications, convertJSON.CanListUsersAsAdmin)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error while update system user %s", convertJSON.Username)})
 		return
@@ -580,8 +563,7 @@ func (*UsersController) ResetSystemUser(ctx *gin.Context) {
 	}
 
 	var systemUserToReset = models.User{}
-	err := systemUserToReset.FindByUsername(systemUserJSON.Username)
-	if err != nil {
+	if err := systemUserToReset.FindByUsername(systemUserJSON.Username); err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", systemUserJSON.Username))
 		return
 	}
@@ -611,8 +593,7 @@ func (*UsersController) SetAdmin(ctx *gin.Context) {
 	ctx.Bind(&convertJSON)
 
 	var userToGrant = models.User{}
-	err := userToGrant.FindByUsername(convertJSON.Username)
-	if err != nil {
+	if err := userToGrant.FindByUsername(convertJSON.Username); err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", convertJSON.Username))
 		return
 	}
@@ -622,8 +603,7 @@ func (*UsersController) SetAdmin(ctx *gin.Context) {
 		return
 	}
 
-	err = userToGrant.ConvertToAdmin(utils.GetCtxUsername(ctx))
-	if err != nil {
+	if err := userToGrant.ConvertToAdmin(utils.GetCtxUsername(ctx)); err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("Convert %s to admin user failed", convertJSON.Username))
 		return
 	}
@@ -641,8 +621,7 @@ func (*UsersController) Archive(ctx *gin.Context) {
 	ctx.Bind(&archiveJSON)
 
 	var userToArchive = models.User{}
-	err := userToArchive.FindByUsername(archiveJSON.Username)
-	if err != nil {
+	if err := userToArchive.FindByUsername(archiveJSON.Username); err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", archiveJSON.Username))
 		return
 	}
@@ -652,8 +631,7 @@ func (*UsersController) Archive(ctx *gin.Context) {
 		return
 	}
 
-	err = userToArchive.Archive(utils.GetCtxUsername(ctx))
-	if err != nil {
+	if err := userToArchive.Archive(utils.GetCtxUsername(ctx)); err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("archive user %s failed", archiveJSON.Username))
 		return
 	}
@@ -672,14 +650,12 @@ func (*UsersController) Rename(ctx *gin.Context) {
 	ctx.Bind(&renameJSON)
 
 	var userToRename = models.User{}
-	err := userToRename.FindByUsername(renameJSON.Username)
-	if err != nil {
+	if err := userToRename.FindByUsername(renameJSON.Username); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("user with username %s does not exist", renameJSON.Username)})
 		return
 	}
 
-	err = userToRename.Rename(renameJSON.NewUsername)
-	if err != nil {
+	if err := userToRename.Rename(renameJSON.NewUsername); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("Rename %s user to %s failed", renameJSON.Username, renameJSON.NewUsername)})
 		return
 	}
@@ -699,8 +675,7 @@ func (*UsersController) Update(ctx *gin.Context) {
 	ctx.Bind(&updateJSON)
 
 	var userToUpdate = models.User{}
-	err := userToUpdate.FindByUsername(updateJSON.Username)
-	if err != nil {
+	if err := userToUpdate.FindByUsername(updateJSON.Username); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("user with username %s does not exist", updateJSON.Username)})
 		return
 	}
@@ -710,7 +685,7 @@ func (*UsersController) Update(ctx *gin.Context) {
 		return
 	}
 
-	err = userToUpdate.Update(strings.TrimSpace(updateJSON.NewFullname), strings.TrimSpace(updateJSON.NewEmail))
+	err := userToUpdate.Update(strings.TrimSpace(updateJSON.NewFullname), strings.TrimSpace(updateJSON.NewEmail))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Update %s user to fullname %s and email %s failed : %s", updateJSON.Username, updateJSON.NewFullname, updateJSON.NewEmail, err.Error())})
 		return
@@ -733,8 +708,7 @@ func (u *UsersController) Check(ctx *gin.Context) {
 	ctx.Bind(&userJSON)
 
 	var userToCheck = models.User{}
-	err := userToCheck.FindByUsername(userJSON.Username)
-	if err != nil {
+	if err := userToCheck.FindByUsername(userJSON.Username); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("user with username %s does not exist", userJSON.Username)})
 		return
 	}
@@ -763,8 +737,7 @@ func (*UsersController) checkDefaultGroup(fixDefaultGroup bool, userToCheck mode
 	}
 	if !find {
 		if fixDefaultGroup {
-			err = userToCheck.AddDefaultGroup()
-			if err != nil {
+			if err = userToCheck.AddDefaultGroup(); err != nil {
 				return err.Error()
 			}
 			defaultGroupInfo = fmt.Sprintf("user added in default group %s", viper.GetString("default_group"))
@@ -784,12 +757,10 @@ func (*UsersController) checkTopics(fixTopics bool, userToCheck models.User) str
 			topicName = fmt.Sprintf("%s/%s", topicName, shortName)
 		}
 		topic := &models.Topic{}
-		errfinding := topic.FindByTopic(topicName, false, false, false, nil)
-		if errfinding != nil {
+		if errfinding := topic.FindByTopic(topicName, false, false, false, nil); errfinding != nil {
 			topicsInfo = fmt.Sprintf("%s %s KO : not exist; ", topicsInfo, topicName)
 			if fixTopics {
-				err := userToCheck.CreatePrivateTopic(shortName)
-				if err != nil {
+				if err := userToCheck.CreatePrivateTopic(shortName); err != nil {
 					topicsInfo = fmt.Sprintf("%s Error while creating %s; ", topicsInfo, topicName)
 				} else {
 					topicsInfo = fmt.Sprintf("%s %s created; ", topicsInfo, topicName)

@@ -630,7 +630,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/me/enable/notifications/alltopics
 ```
 
-### Disable notifications on all topics
+### Disable notifications on all topics, except /Private/*
 ```
 curl -XPOST \
     -H "Content-Type: application/json" \
