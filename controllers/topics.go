@@ -45,7 +45,7 @@ type topicParameterJSON struct {
 	Recursive bool   `json:"recursive"`
 }
 
-func (*TopicsController) buildCriteria(ctx *gin.Context) *models.TopicCriteria {
+func (*TopicsController) buildCriteria(ctx *gin.Context, user *models.User) *models.TopicCriteria {
 	c := models.TopicCriteria{}
 	skip, e := strconv.Atoi(ctx.DefaultQuery("skip", "0"))
 	if e != nil {
@@ -66,18 +66,23 @@ func (*TopicsController) buildCriteria(ctx *gin.Context) *models.TopicCriteria {
 	c.DateMinCreation = ctx.Query("dateMinCreation")
 	c.DateMaxCreation = ctx.Query("dateMaxCreation")
 	c.GetNbMsgUnread = ctx.Query("getNbMsgUnread")
+	c.OnlyFavorites = ctx.Query("onlyFavorites")
 	c.GetForTatAdmin = ctx.Query("getForTatAdmin")
+
+	if c.OnlyFavorites == "true" {
+		c.Topic = strings.Join(user.FavoritesTopics, ",")
+	}
 	return &c
 }
 
 // List returns the list of topics that can be viewed by user
 func (t *TopicsController) List(ctx *gin.Context) {
-	criteria := t.buildCriteria(ctx)
 	var user = &models.User{}
 	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
 		return
 	}
+	criteria := t.buildCriteria(ctx, user)
 	count, topics, err := models.ListTopics(criteria, user)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching topics."})
@@ -206,8 +211,7 @@ func (t *TopicsController) Delete(ctx *gin.Context) {
 	if e != nil {
 		return
 	}
-	err = topic.Delete(&user)
-	if err != nil {
+	if err = topic.Delete(&user); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -394,8 +398,7 @@ func (t *TopicsController) AddAdminUser(ctx *gin.Context) {
 		return
 	}
 
-	err := topic.AddAdminUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
-	if err != nil {
+	if err := topic.AddAdminUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive); err != nil {
 		log.Errorf("Error while adding admin user: %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -431,8 +434,7 @@ func (t *TopicsController) RemoveRwUser(ctx *gin.Context) {
 		return
 	}
 
-	err := topic.RemoveRwUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
-	if err != nil {
+	if err := topic.RemoveRwUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive); err != nil {
 		log.Errorf("Error while removing read write user: %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -449,8 +451,7 @@ func (t *TopicsController) RemoveAdminUser(ctx *gin.Context) {
 		return
 	}
 
-	err := topic.RemoveAdminUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
-	if err != nil {
+	if err := topic.RemoveAdminUser(utils.GetCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive); err != nil {
 		log.Errorf("Error while removing admin user: %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -472,8 +473,7 @@ func (t *TopicsController) AddRoGroup(ctx *gin.Context) {
 	if e != nil {
 		return
 	}
-	err := topic.AddRoGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
-	if err != nil {
+	if err := topic.AddRoGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive); err != nil {
 		log.Errorf("Error while adding admin read only group: %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -490,8 +490,7 @@ func (t *TopicsController) AddRwGroup(ctx *gin.Context) {
 		return
 	}
 
-	err := topic.AddRwGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
-	if err != nil {
+	if err := topic.AddRwGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive); err != nil {
 		log.Errorf("Error while adding admin read write group: %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -509,8 +508,7 @@ func (t *TopicsController) AddAdminGroup(ctx *gin.Context) {
 		return
 	}
 
-	err := topic.AddAdminGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
-	if err != nil {
+	if err := topic.AddAdminGroup(utils.GetCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive); err != nil {
 		log.Errorf("Error while adding admin admin group: %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

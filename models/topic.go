@@ -56,6 +56,7 @@ type TopicCriteria struct {
 	DateMinCreation string
 	DateMaxCreation string
 	GetNbMsgUnread  string
+	OnlyFavorites   string
 	GetForTatAdmin  string
 	Group           string
 }
@@ -71,12 +72,13 @@ func buildTopicCriteria(criteria *TopicCriteria, user *User) bson.M {
 		}
 		query = append(query, queryIDTopics)
 	}
-	if criteria.Topic != "" {
+	if criteria.Topic != "" || criteria.OnlyFavorites == "true" {
 		queryTopics := bson.M{}
 		queryTopics["$or"] = []bson.M{}
 		for _, val := range strings.Split(criteria.Topic, ",") {
 			queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topic": val})
 		}
+		queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topic": bson.RegEx{Pattern: "/Private/.*"}})
 		query = append(query, queryTopics)
 	}
 	if criteria.Description != "" {
