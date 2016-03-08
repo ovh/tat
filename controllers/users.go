@@ -713,62 +713,8 @@ func (u *UsersController) Check(ctx *gin.Context) {
 		return
 	}
 
-	topicsInfo := u.checkTopics(userJSON.FixPrivateTopics, userToCheck)
-	defaultGroupInfo := u.checkDefaultGroup(userJSON.FixDefaultGroup, userToCheck)
+	topicsInfo := userToCheck.CheckTopics(userJSON.FixPrivateTopics)
+	defaultGroupInfo := userToCheck.CheckDefaultGroup(userJSON.FixDefaultGroup)
 
 	ctx.JSON(http.StatusCreated, gin.H{"topics": topicsInfo, "defaultGroup": defaultGroupInfo})
-}
-
-func (*UsersController) checkDefaultGroup(fixDefaultGroup bool, userToCheck models.User) string {
-	defaultGroupInfo := ""
-
-	userGroups, err := userToCheck.GetGroupsOnlyName()
-	if err != nil {
-		return "Error while fetching user groups"
-	}
-
-	find := false
-	for _, g := range userGroups {
-		if g == viper.GetString("default_group") {
-			find = true
-			defaultGroupInfo = fmt.Sprintf("user in %s OK", viper.GetString("default_group"))
-			break
-		}
-	}
-	if !find {
-		if fixDefaultGroup {
-			if err = userToCheck.AddDefaultGroup(); err != nil {
-				return err.Error()
-			}
-			defaultGroupInfo = fmt.Sprintf("user added in default group %s", viper.GetString("default_group"))
-		} else {
-			defaultGroupInfo = fmt.Sprintf("user in default group %s KO", viper.GetString("default_group"))
-		}
-	}
-	return defaultGroupInfo
-}
-
-func (*UsersController) checkTopics(fixTopics bool, userToCheck models.User) string {
-	topicsInfo := ""
-	topicNames := [...]string{"", "Tasks", "Bookmarks", "Notifications"}
-	for _, shortName := range topicNames {
-		topicName := fmt.Sprintf("/Private/%s", userToCheck.Username)
-		if shortName != "" {
-			topicName = fmt.Sprintf("%s/%s", topicName, shortName)
-		}
-		topic := &models.Topic{}
-		if errfinding := topic.FindByTopic(topicName, false, false, false, nil); errfinding != nil {
-			topicsInfo = fmt.Sprintf("%s %s KO : not exist; ", topicsInfo, topicName)
-			if fixTopics {
-				if err := userToCheck.CreatePrivateTopic(shortName); err != nil {
-					topicsInfo = fmt.Sprintf("%s Error while creating %s; ", topicsInfo, topicName)
-				} else {
-					topicsInfo = fmt.Sprintf("%s %s created; ", topicsInfo, topicName)
-				}
-			}
-		} else {
-			topicsInfo = fmt.Sprintf("%s %s OK; ", topicsInfo, topicName)
-		}
-	}
-	return topicsInfo
 }

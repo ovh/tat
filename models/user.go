@@ -260,15 +260,9 @@ func (user *User) Verify(username, tokenVerify string) (bool, string, error) {
 	if err != nil {
 		return false, "", err
 	}
-
 	password, err := user.regenerateAndStoreAuth()
-
-	if !emailVerified {
-		log.Debugf("%s is a new user, ask to create his topics", username)
-		user.createTopics()
-		user.AddDefaultGroup()
-	}
-
+	user.CheckDefaultGroup(true)
+	user.CheckTopics(true)
 	return !emailVerified, password, err
 }
 
@@ -345,8 +339,7 @@ func (user *User) TrustUsername(username string) error {
 			return fmt.Errorf("TrustUsername, Error while Insert user %s : %s", username, err.Error())
 		}
 
-		_, _, err = user.Verify(username, tokenVerify)
-		if err != nil {
+		if _, _, err = user.Verify(username, tokenVerify); err != nil {
 			return fmt.Errorf("TrustUsername, Error while verify : %s", err.Error())
 		}
 
@@ -412,8 +405,7 @@ func (user *User) findByUsernameAndTokenVerify(username, tokenVerify string) (bo
 	}
 
 	// ok, user is checked, get all fields now
-	err = user.FindByUsername(username)
-	if err != nil {
+	if err = user.FindByUsername(username); err != nil {
 		return false, err
 	}
 
@@ -918,4 +910,60 @@ func (user *User) AddDefaultGroup() error {
 		return e
 	}
 	return nil
+}
+
+// CheckDefaultGroup check default group and creates it if fixDefaultGroup is true
+func (user *User) CheckDefaultGroup(fixDefaultGroup bool) string {
+	defaultGroupInfo := ""
+
+	userGroups, err := user.GetGroupsOnlyName()
+	if err != nil {
+		return "Error while fetching user groups"
+	}
+
+	find := false
+	for _, g := range userGroups {
+		if g == viper.GetString("default_group") {
+			find = true
+			defaultGroupInfo = fmt.Sprintf("user in %s OK", viper.GetString("default_group"))
+			break
+		}
+	}
+	if !find {
+		if fixDefaultGroup {
+			if err = user.AddDefaultGroup(); err != nil {
+				return err.Error()
+			}
+			defaultGroupInfo = fmt.Sprintf("user added in default group %s", viper.GetString("default_group"))
+		} else {
+			defaultGroupInfo = fmt.Sprintf("user in default group %s KO", viper.GetString("default_group"))
+		}
+	}
+	return defaultGroupInfo
+}
+
+// CheckTopics check default topics for user and creates them if fixTopics is true
+func (user *User) CheckTopics(fixTopics bool) string {
+	topicsInfo := ""
+	topicNames := [...]string{"", "Tasks", "Bookmarks", "Notifications"}
+	for _, shortName := range topicNames {
+		topicName := fmt.Sprintf("/Private/%s", user.Username)
+		if shortName != "" {
+			topicName = fmt.Sprintf("%s/%s", topicName, shortName)
+		}
+		topic := &Topic{}
+		if errfinding := topic.FindByTopic(topicName, false, false, false, nil); errfinding != nil {
+			topicsInfo = fmt.Sprintf("%s %s KO : not exist; ", topicsInfo, topicName)
+			if fixTopics {
+				if err := user.CreatePrivateTopic(shortName); err != nil {
+					topicsInfo = fmt.Sprintf("%s Error while creating %s; ", topicsInfo, topicName)
+				} else {
+					topicsInfo = fmt.Sprintf("%s %s created; ", topicsInfo, topicName)
+				}
+			}
+		} else {
+			topicsInfo = fmt.Sprintf("%s %s OK; ", topicsInfo, topicName)
+		}
+	}
+	return topicsInfo
 }
