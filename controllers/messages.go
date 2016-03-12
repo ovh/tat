@@ -612,7 +612,7 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *models.M
 	info = fmt.Sprintf("Message updated in %s", topic.Topic)
 
 	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
-	out := &messageJSONOut{Message: message, Info: info}
+	out := &models.MessageJSONOut{Message: message, Info: info}
 	ctx.JSON(http.StatusOK, out)
 }
 

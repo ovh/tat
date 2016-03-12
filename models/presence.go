@@ -40,6 +40,23 @@ type PresenceCriteria struct {
 	DateMaxPresence string
 }
 
+// PresencesJSON represents list of presences with count for total
+type PresencesJSON struct {
+	Count     int        `json:"count"`
+	Presences []Presence `json:"presences"`
+}
+
+// PresenceJSONOut represents a presence
+type PresenceJSONOut struct {
+	Presence Presence `json:"presence"`
+}
+
+// PresenceJSON represents a status on a topic
+type PresenceJSON struct {
+	Status string `json:"status" binding:"required"`
+	Topic  string
+}
+
 func buildPresenceCriteria(criteria *PresenceCriteria) bson.M {
 	var query = []bson.M{}
 

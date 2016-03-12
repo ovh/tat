@@ -18,11 +18,6 @@ import (
 // UsersController contains all methods about users manipulation
 type UsersController struct{}
 
-type usersJSON struct {
-	Count int           `json:"count"`
-	Users []models.User `json:"users"`
-}
-
 func (*UsersController) buildCriteria(ctx *gin.Context) *models.UserCriteria {
 	c := models.UserCriteria{}
 	skip, e := strconv.Atoi(ctx.DefaultQuery("skip", "0"))
@@ -69,7 +64,7 @@ func (u *UsersController) List(ctx *gin.Context) {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	out := &usersJSON{
+	out := &models.UsersJSON{
 		Count: count,
 		Users: users,
 	}

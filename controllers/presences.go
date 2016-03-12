@@ -16,20 +16,6 @@ import (
 // PresencesController contains all methods about presences manipulation
 type PresencesController struct{}
 
-type presencesJSON struct {
-	Count     int               `json:"count"`
-	Presences []models.Presence `json:"presences"`
-}
-
-type presenceJSONOut struct {
-	Presence models.Presence `json:"presence"`
-}
-
-type presenceJSON struct {
-	Status string `json:"status" binding:"required"`
-	Topic  string
-}
-
 func (*PresencesController) buildCriteria(ctx *gin.Context) *models.PresenceCriteria {
 	c := models.PresenceCriteria{}
 	skip, e := strconv.Atoi(ctx.DefaultQuery("skip", "0"))
@@ -99,16 +85,16 @@ func (m *PresencesController) listWithCriteria(ctx *gin.Context, criteria *model
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	out := &presencesJSON{
+	out := &models.PresencesJSON{
 		Count:     count,
 		Presences: presences,
 	}
 	ctx.JSON(http.StatusOK, out)
 }
 
-func (m *PresencesController) preCheckTopic(ctx *gin.Context) (presenceJSON, models.Topic, error) {
+func (m *PresencesController) preCheckTopic(ctx *gin.Context) (models.PresenceJSON, models.Topic, error) {
 	var topic = models.Topic{}
-	var presenceIn presenceJSON
+	var presenceIn models.PresenceJSON
 	ctx.Bind(&presenceIn)
 
 	topicIn, err := GetParam(ctx, "topic")
@@ -136,7 +122,6 @@ func (*PresencesController) preCheckUser(ctx *gin.Context) (models.User, error) 
 }
 
 func (m *PresencesController) create(ctx *gin.Context) {
-
 	presenceIn, topic, e := m.preCheckTopic(ctx)
 	if e != nil {
 		return

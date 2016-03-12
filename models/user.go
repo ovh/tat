@@ -49,6 +49,12 @@ type User struct {
 	Auth                   Auth      `bson:"auth" json:"-"`
 }
 
+// UsersJSON  represents list of users and count for total
+type UsersJSON struct {
+	Count int    `json:"count"`
+	Users []User `json:"users"`
+}
+
 // UserCriteria is used to list users with criterias
 type UserCriteria struct {
 	Skip            int
