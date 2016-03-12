@@ -16,31 +16,6 @@ import (
 // MessagesController contains all methods about messages manipulation
 type MessagesController struct{}
 
-type messagesJSON struct {
-	Messages  []models.Message `json:"messages"`
-	IsTopicRw bool             `json:"isTopicRw"`
-}
-
-type messagesCountJSON struct {
-	Count int `json:"count"`
-}
-
-type messageJSONOut struct {
-	Message models.Message `json:"message"`
-	Info    string         `json:"info"`
-}
-
-type messageJSON struct {
-	ID           string `json:"_id"`
-	Text         string `json:"text"`
-	Option       string `json:"option"`
-	Topic        string
-	IDReference  string         `json:"idReference"`
-	Action       string         `json:"action"`
-	DateCreation float64        `json:"dateCreation"`
-	Labels       []models.Label `json:"labels"`
-}
-
 func (*MessagesController) buildCriteria(ctx *gin.Context) *models.MessageCriteria {
 	c := models.MessageCriteria{}
 	skip, e := strconv.Atoi(ctx.DefaultQuery("skip", "0"))
@@ -123,7 +98,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 		criteria.Topic = topicCriteria
 	}
 
-	out := &messagesJSON{}
+	out := &models.MessagesJSON{}
 
 	var user models.User
 	var e error
@@ -151,7 +126,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		ctx.JSON(http.StatusOK, &messagesCountJSON{Count: count})
+		ctx.JSON(http.StatusOK, &models.MessagesCountJSON{Count: count})
 		return
 	}
 
@@ -177,10 +152,10 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, out)
 }
 
-func (m *MessagesController) preCheckTopic(ctx *gin.Context) (messageJSON, models.Message, models.Topic, error) {
+func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON, models.Message, models.Topic, error) {
 	var topic = models.Topic{}
 	var message = models.Message{}
-	var messageIn messageJSON
+	var messageIn models.MessageJSON
 	ctx.Bind(&messageIn)
 
 	topicIn, err := GetParam(ctx, "topic")
@@ -295,7 +270,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 		go models.WSMessageNew(&models.WSMessageNewJSON{Topic: topic.Topic})
 		info = fmt.Sprintf("Message created in %s", topic.Topic)
 	}
-	out := &messageJSONOut{Message: message, Info: info}
+	out := &models.MessageJSONOut{Message: message, Info: info}
 	go models.WSMessage(&models.WSMessageJSON{Action: "create", Username: user.Username, Message: message})
 	ctx.JSON(http.StatusCreated, out)
 }
@@ -507,7 +482,7 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 	ctx.JSON(http.StatusCreated, gin.H{"info": info})
 }
 
-func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
+func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
 	if messageIn.Text == "" && messageIn.Action != "relabel" {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid Text for label"))
 		return
@@ -546,7 +521,7 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *messa
 	ctx.JSON(http.StatusCreated, info)
 }
 
-func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
+func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
 	info := ""
 	errInfo := ""
 	if messageIn.Action == "voteup" {
@@ -586,7 +561,7 @@ func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *messageJSO
 	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
-func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
+func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
 	info := ""
 	if messageIn.Action == "task" {
 		if message.InReplyOfIDRoot != "" {
@@ -615,7 +590,7 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *messag
 	ctx.JSON(http.StatusCreated, gin.H{"info": info})
 }
 
-func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
+func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
 	info := ""
 
 	if !topic.CanUpdateMsg && !topic.CanUpdateAllMsg {
@@ -641,7 +616,7 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *messageJ
 	ctx.JSON(http.StatusOK, out)
 }
 
-func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *messageJSON, message models.Message, user models.User, topic models.Topic) {
+func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
 	// Check if user can delete msg on from topic
 	_, err := m.checkBeforeDelete(ctx, message, user, true)
 	if err != nil {

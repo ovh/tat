@@ -88,6 +88,35 @@ type MessageCriteria struct {
 	OnlyCount           string
 }
 
+// MessagesJSON represents a message and information if current topic is RW
+type MessagesJSON struct {
+	Messages  []Message `json:"messages"`
+	IsTopicRw bool      `json:"isTopicRw"`
+}
+
+// MessagesCountJSON represents count of messages
+type MessagesCountJSON struct {
+	Count int `json:"count"`
+}
+
+// MessageJSONOut represents a message and an additional info
+type MessageJSONOut struct {
+	Message Message `json:"message"`
+	Info    string  `json:"info"`
+}
+
+// MessageJSON represents a message with action on it
+type MessageJSON struct {
+	ID           string `json:"_id"`
+	Text         string `json:"text"`
+	Option       string `json:"option"`
+	Topic        string
+	IDReference  string  `json:"idReference"`
+	Action       string  `json:"action"`
+	DateCreation float64 `json:"dateCreation"`
+	Labels       []Label `json:"labels"`
+}
+
 func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 	var query = []bson.M{}
 

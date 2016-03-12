@@ -16,17 +16,6 @@ import (
 // TopicsController contains all methods about topics manipulation
 type TopicsController struct{}
 
-type topicsJSON struct {
-	Count                int            `json:"count"`
-	Topics               []models.Topic `json:"topics"`
-	CountTopicsMsgUnread int            `json:"countTopicsMsgUnread"`
-	TopicsMsgUnread      map[string]int `json:"topicsMsgUnread"`
-}
-
-type topicJSON struct {
-	Topic *models.Topic `json:"topic"`
-}
-
 type paramTopicUserJSON struct {
 	Topic     string `json:"topic"` // topic topic
 	Username  string `json:"username"`
@@ -89,7 +78,7 @@ func (t *TopicsController) List(ctx *gin.Context) {
 		return
 	}
 
-	out := &topicsJSON{Topics: topics, Count: count}
+	out := &models.TopicsJSON{Topics: topics, Count: count}
 
 	if criteria.GetNbMsgUnread == "true" {
 		c := &models.PresenceCriteria{
@@ -158,7 +147,7 @@ func (t *TopicsController) OneTopic(ctx *gin.Context) {
 		return
 	}
 
-	out := &topicJSON{Topic: topic}
+	out := &models.TopicJSON{Topic: topic}
 	ctx.JSON(http.StatusOK, out)
 }
 

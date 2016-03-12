@@ -61,6 +61,19 @@ type TopicCriteria struct {
 	Group           string
 }
 
+// TopicsJSON represents struct used by Engine while returns list of topics
+type TopicsJSON struct {
+	Count                int            `json:"count"`
+	Topics               []Topic        `json:"topics"`
+	CountTopicsMsgUnread int            `json:"countTopicsMsgUnread"`
+	TopicsMsgUnread      map[string]int `json:"topicsMsgUnread"`
+}
+
+// TopicJSON represents struct used by Engine while returns one topic
+type TopicJSON struct {
+	Topic *Topic `json:"topic"`
+}
+
 func buildTopicCriteria(criteria *TopicCriteria, user *User) bson.M {
 	var query = []bson.M{}
 
