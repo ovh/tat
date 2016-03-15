@@ -687,7 +687,7 @@ func (message *Message) insertNotification(author User, usernameMention string) 
 	notif := Message{}
 	text := fmt.Sprintf("#mention #idMessage:%s #topic:%s %s", message.ID, message.Topics[0], message.Text)
 	topicname := fmt.Sprintf("/Private/%s/Notifications", usernameMention)
-	labels := []Label{Label{Text: "unread", Color: "#d04437"}}
+	labels := []Label{{Text: "unread", Color: "#d04437"}}
 	var topic = Topic{}
 	if err := topic.FindByTopic(topicname, false, false, false, nil); err != nil {
 		return
@@ -789,7 +789,7 @@ func (message *Message) Move(user User, newTopic Topic) error {
 	// here, ok, we can move
 	topicUpdate := []string{newTopic.Topic}
 	_, err = Store().clMessages.UpdateAll(
-		bson.M{"$or": []bson.M{bson.M{"_id": message.ID}, bson.M{"inReplyOfIDRoot": message.ID}}},
+		bson.M{"$or": []bson.M{{"_id": message.ID}, {"inReplyOfIDRoot": message.ID}}},
 		bson.M{"$set": bson.M{"topics": topicUpdate}})
 
 	if err != nil {
@@ -816,7 +816,7 @@ func (message *Message) Delete(cascade bool) error {
 	}
 
 	if cascade {
-		_, err := Store().clMessages.RemoveAll(bson.M{"$or": []bson.M{bson.M{"_id": message.ID}, bson.M{"inReplyOfIDRoot": message.ID}}})
+		_, err := Store().clMessages.RemoveAll(bson.M{"$or": []bson.M{{"_id": message.ID}, {"inReplyOfIDRoot": message.ID}}})
 		return err
 	}
 	return Store().clMessages.Remove(bson.M{"_id": message.ID})
@@ -998,7 +998,7 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 	}
 
 	_, err := Store().clMessages.UpdateAll(
-		bson.M{"$or": []bson.M{bson.M{"_id": idRoot}, bson.M{"inReplyOfIDRoot": idRoot}}},
+		bson.M{"$or": []bson.M{{"_id": idRoot}, {"inReplyOfIDRoot": idRoot}}},
 		bson.M{"$" + action: bson.M{"topics": topicTasksName}})
 
 	if err != nil {
