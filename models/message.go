@@ -344,7 +344,7 @@ func ListMessages(criteria *MessageCriteria) ([]Message, error) {
 	return messages, err
 }
 
-// CountMessages list messages with given criterias
+// CountMessages list messages with given criteria
 func CountMessages(criteria *MessageCriteria) (int, error) {
 	count, err := Store().clMessages.Find(buildMessageCriteria(criteria)).Count()
 	if err != nil {

@@ -36,7 +36,7 @@ func (*PresencesController) buildCriteria(ctx *gin.Context) *models.PresenceCrit
 	return &c
 }
 
-// List list presences with given criterias
+// List list presences with given criteria
 func (m *PresencesController) List(ctx *gin.Context) {
 	topicIn, err := GetParam(ctx, "topic")
 	if err != nil {

@@ -51,7 +51,7 @@ func (*GroupsController) buildCriteria(ctx *gin.Context) *models.GroupCriteria {
 	return &c
 }
 
-// List list groups with given criterias
+// List list groups with given criteria
 func (g *GroupsController) List(ctx *gin.Context) {
 	var criteria models.GroupCriteria
 	ctx.Bind(&criteria)
@@ -76,12 +76,12 @@ func (g *GroupsController) List(ctx *gin.Context) {
 
 // Create creates a new group
 func (*GroupsController) Create(ctx *gin.Context) {
-	var groupJSON groupJSON
-	ctx.Bind(&groupJSON)
+	var groupBind groupJSON
+	ctx.Bind(&groupBind)
 
 	var groupIn models.Group
-	groupIn.Name = groupJSON.Name
-	groupIn.Description = groupJSON.Description
+	groupIn.Name = groupBind.Name
+	groupIn.Description = groupBind.Description
 
 	err := groupIn.Insert()
 	if err != nil {

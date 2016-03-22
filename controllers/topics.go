@@ -508,14 +508,14 @@ func (t *TopicsController) AddAdminGroup(ctx *gin.Context) {
 
 // AddParameter add a parameter on selected topic
 func (t *TopicsController) AddParameter(ctx *gin.Context) {
-	var topicParameterJSON topicParameterJSON
-	ctx.Bind(&topicParameterJSON)
-	topic, e := t.preCheckUserAdminOnTopic(ctx, topicParameterJSON.Topic)
+	var topicParameterBind topicParameterJSON
+	ctx.Bind(&topicParameterBind)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, topicParameterBind.Topic)
 	if e != nil {
 		return
 	}
 
-	err := topic.AddParameter(utils.GetCtxUsername(ctx), topicParameterJSON.Key, topicParameterJSON.Value, topicParameterJSON.Recursive)
+	err := topic.AddParameter(utils.GetCtxUsername(ctx), topicParameterBind.Key, topicParameterBind.Value, topicParameterBind.Recursive)
 	if err != nil {
 		log.Errorf("Error while adding parameter: %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -527,15 +527,15 @@ func (t *TopicsController) AddParameter(ctx *gin.Context) {
 
 // RemoveParameter add a parameter on selected topic
 func (t *TopicsController) RemoveParameter(ctx *gin.Context) {
-	var topicParameterJSON topicParameterJSON
-	ctx.Bind(&topicParameterJSON)
+	var topicParameterBind topicParameterJSON
+	ctx.Bind(&topicParameterBind)
 
-	topic, e := t.preCheckUserAdminOnTopic(ctx, topicParameterJSON.Topic)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, topicParameterBind.Topic)
 	if e != nil {
 		return
 	}
 
-	err := topic.RemoveParameter(utils.GetCtxUsername(ctx), topicParameterJSON.Key, topicParameterJSON.Value, topicParameterJSON.Recursive)
+	err := topic.RemoveParameter(utils.GetCtxUsername(ctx), topicParameterBind.Key, topicParameterBind.Value, topicParameterBind.Recursive)
 	if err != nil {
 		log.Errorf("Error while removing parameter: %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -617,19 +617,18 @@ type paramsJSON struct {
 // SetParam update Topic Parameters : MaxLength, CanForeceDate, CanUpdateMsg, CanDeleteMsg, CanUpdateAllMsg, CanDeleteAllMsg, IsROPublic
 // admin only, except on Private topic
 func (t *TopicsController) SetParam(ctx *gin.Context) {
-	var paramsJSON paramsJSON
-	ctx.Bind(&paramsJSON)
+	var paramsBind paramsJSON
+	ctx.Bind(&paramsBind)
 
 	topic := models.Topic{}
 	var err error
-	if strings.HasPrefix(paramsJSON.Topic, "/Private/"+utils.GetCtxUsername(ctx)) {
-		err := topic.FindByTopic(paramsJSON.Topic, false, false, false, nil)
-		if err != nil {
+	if strings.HasPrefix(paramsBind.Topic, "/Private/"+utils.GetCtxUsername(ctx)) {
+		if errFind := topic.FindByTopic(paramsBind.Topic, false, false, false, nil); errFind != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching topic /Private/" + utils.GetCtxUsername(ctx)})
 			return
 		}
 	} else {
-		topic, err = t.preCheckUserAdminOnTopic(ctx, paramsJSON.Topic)
+		topic, err = t.preCheckUserAdminOnTopic(ctx, paramsBind.Topic)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, err)
 			return
@@ -637,17 +636,17 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 	}
 
 	err = topic.SetParam(utils.GetCtxUsername(ctx),
-		paramsJSON.Recursive,
-		paramsJSON.MaxLength,
-		paramsJSON.CanForceDate,
-		paramsJSON.CanUpdateMsg,
-		paramsJSON.CanDeleteMsg,
-		paramsJSON.CanUpdateAllMsg,
-		paramsJSON.CanDeleteAllMsg,
-		paramsJSON.IsROPublic,
-		paramsJSON.IsAutoComputeTags,
-		paramsJSON.IsAutoComputeLabels,
-		paramsJSON.Parameters)
+		paramsBind.Recursive,
+		paramsBind.MaxLength,
+		paramsBind.CanForceDate,
+		paramsBind.CanUpdateMsg,
+		paramsBind.CanDeleteMsg,
+		paramsBind.CanUpdateAllMsg,
+		paramsBind.CanDeleteAllMsg,
+		paramsBind.IsROPublic,
+		paramsBind.IsAutoComputeTags,
+		paramsBind.IsAutoComputeLabels,
+		paramsBind.Parameters)
 
 	if err != nil {
 		log.Errorf("Error while setting parameters: %s", err)

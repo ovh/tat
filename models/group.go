@@ -102,7 +102,7 @@ func buildGroupCriteria(criteria *GroupCriteria) bson.M {
 	return bson.M{}
 }
 
-// ListGroups return all groups matching given criterias
+// ListGroups return all groups matching given criteria
 func ListGroups(criteria *GroupCriteria, user *User, isAdmin bool) (int, []Group, error) {
 	var groups []Group
 

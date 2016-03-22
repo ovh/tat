@@ -57,7 +57,7 @@ func (*MessagesController) buildCriteria(ctx *gin.Context) *models.MessageCriter
 	return &c
 }
 
-// List messages on one topic, with given criterias
+// List messages on one topic, with given criteria
 func (m *MessagesController) List(ctx *gin.Context) {
 	var criteria = m.buildCriteria(ctx)
 
@@ -91,7 +91,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 			return
 		}
 		// hack to get new created DM Topic
-		if err := topic.FindByTopic(criteria.Topic, true, false, false, nil); err != nil {
+		if e := topic.FindByTopic(criteria.Topic, true, false, false, nil); e != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + criteria.Topic + " does not exist (2)"})
 			return
 		}
@@ -121,9 +121,9 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	}
 
 	if criteria.OnlyCount == "true" {
-		count, err := models.CountMessages(criteria)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		count, e := models.CountMessages(criteria)
+		if e != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
 			return
 		}
 		ctx.JSON(http.StatusOK, &models.MessagesCountJSON{Count: count})
@@ -134,9 +134,8 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	if presenceArg != "" && !user.IsSystem {
 		go func() {
 			var presence = models.Presence{}
-			err := presence.Upsert(user, topic, presenceArg)
-			if err != nil {
-				log.Errorf("Error while InsertPresence %s", err)
+			if e := presence.Upsert(user, topic, presenceArg); e != nil {
+				log.Errorf("Error while InsertPresence %s", e)
 			}
 			go models.WSPresence(&models.WSPresenceJSON{Action: "create", Presence: presence})
 		}()
@@ -165,9 +164,9 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON
 	messageIn.Topic = topicIn
 
 	if messageIn.IDReference == "" || messageIn.Action == "" {
-		if err := topic.FindByTopic(messageIn.Topic, true, true, true, nil); err != nil {
-			topica, _, err := checkDMTopic(ctx, messageIn.Topic)
-			if err != nil {
+		if efind := topic.FindByTopic(messageIn.Topic, true, true, true, nil); efind != nil {
+			topica, _, edm := checkDMTopic(ctx, messageIn.Topic)
+			if edm != nil {
 				e := errors.New("Topic " + messageIn.Topic + " does not exist")
 				ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 				return messageIn, message, topic, e
@@ -175,7 +174,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON
 			topic = *topica
 		}
 	} else if messageIn.IDReference != "" {
-		if err := message.FindByID(messageIn.IDReference); err != nil {
+		if efind := message.FindByID(messageIn.IDReference); efind != nil {
 			e := errors.New("Message " + messageIn.IDReference + " does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 			return messageIn, message, topic, e
@@ -379,8 +378,8 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 
 	if cascade {
 		for _, r := range msgs {
-			_, err := m.checkBeforeDelete(ctx, r, user, force)
-			if err != nil {
+			_, errCheck := m.checkBeforeDelete(ctx, r, user, force)
+			if errCheck != nil {
 				// ctx writes in checkBeforeDelete
 				return
 			}
@@ -479,7 +478,7 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 		return
 	}
 	go models.WSMessage(&models.WSMessageJSON{Action: action, Username: user.Username, Message: message})
-	ctx.JSON(http.StatusCreated, gin.H{"info": info})
+	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
 func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
