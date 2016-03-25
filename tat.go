@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"net/http"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
@@ -62,7 +64,15 @@ var mainCmd = &cobra.Command{
 		routes.InitRoutesStats(router)
 		routes.InitRoutesSystem(router)
 		routes.InitRoutesSockets(router)
-		router.Run(":" + viper.GetString("listen_port"))
+
+		s := &http.Server{
+			Addr:           ":" + viper.GetString("listen_port"),
+			Handler:        router,
+			ReadTimeout:    time.Duration(viper.GetInt("read_timeout")) * time.Second,
+			WriteTimeout:   time.Duration(viper.GetInt("write_timeout")) * time.Second,
+			MaxHeaderBytes: 1 << 20,
+		}
+		s.ListenAndServe()
 	},
 }
 
@@ -113,6 +123,8 @@ func init() {
 	flags.String("header-trust-username", "", "Header Trust Username: for example, if X-Remote-User and X-Remote-User received in header -> auto accept user without testing tat_password. Use it with precaution")
 	flags.String("trusted-usernames-emails-fullnames", "", "Tuples trusted username / email / fullname. Example: username:email:Firstname1_Fullname1,username2:email2:Firstname2_Fullname2")
 	flags.String("default-domain", "", "Default domains for mail for trusted username")
+	flags.Int("read-timeout", 10, "Read Timeout in seconds")
+	flags.Int("write-timeout", 10, "Write Timeout in seconds")
 
 	viper.BindPFlag("production", flags.Lookup("production"))
 	viper.BindPFlag("no_smtp", flags.Lookup("no-smtp"))
@@ -139,6 +151,8 @@ func init() {
 	viper.BindPFlag("header_trust_username", flags.Lookup("header-trust-username"))
 	viper.BindPFlag("trusted_usernames_emails_fullnames", flags.Lookup("trusted-usernames-emails-fullnames"))
 	viper.BindPFlag("default_domain", flags.Lookup("default-domain"))
+	viper.BindPFlag("read_timeout", flags.Lookup("read-timeout"))
+	viper.BindPFlag("write_timeout", flags.Lookup("write-timeout"))
 }
 
 func main() {
