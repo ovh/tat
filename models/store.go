@@ -51,11 +51,14 @@ func NewStore() {
 	replicaSetHostnamesTags := getDbParameter("db_rs_tags")
 
 	address := viper.GetString("db_addr")
-
 	if username != "" && password != "" {
 		session, err = mgo.Dial("mongodb://" + username + ":" + password + "@" + address)
 	} else {
 		session, err = mgo.Dial("mongodb://" + address)
+	}
+
+	if err != nil {
+		log.Errorf("Error with mgo.Dial %s", err.Error())
 	}
 
 	hostname, err := os.Hostname()
