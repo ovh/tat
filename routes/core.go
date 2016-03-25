@@ -20,7 +20,7 @@ var (
 	tatHeaderPasswordLowerDash = "tat-password"
 )
 
-type tatHeaders struct {
+type tatHeadersType struct {
 	username      string
 	password      string
 	trustUsername string
@@ -56,8 +56,7 @@ func CheckPassword() gin.HandlerFunc {
 			return
 		}
 
-		err = storeInContext(ctx, user)
-		if err != nil {
+		if err = storeInContext(ctx, user); err != nil {
 			ctx.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
@@ -67,8 +66,8 @@ func CheckPassword() gin.HandlerFunc {
 // extractTatHeadesr extracts Tat_username and Tat_password from Headers Request
 // try match tat_username, tat_password, tat-username, tat-password
 // try dash version, thanks to perl lib...
-func extractTatHeaders(ctx *gin.Context) (tatHeaders, error) {
-	var tatHeaders tatHeaders
+func extractTatHeaders(ctx *gin.Context) (tatHeadersType, error) {
+	var tatHeaders tatHeadersType
 
 	for k, v := range ctx.Request.Header {
 		if strings.ToLower(k) == utils.TatHeaderUsernameLower {
@@ -96,7 +95,7 @@ func extractTatHeaders(ctx *gin.Context) (tatHeaders, error) {
 }
 
 // validateTatHeaders fetch user in db and check Password
-func validateTatHeaders(tatHeaders tatHeaders) (models.User, error) {
+func validateTatHeaders(tatHeaders tatHeadersType) (models.User, error) {
 
 	user := models.User{}
 	if tatHeaders.trustUsername != "" && tatHeaders.trustUsername != "null" {
