@@ -223,8 +223,7 @@ func (user *User) Insert() (string, error) {
 		return tokenVerify, err
 	}
 
-	err = Store().clUsers.Insert(user)
-	if err != nil {
+	if err = Store().clUsers.Insert(user); err != nil {
 		log.Errorf("Error while inserting new user %s", err)
 	}
 	return tokenVerify, err
@@ -344,6 +343,10 @@ func (user *User) TrustUsername(username string) error {
 		if err != nil {
 			return fmt.Errorf("TrustUsername, Error while Insert user %s : %s", username, err.Error())
 		}
+
+		// force default group and topics, even if it should be done in Verify
+		user.CheckDefaultGroup(true)
+		user.CheckTopics(true)
 
 		if _, _, err = user.Verify(username, tokenVerify); err != nil {
 			return fmt.Errorf("TrustUsername, Error while verify : %s", err.Error())
