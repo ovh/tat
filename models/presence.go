@@ -53,8 +53,9 @@ type PresenceJSONOut struct {
 
 // PresenceJSON represents a status on a topic
 type PresenceJSON struct {
-	Status string `json:"status" binding:"required"`
-	Topic  string
+	Status   string `json:"status" binding:"required"`
+	Username string `json:"username,omitempty"`
+	Topic    string
 }
 
 func buildPresenceCriteria(criteria *PresenceCriteria) bson.M {
@@ -240,4 +241,25 @@ func changeAuthorUsernameOnPresences(oldUsername, newUsername string) error {
 // CountPresences returns the total number of presences in db
 func CountPresences() (int, error) {
 	return Store().clPresences.Count()
+}
+
+// Delete all presences of one user on one topic
+func (presence *Presence) Delete(user User, topic Topic) error {
+	_, err := Store().clPresences.RemoveAll(bson.M{"userPresence.username": user.Username, "topic": topic.Topic})
+	return err
+}
+
+// CheckAllPresences detects duplicate
+func CheckAllPresences() ([]bson.M, error) {
+	pipeline := []bson.M{
+		{"$group": bson.M{"_id": bson.M{"username": "$userPresence.username", "topic": "$topic"}, "topic": bson.M{"$addToSet": "$topic"}}},
+		{"$unwind": "$topic"},
+		{"$group": bson.M{"_id": "$_id", "topicCount": bson.M{"$sum": 1}}},
+		{"$match": bson.M{"topicCount": bson.M{"$gt": 1}}},
+	}
+	pipe := Store().clPresences.Pipe(pipeline)
+	results := []bson.M{}
+
+	err := pipe.All(&results)
+	return results, err
 }

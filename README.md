@@ -496,6 +496,18 @@ curl -XGET https://<tatHostname>:<tatPort>/presences/topicA?skip=0&limit=100 | p
 curl -XGET https://<tatHostname>:<tatPort>/presences/topicA/subTopic?skip=0&limit=100&dateMinPresence=1405544146&dateMaxPresence=1405544146 | python -m json.tool
 ```
 
+### Delete presence
+Admin can delete presences a another user on one topic.
+Users can delete their own presence.
+
+```
+curl -XDELETE \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	https://<tatHostname>:<tatPort>/presences/topic/sub-topic
+```
+
 ## User
 ### Tat Password
 It's a generated password by Tat, allowing username to communicate with Tat.

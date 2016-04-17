@@ -15,5 +15,12 @@ func InitRoutesPresences(router *gin.Engine) {
 		g.GET("presences/*topic", presencesCtrl.List)
 		// Add a presence and get list
 		g.POST("presenceget/*topic", presencesCtrl.CreateAndGet)
+		// delete a presence
+		g.DELETE("presences/*topic", presencesCtrl.Delete)
+	}
+	admin := router.Group("/presencesadmin")
+	admin.Use(CheckPassword(), CheckAdmin())
+	{
+		admin.GET("/checkall", presencesCtrl.CheckAllPresences)
 	}
 }

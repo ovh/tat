@@ -109,6 +109,7 @@ func (t *TopicsController) List(ctx *gin.Context) {
 					return
 				}
 				unread[presence.Topic] = nb
+				break
 			}
 			if !knownPresence {
 				unread[topic.Topic] = -1

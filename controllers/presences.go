@@ -116,6 +116,7 @@ func (*PresencesController) preCheckUser(ctx *gin.Context) (models.User, error) 
 	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
 		e := errors.New("Error while fetching user.")
 		ctx.AbortWithError(http.StatusInternalServerError, e)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
 		return user, e
 	}
 	return user, nil
@@ -171,4 +172,59 @@ func (m *PresencesController) CreateAndGet(ctx *gin.Context) {
 	}
 
 	m.listWithCriteria(ctx, criteria)
+}
+
+// Delete deletes all presences of one user, on one topic
+func (m *PresencesController) Delete(ctx *gin.Context) {
+	presenceIn, topic, e := m.preCheckTopic(ctx)
+	if e != nil {
+		return
+	}
+
+	var user = models.User{}
+
+	user, e = m.preCheckUser(ctx)
+	if e != nil {
+		return
+	}
+
+	if user.IsAdmin {
+		if err := user.FindByUsername(presenceIn.Username); err != nil {
+			e := errors.New("Error while fetching user " + presenceIn.Username + " for delete presence.")
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
+			return
+		}
+	} else if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
+		e := errors.New("No Read Access to topic " + presenceIn.Topic + " for user " + user.Username)
+		ctx.AbortWithError(http.StatusForbidden, e)
+		ctx.JSON(http.StatusForbidden, gin.H{"error": e.Error()})
+		return
+	}
+
+	var presence = models.Presence{}
+	if err := presence.Delete(user, topic); err != nil {
+		log.Errorf("Error while DeletePresence %s", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	go models.WSPresence(&models.WSPresenceJSON{Action: "delete", Presence: presence})
+	ctx.JSON(http.StatusOK, nil)
+}
+
+// CheckAllPresences checks presences, delete double
+func (m *PresencesController) CheckAllPresences(ctx *gin.Context) {
+	// admin check in route
+	statsPresences, err := models.CheckAllPresences()
+	if err != nil {
+		log.Errorf("Error while get models.CheckAllPresences %s", err)
+	}
+
+	now := time.Now()
+	ctx.JSON(http.StatusOK, gin.H{
+		"date":           now.Unix(),
+		"dateHuman":      now,
+		"statsPresences": statsPresences,
+	})
 }
