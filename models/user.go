@@ -176,11 +176,11 @@ func ListUsers(criteria *UserCriteria, isAdmin bool) (int, []User, error) {
 	if criteria.WithGroups && isAdmin {
 		var usersWithGroups []User
 		for _, u := range users {
-			gs, err := u.GetGroupsOnlyName()
+			gs, errGetGroupsOnlyName := u.GetGroupsOnlyName()
 			u.Groups = gs
 			log.Infof("User %s, Groups%s", u.Username, u.Groups)
-			if err != nil {
-				log.Errorf("Error while getting group for user %s, Error:%s", u.Username, err)
+			if errGetGroupsOnlyName != nil {
+				log.Errorf("Error while getting group for user %s, Error:%s", u.Username, errGetGroupsOnlyName)
 			}
 			usersWithGroups = append(usersWithGroups, u)
 		}

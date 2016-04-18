@@ -251,12 +251,12 @@ func (presence *Presence) Delete(user User, topic Topic) error {
 
 // CheckAllPresences detects duplicate
 func CheckAllPresences() ([]bson.M, error) {
+
 	pipeline := []bson.M{
-		{"$group": bson.M{"_id": bson.M{"username": "$userPresence.username", "topic": "$topic"}, "topic": bson.M{"$addToSet": "$topic"}}},
-		{"$unwind": "$topic"},
-		{"$group": bson.M{"_id": "$_id", "topicCount": bson.M{"$sum": 1}}},
-		{"$match": bson.M{"topicCount": bson.M{"$gt": 1}}},
+		{"$group": bson.M{"_id": bson.M{"username": "$userPresence.username", "topic": "$topic"}, "count": bson.M{"$sum": 1}}},
+		{"$match": bson.M{"count": bson.M{"$gt": 1}}},
 	}
+
 	pipe := Store().clPresences.Pipe(pipeline)
 	results := []bson.M{}
 

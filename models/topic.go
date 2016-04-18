@@ -698,13 +698,11 @@ func AllTopicsComputeReplies() (string, error) {
 		return "", err
 	}
 
-	errTxt := ""
 	nOk := 1
 	for _, topic := range topics {
 		nbCompute, err := ComputeReplies(topic.Topic)
 		if err != nil {
 			log.Errorf("Error while compute replies on topic %s: %s", topic.Topic, err.Error())
-			errTxt += fmt.Sprintf(" Error compute replies on topic %s", topic.Topic)
 		} else {
 			log.Infof(" %d replies compute on topic %s", nbCompute, topic.Topic)
 			nOk++
@@ -748,9 +746,9 @@ func (topic *Topic) FindByTopic(topicIn string, isAdmin, withTags, withLabels bo
 
 	if user != nil {
 		// Get all topics where user is admin
-		topicsMember, err := getTopicsForMemberUser(user, topic)
-		if err != nil {
-			return err
+		topicsMember, errTopicsMember := getTopicsForMemberUser(user, topic)
+		if errTopicsMember != nil {
+			return errTopicsMember
 		}
 
 		if len(topicsMember) == 1 {
@@ -1115,12 +1113,12 @@ func changeUsernameOnPrivateTopics(oldUsername, newUsername string) error {
 
 	for _, topic := range topics {
 		newTopicName := strings.Replace(topic.Topic, oldUsername, newUsername, 1)
-		err := Store().clTopics.Update(
+		errUpdate := Store().clTopics.Update(
 			bson.M{"_id": topic.ID},
 			bson.M{"$set": bson.M{"topic": newTopicName}},
 		)
-		if err != nil {
-			log.Errorf("Error while update Topic name from %s to %s :%s", topic.Topic, newTopicName, err)
+		if errUpdate != nil {
+			log.Errorf("Error while update Topic name from %s to %s :%s", topic.Topic, newTopicName, errUpdate)
 		}
 	}
 

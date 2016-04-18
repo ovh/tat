@@ -1092,8 +1092,8 @@ func changeUsernameOnMessagesTopics(oldUsername, newUsername string) error {
 			msg.Topics = append(msg.Topics, newTopicName)
 		}
 
-		if err := Store().clMessages.Update(bson.M{"_id": msg.ID}, bson.M{"$set": bson.M{"topics": msg.Topics}}); err != nil {
-			log.Errorf("Error while update topic on message %s name from username %s to username %s :%s", msg.ID, oldUsername, newUsername, err)
+		if errUpdate := Store().clMessages.Update(bson.M{"_id": msg.ID}, bson.M{"$set": bson.M{"topics": msg.Topics}}); errUpdate != nil {
+			log.Errorf("Error while update topic on message %s name from username %s to username %s :%s", msg.ID, oldUsername, newUsername, errUpdate)
 		}
 	}
 
