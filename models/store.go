@@ -151,6 +151,7 @@ func ensureIndexes(store *MongoStore) {
 	ensureIndex(store.clUsers, mgo.Index{Key: []string{"email"}, Unique: true})
 	ensureIndex(store.clPresences, mgo.Index{Key: []string{"topic", "-dateTimePresence"}})
 	ensureIndex(store.clPresences, mgo.Index{Key: []string{"userPresence.username", "-datePresence"}})
+	ensureIndex(store.clPresences, mgo.Index{Key: []string{"topic", "userPresence.username"}, Unique: true})
 }
 
 func listIndex(col *mgo.Collection, drop bool) {
