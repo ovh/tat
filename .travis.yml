@@ -1,9 +1,8 @@
 language: go
 go:
-- 1.5.1
+- 1.6.2
 env:
   global:
-  - GO15VENDOREXPERIMENT=1
   - PROJECT_NAME="tat"
   - PROJECT_PATH="github.com/ovh"
 install: true
