@@ -894,7 +894,7 @@ func (topic *Topic) RemoveRoUser(admin string, username string, recursive bool) 
 
 // RemoveAdminUser removes a read only user from topic
 func (topic *Topic) RemoveAdminUser(admin string, username string, recursive bool) error {
-	return topic.actionOnSet("$pull", "roUsers", username, admin, recursive, "remove from admin")
+	return topic.actionOnSet("$pull", "adminUsers", username, admin, recursive, "remove from admin")
 }
 
 // RemoveRwUser removes a read write user from topic
