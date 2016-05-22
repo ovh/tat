@@ -333,17 +333,29 @@ hashtags:
     text: "#From:dev/aa #From:aa/ff"
     expected: ["From:dev/aa", "From:aa/ff"]
 
-  - description: "Hashtag after punctuations"
-    text: ":#hashtaga ;#hashtagb ,#hashtagc .#hashtagd !#hashtage ?#hashtagf"
-    expected: ["hashtaga", "hashtagb", "hashtagc", "hashtagd", "hashtage", "hashtagf"]
+#  - description: "Hashtag after punctuations"
+#    text: ":#hashtaga ;#hashtagb ,#hashtagc .#hashtagd ?#hashtagf"
+#    expected: ["hashtaga", "hashtagb", "hashtagc", "hashtagd", "hashtagf"]
+
+  - description: "Hashtag with http://"
+    text: "#hop:http://hashtaga"
+    expected: ["hop:http://hashtaga"]
+
+  - description: "Hashtag with :/"
+    text: "#http:/hashtaga"
+    expected: ["http:/hashtaga"]
+
+  - description: "Hashtag with http:aa"
+    text: "#http:aa"
+    expected: ["http:aa"]
 
   - description: "Hashtag before newline"
     text: "#hashtag\ntest\n#hashtag2\ntest\n#hashtag3\n"
     expected: ["hashtag", "hashtag2", "hashtag3"]
 
-  - description: "DO NOT extract hashtag when # is followed by URL"
+  - description: "Extract hashtag when # is followed by URL"
     text: "#http://twitter.com #https://twitter.com"
-    expected: []
+    expected: ["http://twitter.com", "https://twitter.com"]
 
 # Checking for overlap of hashtag with URL is not implemented currently
 #  - description: "DO NOT extract hashtag if it's a part of URL"
@@ -357,10 +369,6 @@ hashtags:
   - description: "Extract Arabic hashtags"
     text: "#سیاست #ایران #السياسة #السياح #لغات  #اتمی  #کنفرانس #العربية #الجزيرة #فارسی"
     expected: ["سیاست", "ایران", "السياسة", "السياح", "لغات", "اتمی", "کنفرانس", "العربية", "الجزيرة", "فارسی"]
-
-  - description: "Extract Arabic hashtags with underscore"
-    text: "#برنامه_نویسی  #رییس_جمهور  #رئيس_الوزراء, #ثبت_نام. #لس_آنجلس"
-    expected: ["برنامه_نویسی", "رییس_جمهور", "رئيس_الوزراء", "ثبت_نام", "لس_آنجلس"]
 
   - description: "Extract Hebrew hashtags"
     text: "#עַל־יְדֵי #וכו׳ #מ״כ"

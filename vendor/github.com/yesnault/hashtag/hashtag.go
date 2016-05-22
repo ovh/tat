@@ -49,7 +49,7 @@ const (
 
 	hashtagLetters      = "\\pL\\pM"
 	hashtagNumerals     = "\\p{Nd}"
-	hashtagSpecialChars = "/" + "\\." + "_" + "\\-" + "\\:" + //underscore
+	hashtagSpecialChars = "/" + "\\." + "_" + "\\-" + "\\:" +
 		"\\x{200c}" + // ZERO WIDTH NON-JOINER (ZWNJ)
 		"\\x{200d}" + // ZERO WIDTH JOINER (ZWJ)
 		"\\x{a67e}" + // CYRILLIC KAVYKA
@@ -88,7 +88,7 @@ var validHashtag = regexp.MustCompile("(?m)(?:^|[^&" + hashtagLettersNumerals + 
 	hashtagLettersNumeralsSet + "*" + hashtagLettersSet + hashtagLettersNumeralsSet +
 	"*)")
 
-var invalidHashtagMatchEnd = regexp.MustCompile("^(?:[#＃]|://)")
+var invalidHashtagMatchEnd = regexp.MustCompile("^(?:[#＃])")
 
 var validReply = regexp.MustCompile("^(?:" + unicodeSpaces + ")*" + atSigns + "([A-Za-z0-9_]{1,20})")
 
@@ -131,9 +131,9 @@ func ExtractHashtagsWithIndices(text string) []Entity {
 	for _, match := range matches {
 		if !invalidHashtagMatchEnd.MatchString(text[match[1]:]) {
 			value := text[match[2]:match[3]]
-			if strings.Contains(value, "://") {
+			/*if strings.Contains(value, "://") {
 				continue
-			}
+			}*/
 			entities = append(entities, Entity{
 				Start: match[2],
 				End:   match[3],
