@@ -4,13 +4,18 @@
 	"package": [
 		{
 			"path": "github.com/BurntSushi/toml",
-			"revision": "5c4df71dfe9ac89ef6287afc05e4c1b16ae65a1e",
-			"revisionTime": "2016-01-02T09:47:48-05:00"
+			"revision": "f0aeabca5a127c4078abb8c8d64298b147264b55",
+			"revisionTime": "2016-04-26T03:16:13-07:00"
 		},
 		{
 			"path": "github.com/Sirupsen/logrus",
 			"revision": "27b713cfd2742876645e3692a488c5e3fd65361d",
 			"revisionTime": "2015-08-18T20:11:02-04:00"
+		},
+		{
+			"path": "github.com/fsnotify/fsnotify",
+			"revision": "30411dbcefb7a1da7e84f75530ad3abe4011b4f8",
+			"revisionTime": "2016-04-12T16:37:56+03:00"
 		},
 		{
 			"path": "github.com/gin-gonic/gin",
@@ -29,53 +34,53 @@
 		},
 		{
 			"path": "github.com/gorilla/websocket",
-			"revision": "a3ec486e6a7a41858210b0fc5d7b5df593b3c4a3",
-			"revisionTime": "2015-05-29T20:03:52-07:00"
+			"revision": "3ddc98405808dc90b76f43a2eddca8f12e244e2b",
+			"revisionTime": "2016-05-31T22:17:19-07:00"
 		},
 		{
 			"path": "github.com/hashicorp/hcl",
-			"revision": "197e8d3cf42199cfd53cd775deb37f3637234635",
-			"revisionTime": "2015-12-18T11:53:00-06:00"
+			"revision": "9a905a34e6280ce905da1a32344b25e81011197a",
+			"revisionTime": "2016-04-26T17:13:00-05:00"
 		},
 		{
 			"path": "github.com/hashicorp/hcl/hcl/ast",
-			"revision": "197e8d3cf42199cfd53cd775deb37f3637234635",
-			"revisionTime": "2015-12-18T11:53:00-06:00"
+			"revision": "9a905a34e6280ce905da1a32344b25e81011197a",
+			"revisionTime": "2016-04-26T17:13:00-05:00"
 		},
 		{
 			"path": "github.com/hashicorp/hcl/hcl/parser",
-			"revision": "197e8d3cf42199cfd53cd775deb37f3637234635",
-			"revisionTime": "2015-12-18T11:53:00-06:00"
+			"revision": "9a905a34e6280ce905da1a32344b25e81011197a",
+			"revisionTime": "2016-04-26T17:13:00-05:00"
 		},
 		{
 			"path": "github.com/hashicorp/hcl/hcl/scanner",
-			"revision": "197e8d3cf42199cfd53cd775deb37f3637234635",
-			"revisionTime": "2015-12-18T11:53:00-06:00"
+			"revision": "9a905a34e6280ce905da1a32344b25e81011197a",
+			"revisionTime": "2016-04-26T17:13:00-05:00"
 		},
 		{
 			"path": "github.com/hashicorp/hcl/hcl/strconv",
-			"revision": "197e8d3cf42199cfd53cd775deb37f3637234635",
-			"revisionTime": "2015-12-18T11:53:00-06:00"
+			"revision": "9a905a34e6280ce905da1a32344b25e81011197a",
+			"revisionTime": "2016-04-26T17:13:00-05:00"
 		},
 		{
 			"path": "github.com/hashicorp/hcl/hcl/token",
-			"revision": "197e8d3cf42199cfd53cd775deb37f3637234635",
-			"revisionTime": "2015-12-18T11:53:00-06:00"
+			"revision": "9a905a34e6280ce905da1a32344b25e81011197a",
+			"revisionTime": "2016-04-26T17:13:00-05:00"
 		},
 		{
 			"path": "github.com/hashicorp/hcl/json/parser",
-			"revision": "197e8d3cf42199cfd53cd775deb37f3637234635",
-			"revisionTime": "2015-12-18T11:53:00-06:00"
+			"revision": "9a905a34e6280ce905da1a32344b25e81011197a",
+			"revisionTime": "2016-04-26T17:13:00-05:00"
 		},
 		{
 			"path": "github.com/hashicorp/hcl/json/scanner",
-			"revision": "197e8d3cf42199cfd53cd775deb37f3637234635",
-			"revisionTime": "2015-12-18T11:53:00-06:00"
+			"revision": "9a905a34e6280ce905da1a32344b25e81011197a",
+			"revisionTime": "2016-04-26T17:13:00-05:00"
 		},
 		{
 			"path": "github.com/hashicorp/hcl/json/token",
-			"revision": "197e8d3cf42199cfd53cd775deb37f3637234635",
-			"revisionTime": "2015-12-18T11:53:00-06:00"
+			"revision": "9a905a34e6280ce905da1a32344b25e81011197a",
+			"revisionTime": "2016-04-26T17:13:00-05:00"
 		},
 		{
 			"path": "github.com/inconshreveable/mousetrap",
@@ -88,19 +93,9 @@
 			"revisionTime": "2015-07-02T20:22:01-03:00"
 		},
 		{
-			"path": "github.com/kr/pretty",
-			"revision": "e6ac2fc51e89a3249e82157fa0bb7a18ef9dd5bb",
-			"revisionTime": "2015-05-20T12:35:14-04:00"
-		},
-		{
-			"path": "github.com/kr/text",
-			"revision": "bb797dc4fb8320488f47bf11de07a733d7233e1f",
-			"revisionTime": "2015-09-05T15:45:08-07:00"
-		},
-		{
 			"path": "github.com/magiconair/properties",
-			"revision": "c81f9d71af8f8cba1466501d30326b99a4e56c19",
-			"revisionTime": "2015-12-21T22:31:49+01:00"
+			"revision": "c265cfa48dda6474e208715ca93e987829f572f8",
+			"revisionTime": "2016-03-20T21:54:47+01:00"
 		},
 		{
 			"path": "github.com/manucorporat/sse",
@@ -119,8 +114,8 @@
 		},
 		{
 			"path": "github.com/mitchellh/mapstructure",
-			"revision": "281073eb9eb092240d33ef253c404f1cca550309",
-			"revisionTime": "2015-07-16T22:11:58-07:00"
+			"revision": "d2dd0262208475919e1a362f675cfc0e7c10e905",
+			"revisionTime": "2016-02-11T19:18:39-08:00"
 		},
 		{
 			"path": "github.com/mvdan/xurls",
@@ -129,28 +124,28 @@
 		},
 		{
 			"path": "github.com/spf13/cast",
-			"revision": "ee7b3e0353166ab1f3a605294ac8cd2b77953778",
-			"revisionTime": "2015-11-26T07:42:19+01:00"
+			"revision": "27b586b42e29bec072fe7379259cc719e1289da6",
+			"revisionTime": "2016-03-03T20:15:55+01:00"
 		},
 		{
 			"path": "github.com/spf13/cobra",
-			"revision": "801364aa1521eb0ac9735f138901d5fe0f37b4b8",
-			"revisionTime": "2016-02-05T13:04:36+08:00"
+			"revision": "f368244301305f414206f889b1735a54cfc8bde8",
+			"revisionTime": "2016-05-17T13:19:29-04:00"
 		},
 		{
 			"path": "github.com/spf13/jwalterweatherman",
-			"revision": "d00654080cddbd2b082acaa74007cb94a2b40866",
-			"revisionTime": "2015-10-14T12:42:31+05:30"
+			"revision": "33c24e77fb80341fe7130ee7c594256ff08ccc46",
+			"revisionTime": "2016-03-01T04:00:06-08:00"
 		},
 		{
 			"path": "github.com/spf13/pflag",
-			"revision": "7f60f83a2c81bc3c3c0d5297f61ddfa68da9d3b7",
-			"revisionTime": "2015-10-24T12:54:09+02:00"
+			"revision": "cb88ea77998c3f024757528e3305022ab50b43be",
+			"revisionTime": "2016-03-17T02:02:28+02:00"
 		},
 		{
 			"path": "github.com/spf13/viper",
-			"revision": "a212099cbe6fbe8d07476bfda8d2d39b6ff8f325",
-			"revisionTime": "2016-01-11T16:07:23+01:00"
+			"revision": "d8a428b8a30606e1d0b355d91edf282609ade1a6",
+			"revisionTime": "2016-05-08T20:07:13+02:00"
 		},
 		{
 			"path": "github.com/stretchr/testify/assert",
@@ -169,8 +164,8 @@
 		},
 		{
 			"path": "golang.org/x/sys/unix",
-			"revision": "442cd600860ce722f6615730eb008a37a87b13ee",
-			"revisionTime": "2016-01-13T11:01:27+11:00"
+			"revision": "d4feaf1a7e61e1d9e79e6c4e76c6349e9cab0a03",
+			"revisionTime": "2016-05-16T08:31:02-04:00"
 		},
 		{
 			"path": "gopkg.in/bluesuncorp/validator.v5",
@@ -178,34 +173,29 @@
 			"revisionTime": "2015-06-29T21:01:05-04:00"
 		},
 		{
-			"path": "gopkg.in/fsnotify.v1",
-			"revision": "508915b7500b6e42a87132e4afeb4729cebc7cbb",
-			"revisionTime": "2015-12-17T11:48:24-07:00"
-		},
-		{
 			"path": "gopkg.in/mgo.v2",
-			"revision": "3871eddd896b8b70fe630053af5e81f2c1e8ed53",
-			"revisionTime": "2016-02-04T16:00:46-02:00"
+			"revision": "b6e2fa371e64216a45e61072a96d4e3859f169da",
+			"revisionTime": "2016-02-23T08:38:14-05:00"
 		},
 		{
 			"path": "gopkg.in/mgo.v2/bson",
-			"revision": "3871eddd896b8b70fe630053af5e81f2c1e8ed53",
-			"revisionTime": "2016-02-04T16:00:46-02:00"
+			"revision": "b6e2fa371e64216a45e61072a96d4e3859f169da",
+			"revisionTime": "2016-02-23T08:38:14-05:00"
 		},
 		{
 			"path": "gopkg.in/mgo.v2/internal/sasl",
-			"revision": "3871eddd896b8b70fe630053af5e81f2c1e8ed53",
-			"revisionTime": "2016-02-04T16:00:46-02:00"
+			"revision": "b6e2fa371e64216a45e61072a96d4e3859f169da",
+			"revisionTime": "2016-02-23T08:38:14-05:00"
 		},
 		{
 			"path": "gopkg.in/mgo.v2/internal/scram",
-			"revision": "3871eddd896b8b70fe630053af5e81f2c1e8ed53",
-			"revisionTime": "2016-02-04T16:00:46-02:00"
+			"revision": "b6e2fa371e64216a45e61072a96d4e3859f169da",
+			"revisionTime": "2016-02-23T08:38:14-05:00"
 		},
 		{
 			"path": "gopkg.in/yaml.v2",
-			"revision": "f7716cbe52baa25d2e9b0d0da546fcf909fc16b4",
-			"revisionTime": "2015-12-01T14:27:45-02:00"
+			"revision": "a83829b6f1293c91addabc89d0571c246397bbf4",
+			"revisionTime": "2016-03-01T17:40:22-03:00"
 		}
 	]
 }

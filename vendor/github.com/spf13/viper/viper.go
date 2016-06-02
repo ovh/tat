@@ -31,12 +31,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kr/pretty"
+	"github.com/fsnotify/fsnotify"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cast"
 	jww "github.com/spf13/jwalterweatherman"
 	"github.com/spf13/pflag"
-	"gopkg.in/fsnotify.v1"
 )
 
 var v *Viper
@@ -540,7 +539,7 @@ func (v *Viper) GetString(key string) string {
 	return cast.ToString(v.Get(key))
 }
 
-// Returns the value associated with the key asa boolean
+// Returns the value associated with the key as a boolean
 func GetBool(key string) bool { return v.GetBool(key) }
 func (v *Viper) GetBool(key string) bool {
 	return cast.ToBool(v.Get(key))
@@ -613,6 +612,37 @@ func (v *Viper) UnmarshalKey(key string, rawVal interface{}) error {
 func Unmarshal(rawVal interface{}) error { return v.Unmarshal(rawVal) }
 func (v *Viper) Unmarshal(rawVal interface{}) error {
 	err := mapstructure.WeakDecode(v.AllSettings(), rawVal)
+
+	if err != nil {
+		return err
+	}
+
+	v.insensitiviseMaps()
+
+	return nil
+}
+
+// A wrapper around mapstructure.Decode that mimics the WeakDecode functionality
+// while erroring on non existing vals in the destination struct
+func weakDecodeExact(input, output interface{}) error {
+	config := &mapstructure.DecoderConfig{
+		ErrorUnused:      true,
+		Metadata:         nil,
+		Result:           output,
+		WeaklyTypedInput: true,
+	}
+
+	decoder, err := mapstructure.NewDecoder(config)
+	if err != nil {
+		return err
+	}
+	return decoder.Decode(input)
+}
+
+// Unmarshals the config into a Struct, erroring if a field is non-existant
+// in the destination struct
+func (v *Viper) UnmarshalExact(rawVal interface{}) error {
+	err := weakDecodeExact(v.AllSettings(), rawVal)
 
 	if err != nil {
 		return err
@@ -1149,6 +1179,10 @@ func (v *Viper) AllKeys() []string {
 		m[strings.ToLower(key)] = struct{}{}
 	}
 
+	for key, _ := range v.aliases {
+		m[strings.ToLower(key)] = struct{}{}
+	}
+
 	a := []string{}
 	for x, _ := range m {
 		a = append(a, x)
@@ -1249,17 +1283,11 @@ func (v *Viper) findConfigFile() (string, error) {
 func Debug() { v.Debug() }
 func (v *Viper) Debug() {
 	fmt.Println("Aliases:")
-	pretty.Println(v.aliases)
-	fmt.Println("Override:")
-	pretty.Println(v.override)
-	fmt.Println("PFlags")
-	pretty.Println(v.pflags)
-	fmt.Println("Env:")
-	pretty.Println(v.env)
-	fmt.Println("Key/Value Store:")
-	pretty.Println(v.kvstore)
-	fmt.Println("Config:")
-	pretty.Println(v.config)
-	fmt.Println("Defaults:")
-	pretty.Println(v.defaults)
+	fmt.Printf("Aliases:\n%#v\n", v.aliases)
+	fmt.Printf("Override:\n%#v\n", v.override)
+	fmt.Printf("PFlags:\n%#v\n", v.pflags)
+	fmt.Printf("Env:\n%#v\n", v.env)
+	fmt.Printf("Key/Value Store:\n%#v\n", v.kvstore)
+	fmt.Printf("Config:\n%#v\n", v.config)
+	fmt.Printf("Defaults:\n%#v\n", v.defaults)
 }
