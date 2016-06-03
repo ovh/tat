@@ -222,7 +222,7 @@ type userJSON struct {
 func (*UsersController) Me(ctx *gin.Context) {
 	var user = models.User{}
 	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
-		AbortWithReturnError(ctx, http.StatusInternalServerError, errors.New("Error while fetching user"))
+		AbortWithReturnError(ctx, http.StatusUnauthorized, errors.New("Error while fetching user"))
 		return
 	}
 	out := &userJSON{User: &user}
