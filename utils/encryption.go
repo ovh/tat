@@ -24,7 +24,7 @@ func GenerateSalt() (string, error) {
 	salt := make([]byte, pwSaltBytes)
 	_, err := io.ReadFull(rand.Reader, salt)
 	if err != nil {
-		log.Fatal(err)
+		log.Errorf("Error whith GenerateSalt:%s", err.Error())
 		return "", err
 	}
 	return hex.EncodeToString(salt), nil
@@ -34,7 +34,7 @@ func generatePassword() (string, error) {
 	password := make([]byte, pwPasswordBytes)
 	_, err := io.ReadFull(rand.Reader, password)
 	if err != nil {
-		log.Fatal(err)
+		log.Errorf("Error whith generatePassword:%s", err.Error())
 		return "", err
 	}
 	return hex.EncodeToString(password), nil

@@ -119,9 +119,9 @@ func sendEmail(templ, subject, username, toUser, tokenVerify, text, cmd, device 
 		// for smtp servers running on 465 that require an ssl connection
 		// from the very beginning (no starttls)
 
-		conn, err := tls.Dial("tcp", servername, tlsconfig)
-		if err != nil {
-			log.Errorf("Error with c.Dial:%s", err.Error())
+		conn, errc := tls.Dial("tcp", servername, tlsconfig)
+		if errc != nil {
+			log.Errorf("Error with c.Dial:%s", errc.Error())
 			return err
 		}
 
@@ -133,7 +133,7 @@ func sendEmail(templ, subject, username, toUser, tokenVerify, text, cmd, device 
 	} else {
 		c, err = smtp.Dial(servername)
 		if err != nil {
-			log.Fatal(err)
+			log.Errorf("Error while smtp.Dial:%s", err)
 		}
 		defer c.Close()
 	}
