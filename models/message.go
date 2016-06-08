@@ -780,12 +780,6 @@ func (message *Message) Move(user User, newTopic Topic) error {
 		return fmt.Errorf("Error while list Messages in Delete (%s not unique!)", message.ID)
 	}
 
-	for _, e := range msgs[0].Replies {
-		if len(e.Topics) != 1 {
-			return fmt.Errorf("A reply belongs more than one topic, you can't move this thread.")
-		}
-	}
-
 	// here, ok, we can move
 	topicUpdate := []string{newTopic.Topic}
 	_, err = Store().clMessages.UpdateAll(
