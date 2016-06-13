@@ -107,8 +107,13 @@ func (m *MessagesController) List(ctx *gin.Context) {
 		if e != nil {
 			return
 		}
+		if topic.ID == "" {
+			log.Error("Invalid Topic ID. user: %s topic:%s", user.Username, criteria.Topic)
+			ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("Invalid Topic. No Read Access for %s on topic %s", user.Username, criteria.Topic)})
+			return
+		}
 		if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
-			ctx.JSON(http.StatusForbidden, gin.H{"error": "No Read Access to this topic"})
+			ctx.JSON(http.StatusForbidden, gin.H{"error": "No Read Access on topic"})
 			return
 		}
 		out.IsTopicRw = topic.IsUserRW(&user)

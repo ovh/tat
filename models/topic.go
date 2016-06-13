@@ -775,7 +775,7 @@ func (topic *Topic) FindByID(id string, isAdmin bool) error {
 		Select(getTopicSelectedFields(isAdmin, false, false)).
 		One(&topic)
 	if err != nil {
-		log.Errorf("Error while fecthing topic with id:%s", id)
+		log.Errorf("Error while fetching topic with id:%s isAdmin:%s", id, isAdmin)
 	}
 	return err
 }
