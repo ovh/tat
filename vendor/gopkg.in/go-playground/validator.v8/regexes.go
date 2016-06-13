@@ -57,8 +57,3 @@ var (
 	longitudeRegex      = regexp.MustCompile(longitudeRegexString)
 	sSNRegex            = regexp.MustCompile(sSNRegexString)
 )
-
-func matchesRegex(regex *regexp.Regexp, field interface{}) bool {
-	fieldAsString := field.(string) //this will panic inherently
-	return regex.MatchString(fieldAsString)
-}

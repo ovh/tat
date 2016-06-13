@@ -12,6 +12,7 @@ import (
 	"github.com/ovh/tat/controllers"
 	"github.com/ovh/tat/models"
 	"github.com/ovh/tat/routes"
+	"github.com/ovh/tat/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -24,12 +25,16 @@ var mainCmd = &cobra.Command{
 		viper.SetEnvPrefix("tat")
 		viper.AutomaticEnv()
 
+		router := gin.New()
+		router.Use(gin.Recovery())
+
 		if viper.GetBool("production") {
 			// Only log the warning severity or above.
-			log.SetLevel(log.WarnLevel)
-			log.Info("Set Production Mode ON")
+			log.SetLevel(log.InfoLevel)
 			gin.SetMode(gin.ReleaseMode)
+			log.SetFormatter(&log.JSONFormatter{})
 		} else {
+			router.Use(gin.Logger())
 			log.SetLevel(log.DebugLevel)
 		}
 
@@ -44,7 +49,12 @@ var mainCmd = &cobra.Command{
 			}
 		}
 
-		router := gin.Default()
+		// Add a ginrus middleware, which:
+		//   - Logs all requests, like a combined access and error log.
+		//   - Logs to stdout.
+		//   - RFC3339 with UTC time format.
+		router.Use(utils.Ginrus(log.StandardLogger(), time.RFC3339, true))
+
 		router.Use(cors.Middleware(cors.Config{
 			Origins:         "*",
 			Methods:         "GET, PUT, POST, DELETE",
@@ -72,7 +82,12 @@ var mainCmd = &cobra.Command{
 			WriteTimeout:   time.Duration(viper.GetInt("write_timeout")) * time.Second,
 			MaxHeaderBytes: 1 << 20,
 		}
-		s.ListenAndServe()
+
+		log.Infof("Running TAT on %s", viper.GetString("listen_port"))
+
+		if err := s.ListenAndServe(); err != nil {
+			log.Info("Error while running ListenAndServe: %s", err.Error())
+		}
 	},
 }
 

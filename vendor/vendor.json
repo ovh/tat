@@ -9,8 +9,8 @@
 		},
 		{
 			"path": "github.com/Sirupsen/logrus",
-			"revision": "27b713cfd2742876645e3692a488c5e3fd65361d",
-			"revisionTime": "2015-08-18T20:11:02-04:00"
+			"revision": "f3cfb454f4c209e6668c95216c4744b8fddb2356",
+			"revisionTime": "2016-06-01T07:32:10-04:00"
 		},
 		{
 			"path": "github.com/fsnotify/fsnotify",
@@ -19,18 +19,23 @@
 		},
 		{
 			"path": "github.com/gin-gonic/gin",
-			"revision": "4cc2de6207f4128624cbdd16be30f64966c67c08",
-			"revisionTime": "2015-06-26T16:08:55+02:00"
+			"revision": "5caaac4c5c712a9e7a7de29e6c24ef46c753017f",
+			"revisionTime": "2016-04-15T01:39:28+02:00"
 		},
 		{
 			"path": "github.com/gin-gonic/gin/binding",
-			"revision": "4cc2de6207f4128624cbdd16be30f64966c67c08",
-			"revisionTime": "2015-06-26T16:08:55+02:00"
+			"revision": "5caaac4c5c712a9e7a7de29e6c24ef46c753017f",
+			"revisionTime": "2016-04-15T01:39:28+02:00"
 		},
 		{
 			"path": "github.com/gin-gonic/gin/render",
-			"revision": "4cc2de6207f4128624cbdd16be30f64966c67c08",
-			"revisionTime": "2015-06-26T16:08:55+02:00"
+			"revision": "5caaac4c5c712a9e7a7de29e6c24ef46c753017f",
+			"revisionTime": "2016-04-15T01:39:28+02:00"
+		},
+		{
+			"path": "github.com/golang/protobuf/proto",
+			"revision": "8616e8ee5e20a1704615e6c8d7afcdac06087a67",
+			"revisionTime": "2016-06-08T14:55:45-07:00"
 		},
 		{
 			"path": "github.com/gorilla/websocket",
@@ -99,18 +104,8 @@
 		},
 		{
 			"path": "github.com/manucorporat/sse",
-			"revision": "c142f0f1baea5cef7f98a8a6c222f6134368c1f5",
-			"revisionTime": "2015-06-04T11:11:00+02:00"
-		},
-		{
-			"path": "github.com/mattn/go-colorable",
-			"revision": "40e4aedc8fabf8c23e040057540867186712faa5",
-			"revisionTime": "2015-06-26T00:46:42+09:00"
-		},
-		{
-			"path": "github.com/mattn/go-isatty",
-			"revision": "d6aaa2f596ae91a0a58d8e7f2c79670991468e4f",
-			"revisionTime": "2015-11-08T00:36:48+09:00"
+			"revision": "ee05b128a739a0fb76c7ebd3ae4810c1de808d6d",
+			"revisionTime": "2016-01-26T19:01:36+01:00"
 		},
 		{
 			"path": "github.com/mitchellh/mapstructure",
@@ -159,8 +154,8 @@
 		},
 		{
 			"path": "golang.org/x/net/context",
-			"revision": "d9558e5c97f85372afee28cf2b6059d7d3818919",
-			"revisionTime": "2015-06-29T10:25:16+09:00"
+			"revision": "3f122ce3dbbe488b7e6a8bdb26f41edec852a40b",
+			"revisionTime": "2016-06-09T14:57:12+10:00"
 		},
 		{
 			"path": "golang.org/x/sys/unix",
@@ -168,9 +163,9 @@
 			"revisionTime": "2016-05-16T08:31:02-04:00"
 		},
 		{
-			"path": "gopkg.in/bluesuncorp/validator.v5",
-			"revision": "d8e0c4d93696f467eedc43f7f954b48eb6fe6ba8",
-			"revisionTime": "2015-06-29T21:01:05-04:00"
+			"path": "gopkg.in/go-playground/validator.v8",
+			"revision": "014792cf3e266caff1e916876be12282b33059e0",
+			"revisionTime": "2016-02-23T15:26:51-05:00"
 		},
 		{
 			"path": "gopkg.in/mgo.v2",

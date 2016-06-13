@@ -10,9 +10,7 @@ import (
 	"strconv"
 )
 
-const (
-	AuthUserKey = "user"
-)
+const AuthUserKey = "user"
 
 type (
 	Accounts map[string]string
@@ -35,8 +33,9 @@ func (a authPairs) searchCredential(authValue string) (string, bool) {
 	return "", false
 }
 
-// Implements a basic Basic HTTP Authorization. It takes as arguments a map[string]string where
-// the key is the user name and the value is the password, as well as the name of the Realm
+// BasicAuthForRealm returns a Basic HTTP Authorization middleware. It takes as arguments a map[string]string where
+// the key is the user name and the value is the password, as well as the name of the Realm.
+// If the realm is empty, "Authorization Required" will be used by default.
 // (see http://tools.ietf.org/html/rfc2617#section-1.2)
 func BasicAuthForRealm(accounts Accounts, realm string) HandlerFunc {
 	if realm == "" {
@@ -59,21 +58,17 @@ func BasicAuthForRealm(accounts Accounts, realm string) HandlerFunc {
 	}
 }
 
-// Implements a basic Basic HTTP Authorization. It takes as argument a map[string]string where
+// BasicAuth returns a Basic HTTP Authorization middleware. It takes as argument a map[string]string where
 // the key is the user name and the value is the password.
 func BasicAuth(accounts Accounts) HandlerFunc {
 	return BasicAuthForRealm(accounts, "")
 }
 
 func processAccounts(accounts Accounts) authPairs {
-	if len(accounts) == 0 {
-		panic("Empty list of authorized credentials")
-	}
+	assert1(len(accounts) > 0, "Empty list of authorized credentials")
 	pairs := make(authPairs, 0, len(accounts))
 	for user, password := range accounts {
-		if len(user) == 0 {
-			panic("User can not be empty")
-		}
+		assert1(len(user) > 0, "User can not be empty")
 		value := authorizationHeader(user, password)
 		pairs = append(pairs, authPair{
 			Value: value,
@@ -91,8 +86,7 @@ func authorizationHeader(user, password string) string {
 func secureCompare(given, actual string) bool {
 	if subtle.ConstantTimeEq(int32(len(given)), int32(len(actual))) == 1 {
 		return subtle.ConstantTimeCompare([]byte(given), []byte(actual)) == 1
-	} else {
-		/* Securely compare actual to itself to keep constant time, but always return false */
-		return subtle.ConstantTimeCompare([]byte(actual), []byte(actual)) == 1 && false
 	}
+	/* Securely compare actual to itself to keep constant time, but always return false */
+	return subtle.ConstantTimeCompare([]byte(actual), []byte(actual)) == 1 && false
 }
