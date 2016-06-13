@@ -23,7 +23,7 @@ func (*PresencesController) buildCriteria(ctx *gin.Context) *models.PresenceCrit
 		skip = 0
 	}
 	c.Skip = skip
-	limit, e2 := strconv.Atoi(ctx.DefaultQuery("limit", "100"))
+	limit, e2 := strconv.Atoi(ctx.DefaultQuery("limit", "10"))
 	if e2 != nil {
 		limit = 10
 	}
@@ -38,12 +38,11 @@ func (*PresencesController) buildCriteria(ctx *gin.Context) *models.PresenceCrit
 
 // List list presences with given criteria
 func (m *PresencesController) List(ctx *gin.Context) {
-	topicIn, err := GetParam(ctx, "topic")
-	if err != nil {
-		return
-	}
 	criteria := m.buildCriteria(ctx)
-	criteria.Topic = topicIn
+	topicIn, found := ctx.Params.Get("topic")
+	if found {
+		criteria.Topic = topicIn
+	}
 	m.listWithCriteria(ctx, criteria)
 }
 
@@ -52,32 +51,35 @@ func (m *PresencesController) listWithCriteria(ctx *gin.Context, criteria *model
 	if e != nil {
 		return
 	}
-	var topic = models.Topic{}
-	if err := topic.FindByTopic(criteria.Topic, true, false, false, nil); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, errors.New("topic "+criteria.Topic+" does not exist"))
-		return
-	}
 
-	if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
-		ctx.AbortWithError(http.StatusForbidden, errors.New("No Read Access to this topic."))
-		return
-	}
-	// add / if search on topic
-	// as topic is in path, it can't start with a /
-	if criteria.Topic != "" && string(criteria.Topic[0]) != "/" {
-		criteria.Topic = "/" + criteria.Topic
-	}
-
-	topicDM := "/Private/" + utils.GetCtxUsername(ctx) + "/DM/"
-	if strings.HasPrefix(criteria.Topic, topicDM) {
-		part := strings.Split(criteria.Topic, "/")
-		if len(part) != 5 {
-			log.Errorf("wrong topic name for DM")
-			ctx.AbortWithError(http.StatusInternalServerError, errors.New("Wrong topic name for DM:"+criteria.Topic))
+	if criteria.Topic != "" {
+		var topic = models.Topic{}
+		if err := topic.FindByTopic(criteria.Topic, true, false, false, nil); err != nil {
+			ctx.AbortWithError(http.StatusBadRequest, errors.New("topic "+criteria.Topic+" does not exist"))
 			return
 		}
-		topicInverse := "/Private/" + part[4] + "/DM/" + utils.GetCtxUsername(ctx)
-		criteria.Topic = criteria.Topic + "," + topicInverse
+
+		if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
+			ctx.AbortWithError(http.StatusForbidden, errors.New("No Read Access to this topic."))
+			return
+		}
+		// add / if search on topic
+		// as topic is in path, it can't start with a /
+		if criteria.Topic != "" && string(criteria.Topic[0]) != "/" {
+			criteria.Topic = "/" + criteria.Topic
+		}
+
+		topicDM := "/Private/" + utils.GetCtxUsername(ctx) + "/DM/"
+		if strings.HasPrefix(criteria.Topic, topicDM) {
+			part := strings.Split(criteria.Topic, "/")
+			if len(part) != 5 {
+				log.Errorf("wrong topic name for DM")
+				ctx.AbortWithError(http.StatusInternalServerError, errors.New("Wrong topic name for DM:"+criteria.Topic))
+				return
+			}
+			topicInverse := "/Private/" + part[4] + "/DM/" + utils.GetCtxUsername(ctx)
+			criteria.Topic = criteria.Topic + "," + topicInverse
+		}
 	}
 
 	count, presences, err := models.ListPresences(criteria)

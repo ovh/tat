@@ -137,6 +137,7 @@ func getFieldsPresence(allFields bool) bson.M {
 		"dateTimePresence": 1,
 		"datePresence":     1,
 		"userPresence":     1,
+		"topic":            1,
 	}
 }
 
@@ -177,8 +178,7 @@ func listPresencesCursor(criteria *PresenceCriteria, allFields bool) *mgo.Query 
 // Upsert insert of update a presence (user / topic)
 func (presence *Presence) Upsert(user User, topic Topic, status string) error {
 	presence.Status = status
-	err := presence.checkAndFixStatus()
-	if err != nil {
+	if err := presence.checkAndFixStatus(); err != nil {
 		return err
 	}
 	//	presence.ID = bson.NewObjectId().Hex()
@@ -195,11 +195,10 @@ func (presence *Presence) Upsert(user User, topic Topic, status string) error {
 	//selector = append(selector, bson.M{"userpresence.username": userPresence.Username})
 	//selector = append(selector, bson.M{"topic": topic.Topic})
 	selector := bson.M{"topic": topic.Topic, "userPresence.username": userPresence.Username}
-	_, err = Store().clPresences.Upsert(selector, presence)
-	if err != nil {
+	if _, err := Store().clPresences.Upsert(selector, presence); err != nil {
 		log.Errorf("Error while inserting new presence %s", err)
 	}
-	return err
+	return nil
 }
 
 // truncate to 140 characters

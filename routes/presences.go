@@ -12,6 +12,7 @@ func InitRoutesPresences(router *gin.Engine) {
 	g.Use(CheckPassword())
 	{
 		// List Presences
+		g.GET("presences", presencesCtrl.List)
 		g.GET("presences/*topic", presencesCtrl.List)
 		// Add a presence and get list
 		g.POST("presenceget/*topic", presencesCtrl.CreateAndGet)
