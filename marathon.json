@@ -55,7 +55,10 @@
   "instances": {{.nb_instances}},
   "labels": {
     "HAPROXY_0_MODE": "{{.haproxy_0_mode}}",
-    "HAPROXY_0_VHOST": "{{.haproxy_0_vhost}}"
+    "HAPROXY_0_VHOST": "{{.haproxy_0_vhost}}",
+    "USER_THOT_TOKEN": "{{.user_thot_token}}",
+    "USER_IOT_ID": "{{.user_iot_id}}",
+    "USER_IOT_KEY": "{{.user_iot_key}}"
   },
   "constraints": [["hostname", "UNIQUE"]],
   "mem": {{.mem}}
