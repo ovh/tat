@@ -91,7 +91,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 			return
 		}
 		// hack to get new created DM Topic
-		if e := topic.FindByTopic(criteria.Topic, true, false, false, nil); e != nil {
+		if e := topic.FindByTopic(topicCriteria, true, false, false, nil); e != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + criteria.Topic + " does not exist (2)"})
 			return
 		}

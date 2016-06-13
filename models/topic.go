@@ -739,9 +739,14 @@ func (topic *Topic) FindByTopic(topicIn string, isAdmin, withTags, withLabels bo
 		One(&topic)
 
 	if err != nil || topic.ID == "" {
-		log.Debugf("FindByTopic> Error while fetching topic %s, isAdmin:", topic.Topic, isAdmin)
+		username := ""
+		if user != nil {
+			username = user.Username
+		}
+		err := fmt.Sprintf("FindByTopic> Error while fetching topic %s, isAdmin:%t, username:%s", topic.Topic, isAdmin, username)
+		log.Error(err)
 		// TODO DM
-		return err
+		return fmt.Errorf(err)
 	}
 
 	if user != nil {
@@ -770,12 +775,12 @@ func IsTopicExists(topic string) bool {
 }
 
 // FindByID return topic, matching given id
-func (topic *Topic) FindByID(id string, isAdmin bool) error {
+func (topic *Topic) FindByID(id string, isAdmin bool, username string) error {
 	err := Store().clTopics.Find(bson.M{"_id": id}).
 		Select(getTopicSelectedFields(isAdmin, false, false)).
 		One(&topic)
 	if err != nil {
-		log.Errorf("Error while fetching topic with id:%s isAdmin:%s", id, isAdmin)
+		log.Errorf("Error while fetching topic with id:%s isAdmin:%t username:", id, isAdmin, username)
 	}
 	return err
 }
@@ -983,7 +988,7 @@ func (topic *Topic) IsUserReadAccess(user User) bool {
 	// if user not admin, reload topic with admin rights
 	if !user.IsAdmin {
 		currentTopic = &Topic{}
-		if e := currentTopic.FindByID(topic.ID, true); e != nil {
+		if e := currentTopic.FindByID(topic.ID, true, user.Username); e != nil {
 			return false
 		}
 	}
