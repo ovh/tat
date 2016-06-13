@@ -854,6 +854,7 @@ func (message *Message) AddLabel(topic Topic, label string, color string) (Label
 	}
 
 	if message.ContainsLabel(label) {
+		log.Errorf("AddLabel not possible, %s is already a label of message %s", label, message.ID)
 		return Label{}, fmt.Errorf("AddLabel not possible, %s is already a label of this message", label)
 	}
 	var newLabel = Label{Text: label, Color: color}

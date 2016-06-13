@@ -744,7 +744,7 @@ func (topic *Topic) FindByTopic(topicIn string, isAdmin, withTags, withLabels bo
 			username = user.Username
 		}
 		err := fmt.Sprintf("FindByTopic> Error while fetching topic %s, isAdmin:%t, username:%s", topic.Topic, isAdmin, username)
-		log.Error(err)
+		log.Errorf(err)
 		// TODO DM
 		return fmt.Errorf(err)
 	}
@@ -780,7 +780,7 @@ func (topic *Topic) FindByID(id string, isAdmin bool, username string) error {
 		Select(getTopicSelectedFields(isAdmin, false, false)).
 		One(&topic)
 	if err != nil {
-		log.Errorf("Error while fetching topic with id:%s isAdmin:%t username:", id, isAdmin, username)
+		log.Errorf("Error while fetching topic with id:%s isAdmin:%t username:%s", id, isAdmin, username)
 	}
 	return err
 }

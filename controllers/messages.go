@@ -692,7 +692,7 @@ func checkDMTopic(ctx *gin.Context, topicName string) (*models.Topic, string, er
 	topicParentName := "/Private/" + utils.GetCtxUsername(ctx) + "/DM"
 	if !strings.HasPrefix(topicName, topicParentName+"/") {
 		log.Errorf("wrong topic name for DM:" + topicName)
-		return &topic, "", errors.New("Wrong tpic name for DM:" + topicName)
+		return &topic, "", errors.New("Wrong topic name for DM:" + topicName)
 	}
 
 	// /Private/usernameFrom/DM/usernameTO
