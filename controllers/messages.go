@@ -83,7 +83,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	}
 
 	var topic = models.Topic{}
-	if topic.FindByTopic(criteria.Topic, true, false, false, nil); err != nil {
+	if errt := topic.FindByTopic(criteria.Topic, true, false, false, nil); errt != nil {
 		topicCriteria := ""
 		_, topicCriteria, err = checkDMTopic(ctx, criteria.Topic)
 		if err != nil {
@@ -108,7 +108,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 			return
 		}
 		if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
-			ctx.JSON(http.StatusForbidden, gin.H{"error": "No Read Access on topic"})
+			ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No Read Access on topic %s", criteria.Topic)})
 			return
 		}
 		out.IsTopicRw = topic.IsUserRW(&user)
@@ -691,14 +691,14 @@ func checkDMTopic(ctx *gin.Context, topicName string) (*models.Topic, string, er
 
 	topicParentName := "/Private/" + utils.GetCtxUsername(ctx) + "/DM"
 	if !strings.HasPrefix(topicName, topicParentName+"/") {
-		log.Errorf("wrong topic name for DM:" + topicName)
+		log.Debugf("wrong topic name for DM:" + topicName)
 		return &topic, "", errors.New("Wrong topic name for DM:" + topicName)
 	}
 
 	// /Private/usernameFrom/DM/usernameTO
 	part := strings.Split(topicName, "/")
 	if len(part) != 5 {
-		log.Errorf("wrong topic name for DM")
+		log.Debugf("wrong topic name for DM")
 		return &topic, "", errors.New("Wrong topic name for DM:" + topicName)
 	}
 

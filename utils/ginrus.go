@@ -50,7 +50,7 @@ func Ginrus(logger *logrus.Logger, timeFormat string, utc bool) gin.HandlerFunc 
 		if len(c.Errors) > 0 {
 			// Append error field if this is an erroneous request.
 			entry.Error(c.Errors.String())
-		} else if c.Writer.Status() > 400 {
+		} else if c.Writer.Status() >= 400 {
 			entry.Warn()
 		} else {
 			entry.Info()

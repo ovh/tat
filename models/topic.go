@@ -743,10 +743,10 @@ func (topic *Topic) FindByTopic(topicIn string, isAdmin, withTags, withLabels bo
 		if user != nil {
 			username = user.Username
 		}
-		err := fmt.Sprintf("FindByTopic> Error while fetching topic %s, isAdmin:%t, username:%s", topic.Topic, isAdmin, username)
-		log.Errorf(err)
+		e := fmt.Sprintf("FindByTopic> Error while fetching topic %s, isAdmin:%t, username:%s", topic.Topic, isAdmin, username)
+		log.Debugf(e)
 		// TODO DM
-		return fmt.Errorf(err)
+		return fmt.Errorf(e)
 	}
 
 	if user != nil {
