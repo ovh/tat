@@ -598,7 +598,7 @@ func WSMessage(msg *WSMessageJSON) {
 
 		// getting messages related to ID, only once
 		if !isGetMsgs {
-			msgs, _ = ListMessages(c)
+			msgs, _ = ListMessages(c, "")
 			isGetMsgs = true
 		}
 

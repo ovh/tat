@@ -121,7 +121,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	}
 
 	if criteria.OnlyCount == "true" {
-		count, e := models.CountMessages(criteria)
+		count, e := models.CountMessages(criteria, user.Username)
 		if e != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
 			return
@@ -141,7 +141,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 		}()
 	}
 
-	messages, err := models.ListMessages(criteria)
+	messages, err := models.ListMessages(criteria, user.Username)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -369,7 +369,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 		TreeView:    "onetree",
 	}
 
-	msgs, err := models.ListMessages(c)
+	msgs, err := models.ListMessages(c, user.Username)
 	if err != nil {
 		log.Errorf("Error while list Messages in Delete %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while list Messages in Delete"})

@@ -117,7 +117,7 @@ type MessageJSON struct {
 	Labels       []Label `json:"labels"`
 }
 
-func buildMessageCriteria(criteria *MessageCriteria) bson.M {
+func buildMessageCriteria(criteria *MessageCriteria, username string) bson.M {
 	var query = []bson.M{}
 
 	if criteria.IDMessage != "" {
@@ -206,7 +206,7 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 	if criteria.DateMinCreation != "" {
 		i, err := strconv.ParseFloat(criteria.DateMinCreation, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMinCreation %s", err)
+			log.Errorf("Error while parsing dateMinCreation %s, criteria:%v", err, criteria)
 		} else {
 			bsonDate["$gte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 		}
@@ -214,7 +214,7 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 	if criteria.DateMaxCreation != "" {
 		i, err := strconv.ParseFloat(criteria.DateMaxCreation, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMaxCreation %s", err)
+			log.Errorf("Error while parsing dateMaxCreation %s, criteria:%v", err, criteria)
 		} else {
 			bsonDate["$lte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 		}
@@ -227,7 +227,7 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 	if criteria.DateMinUpdate != "" {
 		i, err := strconv.ParseFloat(criteria.DateMinUpdate, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMinUpdate %s", err)
+			log.Errorf("Error while parsing dateMinUpdate %s, criteria:%v", err, criteria)
 		} else {
 			bsonDateUpdate["$gte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 		}
@@ -235,7 +235,7 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 	if criteria.DateMaxUpdate != "" {
 		i, err := strconv.ParseFloat(criteria.DateMaxUpdate, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMaxUpdate %s", err)
+			log.Errorf("Error while parsing dateMaxUpdate %s, criteria:%v", err, criteria)
 		} else {
 			bsonDateUpdate["$lte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 		}
@@ -248,7 +248,7 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 	if criteria.LimitMinNbVotesUP != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMinNbVotesUP, 64)
 		if err != nil {
-			log.Errorf("Error while parsing limitMinNbVotesUP %s", err)
+			log.Errorf("Error while parsing limitMinNbVotesUP %s, criteria:%v", err, criteria)
 		} else {
 			bsonNbVotesUP["$gte"] = i
 		}
@@ -256,7 +256,7 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 	if criteria.LimitMaxNbVotesUP != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMaxNbVotesUP, 64)
 		if err != nil {
-			log.Errorf("Error while parsing limitMaxNbVotesUP %s", err)
+			log.Errorf("Error while parsing limitMaxNbVotesUP %s, criteria:%v", err, criteria)
 		} else {
 			bsonNbVotesUP["$lte"] = i
 		}
@@ -269,7 +269,7 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 	if criteria.LimitMinNbVotesDown != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMinNbVotesDown, 64)
 		if err != nil {
-			log.Errorf("Error while parsing limitMinNbVotesDown %s", err)
+			log.Errorf("Error while parsing limitMinNbVotesDown %s, criteria:%v", err, criteria)
 		} else {
 			bsonNbVotesDown["$gte"] = i
 		}
@@ -277,7 +277,7 @@ func buildMessageCriteria(criteria *MessageCriteria) bson.M {
 	if criteria.LimitMaxNbVotesDown != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMaxNbVotesDown, 64)
 		if err != nil {
-			log.Errorf("Error while parsing limitMaxNbVotesDown %s", err)
+			log.Errorf("Error while parsing limitMaxNbVotesDown %s, criteria:%v", err, criteria)
 		} else {
 			bsonNbVotesDown["$lte"] = i
 		}
@@ -304,10 +304,10 @@ func (message *Message) FindByID(id string) error {
 }
 
 // ListMessages list messages with given criteria
-func ListMessages(criteria *MessageCriteria) ([]Message, error) {
+func ListMessages(criteria *MessageCriteria, username string) ([]Message, error) {
 	var messages []Message
 
-	err := Store().clMessages.Find(buildMessageCriteria(criteria)).
+	err := Store().clMessages.Find(buildMessageCriteria(criteria, username)).
 		Sort("-dateCreation").
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
@@ -345,8 +345,8 @@ func ListMessages(criteria *MessageCriteria) ([]Message, error) {
 }
 
 // CountMessages list messages with given criteria
-func CountMessages(criteria *MessageCriteria) (int, error) {
-	count, err := Store().clMessages.Find(buildMessageCriteria(criteria)).Count()
+func CountMessages(criteria *MessageCriteria, username string) (int, error) {
+	count, err := Store().clMessages.Find(buildMessageCriteria(criteria, username)).Count()
 	if err != nil {
 		log.Errorf("Error while Count Messages %s", err)
 	}
@@ -408,7 +408,7 @@ func initTree(messages []Message, criteria *MessageCriteria) ([]Message, error) 
 		NotTag:       criteria.NotTag,
 	}
 	var msgs []Message
-	err := Store().clMessages.Find(buildMessageCriteria(c)).Sort("-dateCreation").All(&msgs)
+	err := Store().clMessages.Find(buildMessageCriteria(c, "")).Sort("-dateCreation").All(&msgs)
 	if err != nil {
 		log.Errorf("Error while Find Messages in getTree %s", err)
 		return messages, err
@@ -518,7 +518,7 @@ func getTree(messagesIn map[string][]Message, criteria *MessageCriteria) ([]Mess
 			NotTag:       criteria.NotTag,
 		}
 		var msgs []Message
-		err := Store().clMessages.Find(buildMessageCriteria(c)).Sort("-dateCreation").All(&msgs)
+		err := Store().clMessages.Find(buildMessageCriteria(c, "")).Sort("-dateCreation").All(&msgs)
 		if err != nil {
 			log.Errorf("Error while Find Messages in getTree %s", err)
 			return messages, err
@@ -772,7 +772,7 @@ func (message *Message) Move(user User, newTopic Topic) error {
 		TreeView:  "onetree",
 	}
 
-	msgs, err := ListMessages(c)
+	msgs, err := ListMessages(c, user.Username)
 	if err != nil {
 		return fmt.Errorf("Error while list Messages in Delete %s", err)
 	}
@@ -1121,7 +1121,7 @@ func ComputeReplies(topicName string) (int, error) {
 			continue
 		}
 		c := &MessageCriteria{InReplyOfID: msg.InReplyOfID}
-		if nb, err := CountMessages(c); err == nil {
+		if nb, err := CountMessages(c, ""); err == nil {
 			err := Store().clMessages.Update(
 				bson.M{"_id": msg.InReplyOfID},
 				bson.M{"$set": bson.M{"nbReplies": nb}})

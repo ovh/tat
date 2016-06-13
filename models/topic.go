@@ -433,7 +433,7 @@ func (topic *Topic) Delete(user *User) error {
 	}
 
 	c := &MessageCriteria{Topic: topic.Topic}
-	msgs, err := ListMessages(c)
+	msgs, err := ListMessages(c, user.Username)
 	if err != nil {
 		return fmt.Errorf("Error while list Messages in Delete %s", err)
 	}
