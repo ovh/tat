@@ -98,6 +98,12 @@ func (m *MessagesController) List(ctx *gin.Context) {
 		criteria.Topic = topicCriteria
 	}
 
+	if topic.ID == "" {
+		log.Errorf("Invalid Topic ID. user: %s topic:%s", user.Username, criteria.Topic)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + criteria.Topic + " does not exist"})
+		return
+	}
+
 	out := &models.MessagesJSON{}
 
 	var user models.User
@@ -105,11 +111,6 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	if utils.GetCtxUsername(ctx) != "" {
 		user, e = PreCheckUser(ctx)
 		if e != nil {
-			return
-		}
-		if topic.ID == "" {
-			log.Error("Invalid Topic ID. user: %s topic:%s", user.Username, criteria.Topic)
-			ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("Invalid Topic. No Read Access for %s on topic %s", user.Username, criteria.Topic)})
 			return
 		}
 		if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {

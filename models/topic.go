@@ -738,7 +738,7 @@ func (topic *Topic) FindByTopic(topicIn string, isAdmin, withTags, withLabels bo
 		Select(getTopicSelectedFields(isAdmin, withTags, withLabels)).
 		One(&topic)
 
-	if err != nil || topic.Topic == "" {
+	if err != nil || topic.ID == "" {
 		log.Debugf("FindByTopic> Error while fetching topic %s, isAdmin:", topic.Topic, isAdmin)
 		// TODO DM
 		return err
