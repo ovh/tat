@@ -117,7 +117,7 @@ type MessageJSON struct {
 	Labels       []Label `json:"labels"`
 }
 
-func buildMessageCriteria(criteria *MessageCriteria, username string) bson.M {
+func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, error) {
 	var query = []bson.M{}
 
 	if criteria.IDMessage != "" {
@@ -206,18 +206,16 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) bson.M {
 	if criteria.DateMinCreation != "" {
 		i, err := strconv.ParseFloat(criteria.DateMinCreation, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMinCreation %s, criteria:%v", err, criteria)
-		} else {
-			bsonDate["$gte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
+			return bson.M{}, fmt.Errorf("Error while parsing dateMinCreation %s, criteria:%v", err, criteria)
 		}
+		bsonDate["$gte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 	}
 	if criteria.DateMaxCreation != "" {
 		i, err := strconv.ParseFloat(criteria.DateMaxCreation, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMaxCreation %s, criteria:%v", err, criteria)
-		} else {
-			bsonDate["$lte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
+			return bson.M{}, fmt.Errorf("Error while parsing dateMaxCreation %s, criteria:%v", err, criteria)
 		}
+		bsonDate["$lte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 	}
 	if len(bsonDate) > 0 {
 		query = append(query, bson.M{"dateCreation": bsonDate})
@@ -227,18 +225,16 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) bson.M {
 	if criteria.DateMinUpdate != "" {
 		i, err := strconv.ParseFloat(criteria.DateMinUpdate, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMinUpdate %s, criteria:%v", err, criteria)
-		} else {
-			bsonDateUpdate["$gte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
+			return bson.M{}, fmt.Errorf("Error while parsing dateMinUpdate %s, criteria:%v", err, criteria)
 		}
+		bsonDateUpdate["$gte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 	}
 	if criteria.DateMaxUpdate != "" {
 		i, err := strconv.ParseFloat(criteria.DateMaxUpdate, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMaxUpdate %s, criteria:%v", err, criteria)
-		} else {
-			bsonDateUpdate["$lte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
+			return bson.M{}, fmt.Errorf("Error while parsing dateMaxUpdate %s, criteria:%v", err, criteria)
 		}
+		bsonDateUpdate["$lte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 	}
 	if len(bsonDateUpdate) > 0 {
 		query = append(query, bson.M{"dateUpdate": bsonDateUpdate})
@@ -248,18 +244,16 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) bson.M {
 	if criteria.LimitMinNbVotesUP != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMinNbVotesUP, 64)
 		if err != nil {
-			log.Errorf("Error while parsing limitMinNbVotesUP %s, criteria:%v", err, criteria)
-		} else {
-			bsonNbVotesUP["$gte"] = i
+			return bson.M{}, fmt.Errorf("Error while parsing limitMinNbVotesUP %s, criteria:%v", err, criteria)
 		}
+		bsonNbVotesUP["$gte"] = i
 	}
 	if criteria.LimitMaxNbVotesUP != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMaxNbVotesUP, 64)
 		if err != nil {
-			log.Errorf("Error while parsing limitMaxNbVotesUP %s, criteria:%v", err, criteria)
-		} else {
-			bsonNbVotesUP["$lte"] = i
+			return bson.M{}, fmt.Errorf("Error while parsing limitMaxNbVotesUP %s, criteria:%v", err, criteria)
 		}
+		bsonNbVotesUP["$lte"] = i
 	}
 	if len(bsonNbVotesUP) > 0 {
 		query = append(query, bson.M{"nbVotesUP": bsonNbVotesUP})
@@ -269,29 +263,27 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) bson.M {
 	if criteria.LimitMinNbVotesDown != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMinNbVotesDown, 64)
 		if err != nil {
-			log.Errorf("Error while parsing limitMinNbVotesDown %s, criteria:%v", err, criteria)
-		} else {
-			bsonNbVotesDown["$gte"] = i
+			return bson.M{}, fmt.Errorf("Error while parsing limitMinNbVotesDown %s, criteria:%v", err, criteria)
 		}
+		bsonNbVotesDown["$gte"] = i
 	}
 	if criteria.LimitMaxNbVotesDown != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMaxNbVotesDown, 64)
 		if err != nil {
-			log.Errorf("Error while parsing limitMaxNbVotesDown %s, criteria:%v", err, criteria)
-		} else {
-			bsonNbVotesDown["$lte"] = i
+			return bson.M{}, fmt.Errorf("Error while parsing limitMaxNbVotesDown %s, criteria:%v", err, criteria)
 		}
+		bsonNbVotesDown["$lte"] = i
 	}
 	if len(bsonNbVotesDown) > 0 {
 		query = append(query, bson.M{"nbVotesDown": bsonNbVotesDown})
 	}
 
 	if len(query) > 0 {
-		return bson.M{"$and": query}
+		return bson.M{"$and": query}, nil
 	} else if len(query) == 1 {
-		return query[0]
+		return query[0], nil
 	}
-	return bson.M{}
+	return bson.M{}, nil
 }
 
 // FindByID returns message by given ID
@@ -307,7 +299,11 @@ func (message *Message) FindByID(id string) error {
 func ListMessages(criteria *MessageCriteria, username string) ([]Message, error) {
 	var messages []Message
 
-	err := Store().clMessages.Find(buildMessageCriteria(criteria, username)).
+	c, errc := buildMessageCriteria(criteria, username)
+	if errc != nil {
+		return messages, errc
+	}
+	err := Store().clMessages.Find(c).
 		Sort("-dateCreation").
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
@@ -346,7 +342,11 @@ func ListMessages(criteria *MessageCriteria, username string) ([]Message, error)
 
 // CountMessages list messages with given criteria
 func CountMessages(criteria *MessageCriteria, username string) (int, error) {
-	count, err := Store().clMessages.Find(buildMessageCriteria(criteria, username)).Count()
+	c, errc := buildMessageCriteria(criteria, username)
+	if errc != nil {
+		return -1, errc
+	}
+	count, err := Store().clMessages.Find(c).Count()
 	if err != nil {
 		log.Errorf("Error while Count Messages %s", err)
 	}
@@ -408,7 +408,11 @@ func initTree(messages []Message, criteria *MessageCriteria) ([]Message, error) 
 		NotTag:       criteria.NotTag,
 	}
 	var msgs []Message
-	err := Store().clMessages.Find(buildMessageCriteria(c, "")).Sort("-dateCreation").All(&msgs)
+	cr, errc := buildMessageCriteria(c, "")
+	if errc != nil {
+		return msgs, errc
+	}
+	err := Store().clMessages.Find(cr).Sort("-dateCreation").All(&msgs)
 	if err != nil {
 		log.Errorf("Error while Find Messages in getTree %s", err)
 		return messages, err
@@ -518,7 +522,11 @@ func getTree(messagesIn map[string][]Message, criteria *MessageCriteria) ([]Mess
 			NotTag:       criteria.NotTag,
 		}
 		var msgs []Message
-		err := Store().clMessages.Find(buildMessageCriteria(c, "")).Sort("-dateCreation").All(&msgs)
+		cr, errc := buildMessageCriteria(c, "")
+		if errc != nil {
+			return msgs, errc
+		}
+		err := Store().clMessages.Find(cr).Sort("-dateCreation").All(&msgs)
 		if err != nil {
 			log.Errorf("Error while Find Messages in getTree %s", err)
 			return messages, err
