@@ -91,9 +91,6 @@ func buildTopicCriteria(criteria *TopicCriteria, user *User) bson.M {
 		for _, val := range strings.Split(criteria.Topic, ",") {
 			queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topic": val})
 		}
-		if criteria.OnlyFavorites == "true" {
-			queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topic": bson.RegEx{Pattern: "/Private/.*"}})
-		}
 		query = append(query, queryTopics)
 	}
 	if criteria.Description != "" {
