@@ -206,14 +206,14 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 	if criteria.DateMinCreation != "" {
 		i, err := strconv.ParseFloat(criteria.DateMinCreation, 64)
 		if err != nil {
-			return bson.M{}, fmt.Errorf("Error while parsing dateMinCreation %s, criteria:%v", err, criteria)
+			return bson.M{}, fmt.Errorf("Error while parsing dateMinCreation %s", err)
 		}
 		bsonDate["$gte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 	}
 	if criteria.DateMaxCreation != "" {
 		i, err := strconv.ParseFloat(criteria.DateMaxCreation, 64)
 		if err != nil {
-			return bson.M{}, fmt.Errorf("Error while parsing dateMaxCreation %s, criteria:%v", err, criteria)
+			return bson.M{}, fmt.Errorf("Error while parsing dateMaxCreation %s", err)
 		}
 		bsonDate["$lte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 	}
@@ -225,14 +225,14 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 	if criteria.DateMinUpdate != "" {
 		i, err := strconv.ParseFloat(criteria.DateMinUpdate, 64)
 		if err != nil {
-			return bson.M{}, fmt.Errorf("Error while parsing dateMinUpdate %s, criteria:%v", err, criteria)
+			return bson.M{}, fmt.Errorf("Error while parsing dateMinUpdate %s", err)
 		}
 		bsonDateUpdate["$gte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 	}
 	if criteria.DateMaxUpdate != "" {
 		i, err := strconv.ParseFloat(criteria.DateMaxUpdate, 64)
 		if err != nil {
-			return bson.M{}, fmt.Errorf("Error while parsing dateMaxUpdate %s, criteria:%v", err, criteria)
+			return bson.M{}, fmt.Errorf("Error while parsing dateMaxUpdate %s", err)
 		}
 		bsonDateUpdate["$lte"] = utils.TatTSFromDate(utils.DateFromFloat(i))
 	}
@@ -244,14 +244,14 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 	if criteria.LimitMinNbVotesUP != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMinNbVotesUP, 64)
 		if err != nil {
-			return bson.M{}, fmt.Errorf("Error while parsing limitMinNbVotesUP %s, criteria:%v", err, criteria)
+			return bson.M{}, fmt.Errorf("Error while parsing limitMinNbVotesUP %s", err)
 		}
 		bsonNbVotesUP["$gte"] = i
 	}
 	if criteria.LimitMaxNbVotesUP != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMaxNbVotesUP, 64)
 		if err != nil {
-			return bson.M{}, fmt.Errorf("Error while parsing limitMaxNbVotesUP %s, criteria:%v", err, criteria)
+			return bson.M{}, fmt.Errorf("Error while parsing limitMaxNbVotesUP %s", err)
 		}
 		bsonNbVotesUP["$lte"] = i
 	}
@@ -263,14 +263,14 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 	if criteria.LimitMinNbVotesDown != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMinNbVotesDown, 64)
 		if err != nil {
-			return bson.M{}, fmt.Errorf("Error while parsing limitMinNbVotesDown %s, criteria:%v", err, criteria)
+			return bson.M{}, fmt.Errorf("Error while parsing limitMinNbVotesDown %s", err)
 		}
 		bsonNbVotesDown["$gte"] = i
 	}
 	if criteria.LimitMaxNbVotesDown != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMaxNbVotesDown, 64)
 		if err != nil {
-			return bson.M{}, fmt.Errorf("Error while parsing limitMaxNbVotesDown %s, criteria:%v", err, criteria)
+			return bson.M{}, fmt.Errorf("Error while parsing limitMaxNbVotesDown %s", err)
 		}
 		bsonNbVotesDown["$lte"] = i
 	}

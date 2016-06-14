@@ -67,7 +67,7 @@ type UserCriteria struct {
 	DateMaxCreation string
 }
 
-func buildUserCriteria(criteria *UserCriteria) bson.M {
+func buildUserCriteria(criteria *UserCriteria) (bson.M, error) {
 	var query = []bson.M{}
 	query = append(query, bson.M{"isArchived": false})
 
@@ -101,39 +101,29 @@ func buildUserCriteria(criteria *UserCriteria) bson.M {
 	if criteria.DateMinCreation != "" {
 		i, err := strconv.ParseInt(criteria.DateMinCreation, 10, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMinCreation %s", err)
+			return bson.M{}, fmt.Errorf("Error while parsing dateMinCreation %s", err)
 		}
 		tm := time.Unix(i, 0)
-
-		if err == nil {
-			bsonDate["$gte"] = tm.Unix()
-		} else {
-			log.Errorf("Error while parsing dateMinCreation %s", err)
-		}
+		bsonDate["$gte"] = tm.Unix()
 	}
 	if criteria.DateMaxCreation != "" {
 		i, err := strconv.ParseInt(criteria.DateMaxCreation, 10, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMaxCreation %s", err)
+			return bson.M{}, fmt.Errorf("Error while parsing dateMaxCreation %s", err)
 		}
 		tm := time.Unix(i, 0)
-
-		if err == nil {
-			bsonDate["$lte"] = tm.Unix()
-		} else {
-			log.Errorf("Error while parsing dateMaxCreation %s", err)
-		}
+		bsonDate["$lte"] = tm.Unix()
 	}
 	if len(bsonDate) > 0 {
 		query = append(query, bson.M{"dateCreation": bsonDate})
 	}
 
 	if len(query) > 0 {
-		return bson.M{"$and": query}
+		return bson.M{"$and": query}, nil
 	} else if len(query) == 1 {
-		return query[0]
+		return query[0], nil
 	}
-	return bson.M{}
+	return bson.M{}, nil
 }
 
 func getUserListField(isAdmin bool) bson.M {
@@ -156,10 +146,13 @@ func getUserListField(isAdmin bool) bson.M {
 func ListUsers(criteria *UserCriteria, isAdmin bool) (int, []User, error) {
 	var users []User
 
-	cursor := listUsersCursor(criteria, isAdmin)
+	cursor, errl := listUsersCursor(criteria, isAdmin)
+	if errl != nil {
+		return -1, users, errl
+	}
 	count, err := cursor.Count()
 	if err != nil {
-		log.Errorf("Error while count Users %s", err)
+		return -1, users, fmt.Errorf("Error while count Users %s", err)
 	}
 
 	err = cursor.Select(getUserListField(isAdmin)).
@@ -169,7 +162,7 @@ func ListUsers(criteria *UserCriteria, isAdmin bool) (int, []User, error) {
 		All(&users)
 
 	if err != nil {
-		log.Errorf("Error while Find All Users %s", err)
+		return -1, users, fmt.Errorf("Error while Find All Users %s", err)
 	}
 
 	// Admin could ask groups for all users. Not perf, but really rare
@@ -189,8 +182,12 @@ func ListUsers(criteria *UserCriteria, isAdmin bool) (int, []User, error) {
 	return count, users, err
 }
 
-func listUsersCursor(criteria *UserCriteria, isAdmin bool) *mgo.Query {
-	return Store().clUsers.Find(buildUserCriteria(criteria))
+func listUsersCursor(criteria *UserCriteria, isAdmin bool) (*mgo.Query, error) {
+	c, err := buildUserCriteria(criteria)
+	if err != nil {
+		return nil, err
+	}
+	return Store().clUsers.Find(c), nil
 }
 
 // Insert a new user, return tokenVerify to user, in order to

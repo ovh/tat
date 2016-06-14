@@ -34,7 +34,7 @@ type GroupCriteria struct {
 	DateMaxCreation string
 }
 
-func buildGroupCriteria(criteria *GroupCriteria) bson.M {
+func buildGroupCriteria(criteria *GroupCriteria) (bson.M, error) {
 	var query = []bson.M{}
 
 	if criteria.IDGroup != "" {
@@ -67,46 +67,39 @@ func buildGroupCriteria(criteria *GroupCriteria) bson.M {
 	if criteria.DateMinCreation != "" {
 		i, err := strconv.ParseInt(criteria.DateMinCreation, 10, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMinCreation %s", err)
+			return bson.M{}, fmt.Errorf("Error while parsing dateMinCreation %s", err)
 		}
 		tm := time.Unix(i, 0)
-
-		if err == nil {
-			bsonDate["$gte"] = tm.Unix()
-		} else {
-			log.Errorf("Error while parsing dateMinCreation %s", err)
-		}
+		bsonDate["$gte"] = tm.Unix()
 	}
 	if criteria.DateMaxCreation != "" {
 		i, err := strconv.ParseInt(criteria.DateMaxCreation, 10, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMaxCreation %s", err)
+			return bson.M{}, fmt.Errorf("Error while parsing dateMaxCreation %s", err)
 		}
 		tm := time.Unix(i, 0)
-
-		if err == nil {
-			bsonDate["$lte"] = tm.Unix()
-		} else {
-			log.Errorf("Error while parsing dateMaxCreation %s", err)
-		}
+		bsonDate["$lte"] = tm.Unix()
 	}
 	if len(bsonDate) > 0 {
 		query = append(query, bson.M{"dateCreation": bsonDate})
 	}
 
 	if len(query) > 0 {
-		return bson.M{"$and": query}
+		return bson.M{"$and": query}, nil
 	} else if len(query) == 1 {
-		return query[0]
+		return query[0], nil
 	}
-	return bson.M{}
+	return bson.M{}, nil
 }
 
 // ListGroups return all groups matching given criteria
 func ListGroups(criteria *GroupCriteria, user *User, isAdmin bool) (int, []Group, error) {
 	var groups []Group
 
-	cursor := listGroupsCursor(criteria)
+	cursor, errl := listGroupsCursor(criteria)
+	if errl != nil {
+		return -1, groups, errl
+	}
 	count, err := cursor.Count()
 	if err != nil {
 		log.Errorf("Error while count Groups %s", err)
@@ -169,8 +162,12 @@ func getGroupsForMemberUser(user *User) ([]Group, error) {
 	return groups, err
 }
 
-func listGroupsCursor(criteria *GroupCriteria) *mgo.Query {
-	return Store().clGroups.Find(buildGroupCriteria(criteria))
+func listGroupsCursor(criteria *GroupCriteria) (*mgo.Query, error) {
+	c, err := buildGroupCriteria(criteria)
+	if err != nil {
+		return nil, err
+	}
+	return Store().clGroups.Find(c), nil
 }
 
 // Insert insert new group

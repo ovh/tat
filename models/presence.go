@@ -58,7 +58,7 @@ type PresenceJSON struct {
 	Topic    string
 }
 
-func buildPresenceCriteria(criteria *PresenceCriteria) bson.M {
+func buildPresenceCriteria(criteria *PresenceCriteria) (bson.M, error) {
 	var query = []bson.M{}
 
 	if criteria.Status != "" {
@@ -91,39 +91,29 @@ func buildPresenceCriteria(criteria *PresenceCriteria) bson.M {
 	if criteria.DateMinPresence != "" {
 		i, err := strconv.ParseInt(criteria.DateMinPresence, 10, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMinPresence %s", err)
+			return bson.M{}, fmt.Errorf("Error while parsing dateMinPresence %s", err)
 		}
 		tm := time.Unix(i, 0)
-
-		if err == nil {
-			bsonDate["$gte"] = tm.Unix()
-		} else {
-			log.Errorf("Error while parsing dateMinPresence %s", err)
-		}
+		bsonDate["$gte"] = tm.Unix()
 	}
 	if criteria.DateMaxPresence != "" {
 		i, err := strconv.ParseInt(criteria.DateMaxPresence, 10, 64)
 		if err != nil {
-			log.Errorf("Error while parsing dateMaxPresence %s", err)
+			return bson.M{}, fmt.Errorf("Error while parsing dateMaxPresence %s", err)
 		}
 		tm := time.Unix(i, 0)
-
-		if err == nil {
-			bsonDate["$lte"] = tm.Unix()
-		} else {
-			log.Errorf("Error while parsing dateMaxPresence %s", err)
-		}
+		bsonDate["$lte"] = tm.Unix()
 	}
 	if len(bsonDate) > 0 {
 		query = append(query, bson.M{"datePresence": bsonDate})
 	}
 
 	if len(query) > 0 {
-		return bson.M{"$and": query}
+		return bson.M{"$and": query}, nil
 	} else if len(query) == 1 {
-		return query[0]
+		return query[0], nil
 	}
-	return bson.M{}
+	return bson.M{}, nil
 }
 
 func getFieldsPresence(allFields bool) bson.M {
@@ -154,10 +144,13 @@ func ListPresences(criteria *PresenceCriteria) (int, []Presence, error) {
 func listPresencesInternal(criteria *PresenceCriteria, allFields bool) (int, []Presence, error) {
 	var presences []Presence
 
-	cursor := listPresencesCursor(criteria, allFields)
+	cursor, errl := listPresencesCursor(criteria, allFields)
+	if errl != nil {
+		return -1, presences, errl
+	}
 	count, err := cursor.Count()
 	if err != nil {
-		log.Errorf("Error while count Presences %s", err)
+		return -1, presences, fmt.Errorf("Error while count Presences %s", err)
 	}
 	err = cursor.Select(getFieldsPresence(allFields)).
 		Sort("-datePresence").
@@ -171,8 +164,12 @@ func listPresencesInternal(criteria *PresenceCriteria, allFields bool) (int, []P
 	return count, presences, err
 }
 
-func listPresencesCursor(criteria *PresenceCriteria, allFields bool) *mgo.Query {
-	return Store().clPresences.Find(buildPresenceCriteria(criteria))
+func listPresencesCursor(criteria *PresenceCriteria, allFields bool) (*mgo.Query, error) {
+	c, err := buildPresenceCriteria(criteria)
+	if err != nil {
+		return nil, err
+	}
+	return Store().clPresences.Find(c), nil
 }
 
 // Upsert insert of update a presence (user / topic)
