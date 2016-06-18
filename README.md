@@ -201,16 +201,6 @@ curl -XPUT \
 	https://<tatHostname>:<tatPort>/message/newTopic/newSub-topic
 ```
 
-### Bookmark a message
-```
-curl -XPOST \
-    -H 'Content-Type: application/json' \
-    -H "Tat_username: username" \
-    -H "Tat_password: passwordOfUser" \
-	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "bookmark"}'\
-	https://<tatHostname>:<tatPort>/message/Private/username/Bookmarks/sub-topic
-```
-
 ### Delete a message
 ```
 curl -XDELETE \

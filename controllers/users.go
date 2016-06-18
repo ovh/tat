@@ -696,7 +696,7 @@ type checkTopicsUserJSON struct {
 }
 
 // Check if user have his Private topics
-// /Private/username, /Private/username/Tasks, /Private/username/Bookmarks
+// /Private/username, /Private/username/Tasks
 func (u *UsersController) Check(ctx *gin.Context) {
 
 	var userJSON checkTopicsUserJSON

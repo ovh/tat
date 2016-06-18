@@ -183,7 +183,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON
 		topicName := ""
 		if messageIn.Action == "update" {
 			topicName = messageIn.Topic
-		} else if messageIn.Action == "reply" || messageIn.Action == "unbookmark" ||
+		} else if messageIn.Action == "reply" ||
 			messageIn.Action == "like" || messageIn.Action == "unlike" ||
 			messageIn.Action == "label" || messageIn.Action == "unlabel" ||
 			messageIn.Action == "voteup" || messageIn.Action == "votedown" ||
@@ -199,14 +199,6 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON
 				return messageIn, message, topic, err
 			}
 			topicName = m.inverseIfDMTopic(ctx, topicName)
-		} else if messageIn.Action == "bookmark" {
-			topicAction := m.getTopicNameFromAction(utils.GetCtxUsername(ctx), messageIn.Action)
-			if !strings.HasPrefix(messageIn.Topic, topicAction) {
-				e := fmt.Errorf("Invalid Topic name for action %s mTopic %s topicAction:%s ", messageIn.Action, messageIn.Topic, topicAction)
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
-				return messageIn, message, topic, e
-			}
-			topicName = messageIn.Topic
 		} else {
 			e := errors.New("Invalid Call. IDReference not empty with unknown action")
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
@@ -227,7 +219,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON
 
 // Create a new message on one topic
 func (m *MessagesController) Create(ctx *gin.Context) {
-	messageIn, messageReference, topic, e := m.preCheckTopic(ctx)
+	messageIn, _, topic, e := m.preCheckTopic(ctx)
 	if e != nil {
 		return
 	}
@@ -244,31 +236,16 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 
 	var message = models.Message{}
 
-	info := ""
-	if messageIn.Action == "bookmark" {
-		var originalUser = models.User{}
-		if err := originalUser.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
-			ctx.AbortWithError(http.StatusInternalServerError, errors.New("Error while fetching original user."))
-			return
-		}
-		err := message.Insert(originalUser, topic, messageReference.Text, "", -1, messageReference.Labels, false)
-		if err != nil {
-			log.Errorf("Error while InsertMessage with action %s : %s", messageIn.Action, err)
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		info = fmt.Sprintf("New Bookmark created in %s", topic.Topic)
-	} else {
-		// New root message or reply
-		err := message.Insert(user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, false)
-		if err != nil {
-			log.Errorf("%s", err.Error())
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		go models.WSMessageNew(&models.WSMessageNewJSON{Topic: topic.Topic})
-		info = fmt.Sprintf("Message created in %s", topic.Topic)
+	// New root message or reply
+	err := message.Insert(user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, false)
+	if err != nil {
+		log.Errorf("%s", err.Error())
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
+	go models.WSMessageNew(&models.WSMessageNewJSON{Topic: topic.Topic})
+	info := fmt.Sprintf("Message created in %s", topic.Topic)
+
 	out := &models.MessageJSONOut{Message: message, Info: info}
 	go models.WSMessage(&models.WSMessageJSON{Action: "create", Username: user.Username, Message: message})
 	ctx.JSON(http.StatusCreated, out)

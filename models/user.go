@@ -853,10 +853,6 @@ func (user *User) createTopics() error {
 	if err != nil {
 		return err
 	}
-	err = user.CreatePrivateTopic("Bookmarks")
-	if err != nil {
-		return err
-	}
 	err = user.CreatePrivateTopic("Tasks")
 	if err != nil {
 		return err
@@ -951,7 +947,7 @@ func (user *User) CheckDefaultGroup(fixDefaultGroup bool) string {
 // CheckTopics check default topics for user and creates them if fixTopics is true
 func (user *User) CheckTopics(fixTopics bool) string {
 	topicsInfo := ""
-	topicNames := [...]string{"", "Tasks", "Bookmarks", "Notifications"}
+	topicNames := [...]string{"", "Tasks", "Notifications"}
 	for _, shortName := range topicNames {
 		topicName := fmt.Sprintf("/Private/%s", user.Username)
 		if shortName != "" {

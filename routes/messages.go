@@ -30,7 +30,7 @@ func InitRoutesMessages(router *gin.Engine) {
 	gm := router.Group("/message")
 	gm.Use(CheckPassword())
 	{
-		//Create a message, a reply, a bookmark
+		//Create a message, a reply
 		gm.POST("/*topic", messagesCtrl.Create)
 
 		// Like, Unlike, Label, Unlabel a message, mark as task, voteup, votedown, unvoteup, unvotedown
