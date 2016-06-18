@@ -37,6 +37,7 @@ type Message struct {
 	ID              string    `bson:"_id"             json:"_id"`
 	Text            string    `bson:"text"            json:"text"`
 	Topics          []string  `bson:"topics"          json:"topics"`
+	Topic           string    `bson:"topic"           json:"topic"`
 	InReplyOfID     string    `bson:"inReplyOfID"     json:"inReplyOfID"`
 	InReplyOfIDRoot string    `bson:"inReplyOfIDRoot" json:"inReplyOfIDRoot"`
 	NbLikes         int64     `bson:"nbLikes"         json:"nbLikes"`
@@ -604,6 +605,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 			message.InReplyOfIDRoot = messageReference.ID
 		}
 		message.Topics = messageReference.Topics
+		message.Topic = messageReference.Topic
 
 		// if msgRef.dateCreation >= dateToStore -> dateToStore must be after
 		if dateToStore <= messageReference.DateCreation {
@@ -623,6 +625,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 
 	} else { // root message
 		message.Topics = append(message.Topics, topic.Topic)
+		message.Topic = topic.Topic
 		topicDM := "/Private/" + user.Username + "/DM/"
 		if strings.HasPrefix(topic.Topic, topicDM) {
 			part := strings.Split(topic.Topic, "/")
@@ -693,7 +696,7 @@ func (message *Message) insertNotifications(author User) {
 
 func (message *Message) insertNotification(author User, usernameMention string) {
 	notif := Message{}
-	text := fmt.Sprintf("#mention #idMessage:%s #topic:%s %s", message.ID, message.Topics[0], message.Text)
+	text := fmt.Sprintf("#mention #idMessage:%s #topic:%s %s", message.ID, message.Topic, message.Text)
 	topicname := fmt.Sprintf("/Private/%s/Notifications", usernameMention)
 	labels := []Label{{Text: "unread", Color: "#d04437"}}
 	var topic = Topic{}
@@ -792,7 +795,7 @@ func (message *Message) Move(user User, newTopic Topic) error {
 	topicUpdate := []string{newTopic.Topic}
 	_, err = Store().clMessages.UpdateAll(
 		bson.M{"$or": []bson.M{{"_id": message.ID}, {"inReplyOfIDRoot": message.ID}}},
-		bson.M{"$set": bson.M{"topics": topicUpdate}})
+		bson.M{"$set": bson.M{"topics": topicUpdate, "topic": newTopic.Topic}})
 
 	if err != nil {
 		log.Errorf("Error while update messages (move topic to %s) idMsgRoot:%s err:%s", newTopic.Topic, message.ID, err)
@@ -1000,6 +1003,8 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 		idRoot = message.InReplyOfIDRoot
 	}
 
+	// TODO add or remove label doing:username / doing
+
 	_, err := Store().clMessages.UpdateAll(
 		bson.M{"$or": []bson.M{{"_id": idRoot}, {"inReplyOfIDRoot": idRoot}}},
 		bson.M{"$" + action: bson.M{"topics": topicTasksName}})
@@ -1012,7 +1017,28 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 	text := "Take this thread into my tasks"
 	if action == "pull" {
 		text = "Remove this thread from my tasks"
+
+		nDoing := 0
+		for _, cur := range message.Labels {
+			if strings.HasPrefix(cur.Text, "doing:") {
+				nDoing++
+			}
+			if cur.Text == "doing:"+user.Username {
+				message.RemoveLabel("doing:" + user.Username)
+			}
+		}
+		if nDoing <= 1 {
+			message.RemoveLabel("doing")
+		}
+	} else { // push
+		if !message.ContainsLabel("doing") {
+			message.AddLabel(topic, "doing", "#5484ed")
+		}
+		if !message.ContainsLabel("doing:" + user.Username) {
+			message.AddLabel(topic, "doing:"+user.Username, "#5484ed")
+		}
 	}
+
 	return msgReply.Insert(user, topic, text, idRoot, -1, nil, false)
 }
 
