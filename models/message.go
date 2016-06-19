@@ -164,18 +164,31 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 	if criteria.Text != "" {
 		query = append(query, bson.M{"text": bson.RegEx{Pattern: "^.*" + regexp.QuoteMeta(criteria.Text) + ".*$", Options: "im"}})
 	}
-	if criteria.Topic != "" {
+
+	// Task
+	if criteria.Topic == "/Private/"+username+"/Tasks" {
+		log.Infof("Seach with label:doing:" + username)
+		queryLabels := bson.M{"labels": bson.M{"$elemMatch": bson.M{"text": bson.M{"$in": []string{"doing:" + username}}}}}
+		query = append(query, queryLabels)
+	} else if criteria.Topic != "" {
+
+		// TODO activate after migrate tatv1 -> tatv2
+		/*
+			queryTopics := bson.M{}
+			queryTopics["$or"] = []bson.M{}
+			for _, t := range strings.Split(criteria.Topic, ",") {
+				queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topic": t})
+			}
+			query = append(query, queryTopics)
+		*/
+
+		// TODO and remove this after migrate tatv1 -> tatv2
 		queryTopics := bson.M{}
 		queryTopics["$or"] = []bson.M{}
 		queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topics": bson.M{"$in": strings.Split(criteria.Topic, ",")}})
 		query = append(query, queryTopics)
 	}
-	// task
-	if criteria.Topic == "/Private/"+username+"/Tasks" {
-		log.Infof("Seach with label:doing:" + username)
-		queryLabels := bson.M{"labels": bson.M{"$elemMatch": bson.M{"text": "doing:" + username}}}
-		query = append(query, queryLabels)
-	}
+
 	if criteria.Username != "" {
 		queryUsernames := bson.M{}
 		queryUsernames["$or"] = []bson.M{}
@@ -880,11 +893,13 @@ func (message *Message) AddLabel(topic Topic, label string, color string) (Label
 		label = label[0:lengthLabel]
 	}
 
+	var newLabel = Label{Text: label, Color: color}
 	if message.ContainsLabel(label) {
 		log.Errorf("AddLabel not possible, %s is already a label of message %s", label, message.ID)
-		return Label{}, fmt.Errorf("AddLabel not possible, %s is already a label of this message", label)
+		// TODO reactivate after migrate tatv1 -> tatv2 and impact tatwebui
+		//return Label{}, fmt.Errorf("AddLabel not possible, %s is already a label of this message", label)
+		return newLabel, nil
 	}
-	var newLabel = Label{Text: label, Color: color}
 
 	err := Store().clMessages.Update(
 		bson.M{"_id": message.ID},

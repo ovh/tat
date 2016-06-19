@@ -40,13 +40,14 @@ func InitRoutesMessages(router *gin.Engine) {
 		gm.DELETE("/:idMessage", messagesCtrl.Delete)
 	}
 
+	// TODO remove this after migrate tatv1 -> tatv2
 	g.Use(CheckPassword(), CheckAdmin())
 	{
 		g.POST("/countConvertTasksToV2", messagesCtrl.CountConvertTasksToV2)
 		g.POST("/doConvertTasksToV2", messagesCtrl.DoConvertTasksToV2)
 		g.POST("/countConvertManyTopics", messagesCtrl.CountConvertManyTopics)
 		g.POST("/doConvertManyTopics", messagesCtrl.DoConvertManyTopics)
-
+		g.POST("/ensureIndexesV2", messagesCtrl.EnsureIndexesV2)
 	}
 
 }

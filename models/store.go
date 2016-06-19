@@ -131,6 +131,15 @@ func initDb() {
 	createDefaultGroup()
 }
 
+// EnsureIndexesV2 ...
+// TODO remove this method after migrate tatv1 -> tatv2
+func EnsureIndexesV2() {
+	ensureIndex(_instance.clMessages, mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
+	ensureIndex(_instance.clMessages, mgo.Index{Key: []string{"topic", "-dateCreation"}})
+	ensureIndex(_instance.clMessages, mgo.Index{Key: []string{"topic", "tags"}})
+	ensureIndex(_instance.clMessages, mgo.Index{Key: []string{"topic", "labels.text"}})
+}
+
 func ensureIndexes(store *MongoStore) {
 
 	listIndex(store.clMessages, false)
@@ -143,7 +152,7 @@ func ensureIndexes(store *MongoStore) {
 	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
 	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "-dateCreation"}})
 	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "tags"}})
-	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "labels.text", "tags"}})
+	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "labels.text"}})
 
 	ensureIndex(store.clMessages, mgo.Index{Key: []string{"inReplyOfID"}})
 	ensureIndex(store.clMessages, mgo.Index{Key: []string{"inReplyOfIDRoot"}})

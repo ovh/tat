@@ -658,8 +658,7 @@ func (m *MessagesController) getTopicNonPrivateTasks(ctx *gin.Context, topics []
 func checkDMTopic(ctx *gin.Context, topicName string) (*models.Topic, string, error) {
 	var topic = models.Topic{}
 
-	topicParentName := "/Private/" + utils.GetCtxUsername(ctx) + "/DM"
-	if !strings.HasPrefix(topicName, topicParentName+"/") {
+	if !strings.HasPrefix(topicName, "/Private/"+utils.GetCtxUsername(ctx)+"/DM/") {
 		log.Debugf("wrong topic name for DM:" + topicName)
 		return &topic, "", errors.New("Wrong topic name for DM:" + topicName)
 	}
@@ -672,32 +671,29 @@ func checkDMTopic(ctx *gin.Context, topicName string) (*models.Topic, string, er
 	}
 
 	var userFrom = models.User{}
-	err := userFrom.FindByUsername(utils.GetCtxUsername(ctx))
-	if err != nil {
+	if err := userFrom.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
 		return &topic, "", errors.New("Error while fetching user.")
 	}
 	var userTo = models.User{}
 	usernameTo := part[4]
-	err = userTo.FindByUsername(usernameTo)
-	if err != nil {
+	if err := userTo.FindByUsername(usernameTo); err != nil {
 		return &topic, "", errors.New("Error while fetching user.")
 	}
 
-	if err = checkTopicParentDM(userFrom); err != nil {
+	if err := checkTopicParentDM(userFrom); err != nil {
 		return &topic, "", errors.New(err.Error())
 	}
 
-	if err = checkTopicParentDM(userTo); err != nil {
+	if err := checkTopicParentDM(userTo); err != nil {
 		return &topic, "", errors.New(err.Error())
 	}
 
-	topic, err = insertTopicDM(userFrom, userTo)
+	topic, err := insertTopicDM(userFrom, userTo)
 	if err != nil {
 		return &topic, "", errors.New(err.Error())
 	}
 
-	_, err = insertTopicDM(userTo, userFrom)
-	if err != nil {
+	if _, err = insertTopicDM(userTo, userFrom); err != nil {
 		return &topic, "", errors.New(err.Error())
 	}
 
@@ -720,12 +716,10 @@ func insertTopicDM(userFrom, userTo models.User) (models.Topic, error) {
 func checkTopicParentDM(user models.User) error {
 	topicName := "/Private/" + user.Username + "/DM"
 	var topicParent = models.Topic{}
-	err := topicParent.FindByTopic(topicName, false, false, false, nil)
-	if err != nil {
+	if err := topicParent.FindByTopic(topicName, false, false, false, nil); err != nil {
 		topicParent.Topic = topicName
 		topicParent.Description = "DM Topics"
-		err = topicParent.Insert(&user)
-		if err != nil {
+		if err := topicParent.Insert(&user); err != nil {
 			log.Errorf("Error while InsertTopic Parent %s", err)
 			return err
 		}
@@ -883,4 +877,11 @@ func (m *MessagesController) innerConvertManyTopics(ctx *gin.Context, doConvert 
 		}
 	}
 	log.Infof(">>innerConvertManyTopics>> End for %d msg in %fseconds, with %d errors", count, time.Since(startGlobal).Seconds(), nerr)
+}
+
+// EnsureIndexesV2 ..
+// TODO remove this after migrate tatv1 -> tatv2
+func (m *MessagesController) EnsureIndexesV2(ctx *gin.Context) {
+	models.EnsureIndexesV2()
+	ctx.JSON(http.StatusOK, gin.H{"result": "please check logs"})
 }
