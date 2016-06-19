@@ -139,12 +139,15 @@ func ensureIndexes(store *MongoStore) {
 	listIndex(store.clUsers, false)
 	listIndex(store.clPresences, false)
 
-	ensureIndex(store.clMessages, mgo.Index{Key: []string{"topics", "-dateUpdate", "-dateCreation"}})
-	ensureIndex(store.clMessages, mgo.Index{Key: []string{"topics", "-dateCreation"}})
-	ensureIndex(store.clMessages, mgo.Index{Key: []string{"tags"}})
-	ensureIndex(store.clMessages, mgo.Index{Key: []string{"labels.text"}})
+	// TODO activate after migration tatv1 tatv2
+	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
+	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "-dateCreation"}})
+	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "tags"}})
+	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "labels.text", "tags"}})
+
 	ensureIndex(store.clMessages, mgo.Index{Key: []string{"inReplyOfID"}})
 	ensureIndex(store.clMessages, mgo.Index{Key: []string{"inReplyOfIDRoot"}})
+
 	ensureIndex(store.clTopics, mgo.Index{Key: []string{"topic"}, Unique: true})
 	ensureIndex(store.clGroups, mgo.Index{Key: []string{"name"}, Unique: true})
 	ensureIndex(store.clUsers, mgo.Index{Key: []string{"username"}, Unique: true})

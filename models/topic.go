@@ -48,17 +48,18 @@ type TopicParameter struct {
 
 // TopicCriteria struct, used by List Topic
 type TopicCriteria struct {
-	Skip            int
-	Limit           int
-	IDTopic         string
-	Topic           string
-	Description     string
-	DateMinCreation string
-	DateMaxCreation string
-	GetNbMsgUnread  string
-	OnlyFavorites   string
-	GetForTatAdmin  string
-	Group           string
+	Skip                 int
+	Limit                int
+	IDTopic              string
+	Topic                string
+	Description          string
+	DateMinCreation      string
+	DateMaxCreation      string
+	GetNbMsgUnread       string
+	OnlyFavorites        string
+	GetForTatAdmin       string
+	GetForAllTasksTopics bool
+	Group                string
 }
 
 // TopicsJSON represents struct used by Engine while returns list of topics
@@ -132,7 +133,11 @@ func buildTopicCriteria(criteria *TopicCriteria, user *User) (bson.M, error) {
 		query = append(query, bson.M{"dateCreation": bsonDate})
 	}
 
-	if criteria.GetForTatAdmin == "true" && user.IsAdmin {
+	if criteria.GetForAllTasksTopics {
+		query = append(query, bson.M{
+			"topic": bson.RegEx{Pattern: "^\\/Private\\/.*/Tasks", Options: "i"},
+		})
+	} else if criteria.GetForTatAdmin == "true" && user.IsAdmin {
 		// requester is tat Admin and wants all topics, except /Private/* topics
 		query = append(query, bson.M{
 			"topic": bson.M{"$not": bson.RegEx{Pattern: "^\\/Private\\/.*", Options: "i"}},
@@ -427,8 +432,10 @@ func (topic *Topic) Delete(user *User) error {
 		}
 	}
 
+	// TODO check if not tasks topic
+
 	c := &MessageCriteria{Topic: topic.Topic}
-	msgs, err := ListMessages(c, user.Username)
+	msgs, err := ListMessages(c, "")
 	if err != nil {
 		return fmt.Errorf("Error while list Messages in Delete %s", err)
 	}

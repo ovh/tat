@@ -40,4 +40,13 @@ func InitRoutesMessages(router *gin.Engine) {
 		gm.DELETE("/:idMessage", messagesCtrl.Delete)
 	}
 
+	g.Use(CheckPassword(), CheckAdmin())
+	{
+		g.POST("/countConvertTasksToV2", messagesCtrl.CountConvertTasksToV2)
+		g.POST("/doConvertTasksToV2", messagesCtrl.DoConvertTasksToV2)
+		g.POST("/countConvertManyTopics", messagesCtrl.CountConvertManyTopics)
+		g.POST("/doConvertManyTopics", messagesCtrl.DoConvertManyTopics)
+
+	}
+
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
@@ -346,7 +347,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 		TreeView:    "onetree",
 	}
 
-	msgs, err := models.ListMessages(c, user.Username)
+	msgs, err := models.ListMessages(c, "")
 	if err != nil {
 		log.Errorf("Error while list Messages in Delete %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while list Messages in Delete"})
@@ -410,20 +411,11 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 		return topic, fmt.Errorf(e)
 	}
 
-	for _, topicName := range message.Topics {
-		// if msg is only in tasks topic, ok to delete it
-		if strings.HasPrefix(topicName, "/Private/") && strings.HasSuffix(topicName, "/Tasks") && len(message.Topics) > 1 {
-			// if message is in user's tasks, can delete it
-			if topicName == "/Private/"+user.Username+"/Tasks" {
-				continue
-			}
-			// if label done on msg, can delete it
-			if !force && !message.ContainsLabel("done") {
-				e := fmt.Sprintf("Could not delete a message in a tasks topic")
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
-				return topic, fmt.Errorf(e)
-			}
-		}
+	// if label done on msg, can delete it
+	if !force && message.IsDoing() {
+		e := fmt.Sprintf("Could not delete a message with a doing label")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
+		return topic, fmt.Errorf(e)
 	}
 	return topic, nil
 }
@@ -739,4 +731,156 @@ func checkTopicParentDM(user models.User) error {
 		}
 	}
 	return nil
+}
+
+// CountConvertTasksToV2 converts task of tat v1 to task tatv2.
+// task tatv1 -> msg in two topic
+// task tatv2 -> msg contains label doing and doing:username
+// TODO remove this method after migrate tatv1 -> tatv2
+func (m *MessagesController) CountConvertTasksToV2(ctx *gin.Context) {
+	m.innerConvertTasksToV2(ctx, false)
+}
+
+// DoConvertTasksToV2 converts task of tat v1 to task tatv2.
+// task tatv1 -> msg in two topic
+// task tatv2 -> msg contains label doing and doing:username
+// TODO remove this method after migrate tatv1 -> tatv2
+func (m *MessagesController) DoConvertTasksToV2(ctx *gin.Context) {
+	m.innerConvertTasksToV2(ctx, true)
+}
+
+// TODO remove this method after migrate tatv1 -> tatv2
+func (m *MessagesController) innerConvertTasksToV2(ctx *gin.Context, doConvert bool) {
+	var user = &models.User{}
+	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
+		return
+	}
+	c := &models.TopicCriteria{}
+	c.Skip = 0
+	c.Limit = 5000
+	c.GetForAllTasksTopics = true
+
+	out := ""
+	outInfo := ""
+	count, topics, err := models.ListTopics(c, user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching topics:" + err.Error()})
+		return
+	}
+
+	out += fmt.Sprintf("totalTasksTopics:%d;", count)
+	nbConverted := 0
+	nbToConvert := 0
+
+	for _, topic := range topics {
+		c := &models.MessageCriteria{}
+		c.Skip = 0
+		c.Limit = 5000
+		c.Topic = topic.Topic
+		c.OnlyMsgRoot = "true"
+		messages, err := models.ListMessages(c, "")
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		if len(messages) > 0 {
+			out += fmt.Sprintf("%s:%d;", topic.Topic, len(messages))
+			nbToConvert += len(messages)
+			if len(messages) > 200 {
+				outInfo += fmt.Sprintf("INFO-->:%s:%d;", topic.Topic, len(messages))
+			}
+
+			if doConvert {
+				for _, msg := range messages {
+					isDone := false
+					isDoing := false
+					isDoingUsername := false
+					for _, label := range msg.Labels {
+
+						pUsername := strings.Replace(topic.Topic, "/Private/", "", 1)
+						pUsername = strings.Replace(pUsername, "/Tasks", "", 1)
+						if strings.Contains(pUsername, "/") {
+							outInfo = "ERR on topic:" + topic.Topic + ";"
+						}
+
+						if label.Text == "doing:"+pUsername {
+							isDoingUsername = true
+						}
+						if label.Text == "doing" {
+							isDoing = true
+						}
+						if label.Text == "done" {
+							isDone = true
+						}
+					}
+					if !isDone && (!isDoing || !isDoingUsername) {
+						msg.AddToTasksV2(user.Username, topic)
+						nbConverted++
+					}
+				}
+			}
+		}
+	}
+
+	out += fmt.Sprintf("nbToConvert:%d;", nbToConvert)
+	out += fmt.Sprintf("nbConverted:%d;", nbConverted)
+	ctx.JSON(http.StatusOK, gin.H{"result": out + ";;;" + outInfo})
+}
+
+// CountConvertManyTopics converts task of tat v1 to task tatv2.
+// TODO remove this method after migrate tatv1 -> tatv2
+func (m *MessagesController) CountConvertManyTopics(ctx *gin.Context) {
+	m.innerConvertManyTopics(ctx, false)
+	ctx.JSON(http.StatusOK, gin.H{"result": "please check logs"})
+}
+
+// DoConvertManyTopics converts task of tat v1 to task tatv2.
+// TODO remove this method after migrate tatv1 -> tatv2
+func (m *MessagesController) DoConvertManyTopics(ctx *gin.Context) {
+	go m.innerConvertManyTopics(ctx, true)
+	ctx.JSON(http.StatusOK, gin.H{"result": "please check logs"})
+}
+
+// TODO remove this method after migrate tatv1 -> tatv2
+func (m *MessagesController) innerConvertManyTopics(ctx *gin.Context, doConvert bool) {
+
+	startGlobal := time.Now()
+
+	count, _, err := models.CountConvertManyTopics(true, -1, -1)
+	if err != nil {
+		log.Errorf(">>innerConvertManyTopics error CountConvertManyTopics true, err:%s", err.Error())
+		return
+	}
+
+	step := 8000
+	nerr := 0
+	if doConvert {
+		for skip := 0; skip < count; skip = skip + step {
+			start := time.Now()
+			log.Infof("work on skip:%d / %d, after %fs", skip, count, time.Since(startGlobal).Seconds())
+
+			_, messages, err := models.CountConvertManyTopics(false, skip, step)
+			if err != nil {
+				log.Errorf(">>innerConvertManyTopics error CountConvertManyTopics, err:%s", err.Error())
+				return
+			}
+			//out += fmt.Sprintf("countMsg:%d;", len(messages))
+			elapsed := time.Since(start).Seconds()
+
+			id := ""
+			for _, msg := range messages {
+				err := msg.ConvertToOneTOpic()
+				id = msg.ID
+				if err != nil {
+					nerr++
+					log.Errorf(">>innerConvertManyTopics>> err on msg %s", msg.ID)
+				}
+			}
+			outpart := fmt.Sprintf("countMsg:%d;elapsed:%fs;", len(messages), elapsed)
+			time.Sleep(500 * time.Millisecond)
+			log.Infof(">>innerConvertManyTopics>> outpart:%s;lastUpdated:%s;totalErr:%d;", outpart, id, nerr)
+		}
+	}
+	log.Infof(">>innerConvertManyTopics>> End for %d msg in %fseconds, with %d errors", count, time.Since(startGlobal).Seconds(), nerr)
 }

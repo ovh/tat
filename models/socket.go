@@ -606,7 +606,7 @@ func WSMessage(msg *WSMessageJSON) {
 		case "onetree":
 			// only once to call oneTreeMessages
 			if len(oneTree) == 0 {
-				oneTree, _ = oneTreeMessages(msgs, 1, c)
+				oneTree, _ = oneTreeMessages(msgs, 1, c, "")
 				if len(oneTree) == 0 {
 					// fake init oneTree
 					oneTree = []Message{msg.Message}
@@ -619,7 +619,7 @@ func WSMessage(msg *WSMessageJSON) {
 		case "fulltree":
 			// only once to call oneTreeMessages
 			if len(fullTree) == 0 {
-				fullTree, _ = fullTreeMessages(msgs, 1, c)
+				fullTree, _ = fullTreeMessages(msgs, 1, c, "")
 				if len(fullTree) == 0 {
 					// fake init fullTree
 					fullTree = []Message{msg.Message}

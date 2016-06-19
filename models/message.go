@@ -170,6 +170,12 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 		queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topics": bson.M{"$in": strings.Split(criteria.Topic, ",")}})
 		query = append(query, queryTopics)
 	}
+	// task
+	if criteria.Topic == "/Private/"+username+"/Tasks" {
+		log.Infof("Seach with label:doing:" + username)
+		queryLabels := bson.M{"labels": bson.M{"$elemMatch": bson.M{"text": "doing:" + username}}}
+		query = append(query, queryLabels)
+	}
 	if criteria.Username != "" {
 		queryUsernames := bson.M{}
 		queryUsernames["$or"] = []bson.M{}
@@ -319,15 +325,15 @@ func ListMessages(criteria *MessageCriteria, username string) ([]Message, error)
 	}
 
 	if criteria.TreeView == "onetree" || criteria.TreeView == "fulltree" {
-		messages, err = initTree(messages, criteria)
+		messages, err = initTree(messages, criteria, username)
 		if err != nil {
 			log.Errorf("Error while Find All Messages (getTree) %s", err)
 		}
 	}
 	if criteria.TreeView == "onetree" {
-		messages, err = oneTreeMessages(messages, 1, criteria)
+		messages, err = oneTreeMessages(messages, 1, criteria, username)
 	} else if criteria.TreeView == "fulltree" {
-		messages, err = fullTreeMessages(messages, 1, criteria)
+		messages, err = fullTreeMessages(messages, 1, criteria, username)
 	}
 	if err != nil {
 		return messages, err
@@ -388,7 +394,7 @@ func filterNbReplies(messages []Message, criteria *MessageCriteria) ([]Message, 
 	return messagesFiltered, nil
 }
 
-func initTree(messages []Message, criteria *MessageCriteria) ([]Message, error) {
+func initTree(messages []Message, criteria *MessageCriteria, username string) ([]Message, error) {
 	var ids []string
 	idMessages := ""
 	for i := 0; i <= len(messages)-1; i++ {
@@ -409,7 +415,7 @@ func initTree(messages []Message, criteria *MessageCriteria) ([]Message, error) 
 		NotTag:       criteria.NotTag,
 	}
 	var msgs []Message
-	cr, errc := buildMessageCriteria(c, "")
+	cr, errc := buildMessageCriteria(c, username)
 	if errc != nil {
 		return msgs, errc
 	}
@@ -421,7 +427,7 @@ func initTree(messages []Message, criteria *MessageCriteria) ([]Message, error) 
 	return msgs, nil
 }
 
-func oneTreeMessages(messages []Message, nloop int, criteria *MessageCriteria) ([]Message, error) {
+func oneTreeMessages(messages []Message, nloop int, criteria *MessageCriteria, username string) ([]Message, error) {
 	var tree []Message
 	if nloop > 25 {
 		e := "Infinite loop detected in oneTreeMessages"
@@ -454,16 +460,16 @@ func oneTreeMessages(messages []Message, nloop int, criteria *MessageCriteria) (
 	if len(replies) == 0 {
 		return tree, nil
 	}
-	t, err := getTree(replies, criteria)
+	t, err := getTree(replies, criteria, username)
 	if err != nil {
 		return tree, err
 	}
 
-	ft, err := oneTreeMessages(t, nloop+1, criteria)
+	ft, err := oneTreeMessages(t, nloop+1, criteria, username)
 	return append(ft, tree...), err
 }
 
-func fullTreeMessages(messages []Message, nloop int, criteria *MessageCriteria) ([]Message, error) {
+func fullTreeMessages(messages []Message, nloop int, criteria *MessageCriteria, username string) ([]Message, error) {
 	var tree []Message
 	if nloop > 10 {
 		e := "Infinite loop detected in fullTreeMessages"
@@ -503,15 +509,15 @@ func fullTreeMessages(messages []Message, nloop int, criteria *MessageCriteria) 
 	if len(replies) == 0 {
 		return tree, nil
 	}
-	t, err := getTree(replies, criteria)
+	t, err := getTree(replies, criteria, username)
 	if err != nil {
 		return tree, err
 	}
-	ft, err := fullTreeMessages(t, nloop+1, criteria)
+	ft, err := fullTreeMessages(t, nloop+1, criteria, username)
 	return append(ft, tree...), err
 }
 
-func getTree(messagesIn map[string][]Message, criteria *MessageCriteria) ([]Message, error) {
+func getTree(messagesIn map[string][]Message, criteria *MessageCriteria, username string) ([]Message, error) {
 	var messages []Message
 
 	toDelete := false
@@ -523,7 +529,7 @@ func getTree(messagesIn map[string][]Message, criteria *MessageCriteria) ([]Mess
 			NotTag:       criteria.NotTag,
 		}
 		var msgs []Message
-		cr, errc := buildMessageCriteria(c, "")
+		cr, errc := buildMessageCriteria(c, username)
 		if errc != nil {
 			return msgs, errc
 		}
@@ -783,7 +789,7 @@ func (message *Message) Move(user User, newTopic Topic) error {
 		TreeView:  "onetree",
 	}
 
-	msgs, err := ListMessages(c, user.Username)
+	msgs, err := ListMessages(c, "")
 	if err != nil {
 		return fmt.Errorf("Error while list Messages in Delete %s", err)
 	}
@@ -841,6 +847,16 @@ func (message *Message) getLabel(label string) (int, Label, error) {
 func (message *Message) ContainsLabel(label string) bool {
 	_, _, err := message.getLabel(label)
 	return err == nil
+}
+
+// IsDoing returns true if message contains label doing or starts with doing:
+func (message *Message) IsDoing() bool {
+	for _, label := range message.Labels {
+		if label.Text == "doing" || strings.HasPrefix(label.Text, "doing:") {
+			return true
+		}
+	}
+	return false
 }
 
 func (message *Message) getTag(tag string) (int, string, error) {
@@ -993,24 +1009,37 @@ func GetPrivateTopicTaskName(user User) string {
 	return "/Private/" + user.Username + "/Tasks"
 }
 
+// AddToTasksV2 exists only for tatv1 -> tatv2 migration
+// add labels doing without update dateUpdate
+// TODO remove this method after migration
+func (message *Message) AddToTasksV2(username string, topic Topic) {
+
+	if !message.ContainsLabel("doing") {
+		err := Store().clMessages.Update(
+			bson.M{"_id": message.ID},
+			bson.M{"$push": bson.M{"labels": Label{Text: "doing", Color: "#5484ed"}}})
+		if err != nil {
+			log.Errorf("Error on doing:%s", err.Error())
+		}
+	}
+	if !message.ContainsLabel("doing:" + username) {
+		err := Store().clMessages.Update(
+			bson.M{"_id": message.ID},
+			bson.M{"$push": bson.M{"labels": Label{Text: "doing:" + username, Color: "#5484ed"}}})
+		if err != nil {
+			log.Errorf("Error on doing:username:%s", err.Error())
+		}
+	}
+}
+
 func (message *Message) addOrRemoveFromTasks(action string, user User, topic Topic) error {
 	if action != "pull" && action != "push" {
 		return fmt.Errorf("Wrong action to add or remove tasks:%s", action)
 	}
-	topicTasksName := GetPrivateTopicTaskName(user)
+
 	idRoot := message.ID
 	if message.InReplyOfIDRoot != "" {
 		idRoot = message.InReplyOfIDRoot
-	}
-
-	// TODO add or remove label doing:username / doing
-
-	_, err := Store().clMessages.UpdateAll(
-		bson.M{"$or": []bson.M{{"_id": idRoot}, {"inReplyOfIDRoot": idRoot}}},
-		bson.M{"$" + action: bson.M{"topics": topicTasksName}})
-
-	if err != nil {
-		return err
 	}
 
 	msgReply := &Message{}
@@ -1193,4 +1222,74 @@ func DistributionMessages(col string) ([]bson.M, error) {
 
 	err := pipe.All(&results)
 	return results, err
+}
+
+// CountConvertManyTopics ...
+// TODO will be removed after tatv1 -> tatv2 migration
+func CountConvertManyTopics(onlyCount bool, skip, limit int) (int, []Message, error) {
+
+	var messages []Message
+	var err error
+	count := 0
+	if onlyCount {
+		//q := bson.M{"topic": bson.M{"$exists": false}}
+		//count, err = Store().clMessages.Find(q).Count()
+		count, err = Store().clMessages.Find(bson.M{}).Count()
+	} else {
+		//q := bson.M{"topic": bson.M{"$exists": false}}
+		//err = Store().clMessages.Find(q).
+		err = Store().clMessages.Find(bson.M{}).
+			//Sort("-dateCreation").
+			Skip(skip).
+			Limit(limit).All(&messages)
+	}
+
+	if err != nil {
+		log.Errorf("Error while Find All Messages %s", err)
+	}
+
+	return count, messages, err
+
+}
+
+// ConvertManyTopics ...
+// TODO  will be removed after tatv1 -> tatv2 migration
+func ConvertManyTopics(onlyCount bool, size int) (int, []Message, error) {
+
+	q := bson.M{"topics": bson.M{"$size": size}}
+
+	var messages []Message
+	var err error
+	count := 0
+	if onlyCount {
+		count, err = Store().clMessages.Find(q).Count()
+	} else {
+		err = Store().clMessages.Find(q).All(&messages)
+	}
+
+	if err != nil {
+		log.Errorf("Error while Find All Messages %s", err)
+	}
+
+	return count, messages, err
+}
+
+// ConvertToOneTOpic ...
+// TODO  will be removed after tatv1 -> tatv2 migration
+func (message *Message) ConvertToOneTOpic() error {
+	if len(message.Topics) < 1 {
+		e := message.Delete(true)
+		return fmt.Errorf("Error on msg:%s, delete with err:%s", message.ID, e)
+	}
+
+	if len(message.Topics) > 1 && strings.Contains(message.Topics[0], "/Tasks") &&
+		strings.Contains(message.Topics[1], "/Tasks") {
+		log.Warnf(">>ConvertToOneTOpic>> msg id:%s", message.ID)
+	}
+	err := Store().clMessages.Update(
+		bson.M{"_id": message.ID},
+		bson.M{"$set": bson.M{
+			"topic": message.Topics[0],
+		}})
+	return err
 }
