@@ -65,7 +65,10 @@ var mainCmd = &cobra.Command{
 			ValidateHeaders: false,
 		}))
 
-		models.NewStore()
+		if err := models.NewStore(); err != nil {
+			log.Fatalf("Error trying to reach mongoDB. Please check your Tat Configuration and access to your MongoDB. Err: %s", err.Error())
+		}
+
 		routes.InitRoutesGroups(router)
 		routes.InitRoutesMessages(router)
 		routes.InitRoutesPresences(router)
@@ -114,59 +117,84 @@ func init() {
 	flags := mainCmd.Flags()
 
 	flags.Bool("production", false, "Production mode")
-	flags.Bool("no-smtp", false, "No SMTP mode")
-	flags.String("tat-log-level", "", "Tat Log Level: debug, info or warn")
-	flags.String("listen-port", "8080", "Tat Engine Listen Port")
-	flags.String("exposed-scheme", "http", "Tat URI Scheme http or https exposed to client")
-	flags.String("exposed-host", "localhost", "Tat Engine Hostname exposed to client")
-	flags.String("exposed-port", "8080", "Tat Engine Port exposed to client")
-	flags.String("exposed-path", "", "Tat Engine Path exposed to client, ex: host:port/tat/engine /tat/engine is exposed path")
-	flags.String("db-addr", "127.0.0.1:27017", "Address of the mongodb server")
-	flags.String("db-user", "", "User to authenticate with the mongodb server. If \"false\", db-user is not used")
-	flags.String("db-password", "", "Password to authenticate with the mongodb server. If \"false\", db-password is not used")
-	flags.String("db-rs-tags", "", "Link hostname with tag on mongodb replica set - Optional: hostnameA:tagName:value,hostnameB:tagName:value. If \"false\", db-rs-tags is not used")
-	flags.String("smtp-host", "", "SMTP Host")
-	flags.String("smtp-port", "", "SMTP Port")
-	flags.Bool("smtp-tls", false, "SMTP TLS")
-	flags.String("smtp-user", "", "SMTP Username")
-	flags.String("smtp-password", "", "SMTP Password")
-	flags.String("smtp-from", "", "SMTP From")
-	flags.String("allowed-domains", "", "Users have to use theses emails domains. Empty: no-restriction. Ex: --allowed-domains=domainA.org,domainA.com")
-	flags.String("default-group", "", "Default Group for new user")
-	flags.Bool("username-from-email", false, "Username are extracted from first part of email. first.lastame@domainA.org -> username: first.lastname")
-	flags.Bool("websocket-enabled", false, "Enable or not websockets on this instance")
-	flags.String("header-trust-username", "", "Header Trust Username: for example, if X-Remote-User and X-Remote-User received in header -> auto accept user without testing tat_password. Use it with precaution")
-	flags.String("trusted-usernames-emails-fullnames", "", "Tuples trusted username / email / fullname. Example: username:email:Firstname1_Fullname1,username2:email2:Firstname2_Fullname2")
-	flags.String("default-domain", "", "Default domains for mail for trusted username")
-	flags.Int("read-timeout", 10, "Read Timeout in seconds")
-	flags.Int("write-timeout", 10, "Write Timeout in seconds")
-
 	viper.BindPFlag("production", flags.Lookup("production"))
+
+	flags.Bool("no-smtp", false, "No SMTP mode")
 	viper.BindPFlag("no_smtp", flags.Lookup("no-smtp"))
+
+	flags.String("tat-log-level", "", "Tat Log Level: debug, info or warn")
 	viper.BindPFlag("tat_log_level", flags.Lookup("tat-log-level"))
+
+	flags.String("listen-port", "8080", "Tat Engine Listen Port")
 	viper.BindPFlag("listen_port", flags.Lookup("listen-port"))
+
+	flags.String("exposed-scheme", "http", "Tat URI Scheme http or https exposed to client")
 	viper.BindPFlag("exposed_scheme", flags.Lookup("exposed-scheme"))
+
+	flags.String("exposed-host", "localhost", "Tat Engine Hostname exposed to client")
 	viper.BindPFlag("exposed_host", flags.Lookup("exposed-host"))
+
+	flags.String("exposed-port", "8080", "Tat Engine Port exposed to client")
 	viper.BindPFlag("exposed_port", flags.Lookup("exposed-port"))
+
+	flags.String("exposed-path", "", "Tat Engine Path exposed to client, ex: host:port/tat/engine /tat/engine is exposed path")
 	viper.BindPFlag("exposed_path", flags.Lookup("exposed-path"))
+
+	flags.String("db-addr", "127.0.0.1:27017", "Address of the mongodb server")
 	viper.BindPFlag("db_addr", flags.Lookup("db-addr"))
+
+	flags.String("db-user", "", "User to authenticate with the mongodb server. If \"false\", db-user is not used")
 	viper.BindPFlag("db_user", flags.Lookup("db-user"))
+
+	flags.String("db-password", "", "Password to authenticate with the mongodb server. If \"false\", db-password is not used")
 	viper.BindPFlag("db_password", flags.Lookup("db-password"))
+
+	flags.String("db-rs-tags", "", "Link hostname with tag on mongodb replica set - Optional: hostnameA:tagName:value,hostnameB:tagName:value. If \"false\", db-rs-tags is not used")
 	viper.BindPFlag("db_rs_tags", flags.Lookup("db-rs-tags"))
+
+	flags.String("smtp-host", "", "SMTP Host")
 	viper.BindPFlag("smtp_host", flags.Lookup("smtp-host"))
+
+	flags.String("smtp-port", "", "SMTP Port")
 	viper.BindPFlag("smtp_port", flags.Lookup("smtp-port"))
+
+	flags.Bool("smtp-tls", false, "SMTP TLS")
 	viper.BindPFlag("smtp_tls", flags.Lookup("smtp-tls"))
+
+	flags.String("smtp-user", "", "SMTP Username")
 	viper.BindPFlag("smtp_user", flags.Lookup("smtp-user"))
+
+	flags.String("smtp-password", "", "SMTP Password")
 	viper.BindPFlag("smtp_password", flags.Lookup("smtp-password"))
+
+	flags.String("smtp-from", "", "SMTP From")
 	viper.BindPFlag("smtp_from", flags.Lookup("smtp-from"))
+
+	flags.String("allowed-domains", "", "Users have to use theses emails domains. Empty: no-restriction. Ex: --allowed-domains=domainA.org,domainA.com")
 	viper.BindPFlag("allowed_domains", flags.Lookup("allowed-domains"))
+
+	flags.String("default-group", "", "Default Group for new user")
 	viper.BindPFlag("default_group", flags.Lookup("default-group"))
+
+	flags.Bool("username-from-email", false, "Username are extracted from first part of email. first.lastame@domainA.org -> username: first.lastname")
 	viper.BindPFlag("username_from_email", flags.Lookup("username-from-email"))
+
+	flags.Bool("websocket-enabled", false, "Enable or not websockets on this instance")
 	viper.BindPFlag("websocket_enabled", flags.Lookup("websocket-enabled"))
+
+	flags.String("header-trust-username", "", "Header Trust Username: for example, if X-Remote-User and X-Remote-User received in header -> auto accept user without testing tat_password. Use it with precaution")
 	viper.BindPFlag("header_trust_username", flags.Lookup("header-trust-username"))
+
+	flags.String("trusted-usernames-emails-fullnames", "", "Tuples trusted username / email / fullname. Example: username:email:Firstname1_Fullname1,username2:email2:Firstname2_Fullname2")
 	viper.BindPFlag("trusted_usernames_emails_fullnames", flags.Lookup("trusted-usernames-emails-fullnames"))
+
+	flags.String("default-domain", "", "Default domains for mail for trusted username")
 	viper.BindPFlag("default_domain", flags.Lookup("default-domain"))
+
+	flags.Int("read-timeout", 10, "Read Timeout in seconds")
 	viper.BindPFlag("read_timeout", flags.Lookup("read-timeout"))
+
+	flags.Int("write-timeout", 10, "Write Timeout in seconds")
 	viper.BindPFlag("write_timeout", flags.Lookup("write-timeout"))
 }
 

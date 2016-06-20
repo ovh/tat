@@ -41,7 +41,7 @@ func Store() *MongoStore {
 }
 
 // NewStore initializes a new MongoDB Store
-func NewStore() {
+func NewStore() error {
 	log.Info("Mongodb : create new instance")
 	var session *mgo.Session
 	var err error
@@ -59,6 +59,7 @@ func NewStore() {
 
 	if err != nil {
 		log.Errorf("Error with mgo.Dial %s", err.Error())
+		return err
 	}
 
 	hostname, err := os.Hostname()
@@ -88,8 +89,8 @@ func NewStore() {
 	}
 
 	if err != nil {
-		log.Fatalf("Error with getting Mongodb.Instance on address %s : %s", address, err)
-		return
+		log.Errorf("Error with getting Mongodb.Instance on address %s : %s", address, err)
+		return err
 	}
 
 	_instance = &MongoStore{
@@ -104,6 +105,7 @@ func NewStore() {
 
 	initDb()
 	ensureIndexes(_instance)
+	return nil
 }
 
 // getDbParameter gets value of tat parameter
