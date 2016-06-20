@@ -8,7 +8,7 @@ import (
 )
 
 // VERSION is version of Tat.
-const VERSION = "1.2.1"
+const VERSION = "2.0.0"
 
 // SystemController contains all methods about version
 type SystemController struct{}
