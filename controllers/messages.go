@@ -785,10 +785,9 @@ func (m *MessagesController) innerConvertTasksToV2(ctx *gin.Context, doConvert b
 					isDone := false
 					isDoing := false
 					isDoingUsername := false
+					pUsername := strings.Replace(topic.Topic, "/Private/", "", 1)
+					pUsername = strings.Replace(pUsername, "/Tasks", "", 1)
 					for _, label := range msg.Labels {
-
-						pUsername := strings.Replace(topic.Topic, "/Private/", "", 1)
-						pUsername = strings.Replace(pUsername, "/Tasks", "", 1)
 						if strings.Contains(pUsername, "/") {
 							outInfo = "ERR on topic:" + topic.Topic + ";"
 						}
@@ -804,7 +803,7 @@ func (m *MessagesController) innerConvertTasksToV2(ctx *gin.Context, doConvert b
 						}
 					}
 					if !isDone && (!isDoing || !isDoingUsername) {
-						msg.AddToTasksV2(user.Username, topic)
+						msg.AddToTasksV2(pUsername, topic)
 						nbConverted++
 					}
 				}
@@ -828,18 +827,14 @@ func (m *MessagesController) CountConvertManyTopics(ctx *gin.Context) {
 // TODO remove this method after migrate tatv1 -> tatv2
 func (m *MessagesController) CountEmptyTopic(ctx *gin.Context) {
 
-	go m.innerCountEmptyTopic()
-	ctx.JSON(http.StatusOK, gin.H{"result": "see logs"})
-}
-
-func (m *MessagesController) innerCountEmptyTopic() {
 	countNoTopic, countEmptyTopic, err1, err2 := models.CountEmptyTopic()
 	if err1 != nil || err2 != nil {
 		log.Errorf(">>CountEmptyTopic error CountConvertManyTopics true, err1:%s, err2:%s", err1, err2)
 		return
 	}
 
-	log.Warnf("counttopics countNoTopic:%d; countEmptyTopic:%d", countNoTopic, countEmptyTopic)
+	out := fmt.Sprintf("counttopics countNoTopic:%d; countEmptyTopic:%d", countNoTopic, countEmptyTopic)
+	ctx.JSON(http.StatusOK, gin.H{"result": out})
 }
 
 // DoConvertManyTopics converts task of tat v1 to task tatv2.
