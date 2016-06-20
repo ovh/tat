@@ -828,14 +828,18 @@ func (m *MessagesController) CountConvertManyTopics(ctx *gin.Context) {
 // TODO remove this method after migrate tatv1 -> tatv2
 func (m *MessagesController) CountEmptyTopic(ctx *gin.Context) {
 
+	go m.innerCountEmptyTopic()
+	ctx.JSON(http.StatusOK, gin.H{"result": "see logs"})
+}
+
+func (m *MessagesController) innerCountEmptyTopic() {
 	countNoTopic, countEmptyTopic, err1, err2 := models.CountEmptyTopic()
 	if err1 != nil || err2 != nil {
 		log.Errorf(">>CountEmptyTopic error CountConvertManyTopics true, err1:%s, err2:%s", err1, err2)
 		return
 	}
 
-	out := fmt.Sprintf("countNoTopic:%d; countEmptyTopic:%d", countNoTopic, countEmptyTopic)
-	ctx.JSON(http.StatusOK, gin.H{"result": out})
+	log.Warnf("counttopics countNoTopic:%d; countEmptyTopic:%d", countNoTopic, countEmptyTopic)
 }
 
 // DoConvertManyTopics converts task of tat v1 to task tatv2.
