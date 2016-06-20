@@ -167,8 +167,9 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 
 	// Task
 	if criteria.Topic == "/Private/"+username+"/Tasks" {
-		log.Infof("Seach with label:doing:" + username)
-		queryLabels := bson.M{"labels": bson.M{"$elemMatch": bson.M{"text": bson.M{"$in": []string{"doing:" + username}}}}}
+		queryLabels := bson.M{}
+		queryLabels["$or"] = []bson.M{{"topics": bson.M{"$in": []string{"/Private/" + username + "/Tasks"}}}}
+		queryLabels["$or"] = append(queryLabels["$or"].([]bson.M), bson.M{"labels": bson.M{"$elemMatch": bson.M{"text": bson.M{"$in": []string{"doing:" + username}}}}})
 		query = append(query, queryLabels)
 	} else if criteria.Topic != "" {
 
@@ -919,7 +920,9 @@ func (message *Message) AddLabel(topic Topic, label string, color string) (Label
 func (message *Message) RemoveLabel(label string) error {
 	idxLabel, l, err := message.getLabel(label)
 	if err != nil {
-		return fmt.Errorf("Remove Label is not possible, %s is not a label of this message", label)
+		// TODO reactivate after migrate tatv1 -> tatv2 and impact tatwebui
+		return nil
+		//return fmt.Errorf("Remove Label is not possible, %s is not a label of this message", label)
 	}
 
 	err = Store().clMessages.Update(

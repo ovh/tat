@@ -194,12 +194,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON
 		} else if messageIn.Action == "move" {
 			topicName = topicIn
 		} else if messageIn.Action == "task" || messageIn.Action == "untask" {
-			topicName, err = m.getTopicNonPrivateTasks(ctx, message.Topics)
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return messageIn, message, topic, err
-			}
-			topicName = m.inverseIfDMTopic(ctx, topicName)
+			topicName = m.inverseIfDMTopic(ctx, message.Topics[0])
 		} else {
 			e := errors.New("Invalid Call. IDReference not empty with unknown action")
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
@@ -555,7 +550,7 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *models
 		return
 	}
 	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
-	ctx.JSON(http.StatusCreated, gin.H{"info": info})
+	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
 func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
