@@ -47,6 +47,7 @@ func InitRoutesMessages(router *gin.Engine) {
 		g.POST("/doConvertTasksToV2", messagesCtrl.DoConvertTasksToV2)
 		g.POST("/countConvertManyTopics", messagesCtrl.CountConvertManyTopics)
 		g.POST("/doConvertManyTopics", messagesCtrl.DoConvertManyTopics)
+		g.POST("/countEmptyTopic", messagesCtrl.CountEmptyTopic)
 		g.POST("/ensureIndexesV2", messagesCtrl.EnsureIndexesV2)
 	}
 

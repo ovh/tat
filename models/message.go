@@ -1270,6 +1270,22 @@ func CountConvertManyTopics(onlyCount bool, skip, limit int) (int, []Message, er
 
 }
 
+//CountEmptyTopic ...
+// TODO remove avec tatv1 -> tatv2
+func CountEmptyTopic() (int, int, error, error) {
+	countNoTopic, err := Store().clMessages.Find(bson.M{"topic": bson.M{"$exists": false}}).Count()
+	if err != nil {
+		log.Errorf("err noTopic:%s", err)
+	}
+
+	countEmptyTopic, err2 := Store().clMessages.Find(bson.M{"topic": ""}).Count()
+	if err2 != nil {
+		log.Errorf("err emptyTopic:%s", err2)
+	}
+
+	return countNoTopic, countEmptyTopic, err, err2
+}
+
 // ConvertManyTopics ...
 // TODO  will be removed after tatv1 -> tatv2 migration
 func ConvertManyTopics(onlyCount bool, size int) (int, []Message, error) {

@@ -824,6 +824,20 @@ func (m *MessagesController) CountConvertManyTopics(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"result": "please check logs"})
 }
 
+// CountEmptyTopic count msg with empty topic
+// TODO remove this method after migrate tatv1 -> tatv2
+func (m *MessagesController) CountEmptyTopic(ctx *gin.Context) {
+
+	countNoTopic, countEmptyTopic, err1, err2 := models.CountEmptyTopic()
+	if err1 != nil || err2 != nil {
+		log.Errorf(">>CountEmptyTopic error CountConvertManyTopics true, err1:%s, err2:%s", err1, err2)
+		return
+	}
+
+	out := fmt.Sprintf("countNoTopic:%d; countEmptyTopic:%d", countNoTopic, countEmptyTopic)
+	ctx.JSON(http.StatusOK, gin.H{"result": out})
+}
+
 // DoConvertManyTopics converts task of tat v1 to task tatv2.
 // TODO remove this method after migrate tatv1 -> tatv2
 func (m *MessagesController) DoConvertManyTopics(ctx *gin.Context) {
