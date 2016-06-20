@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
@@ -722,174 +721,14 @@ func checkTopicParentDM(user models.User) error {
 	return nil
 }
 
-// CountConvertTasksToV2 converts task of tat v1 to task tatv2.
-// task tatv1 -> msg in two topic
-// task tatv2 -> msg contains label doing and doing:username
-// TODO remove this method after migrate tatv1 -> tatv2
-func (m *MessagesController) CountConvertTasksToV2(ctx *gin.Context) {
-	m.innerConvertTasksToV2(ctx, false)
-}
-
-// DoConvertTasksToV2 converts task of tat v1 to task tatv2.
-// task tatv1 -> msg in two topic
-// task tatv2 -> msg contains label doing and doing:username
-// TODO remove this method after migrate tatv1 -> tatv2
-func (m *MessagesController) DoConvertTasksToV2(ctx *gin.Context) {
-	m.innerConvertTasksToV2(ctx, true)
-}
-
-// TODO remove this method after migrate tatv1 -> tatv2
-func (m *MessagesController) innerConvertTasksToV2(ctx *gin.Context, doConvert bool) {
-	var user = &models.User{}
-	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
-		return
-	}
-	c := &models.TopicCriteria{}
-	c.Skip = 0
-	c.Limit = 5000
-	c.GetForAllTasksTopics = true
-
-	out := ""
-	outInfo := ""
-	count, topics, err := models.ListTopics(c, user)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching topics:" + err.Error()})
-		return
-	}
-
-	out += fmt.Sprintf("totalTasksTopics:%d;", count)
-	nbConverted := 0
-	nbToConvert := 0
-
-	for _, topic := range topics {
-		c := &models.MessageCriteria{}
-		c.Skip = 0
-		c.Limit = 5000
-		c.Topic = topic.Topic
-		c.OnlyMsgRoot = "true"
-		messages, err := models.ListMessages(c, "")
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		if len(messages) > 0 {
-			out += fmt.Sprintf("%s:%d;", topic.Topic, len(messages))
-			nbToConvert += len(messages)
-			if len(messages) > 200 {
-				outInfo += fmt.Sprintf("INFO-->:%s:%d;", topic.Topic, len(messages))
-			}
-
-			if doConvert {
-				for _, msg := range messages {
-					isDone := false
-					isDoing := false
-					isDoingUsername := false
-					pUsername := strings.Replace(topic.Topic, "/Private/", "", 1)
-					pUsername = strings.Replace(pUsername, "/Tasks", "", 1)
-					for _, label := range msg.Labels {
-						if strings.Contains(pUsername, "/") {
-							outInfo = "ERR on topic:" + topic.Topic + ";"
-						}
-
-						if label.Text == "doing:"+pUsername {
-							isDoingUsername = true
-						}
-						if label.Text == "doing" {
-							isDoing = true
-						}
-						if label.Text == "done" {
-							isDone = true
-						}
-					}
-					if !isDone && (!isDoing || !isDoingUsername) {
-						msg.AddToTasksV2(pUsername, topic)
-						nbConverted++
-					}
-				}
-			}
-		}
-	}
-
-	out += fmt.Sprintf("nbToConvert:%d;", nbToConvert)
-	out += fmt.Sprintf("nbConverted:%d;", nbConverted)
-	ctx.JSON(http.StatusOK, gin.H{"result": out + ";;;" + outInfo})
-}
-
-// CountConvertManyTopics converts task of tat v1 to task tatv2.
-// TODO remove this method after migrate tatv1 -> tatv2
-func (m *MessagesController) CountConvertManyTopics(ctx *gin.Context) {
-	m.innerConvertManyTopics(ctx, false)
-	ctx.JSON(http.StatusOK, gin.H{"result": "please check logs"})
-}
-
 // CountEmptyTopic count msg with empty topic
-// TODO remove this method after migrate tatv1 -> tatv2
 func (m *MessagesController) CountEmptyTopic(ctx *gin.Context) {
-
-	countNoTopic, countEmptyTopic, err1, err2 := models.CountEmptyTopic()
-	if err1 != nil || err2 != nil {
-		log.Errorf(">>CountEmptyTopic error CountConvertManyTopics true, err1:%s, err2:%s", err1, err2)
+	countNoTopic, countEmptyTopic, err := models.CountEmptyTopic()
+	if err != nil {
+		log.Errorf(">>CountEmptyTopic error CountConvertManyTopics true, err:%s", err)
 		return
 	}
 
 	out := fmt.Sprintf("counttopics countNoTopic:%d; countEmptyTopic:%d", countNoTopic, countEmptyTopic)
 	ctx.JSON(http.StatusOK, gin.H{"result": out})
-}
-
-// DoConvertManyTopics converts task of tat v1 to task tatv2.
-// TODO remove this method after migrate tatv1 -> tatv2
-func (m *MessagesController) DoConvertManyTopics(ctx *gin.Context) {
-	go m.innerConvertManyTopics(ctx, true)
-	ctx.JSON(http.StatusOK, gin.H{"result": "please check logs"})
-}
-
-// TODO remove this method after migrate tatv1 -> tatv2
-func (m *MessagesController) innerConvertManyTopics(ctx *gin.Context, doConvert bool) {
-
-	startGlobal := time.Now()
-
-	count, _, err := models.CountConvertManyTopics(true, -1, -1)
-	if err != nil {
-		log.Errorf(">>innerConvertManyTopics error CountConvertManyTopics true, err:%s", err.Error())
-		return
-	}
-
-	step := 8000
-	nerr := 0
-	if doConvert {
-		for skip := 0; skip < count; skip = skip + step {
-			start := time.Now()
-			log.Infof("work on skip:%d / %d, after %fs", skip, count, time.Since(startGlobal).Seconds())
-
-			_, messages, err := models.CountConvertManyTopics(false, skip, step)
-			if err != nil {
-				log.Errorf(">>innerConvertManyTopics error CountConvertManyTopics, err:%s", err.Error())
-				return
-			}
-			//out += fmt.Sprintf("countMsg:%d;", len(messages))
-			elapsed := time.Since(start).Seconds()
-
-			id := ""
-			for _, msg := range messages {
-				err := msg.ConvertToOneTOpic()
-				id = msg.ID
-				if err != nil {
-					nerr++
-					log.Errorf(">>innerConvertManyTopics>> err on msg %s", msg.ID)
-				}
-			}
-			outpart := fmt.Sprintf("countMsg:%d;elapsed:%fs;", len(messages), elapsed)
-			time.Sleep(500 * time.Millisecond)
-			log.Infof(">>innerConvertManyTopics>> outpart:%s;lastUpdated:%s;totalErr:%d;", outpart, id, nerr)
-		}
-	}
-	log.Infof(">>innerConvertManyTopics>> End for %d msg in %fseconds, with %d errors", count, time.Since(startGlobal).Seconds(), nerr)
-}
-
-// EnsureIndexesV2 ..
-// TODO remove this after migrate tatv1 -> tatv2
-func (m *MessagesController) EnsureIndexesV2(ctx *gin.Context) {
-	models.EnsureIndexesV2()
-	ctx.JSON(http.StatusOK, gin.H{"result": "please check logs"})
 }

@@ -432,8 +432,6 @@ func (topic *Topic) Delete(user *User) error {
 		}
 	}
 
-	// TODO check if not tasks topic
-
 	c := &MessageCriteria{Topic: topic.Topic}
 	msgs, err := ListMessages(c, "")
 	if err != nil {

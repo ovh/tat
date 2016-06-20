@@ -131,15 +131,6 @@ func initDb() {
 	createDefaultGroup()
 }
 
-// EnsureIndexesV2 ...
-// TODO remove this method after migrate tatv1 -> tatv2
-func EnsureIndexesV2() {
-	ensureIndex(_instance.clMessages, mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
-	ensureIndex(_instance.clMessages, mgo.Index{Key: []string{"topic", "-dateCreation"}})
-	ensureIndex(_instance.clMessages, mgo.Index{Key: []string{"topic", "tags"}})
-	ensureIndex(_instance.clMessages, mgo.Index{Key: []string{"topic", "labels.text"}})
-}
-
 func ensureIndexes(store *MongoStore) {
 
 	listIndex(store.clMessages, false)
@@ -148,19 +139,25 @@ func ensureIndexes(store *MongoStore) {
 	listIndex(store.clUsers, false)
 	listIndex(store.clPresences, false)
 
-	// TODO activate after migration tatv1 tatv2
-	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
-	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "-dateCreation"}})
-	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "tags"}})
-	//ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "labels.text"}})
-
+	// messages
+	ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
+	ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "-dateCreation"}})
+	ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "tags"}})
+	ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "labels.text"}})
 	ensureIndex(store.clMessages, mgo.Index{Key: []string{"inReplyOfID"}})
 	ensureIndex(store.clMessages, mgo.Index{Key: []string{"inReplyOfIDRoot"}})
 
+	// topics
 	ensureIndex(store.clTopics, mgo.Index{Key: []string{"topic"}, Unique: true})
+
+	// groups
 	ensureIndex(store.clGroups, mgo.Index{Key: []string{"name"}, Unique: true})
+
+	// users
 	ensureIndex(store.clUsers, mgo.Index{Key: []string{"username"}, Unique: true})
 	ensureIndex(store.clUsers, mgo.Index{Key: []string{"email"}, Unique: true})
+
+	// presences
 	ensureIndex(store.clPresences, mgo.Index{Key: []string{"topic", "-dateTimePresence"}})
 	ensureIndex(store.clPresences, mgo.Index{Key: []string{"userPresence.username", "-datePresence"}})
 	ensureIndex(store.clPresences, mgo.Index{Key: []string{"topic", "userPresence.username"}, Unique: true})

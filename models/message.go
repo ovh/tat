@@ -168,25 +168,15 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 	// Task
 	if criteria.Topic == "/Private/"+username+"/Tasks" {
 		queryLabels := bson.M{}
-		queryLabels["$or"] = []bson.M{{"topics": bson.M{"$in": []string{"/Private/" + username + "/Tasks"}}}}
+		queryLabels["$or"] = []bson.M{{"topic": "/Private/" + username + "/Tasks"}}
 		queryLabels["$or"] = append(queryLabels["$or"].([]bson.M), bson.M{"labels": bson.M{"$elemMatch": bson.M{"text": bson.M{"$in": []string{"doing:" + username}}}}})
 		query = append(query, queryLabels)
 	} else if criteria.Topic != "" {
-
-		// TODO activate after migrate tatv1 -> tatv2
-		/*
-			queryTopics := bson.M{}
-			queryTopics["$or"] = []bson.M{}
-			for _, t := range strings.Split(criteria.Topic, ",") {
-				queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topic": t})
-			}
-			query = append(query, queryTopics)
-		*/
-
-		// TODO and remove this after migrate tatv1 -> tatv2
 		queryTopics := bson.M{}
 		queryTopics["$or"] = []bson.M{}
-		queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topics": bson.M{"$in": strings.Split(criteria.Topic, ",")}})
+		for _, t := range strings.Split(criteria.Topic, ",") {
+			queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topic": t})
+		}
 		query = append(query, queryTopics)
 	}
 
@@ -896,9 +886,7 @@ func (message *Message) AddLabel(topic Topic, label string, color string) (Label
 
 	var newLabel = Label{Text: label, Color: color}
 	if message.ContainsLabel(label) {
-		log.Errorf("AddLabel not possible, %s is already a label of message %s", label, message.ID)
-		// TODO reactivate after migrate tatv1 -> tatv2 and impact tatwebui
-		//return Label{}, fmt.Errorf("AddLabel not possible, %s is already a label of this message", label)
+		log.Infof("AddLabel not possible, %s is already a label of message %s", label, message.ID)
 		return newLabel, nil
 	}
 
@@ -920,9 +908,8 @@ func (message *Message) AddLabel(topic Topic, label string, color string) (Label
 func (message *Message) RemoveLabel(label string) error {
 	idxLabel, l, err := message.getLabel(label)
 	if err != nil {
-		// TODO reactivate after migrate tatv1 -> tatv2 and impact tatwebui
+		log.Infof("Remove Label is not possible, %s is not a label of this message", label)
 		return nil
-		//return fmt.Errorf("Remove Label is not possible, %s is not a label of this message", label)
 	}
 
 	err = Store().clMessages.Update(
@@ -1027,29 +1014,6 @@ func GetPrivateTopicTaskName(user User) string {
 	return "/Private/" + user.Username + "/Tasks"
 }
 
-// AddToTasksV2 exists only for tatv1 -> tatv2 migration
-// add labels doing without update dateUpdate
-// TODO remove this method after migration
-func (message *Message) AddToTasksV2(username string, topic Topic) {
-
-	if !message.ContainsLabel("doing") {
-		err := Store().clMessages.Update(
-			bson.M{"_id": message.ID},
-			bson.M{"$push": bson.M{"labels": Label{Text: "doing", Color: "#5484ed"}}})
-		if err != nil {
-			log.Errorf("Error on doing:%s", err.Error())
-		}
-	}
-	if !message.ContainsLabel("doing:" + username) {
-		err := Store().clMessages.Update(
-			bson.M{"_id": message.ID},
-			bson.M{"$push": bson.M{"labels": Label{Text: "doing:" + username, Color: "#5484ed"}}})
-		if err != nil {
-			log.Errorf("Error on doing:username:%s", err.Error())
-		}
-	}
-}
-
 func (message *Message) addOrRemoveFromTasks(action string, user User, topic Topic) error {
 	if action != "pull" && action != "push" {
 		return fmt.Errorf("Wrong action to add or remove tasks:%s", action)
@@ -1101,7 +1065,7 @@ func (message *Message) RemoveFromTasks(user User, topic Topic) error {
 
 // CountMsgSinceDate return number of messages created on one topic from a given date
 func CountMsgSinceDate(topic string, date int64) (int, error) {
-	nb, err := Store().clMessages.Find(bson.M{"topics": bson.M{"$in": [1]string{topic}}, "dateCreation": bson.M{"$gte": date}}).Count()
+	nb, err := Store().clMessages.Find(bson.M{"topic": topic, "dateCreation": bson.M{"$gte": date}}).Count()
 	if err != nil {
 		log.Errorf("Error while count message with topic %s and dateCreation lte:%d", topic, date)
 	}
@@ -1112,7 +1076,7 @@ func CountMsgSinceDate(topic string, date int64) (int, error) {
 func ListTags(topic string) ([]string, error) {
 	var tags []string
 	err := Store().clMessages.
-		Find(bson.M{"topics": bson.M{"$in": [1]string{topic}}}).
+		Find(bson.M{"topic": topic}).
 		Distinct("tags", &tags)
 	if err != nil {
 		log.Errorf("Error while getting tags on topic %s", topic)
@@ -1124,7 +1088,7 @@ func ListTags(topic string) ([]string, error) {
 func ListLabels(topic string) ([]Label, error) {
 	var labels []Label
 	err := Store().clMessages.
-		Find(bson.M{"topics": bson.M{"$in": [1]string{topic}}}).
+		Find(bson.M{"topic": topic}).
 		Distinct("labels", &labels)
 	if err != nil {
 		log.Errorf("Error while getting labels on topic %s", topic)
@@ -1154,7 +1118,7 @@ func changeUsernameOnMessagesTopics(oldUsername, newUsername string) error {
 
 	err := Store().clMessages.Find(
 		bson.M{
-			"topics": bson.RegEx{Pattern: "^/Private/" + oldUsername + "/", Options: "i"},
+			"topic": bson.RegEx{Pattern: "^/Private/" + oldUsername + "/", Options: "i"},
 		}).All(&messages)
 
 	if err != nil {
@@ -1168,7 +1132,7 @@ func changeUsernameOnMessagesTopics(oldUsername, newUsername string) error {
 			msg.Topics = append(msg.Topics, newTopicName)
 		}
 
-		if errUpdate := Store().clMessages.Update(bson.M{"_id": msg.ID}, bson.M{"$set": bson.M{"topics": msg.Topics}}); errUpdate != nil {
+		if errUpdate := Store().clMessages.Update(bson.M{"_id": msg.ID}, bson.M{"$set": bson.M{"topic": msg.Topic}}); errUpdate != nil {
 			log.Errorf("Error while update topic on message %s name from username %s to username %s :%s", msg.ID, oldUsername, newUsername, errUpdate)
 		}
 	}
@@ -1190,7 +1154,7 @@ func ComputeReplies(topicName string) (int, error) {
 	var messages []Message
 
 	var query = []bson.M{}
-	query = append(query, bson.M{"topics": bson.M{"$in": [1]string{topicName}}})
+	query = append(query, bson.M{"topic": topicName})
 	query = append(query, bson.M{"inReplyOfID": bson.M{"$exists": true, "$ne": ""}})
 	if err := Store().clMessages.Find(bson.M{"$and": query}).All(&messages); err != nil {
 		log.Errorf("Error while find messages for compute replies on topic %s: %s", topicName, err)
@@ -1242,88 +1206,19 @@ func DistributionMessages(col string) ([]bson.M, error) {
 	return results, err
 }
 
-// CountConvertManyTopics ...
-// TODO will be removed after tatv1 -> tatv2 migration
-func CountConvertManyTopics(onlyCount bool, skip, limit int) (int, []Message, error) {
-
-	var messages []Message
-	var err error
-	count := 0
-	if onlyCount {
-		//q := bson.M{"topic": bson.M{"$exists": false}}
-		//count, err = Store().clMessages.Find(q).Count()
-		count, err = Store().clMessages.Find(bson.M{}).Count()
-	} else {
-		//q := bson.M{"topic": bson.M{"$exists": false}}
-		//err = Store().clMessages.Find(q).
-		err = Store().clMessages.Find(bson.M{}).
-			//Sort("-dateCreation").
-			Skip(skip).
-			Limit(limit).All(&messages)
-	}
-
-	if err != nil {
-		log.Errorf("Error while Find All Messages %s", err)
-	}
-
-	return count, messages, err
-
-}
-
-//CountEmptyTopic ...
-// TODO remove avec tatv1 -> tatv2
-func CountEmptyTopic() (int, int, error, error) {
+// CountEmptyTopic returns msg with empty topic field
+func CountEmptyTopic() (int, int, error) {
 	countNoTopic, err := Store().clMessages.Find(bson.M{"topic": bson.M{"$exists": false}}).Count()
 	if err != nil {
 		log.Errorf("err noTopic:%s", err)
+		return -1, -1, err
 	}
 
 	countEmptyTopic, err2 := Store().clMessages.Find(bson.M{"topic": ""}).Count()
 	if err2 != nil {
 		log.Errorf("err emptyTopic:%s", err2)
+		return -1, -1, err2
 	}
 
-	return countNoTopic, countEmptyTopic, err, err2
-}
-
-// ConvertManyTopics ...
-// TODO  will be removed after tatv1 -> tatv2 migration
-func ConvertManyTopics(onlyCount bool, size int) (int, []Message, error) {
-
-	q := bson.M{"topics": bson.M{"$size": size}}
-
-	var messages []Message
-	var err error
-	count := 0
-	if onlyCount {
-		count, err = Store().clMessages.Find(q).Count()
-	} else {
-		err = Store().clMessages.Find(q).All(&messages)
-	}
-
-	if err != nil {
-		log.Errorf("Error while Find All Messages %s", err)
-	}
-
-	return count, messages, err
-}
-
-// ConvertToOneTOpic ...
-// TODO  will be removed after tatv1 -> tatv2 migration
-func (message *Message) ConvertToOneTOpic() error {
-	if len(message.Topics) < 1 {
-		e := message.Delete(true)
-		return fmt.Errorf("Error on msg:%s, delete with err:%s", message.ID, e)
-	}
-
-	if len(message.Topics) > 1 && strings.Contains(message.Topics[0], "/Tasks") &&
-		strings.Contains(message.Topics[1], "/Tasks") {
-		log.Warnf(">>ConvertToOneTOpic>> msg id:%s", message.ID)
-	}
-	err := Store().clMessages.Update(
-		bson.M{"_id": message.ID},
-		bson.M{"$set": bson.M{
-			"topic": message.Topics[0],
-		}})
-	return err
+	return countNoTopic, countEmptyTopic, nil
 }

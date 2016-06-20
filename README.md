@@ -37,7 +37,7 @@ Tat Engine:
  * Consists of text, tags and labels
  * Can not be deleted or modified (by default)
  * Is limited in characters (topic setting)
- * Is always attached to a topic
+ * Is always attached to one topic
 * Tag
  * Within the message content
  * Can not be added after message creation (by default)
