@@ -189,11 +189,11 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON
 			messageIn.Action == "voteup" || messageIn.Action == "votedown" ||
 			messageIn.Action == "unvoteup" || messageIn.Action == "unvotedown" ||
 			messageIn.Action == "relabel" || messageIn.Action == "concat" {
-			topicName = m.inverseIfDMTopic(ctx, message.Topics[0])
+			topicName = m.inverseIfDMTopic(ctx, message.Topic)
 		} else if messageIn.Action == "move" {
 			topicName = topicIn
 		} else if messageIn.Action == "task" || messageIn.Action == "untask" {
-			topicName = m.inverseIfDMTopic(ctx, message.Topics[0])
+			topicName = m.inverseIfDMTopic(ctx, message.Topic)
 		} else {
 			e := errors.New("Invalid Call. IDReference not empty with unknown action")
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
@@ -376,25 +376,25 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 // - if topic is Private OR is CanDeleteMsg or CanDeleteAllMsg
 func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.Message, user models.User, force bool) (models.Topic, error) {
 	topic := models.Topic{}
-	if err := topic.FindByTopic(message.Topics[0], true, false, false, nil); err != nil {
-		e := fmt.Sprintf("Topic %s does not exist", message.Topics[0])
+	if err := topic.FindByTopic(message.Topic, true, false, false, nil); err != nil {
+		e := fmt.Sprintf("Topic %s does not exist", message.Topic)
 		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
 		return topic, fmt.Errorf(e)
 	}
 
 	if isRw := topic.IsUserRW(&user); !isRw {
-		e := fmt.Sprintf("No RW Access to topic %s", message.Topics[0])
+		e := fmt.Sprintf("No RW Access to topic %s", message.Topic)
 		ctx.JSON(http.StatusForbidden, gin.H{"error": e})
 		return topic, fmt.Errorf(e)
 	}
 
-	if !strings.HasPrefix(message.Topics[0], "/Private/"+user.Username) && !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
+	if !strings.HasPrefix(message.Topic, "/Private/"+user.Username) && !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
 		if !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
 			e := fmt.Sprintf("You can't delete a message from topic %s", topic.Topic)
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
 			return topic, fmt.Errorf(e)
 		}
-		e := fmt.Sprintf("Could not delete a message in a non private topic %s", message.Topics[0])
+		e := fmt.Sprintf("Could not delete a message in a non private topic %s", message.Topic)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
 		return topic, fmt.Errorf(e)
 	}
@@ -417,7 +417,7 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, message models.Message, topic models.Topic, user models.User) {
 	isReadAccess := topic.IsUserReadAccess(user)
 	if !isReadAccess {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New("No Read Access to topic "+message.Topics[0]))
+		ctx.AbortWithError(http.StatusInternalServerError, errors.New("No Read Access to topic "+message.Topic))
 		return
 	}
 
@@ -633,20 +633,6 @@ func (m *MessagesController) inverseIfDMTopic(ctx *gin.Context, topicName string
 		return topicName
 	}
 	return "/Private/" + utils.GetCtxUsername(ctx) + "/DM/" + part[2]
-}
-
-func (m *MessagesController) getTopicNonPrivateTasks(ctx *gin.Context, topics []string) (string, error) {
-	// if msg is only in topic Tasks
-	topicTasks := "/Private/" + utils.GetCtxUsername(ctx) + "/Tasks"
-	for _, name := range topics {
-		if !strings.HasPrefix(name, "/Private") {
-			return name, nil
-		}
-		if !strings.HasPrefix(topics[0], topicTasks) {
-			return name, nil
-		}
-	}
-	return "", errors.New("Could not get non private task topic")
 }
 
 func checkDMTopic(ctx *gin.Context, topicName string) (*models.Topic, string, error) {

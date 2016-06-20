@@ -317,8 +317,7 @@ func (socket *Socket) preCheckWSTopics(msg WSJSON) ([]Topic, User, error) {
 
 func (socket *Socket) getTopicsOfUser(msg WSJSON) (int, []Topic, User, error) {
 	var user = User{}
-	err := user.FindByUsername(socket.username)
-	if err != nil {
+	if err := user.FindByUsername(socket.username); err != nil {
 		m := fmt.Sprintf("Internal Error getting User for action %s", msg.Action)
 		log.Errorf("%s :%s", m, err)
 		socket.write(gin.H{"action": msg.Action, "result": m, "status": http.StatusInternalServerError})
@@ -580,12 +579,11 @@ func WSMessage(msg *WSMessageJSON) {
 
 	var oneTree, fullTree, msgs []Message
 	var wOneTree, wFullTree = gin.H{}, gin.H{}
-	c := &MessageCriteria{}
-	c.AllIDMessage = msg.Message.InReplyOfIDRoot
+	c := &MessageCriteria{AllIDMessage: msg.Message.InReplyOfIDRoot}
 	isGetMsgs := false
 
 	subscriptionMessages.RLock()
-	for _, sVal := range subscriptionMessages.m[msg.Message.Topics[0]] {
+	for _, sVal := range subscriptionMessages.m[msg.Message.Topic] {
 		activeUsers.RLock()
 
 		if msg.Message.InReplyOfIDRoot == "" || sVal.treeView == "" {
