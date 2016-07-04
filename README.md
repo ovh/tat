@@ -206,7 +206,7 @@ curl -XPUT \
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	https://<tatHostname>:<tatPort>/message/9797q87KJhqsfO7Usdqd
+	https://<tatHostname>:<tatPort>/message/nocascade/9797q87KJhqsfO7Usdqd
 ```
 
 ### Delete a message and its replies
@@ -214,7 +214,7 @@ curl -XDELETE \
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	https://<tatHostname>:<tatPort>/messages/cascade/9797q87KJhqsfO7Usdqd
+	https://<tatHostname>:<tatPort>/message/cascade/9797q87KJhqsfO7Usdqd
 ```
 
 ### Delete a message and its replies, even if it's in Tasks Topic of one user
@@ -222,8 +222,38 @@ curl -XDELETE \
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	https://<tatHostname>:<tatPort>/messages/cascadeforce/9797q87KJhqsfO7Usdqd
+	https://<tatHostname>:<tatPort>/message/cascadeforce/9797q87KJhqsfO7Usdqd
 ```
+
+### Delete a list of messages
+```
+curl -XDELETE \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	https://<tatHostname>:<tatPort>/messages/nocascade?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
+```
+
+see https://github.com/ovh/tat#parameters for all parameters
+
+### Delete a list of messages and its replies
+```
+curl -XDELETE \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	https://<tatHostname>:<tatPort>/messages/cascade?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
+```
+
+see https://github.com/ovh/tat#parameters for all parameters
+
+### Delete a list of messages and its replies, even if it's in Tasks Topic of one user
+```
+curl -XDELETE \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	https://<tatHostname>:<tatPort>/messages/cascadeforce?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
+```
+
+see https://github.com/ovh/tat#parameters for all parameters
 
 ### Create a task from a message
 Add a message to topic: `/Private/username/Tasks`.

@@ -13,12 +13,9 @@ func InitRoutesMessages(router *gin.Engine) {
 	g.Use(CheckPassword())
 	{
 		g.GET("/*topic", messagesCtrl.List)
-
-		// Delete a message and its replies
-		g.DELETE("/cascade/:idMessage", messagesCtrl.DeleteCascade)
-
-		// Delete a message and its replies, event if it's in a Tasks Topic of one user
-		g.DELETE("/cascadeforce/:idMessage", messagesCtrl.DeleteCascadeForce)
+		g.DELETE("/nocascade/*topic", messagesCtrl.DeleteBulk)
+		g.DELETE("/cascade/*topic", messagesCtrl.DeleteBulkCascade)
+		g.DELETE("/cascadeforce/*topic", messagesCtrl.DeleteBulkCascadeForce)
 	}
 
 	r := router.Group("/read")
@@ -37,7 +34,13 @@ func InitRoutesMessages(router *gin.Engine) {
 		gm.PUT("/*topic", messagesCtrl.Update)
 
 		// Delete a message
-		gm.DELETE("/:idMessage", messagesCtrl.Delete)
+		gm.DELETE("/nocascade/:idMessage", messagesCtrl.Delete)
+
+		// Delete a message and its replies
+		gm.DELETE("/cascade/:idMessage", messagesCtrl.DeleteCascade)
+
+		// Delete a message and its replies, event if it's in a Tasks Topic of one user
+		gm.DELETE("/cascadeforce/:idMessage", messagesCtrl.DeleteCascadeForce)
 	}
 
 	g.Use(CheckPassword(), CheckAdmin())

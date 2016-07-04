@@ -59,64 +59,10 @@ func (*MessagesController) buildCriteria(ctx *gin.Context) *models.MessageCriter
 
 // List messages on one topic, with given criteria
 func (m *MessagesController) List(ctx *gin.Context) {
-	var criteria = m.buildCriteria(ctx)
+	out, user, topic, criteria, httpCode, err := m.innerList(ctx)
 
-	// we can't use NotLabel or NotTag with fulltree or onetree
-	// this avoid potential wrong results associated with a short param limit
-	if (criteria.NotLabel != "" || criteria.NotTag != "") &&
-		(criteria.TreeView == "fulltree" || criteria.TreeView == "onetree") && criteria.OnlyMsgRoot == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "You can't use fulltree or onetree with NotLabel or NotTag"})
-		return
-	}
-
-	presenceArg := ctx.Query("presence")
-	topicIn, err := GetParam(ctx, "topic")
 	if err != nil {
-		return
-	}
-	criteria.Topic = topicIn
-
-	// add / if search on topic
-	// as topic is in path, it can't start with a /
-	if criteria.Topic != "" && string(criteria.Topic[0]) != "/" {
-		criteria.Topic = "/" + criteria.Topic
-	}
-
-	var topic = models.Topic{}
-	if errt := topic.FindByTopic(criteria.Topic, true, false, false, nil); errt != nil {
-		topicCriteria := ""
-		_, topicCriteria, err = checkDMTopic(ctx, criteria.Topic)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + criteria.Topic + " does not exist"})
-			return
-		}
-		// hack to get new created DM Topic
-		if e := topic.FindByTopic(topicCriteria, true, false, false, nil); e != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + criteria.Topic + " does not exist (2)"})
-			return
-		}
-		criteria.Topic = topicCriteria
-	}
-
-	out := &models.MessagesJSON{}
-
-	var user models.User
-	var e error
-	if utils.GetCtxUsername(ctx) != "" {
-		user, e = PreCheckUser(ctx)
-		if e != nil {
-			return
-		}
-		if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
-			ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No Read Access on topic %s", criteria.Topic)})
-			return
-		}
-		out.IsTopicRw = topic.IsUserRW(&user)
-	} else if !topic.IsROPublic {
-		ctx.JSON(http.StatusForbidden, gin.H{"error": "No Public Read Access Public to this topic"})
-		return
-	} else if topic.IsROPublic && strings.HasPrefix(topic.Topic, "/Private") {
-		ctx.JSON(http.StatusForbidden, gin.H{"error": "No Public Read Access to this topic"})
+		ctx.JSON(httpCode, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -131,6 +77,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	}
 
 	// send presence
+	presenceArg := ctx.Query("presence")
 	if presenceArg != "" && !user.IsSystem {
 		go func() {
 			var presence = models.Presence{}
@@ -143,12 +90,69 @@ func (m *MessagesController) List(ctx *gin.Context) {
 
 	messages, err := models.ListMessages(criteria, user.Username)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+	}
+	out.Messages = messages
+
+	ctx.JSON(http.StatusOK, out)
+
+}
+
+func (m *MessagesController) innerList(ctx *gin.Context) (*models.MessagesJSON, models.User, models.Topic, *models.MessageCriteria, int, error) {
+	var criteria = m.buildCriteria(ctx)
+	out := &models.MessagesJSON{}
+
+	// we can't use NotLabel or NotTag with fulltree or onetree
+	// this avoid potential wrong results associated with a short param limit
+	if (criteria.NotLabel != "" || criteria.NotTag != "") &&
+		(criteria.TreeView == "fulltree" || criteria.TreeView == "onetree") && criteria.OnlyMsgRoot == "" {
+		return out, models.User{}, models.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("You can't use fulltree or onetree with NotLabel or NotTag")
 	}
 
-	out.Messages = messages
-	ctx.JSON(http.StatusOK, out)
+	topicIn, err := GetParam(ctx, "topic")
+	if err != nil {
+		return out, models.User{}, models.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("Invalid topic")
+	}
+	criteria.Topic = topicIn
+
+	// add / if search on topic
+	// as topic is in path, it can't start with a /
+	if criteria.Topic != "" && string(criteria.Topic[0]) != "/" {
+		criteria.Topic = "/" + criteria.Topic
+	}
+
+	var topic = models.Topic{}
+	if errt := topic.FindByTopic(criteria.Topic, true, false, false, nil); errt != nil {
+		topicCriteria := ""
+		_, topicCriteria, err = checkDMTopic(ctx, criteria.Topic)
+		if err != nil {
+			return out, models.User{}, models.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("topic " + criteria.Topic + " does not exist")
+		}
+		// hack to get new created DM Topic
+		if e := topic.FindByTopic(topicCriteria, true, false, false, nil); e != nil {
+			return out, models.User{}, models.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("topic " + criteria.Topic + " does not exist (2)")
+		}
+		criteria.Topic = topicCriteria
+	}
+
+	var user models.User
+	var e error
+	if utils.GetCtxUsername(ctx) != "" {
+		user, e = PreCheckUser(ctx)
+		if e != nil {
+			return out, models.User{}, models.Topic{}, criteria, http.StatusBadRequest, e
+		}
+		if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
+			return out, models.User{}, models.Topic{}, criteria, http.StatusForbidden, fmt.Errorf("No Read Access on topic %s", criteria.Topic)
+		}
+		out.IsTopicRw = topic.IsUserRW(&user)
+	} else if !topic.IsROPublic {
+		return out, models.User{}, models.Topic{}, criteria, http.StatusForbidden, fmt.Errorf("No Public Read Access Public to this topic")
+	} else if topic.IsROPublic && strings.HasPrefix(topic.Topic, "/Private") {
+		return out, models.User{}, models.Topic{}, criteria, http.StatusForbidden, fmt.Errorf("No Public Read Access to this topic")
+	}
+
+	return out, user, topic, criteria, -1, nil
 }
 
 func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON, models.Message, models.Topic, error) {
@@ -717,4 +721,71 @@ func (m *MessagesController) CountEmptyTopic(ctx *gin.Context) {
 
 	out := fmt.Sprintf("counttopics countNoTopic:%d; countEmptyTopic:%d", countNoTopic, countEmptyTopic)
 	ctx.JSON(http.StatusOK, gin.H{"result": out})
+}
+
+// DeleteBulkCascade deletes messages and its replies, with criterias
+func (m *MessagesController) DeleteBulkCascade(ctx *gin.Context) {
+	m.messagesDeleteBulk(ctx, true, false)
+}
+
+// DeleteBulkCascadeForce deletes message and replies, event if a msg is in a
+// tasks topic of one user, messages selected with criterias
+func (m *MessagesController) DeleteBulkCascadeForce(ctx *gin.Context) {
+	m.messagesDeleteBulk(ctx, true, true)
+}
+
+// DeleteBulk deletes messages matching criterias
+func (m *MessagesController) DeleteBulk(ctx *gin.Context) {
+	m.messagesDeleteBulk(ctx, false, false)
+}
+
+func (m *MessagesController) messagesDeleteBulk(ctx *gin.Context, cascade, force bool) {
+	out, user, topic, criteria, httpCode, err := m.innerList(ctx)
+	criteria.TreeView = "onetree"
+
+	if err != nil {
+		ctx.JSON(httpCode, gin.H{"error": err.Error()})
+		return
+	}
+
+	messages, err := models.ListMessages(criteria, user.Username)
+	if err != nil {
+		ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+	}
+	out.Messages = messages
+
+	// check all before
+	for _, msg := range out.Messages {
+		_, errCheck := m.checkBeforeDelete(ctx, msg, user, force)
+		if errCheck != nil {
+			// ctx writes in checkBeforeDelete
+			return
+		}
+		if cascade {
+			for _, r := range msg.Replies {
+				_, errCheck := m.checkBeforeDelete(ctx, r, user, force)
+				if errCheck != nil {
+					// ctx writes in checkBeforeDelete
+					return
+				}
+			}
+		} else if len(msg.Replies) > 0 {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Could not delete a message, message have replies"})
+			return
+		}
+	}
+
+	nbDelete := 0
+	for _, msg := range out.Messages {
+		if err = msg.Delete(cascade); err != nil {
+			log.Errorf("Error while delete a message %s", err)
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		nbDelete++
+		go models.WSMessage(&models.WSMessageJSON{Action: "delete", Username: user.Username, Message: msg})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("%d messages (cascade:%t) deleted from %s, limit criteria to %d messages root",
+		nbDelete, cascade, topic.Topic, criteria.Limit)})
 }
