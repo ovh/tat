@@ -245,7 +245,7 @@ curl -XDELETE \
 
 see https://github.com/ovh/tat#parameters for all parameters
 
-### Delete a list of messages and its replies, even if it's in Tasks Topic of one user
+### Delete a list of messages and its replies, even if it's a reply or it's in Tasks Topic of one user
 ```
 curl -XDELETE \
     -H "Tat_username: username" \

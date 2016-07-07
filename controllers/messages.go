@@ -404,9 +404,12 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 	}
 
 	if !topic.CanDeleteAllMsg && message.Author.Username != user.Username {
-		e := fmt.Sprintf("Could not delete a message from another user %s than you %s", message.Author.Username, user.Username)
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
-		return topic, fmt.Errorf(e)
+		// if it's a reply and force true, allow delete it.
+		if !force || (force && message.InReplyOfIDRoot == "") {
+			e := fmt.Sprintf("Could not delete a message from another user %s than you %s", message.Author.Username, user.Username)
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
+			return topic, fmt.Errorf(e)
+		}
 	}
 
 	// if label done on msg, can delete it
