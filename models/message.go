@@ -940,11 +940,17 @@ func (message *Message) Like(user User) error {
 	if utils.ArrayContains(message.Likers, user.Username) {
 		return fmt.Errorf("Like not possible, %s is already a liker of this message", user.Username)
 	}
-	return Store().clMessages.Update(
+	err := Store().clMessages.Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbLikes": 1},
 			"$push": bson.M{"likers": user.Username}})
+
+	if err == nil {
+		message.NbLikes++
+		message.Likers = append(message.Likers, user.Username)
+	}
+	return err
 }
 
 // Unlike removes a like from one message
@@ -952,11 +958,24 @@ func (message *Message) Unlike(user User) error {
 	if !utils.ArrayContains(message.Likers, user.Username) {
 		return fmt.Errorf("Unlike not possible, %s is not a liker of this message", user.Username)
 	}
-	return Store().clMessages.Update(
+	err := Store().clMessages.Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbLikes": -1},
 			"$pull": bson.M{"likers": user.Username}})
+
+	if err == nil {
+		message.NbLikes--
+		likers := []string{}
+		for _, l := range message.Likers {
+			if l != user.Username {
+				likers = append(likers, l)
+			}
+		}
+		message.Likers = likers
+	}
+
+	return err
 }
 
 // VoteUP add a vote UP to a message
@@ -1067,7 +1086,7 @@ func (message *Message) RemoveFromTasks(user User, topic Topic) error {
 func CountMsgSinceDate(topic string, date int64) (int, error) {
 	nb, err := Store().clMessages.Find(bson.M{"topic": topic, "dateCreation": bson.M{"$gte": date}}).Count()
 	if err != nil {
-		log.Errorf("Error while count message with topic %s and dateCreation lte:%d", topic, date)
+		log.Errorf("Error while count messages with topic %s and dateCreation lte:%d err:%s", topic, date, err.Error())
 	}
 	return nb, err
 }
@@ -1079,7 +1098,7 @@ func ListTags(topic string) ([]string, error) {
 		Find(bson.M{"topic": topic}).
 		Distinct("tags", &tags)
 	if err != nil {
-		log.Errorf("Error while getting tags on topic %s", topic)
+		log.Errorf("Error while getting tags on topic %s, err:%s", topic, err.Error())
 	}
 	return tags, err
 }
@@ -1091,7 +1110,7 @@ func ListLabels(topic string) ([]Label, error) {
 		Find(bson.M{"topic": topic}).
 		Distinct("labels", &labels)
 	if err != nil {
-		log.Errorf("Error while getting labels on topic %s", topic)
+		log.Errorf("Error while getting labels on topic %s, err:%s", topic, err.Error())
 	}
 	return labels, err
 }
@@ -1107,7 +1126,7 @@ func changeAuthorUsernameOnMessages(oldUsername, newUsername string) error {
 		bson.M{"$set": bson.M{"author.username": newUsername}})
 
 	if err != nil {
-		log.Errorf("Error while update username from %s to %s on Messages %s", oldUsername, newUsername, err)
+		log.Errorf("Error while update username from %s to %s on Messages err:%s", oldUsername, newUsername, err.Error())
 	}
 
 	return err

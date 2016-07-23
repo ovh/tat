@@ -45,6 +45,7 @@ func CheckPassword() gin.HandlerFunc {
 
 		tatHeaders, err := extractTatHeaders(ctx)
 		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			ctx.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
@@ -52,11 +53,13 @@ func CheckPassword() gin.HandlerFunc {
 		user, err := validateTatHeaders(tatHeaders)
 		if err != nil {
 			log.Errorf("Error, send 401, err : %s", err.Error())
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			ctx.AbortWithError(http.StatusUnauthorized, err)
 			return
 		}
 
 		if err = storeInContext(ctx, user); err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			ctx.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}

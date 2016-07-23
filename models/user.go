@@ -317,7 +317,7 @@ func (user *User) FindByUsernameAndPassword(username, password string) error {
 		Select(bson.M{"auth.hashedPassword": 1, "auth.saltPassword": 1}).
 		One(&tmpUser)
 	if err != nil {
-		return fmt.Errorf("Error while fetching hash with username %s", username)
+		return fmt.Errorf("Error while fetching hash with username %s, err:%s", username, err.Error())
 	}
 
 	if !utils.IsCheckValid(password, tmpUser.Auth.HashedPassword) {
