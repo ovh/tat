@@ -26,7 +26,7 @@ var mainCmd = &cobra.Command{
 		viper.AutomaticEnv()
 
 		router := gin.New()
-		router.Use(gin.Recovery())
+		router.Use(utils.TatRecovery())
 
 		if viper.GetBool("production") {
 			// Only log the warning severity or above.
@@ -196,6 +196,9 @@ func init() {
 
 	flags.Int("write-timeout", 10, "Write Timeout in seconds")
 	viper.BindPFlag("write_timeout", flags.Lookup("write-timeout"))
+
+	flags.Int("db-socket-timeout", 10, "Session DB Socket Timeout in seconds")
+	viper.BindPFlag("db_socket_timeout", flags.Lookup("db-socket-timeout"))
 }
 
 func main() {

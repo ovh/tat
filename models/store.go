@@ -4,6 +4,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -56,6 +57,8 @@ func NewStore() error {
 	} else {
 		session, err = mgo.Dial("mongodb://" + address)
 	}
+
+	session.SetSocketTimeout(time.Duration(viper.GetInt("db_socket_timeout")) * time.Second)
 
 	if err != nil {
 		log.Errorf("Error with mgo.Dial %s", err.Error())

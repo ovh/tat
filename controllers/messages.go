@@ -93,7 +93,6 @@ func (m *MessagesController) List(ctx *gin.Context) {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 	}
 	out.Messages = messages
-
 	ctx.JSON(http.StatusOK, out)
 
 }
