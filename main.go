@@ -191,13 +191,13 @@ func init() {
 	flags.String("default-domain", "", "Default domains for mail for trusted username")
 	viper.BindPFlag("default_domain", flags.Lookup("default-domain"))
 
-	flags.Int("read-timeout", 10, "Read Timeout in seconds")
+	flags.Int("read-timeout", 25, "Read Timeout in seconds")
 	viper.BindPFlag("read_timeout", flags.Lookup("read-timeout"))
 
-	flags.Int("write-timeout", 10, "Write Timeout in seconds")
+	flags.Int("write-timeout", 25, "Write Timeout in seconds")
 	viper.BindPFlag("write_timeout", flags.Lookup("write-timeout"))
 
-	flags.Int("db-socket-timeout", 10, "Session DB Socket Timeout in seconds")
+	flags.Int("db-socket-timeout", 20, "Session DB Socket Timeout in seconds")
 	viper.BindPFlag("db_socket_timeout", flags.Lookup("db-socket-timeout"))
 }
 
