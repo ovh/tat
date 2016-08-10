@@ -37,7 +37,8 @@
     "TAT_HEADER_TRUST_USERNAME": "{{.tat_header_trust_username}}",
     "TAT_PRODUCTION": "{{.tat_production}}",
     "TAT_READ_TIMEOUT": "{{.tat_read_timeout}}",
-    "TAT_WRITE_TIMEOUT": "{{.tat_write_timeout}}"
+    "TAT_WRITE_TIMEOUT": "{{.tat_write_timeout}}",
+    "TAT_DB_SOCKET_TIMEOUT": "{{.tat_db_socket_timeout}}"
   },
   "healthChecks": [
     {
