@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -52,6 +53,7 @@ type TopicCriteria struct {
 	Limit                int
 	IDTopic              string
 	Topic                string
+	TopicPath            string
 	Description          string
 	DateMinCreation      string
 	DateMaxCreation      string
@@ -93,6 +95,9 @@ func buildTopicCriteria(criteria *TopicCriteria, user *User) (bson.M, error) {
 			queryTopics["$or"] = append(queryTopics["$or"].([]bson.M), bson.M{"topic": val})
 		}
 		query = append(query, queryTopics)
+	}
+	if criteria.TopicPath != "" {
+		query = append(query, bson.M{"topic": bson.RegEx{Pattern: "^" + regexp.QuoteMeta(criteria.TopicPath) + ".*$", Options: "im"}})
 	}
 	if criteria.Description != "" {
 		queryDescriptions := bson.M{}

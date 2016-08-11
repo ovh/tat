@@ -981,6 +981,7 @@ curl -XGET https://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit>&argN
 * skip: Skip skips over the n initial documents from the query results
 * limit: Limit restricts the maximum number of documents retrieved
 * topic: Topic name, example: /topicA
+* topicPath: Topic start path, example: /topicA will return /topicA/subA, /topicA/subB
 * idTopic: id of topic
 * description: description of topic
 * dateMinCreation: filter result on dateCreation, timestamp Unix format

@@ -57,6 +57,7 @@ func (*TopicsController) buildCriteria(ctx *gin.Context, user *models.User) *mod
 	c.GetNbMsgUnread = ctx.Query("getNbMsgUnread")
 	c.OnlyFavorites = ctx.Query("onlyFavorites")
 	c.GetForTatAdmin = ctx.Query("getForTatAdmin")
+	c.TopicPath = ctx.Query("topicPath")
 
 	if c.OnlyFavorites == "true" {
 		c.Topic = strings.Join(user.FavoritesTopics, ",")
