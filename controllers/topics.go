@@ -103,13 +103,9 @@ func (t *TopicsController) List(ctx *gin.Context) {
 					continue
 				}
 				knownPresence = true
-
-				nb, err := models.CountMsgSinceDate(presence.Topic, presence.DatePresence)
-				if err != nil {
-					ctx.JSON(http.StatusInternalServerError, err)
-					return
+				if topic.DateLastMessage > presence.DatePresence {
+					unread[presence.Topic] = 1
 				}
-				unread[presence.Topic] = nb
 				break
 			}
 			if !knownPresence {

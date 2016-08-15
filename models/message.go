@@ -679,6 +679,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	}
 	go topic.UpdateTopicTags(message.Tags)
 	go topic.UpdateTopicLabels(message.Labels)
+	go topic.UpdateTopicLastMessage(now)
 	return nil
 }
 

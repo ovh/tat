@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -36,6 +37,7 @@ type Topic struct {
 	IsROPublic          bool             `bson:"isROPublic"   json:"isROPublic"`
 	DateModification    int64            `bson:"dateModification" json:"dateModificationn,omitempty"`
 	DateCreation        int64            `bson:"dateCreation" json:"dateCreation,omitempty"`
+	DateLastMessage     int64            `bson:"dateLastMessage" json:"dateLastMessage,omitempty"`
 	Parameters          []TopicParameter `bson:"parameters" json:"parameters,omitempty"`
 	Tags                []string         `bson:"tags" json:"tags,omitempty"`
 	Labels              []Label          `bson:"labels" json:"labels,omitempty"`
@@ -173,7 +175,7 @@ func buildTopicCriteria(criteria *TopicCriteria, user *User) (bson.M, error) {
 	return bson.M{}, nil
 }
 
-func getTopicSelectedFields(isAdmin, withTags, withLabels bool) bson.M {
+func getTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M {
 	b := bson.M{}
 
 	if isAdmin {
@@ -187,7 +189,6 @@ func getTopicSelectedFields(isAdmin, withTags, withLabels bool) bson.M {
 			"rwUsers":             1,
 			"adminUsers":          1,
 			"adminGroups":         1,
-			"history":             1,
 			"maxlength":           1,
 			"canForceDate":        1,
 			"canUpdateMsg":        1,
@@ -199,7 +200,11 @@ func getTopicSelectedFields(isAdmin, withTags, withLabels bool) bson.M {
 			"isROPublic":          1,
 			"dateModificationn":   1,
 			"dateCreation":        1,
+			"dateLastMessage":     1,
 			"parameters":          1,
+		}
+		if oneTopic {
+			b["history"] = 1
 		}
 	} else {
 		b = bson.M{
@@ -212,6 +217,7 @@ func getTopicSelectedFields(isAdmin, withTags, withLabels bool) bson.M {
 			"canUpdateAllMsg": 1,
 			"canDeleteAllMsg": 1,
 			"maxlength":       1,
+			"dateLastMessage": 1,
 			"parameters":      1,
 		}
 	}
@@ -242,7 +248,7 @@ func ListTopics(criteria *TopicCriteria, user *User) (int, []Topic, error) {
 		return count, topics, fmt.Errorf("Error while count Topics %s", errc)
 	}
 
-	err := cursor.Select(getTopicSelectedFields(user.IsAdmin, false, false)).
+	err := cursor.Select(getTopicSelectedFields(user.IsAdmin, false, false, false)).
 		Sort("topic").
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
@@ -503,6 +509,44 @@ func (topic *Topic) TruncateLabels() error {
 		bson.M{"$unset": bson.M{"labels": ""}})
 }
 
+var topicsLastMsgUpdate map[string]int64
+var syncLastMsgUpdate sync.Mutex
+
+func init() {
+	topicsLastMsgUpdate = make(map[string]int64)
+	go updateLastMessageTopics()
+}
+
+func updateLastMessageTopics() {
+	for {
+		syncLastMsgUpdate.Lock()
+		if len(topicsLastMsgUpdate) > 0 {
+			workOnTopicsLastMsgUpdate()
+		}
+		syncLastMsgUpdate.Unlock()
+		time.Sleep(10 * time.Second)
+	}
+}
+
+func workOnTopicsLastMsgUpdate() {
+	for topic, dateUpdate := range topicsLastMsgUpdate {
+		err := Store().clTopics.Update(
+			bson.M{"topic": topic},
+			bson.M{"$set": bson.M{"dateLastMessage": dateUpdate}})
+		if err != nil {
+			log.Errorf("Error while update last date message on topic %s, err:%s", topic, err)
+		}
+	}
+	topicsLastMsgUpdate = make(map[string]int64)
+}
+
+// UpdateTopicLastMessage updates tags on topic
+func (topic *Topic) UpdateTopicLastMessage(dateUpdateLastMsg time.Time) {
+	syncLastMsgUpdate.Lock()
+	topicsLastMsgUpdate[topic.Topic] = dateUpdateLastMsg.Unix()
+	syncLastMsgUpdate.Unlock()
+}
+
 // UpdateTopicTags updates tags on topic
 func (topic *Topic) UpdateTopicTags(tags []string) {
 	if !topic.IsAutoComputeTags || len(tags) == 0 {
@@ -570,7 +614,7 @@ func (topic *Topic) UpdateTopicLabels(labels []Label) {
 func AllTopicsComputeLabels() (string, error) {
 	var topics []Topic
 	err := Store().clTopics.Find(bson.M{}).
-		Select(getTopicSelectedFields(true, false, false)).
+		Select(getTopicSelectedFields(true, false, false, false)).
 		All(&topics)
 
 	if err != nil {
@@ -603,7 +647,7 @@ func AllTopicsComputeLabels() (string, error) {
 func AllTopicsComputeTags() (string, error) {
 	var topics []Topic
 	err := Store().clTopics.Find(bson.M{}).
-		Select(getTopicSelectedFields(true, false, false)).
+		Select(getTopicSelectedFields(true, false, false, false)).
 		All(&topics)
 
 	if err != nil {
@@ -636,7 +680,7 @@ func AllTopicsComputeTags() (string, error) {
 func AllTopicsSetParam(key, value string) (string, error) {
 	var topics []Topic
 	err := Store().clTopics.Find(bson.M{}).
-		Select(getTopicSelectedFields(true, false, false)).
+		Select(getTopicSelectedFields(true, false, false, false)).
 		All(&topics)
 
 	if err != nil {
@@ -694,7 +738,7 @@ func (topic *Topic) setABoolParam(key string, value bool) error {
 func AllTopicsComputeReplies() (string, error) {
 	var topics []Topic
 	err := Store().clTopics.Find(bson.M{}).
-		Select(getTopicSelectedFields(true, false, false)).
+		Select(getTopicSelectedFields(true, false, false, false)).
 		Sort("topic").
 		All(&topics)
 
@@ -740,7 +784,7 @@ func (topic *Topic) FindByTopic(topicIn string, isAdmin, withTags, withLabels bo
 		return err
 	}
 	err := Store().clTopics.Find(bson.M{"topic": topic.Topic}).
-		Select(getTopicSelectedFields(isAdmin, withTags, withLabels)).
+		Select(getTopicSelectedFields(isAdmin, withTags, withLabels, true)).
 		One(&topic)
 
 	if err != nil || topic.ID == "" {
@@ -782,7 +826,7 @@ func IsTopicExists(topic string) bool {
 // FindByID return topic, matching given id
 func (topic *Topic) FindByID(id string, isAdmin bool, username string) error {
 	err := Store().clTopics.Find(bson.M{"_id": id}).
-		Select(getTopicSelectedFields(isAdmin, false, false)).
+		Select(getTopicSelectedFields(isAdmin, false, false, true)).
 		One(&topic)
 	if err != nil {
 		log.Errorf("Error while fetching topic with id:%s isAdmin:%t username:%s", id, isAdmin, username)
