@@ -100,7 +100,12 @@ func (u *UsersController) Create(ctx *gin.Context) {
 		return
 	}
 
-	if models.IsEmailExists(userJSON.Email) || models.IsUsernameExists(userJSON.Username) || models.IsFullnameExists(userJSON.Fullname) {
+	user := models.User{}
+	foundEmail, errEmail := user.FindByEmail(userJSON.Email)
+	foundUsername, errUsername := user.FindByUsername(userJSON.Username)
+	foundFullname, errFullname := user.FindByFullname(userJSON.Fullname)
+
+	if !foundEmail || !foundUsername || !foundFullname || errEmail != nil || errUsername != nil || errFullname != nil {
 		e := fmt.Errorf("Please check your username, email or fullname. If you are already registered, please reset your password")
 		AbortWithReturnError(ctx, http.StatusBadRequest, e)
 		return
@@ -221,8 +226,12 @@ type userJSON struct {
 // Me retrieves all information about me (exception information about Authentication)
 func (*UsersController) Me(ctx *gin.Context) {
 	var user = models.User{}
-	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
+	found, err := user.FindByUsername(utils.GetCtxUsername(ctx))
+	if !found {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user"})
 		return
 	}
 	out := &userJSON{User: &user}
@@ -249,7 +258,11 @@ func (*UsersController) Contacts(ctx *gin.Context) {
 	}
 
 	var user = models.User{}
-	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
+	found, err := user.FindByUsername(utils.GetCtxUsername(ctx))
+	if !found {
+		ctx.JSON(http.StatusInternalServerError, errors.New("User unknown"))
+		return
+	} else if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errors.New("Error while fetching user"))
 		return
 	}
@@ -280,8 +293,12 @@ func (*UsersController) AddContact(ctx *gin.Context) {
 	}
 
 	var contact = models.User{}
-	if err := contact.FindByUsername(contactIn); err != nil {
+	found, err := contact.FindByUsername(contactIn)
+	if !found {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", contactIn))
+		return
+	} else if err != nil {
+		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while fetching user with username %s", contactIn))
 		return
 	}
 
@@ -489,8 +506,12 @@ func (*UsersController) Convert(ctx *gin.Context) {
 	}
 
 	var userToConvert = models.User{}
-	if err := userToConvert.FindByUsername(convertJSON.Username); err != nil {
+	found, err := userToConvert.FindByUsername(convertJSON.Username)
+	if !found {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", convertJSON.Username))
+		return
+	} else if err != nil {
+		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while fetching user with username %s", convertJSON.Username))
 		return
 	}
 
@@ -528,8 +549,12 @@ func (*UsersController) UpdateSystemUser(ctx *gin.Context) {
 	}
 
 	var userToConvert = models.User{}
-	if err := userToConvert.FindByUsername(convertJSON.Username); err != nil {
+	found, err := userToConvert.FindByUsername(convertJSON.Username)
+	if !found {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("user with username %s does not exist", convertJSON.Username)})
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error while fetching user with username %s", convertJSON.Username)})
 		return
 	}
 
@@ -538,8 +563,8 @@ func (*UsersController) UpdateSystemUser(ctx *gin.Context) {
 		return
 	}
 
-	err := userToConvert.UpdateSystemUser(convertJSON.CanWriteNotifications, convertJSON.CanListUsersAsAdmin)
-	if err != nil {
+	err2 := userToConvert.UpdateSystemUser(convertJSON.CanWriteNotifications, convertJSON.CanListUsersAsAdmin)
+	if err2 != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error while update system user %s", convertJSON.Username)})
 		return
 	}
@@ -558,8 +583,12 @@ func (*UsersController) ResetSystemUser(ctx *gin.Context) {
 	}
 
 	var systemUserToReset = models.User{}
-	if err := systemUserToReset.FindByUsername(systemUserJSON.Username); err != nil {
+	found, err := systemUserToReset.FindByUsername(systemUserJSON.Username)
+	if !found {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", systemUserJSON.Username))
+		return
+	} else if err != nil {
+		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while fetching user with username %s", systemUserJSON.Username))
 		return
 	}
 
@@ -588,8 +617,12 @@ func (*UsersController) SetAdmin(ctx *gin.Context) {
 	ctx.Bind(&convertJSON)
 
 	var userToGrant = models.User{}
-	if err := userToGrant.FindByUsername(convertJSON.Username); err != nil {
+	found, err := userToGrant.FindByUsername(convertJSON.Username)
+	if !found {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", convertJSON.Username))
+		return
+	} else if err != nil {
+		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while fetching user with username %s", convertJSON.Username))
 		return
 	}
 
@@ -616,8 +649,12 @@ func (*UsersController) Archive(ctx *gin.Context) {
 	ctx.Bind(&archiveJSON)
 
 	var userToArchive = models.User{}
-	if err := userToArchive.FindByUsername(archiveJSON.Username); err != nil {
+	found, err := userToArchive.FindByUsername(archiveJSON.Username)
+	if !found {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("user with username %s does not exist", archiveJSON.Username))
+		return
+	} else if err != nil {
+		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error whil fetching user user with username %s", archiveJSON.Username))
 		return
 	}
 
@@ -645,8 +682,12 @@ func (*UsersController) Rename(ctx *gin.Context) {
 	ctx.Bind(&renameJSON)
 
 	var userToRename = models.User{}
-	if err := userToRename.FindByUsername(renameJSON.Username); err != nil {
+	found, err := userToRename.FindByUsername(renameJSON.Username)
+	if !found {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("user with username %s does not exist", renameJSON.Username)})
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Errorf("Error while fetching user with username %s", renameJSON.Username)})
 		return
 	}
 
@@ -670,8 +711,12 @@ func (*UsersController) Update(ctx *gin.Context) {
 	ctx.Bind(&updateJSON)
 
 	var userToUpdate = models.User{}
-	if err := userToUpdate.FindByUsername(updateJSON.Username); err != nil {
+	found, err := userToUpdate.FindByUsername(updateJSON.Username)
+	if !found {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("user with username %s does not exist", updateJSON.Username)})
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Errorf("Error while fetching user with username %s", updateJSON.Username)})
 		return
 	}
 
@@ -680,9 +725,9 @@ func (*UsersController) Update(ctx *gin.Context) {
 		return
 	}
 
-	err := userToUpdate.Update(strings.TrimSpace(updateJSON.NewFullname), strings.TrimSpace(updateJSON.NewEmail))
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Update %s user to fullname %s and email %s failed : %s", updateJSON.Username, updateJSON.NewFullname, updateJSON.NewEmail, err.Error())})
+	err2 := userToUpdate.Update(strings.TrimSpace(updateJSON.NewFullname), strings.TrimSpace(updateJSON.NewEmail))
+	if err2 != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Update %s user to fullname %s and email %s failed : %s", updateJSON.Username, updateJSON.NewFullname, updateJSON.NewEmail, err2.Error())})
 		return
 	}
 
@@ -703,8 +748,12 @@ func (u *UsersController) Check(ctx *gin.Context) {
 	ctx.Bind(&userJSON)
 
 	var userToCheck = models.User{}
-	if err := userToCheck.FindByUsername(userJSON.Username); err != nil {
+	found, err := userToCheck.FindByUsername(userJSON.Username)
+	if !found {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("user with username %s does not exist", userJSON.Username)})
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Errorf("Error while fetching user with username %s", userJSON.Username)})
 		return
 	}
 

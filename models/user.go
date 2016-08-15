@@ -310,18 +310,21 @@ func (user *User) getFieldsExceptAuth() bson.M {
 
 // FindByUsernameAndPassword search username, use user's salt to generates hashedPassword
 // and check username + hashedPassword in DB
-func (user *User) FindByUsernameAndPassword(username, password string) error {
+func (user *User) FindByUsernameAndPassword(username, password string) (bool, error) {
 	var tmpUser = User{}
 	err := Store().clUsers.
 		Find(bson.M{"username": username}).
 		Select(bson.M{"auth.hashedPassword": 1, "auth.saltPassword": 1}).
 		One(&tmpUser)
-	if err != nil {
-		return fmt.Errorf("Error while fetching hash with username %s, err:%s", username, err.Error())
+
+	if err == mgo.ErrNotFound {
+		return false, fmt.Errorf("FindByUsernameAndPassword> Error fetching for username %s, err:%s", username, err.Error())
+	} else if err != nil {
+		return false, fmt.Errorf("FindByUsernameAndPassword> Error while fetching hash with username %s, err:%s", username, err.Error())
 	}
 
 	if !utils.IsCheckValid(password, tmpUser.Auth.HashedPassword) {
-		return fmt.Errorf("Error while checking user %s with given password", username)
+		return false, fmt.Errorf("FindByUsernameAndPassword> Error while checking user %s with given password", username)
 	}
 
 	// ok, user is checked, get all fields now
@@ -331,7 +334,12 @@ func (user *User) FindByUsernameAndPassword(username, password string) error {
 // TrustUsername create user is not already registered
 func (user *User) TrustUsername(username string) error {
 
-	if !IsUsernameExists(username) {
+	var userCheck = User{}
+	found, errCheck := userCheck.FindByUsername(username)
+
+	if errCheck != nil {
+		return fmt.Errorf("Error with DB Backend: %s", errCheck)
+	} else if errCheck == nil && !found {
 
 		user.Username = username
 		user.setEmailAndFullnameFromTrustedUsername()
@@ -353,7 +361,13 @@ func (user *User) TrustUsername(username string) error {
 	}
 
 	// ok, user is checked, get all fields now
-	return user.FindByUsername(username)
+	//return user.FindByUsername(username)
+	found, err := user.FindByUsername(username)
+	if !found || err != nil {
+		return fmt.Errorf("TrustUsername, Error while find username:%s err:%s", username, err.Error())
+	}
+
+	return nil
 }
 
 func (user *User) setEmailAndFullnameFromTrustedUsername() {
@@ -399,7 +413,7 @@ func (user *User) findByUsernameAndTokenVerify(username, tokenVerify string) (bo
 		Select(bson.M{"auth.emailVerify": 1, "auth.hashedTokenVerify": 1, "auth.saltTokenVerify": 1, "auth.dateAskReset": 1}).
 		One(&tmpUser)
 	if err != nil {
-		return false, fmt.Errorf("Error while fetching hashed Token Verify with username %s", username)
+		return false, fmt.Errorf("findByUsernameAndTokenVerify > Error while fetching hashed Token Verify with username %s", username)
 	}
 
 	// dateAskReset more than 30 min, expire token
@@ -411,7 +425,8 @@ func (user *User) findByUsernameAndTokenVerify(username, tokenVerify string) (bo
 	}
 
 	// ok, user is checked, get all fields now
-	if err = user.FindByUsername(username); err != nil {
+	found, err := user.FindByUsername(username)
+	if !found || err != nil {
 		return false, err
 	}
 
@@ -431,72 +446,51 @@ func (user *User) FindByUsernameAndEmail(username, email string) error {
 }
 
 //FindByUsername retrieve information from user with username
-func (user *User) FindByUsername(username string) error {
+func (user *User) FindByUsername(username string) (bool, error) {
 	err := Store().clUsers.
 		Find(bson.M{"username": username}).
 		Select(user.getFieldsExceptAuth()).
 		One(&user)
-	if err != nil {
-		log.Errorf("Error while fetching user with username %s", username)
+
+	if err == mgo.ErrNotFound {
+		log.Infof("FindByUsername username %s not found", username)
+		return false, nil
+	} else if err != nil {
+		log.Errorf("Error while fetching user with username %s err:%s", username, err)
+		return false, err
 	}
-	return err
+	return true, nil
 }
 
 //FindByFullname retrieve information from user with fullname
-func (user *User) FindByFullname(fullname string) error {
+func (user *User) FindByFullname(fullname string) (bool, error) {
 	err := Store().clUsers.
 		Find(bson.M{"fullname": fullname}).
 		Select(user.getFieldsExceptAuth()).
 		One(&user)
-	if err != nil {
+
+	if err == mgo.ErrNotFound {
+		return false, nil
+	} else if err != nil {
 		log.Errorf("Error while fetching user with fullname %s", fullname)
+		return false, err
 	}
-	return err
+	return true, nil
 }
 
 //FindByEmail retrieve information from user with email
-func (user *User) FindByEmail(email string) error {
+func (user *User) FindByEmail(email string) (bool, error) {
 	err := Store().clUsers.
 		Find(bson.M{"email": email}).
 		Select(user.getFieldsExceptAuth()).
 		One(&user)
-	if err != nil {
+	if err == mgo.ErrNotFound {
+		return false, nil
+	} else if err != nil {
 		log.Errorf("Error while fetching user with email %s", email)
+		return false, err
 	}
-	return err
-}
-
-// IsEmailExists return true if email is already used, false otherwise
-func IsEmailExists(email string) bool {
-	var user = User{}
-
-	err := user.FindByEmail(email)
-	if err != nil {
-		return false // user does not exist
-	}
-	return true // user exists
-}
-
-// IsUsernameExists return true if usernamer is already used, false otherwise
-func IsUsernameExists(username string) bool {
-	var user = User{}
-
-	err := user.FindByUsername(username)
-	if err != nil {
-		return false // user does not exist
-	}
-	return true // user exists
-}
-
-// IsFullnameExists return true if fullname is already used, false otherwise
-func IsFullnameExists(fullname string) bool {
-	var user = User{}
-
-	err := user.FindByFullname(fullname)
-	if err != nil {
-		return false // user does not exist
-	}
-	return true // user exists
+	return true, nil
 }
 
 // GetGroupsOnlyName returns only groupname  of user's groups
@@ -807,8 +801,13 @@ func (user *User) Archive(userAdmin string) error {
 
 // Rename changes username of one user
 func (user *User) Rename(newUsername string) error {
-	if IsUsernameExists(newUsername) {
-		return fmt.Errorf("Username %s already exists", newUsername)
+	var userCheck = User{}
+	found, errCheck := userCheck.FindByUsername(newUsername)
+
+	if errCheck != nil {
+		return fmt.Errorf("Rename> Error with DB Backend:%s", errCheck)
+	} else if found {
+		return fmt.Errorf("Rename> Username %s already exists", newUsername)
 	}
 
 	err := Store().clUsers.Update(
@@ -830,11 +829,20 @@ func (user *User) Rename(newUsername string) error {
 // Update changes fullname and email of user
 func (user *User) Update(newFullname, newEmail string) error {
 
-	if user.Email != newEmail && IsEmailExists(newEmail) {
+	userCheck := User{}
+	found, err := userCheck.FindByEmail(newEmail)
+	if err != nil {
+		return err
+	}
+	if user.Email != newEmail && found {
 		return fmt.Errorf("Email %s already exists", newEmail)
 	}
 
-	if user.Fullname != newFullname && IsFullnameExists(newFullname) {
+	found2, err2 := userCheck.FindByFullname(newFullname)
+	if err2 != nil {
+		return err2
+	}
+	if user.Fullname != newFullname && found2 {
 		return fmt.Errorf("Fullname %s already exists", newFullname)
 	}
 

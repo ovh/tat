@@ -657,30 +657,36 @@ func checkDMTopic(ctx *gin.Context, topicName string) (*models.Topic, string, er
 	}
 
 	var userFrom = models.User{}
-	if err := userFrom.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
+	found, err := userFrom.FindByUsername(utils.GetCtxUsername(ctx))
+	if !found {
+		return &topic, "", errors.New("User unknown")
+	} else if err != nil {
 		return &topic, "", errors.New("Error while fetching user.")
 	}
 	var userTo = models.User{}
 	usernameTo := part[4]
-	if err := userTo.FindByUsername(usernameTo); err != nil {
+	found2, err2 := userTo.FindByUsername(usernameTo)
+	if !found2 {
+		return &topic, "", errors.New("user unknown")
+	} else if err2 != nil {
 		return &topic, "", errors.New("Error while fetching user.")
 	}
 
-	if err := checkTopicParentDM(userFrom); err != nil {
-		return &topic, "", errors.New(err.Error())
+	if err3 := checkTopicParentDM(userFrom); err3 != nil {
+		return &topic, "", errors.New(err3.Error())
 	}
 
-	if err := checkTopicParentDM(userTo); err != nil {
-		return &topic, "", errors.New(err.Error())
+	if err4 := checkTopicParentDM(userTo); err4 != nil {
+		return &topic, "", errors.New(err4.Error())
 	}
 
-	topic, err := insertTopicDM(userFrom, userTo)
-	if err != nil {
-		return &topic, "", errors.New(err.Error())
+	topic, err5 := insertTopicDM(userFrom, userTo)
+	if err5 != nil {
+		return &topic, "", errors.New(err5.Error())
 	}
 
-	if _, err = insertTopicDM(userTo, userFrom); err != nil {
-		return &topic, "", errors.New(err.Error())
+	if _, err6 := insertTopicDM(userTo, userFrom); err6 != nil {
+		return &topic, "", errors.New(err6.Error())
 	}
 
 	topicCriteria := topicName + "," + "/Private/" + usernameTo + "/DM/" + userFrom.Username

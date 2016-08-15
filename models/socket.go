@@ -224,9 +224,11 @@ func closeSocketOfUsername(username string) {
 func (socket *Socket) actionConnect(msg WSConnectJSON) error {
 	user := User{}
 	username := strings.Trim(msg.Username, "")
-	err := user.FindByUsernameAndPassword(username, strings.Trim(msg.Password, ""))
-	if err != nil {
+	found, err := user.FindByUsernameAndPassword(username, strings.Trim(msg.Password, ""))
+	if !found {
 		return fmt.Errorf("Invalid credentials for username %s, err:%s", username, err.Error())
+	} else if err != nil {
+		return fmt.Errorf("Error while connecting username %s, err:%s", username, err.Error())
 	}
 
 	log.Infof("WS Connection Ok for %s", username)
@@ -317,7 +319,8 @@ func (socket *Socket) preCheckWSTopics(msg WSJSON) ([]Topic, User, error) {
 
 func (socket *Socket) getTopicsOfUser(msg WSJSON) (int, []Topic, User, error) {
 	var user = User{}
-	if err := user.FindByUsername(socket.username); err != nil {
+	found, err := user.FindByUsername(socket.username)
+	if !found || err != nil {
 		m := fmt.Sprintf("Internal Error getting User for action %s", msg.Action)
 		log.Errorf("%s :%s", m, err)
 		socket.write(gin.H{"action": msg.Action, "result": m, "status": http.StatusInternalServerError})

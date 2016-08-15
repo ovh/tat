@@ -68,7 +68,11 @@ func (*TopicsController) buildCriteria(ctx *gin.Context, user *models.User) *mod
 // List returns the list of topics that can be viewed by user
 func (t *TopicsController) List(ctx *gin.Context) {
 	var user = &models.User{}
-	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
+	found, err := user.FindByUsername(utils.GetCtxUsername(ctx))
+	if !found {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
+		return
+	} else if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
 		return
 	}
@@ -126,7 +130,11 @@ func (t *TopicsController) OneTopic(ctx *gin.Context) {
 		return
 	}
 	var user = models.User{}
-	if err = user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
+	found, err := user.FindByUsername(utils.GetCtxUsername(ctx))
+	if !found {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
+		return
+	} else if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
 		return
 	}
@@ -155,8 +163,11 @@ func (*TopicsController) Create(ctx *gin.Context) {
 	ctx.Bind(&topicIn)
 
 	var user = models.User{}
-	err := user.FindByUsername(utils.GetCtxUsername(ctx))
-	if err != nil {
+	found, err := user.FindByUsername(utils.GetCtxUsername(ctx))
+	if !found {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
+		return
+	} else if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
 		return
 	}
@@ -182,9 +193,12 @@ func (t *TopicsController) Delete(ctx *gin.Context) {
 	}
 
 	var user = models.User{}
-	err = user.FindByUsername(utils.GetCtxUsername(ctx))
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
+	found, err := user.FindByUsername(utils.GetCtxUsername(ctx))
+	if !found {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user"})
 		return
 	}
 
@@ -296,8 +310,14 @@ func (t *TopicsController) TruncateLabels(ctx *gin.Context) {
 
 // preCheckUser checks if user in paramJSON exists and if current user is admin on topic
 func (t *TopicsController) preCheckUser(ctx *gin.Context, paramJSON *paramTopicUserJSON) (models.Topic, error) {
-	if userExists := models.IsUsernameExists(paramJSON.Username); !userExists {
+	user := models.User{}
+	found, err := user.FindByUsername(paramJSON.Username)
+	if !found {
 		e := errors.New("username " + paramJSON.Username + " does not exist")
+		ctx.AbortWithError(http.StatusInternalServerError, e)
+		return models.Topic{}, e
+	} else if err != nil {
+		e := errors.New("Error while fetching username username " + paramJSON.Username)
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return models.Topic{}, e
 	}

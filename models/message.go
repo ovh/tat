@@ -689,7 +689,8 @@ func extractUsersMentions(text string) []string {
 
 	for _, username := range usernames {
 		var user = User{}
-		if err := user.FindByUsername(username); err == nil {
+		found, err := user.FindByUsername(username)
+		if found && err == nil {
 			usernamesChecked = append(usernamesChecked, user.Username)
 		}
 	}

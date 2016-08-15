@@ -19,5 +19,4 @@ func InitRoutesSockets(router *gin.Engine) {
 			admin.GET("/dump", socketsCtrl.Dump)
 		}
 	}
-
 }

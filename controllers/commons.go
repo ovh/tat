@@ -13,8 +13,14 @@ import (
 // Check if username exists in database, return user if ok
 func PreCheckUser(ctx *gin.Context) (models.User, error) {
 	var user = models.User{}
-	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
-		e := errors.New("Error while fetching user")
+	found, err := user.FindByUsername(utils.GetCtxUsername(ctx))
+	var e error
+	if !found {
+		e = errors.New("User unknown")
+	} else if err != nil {
+		e = errors.New("Error while fetching user")
+	}
+	if e != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": e})
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return user, e

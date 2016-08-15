@@ -115,8 +115,14 @@ func (m *PresencesController) preCheckTopic(ctx *gin.Context) (models.PresenceJS
 
 func (*PresencesController) preCheckUser(ctx *gin.Context) (models.User, error) {
 	var user = models.User{}
-	if err := user.FindByUsername(utils.GetCtxUsername(ctx)); err != nil {
-		e := errors.New("Error while fetching user.")
+	found, err := user.FindByUsername(utils.GetCtxUsername(ctx))
+	var e error
+	if !found {
+		e = errors.New("User unknown")
+	} else if err != nil {
+		e = errors.New("Error while fetching user")
+	}
+	if e != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
 		return user, e
@@ -191,8 +197,13 @@ func (m *PresencesController) Delete(ctx *gin.Context) {
 	}
 
 	if user.IsAdmin {
-		if err := user.FindByUsername(presenceIn.Username); err != nil {
-			e := errors.New("Error while fetching user " + presenceIn.Username + " for delete presence.")
+		found, err := user.FindByUsername(presenceIn.Username)
+		if !found {
+			e := errors.New("User unknown while fetching user " + presenceIn.Username + " for delete presence")
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
+			return
+		} else if err != nil {
+			e := errors.New("Error while fetching user " + presenceIn.Username + " for delete presence")
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
 			return
 		}

@@ -102,14 +102,15 @@ func validateTatHeaders(tatHeaders tatHeadersType) (models.User, error) {
 
 	user := models.User{}
 	if tatHeaders.trustUsername != "" && tatHeaders.trustUsername != "null" {
-		err := user.TrustUsername(tatHeaders.trustUsername)
-		if err != nil {
+		if err := user.TrustUsername(tatHeaders.trustUsername); err != nil {
 			return user, fmt.Errorf("User %s does not exist. Please register before. Err:%s", tatHeaders.trustUsername, err.Error())
 		}
 	} else {
-		err := user.FindByUsernameAndPassword(tatHeaders.username, tatHeaders.password)
-		if err != nil {
-			return user, fmt.Errorf("Invalid Tat credentials for username %s, err:%s", tatHeaders.username, err.Error())
+		found, err := user.FindByUsernameAndPassword(tatHeaders.username, tatHeaders.password)
+		if !found {
+			return user, fmt.Errorf("Invalid Tat credentials for username %s", tatHeaders.username)
+		} else if err != nil {
+			return user, fmt.Errorf("Error with DB Backend  %s, err:%s", tatHeaders.username, err.Error())
 		}
 	}
 

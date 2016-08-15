@@ -93,9 +93,15 @@ func (*GroupsController) Create(ctx *gin.Context) {
 }
 
 func (*GroupsController) preCheckUser(ctx *gin.Context, paramJSON *paramUserJSON) (models.Group, error) {
-	usernameExists := models.IsUsernameExists(paramJSON.Username)
+	user := models.User{}
 	group := models.Group{}
-	if !usernameExists {
+	found, err := user.FindByUsername(paramJSON.Username)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return group, err
+	}
+
+	if !found {
 		e := errors.New("username " + paramJSON.Username + " does not exist")
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return group, e
@@ -108,11 +114,6 @@ func (*GroupsController) preCheckUser(ctx *gin.Context, paramJSON *paramUserJSON
 
 	if utils.IsTatAdmin(ctx) { // if Tat admin, ok
 		return group, nil
-	}
-
-	user, err := PreCheckUser(ctx)
-	if err != nil {
-		return models.Group{}, err
 	}
 
 	if !group.IsUserAdmin(&user) {
