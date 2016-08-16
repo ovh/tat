@@ -235,7 +235,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 	var message = models.Message{}
 
 	// New root message or reply
-	err := message.Insert(user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, false)
+	err := message.Insert(user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, false)
 	if err != nil {
 		log.Errorf("%s", err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

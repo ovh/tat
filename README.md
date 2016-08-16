@@ -93,6 +93,17 @@ curl -XPOST \
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
+You can add replies from the creation
+
+```
+curl -XPOST \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+  -d '{ "text": "text", "replies":["reply A", "reply B"] }' \
+  https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
 If you use a `system user`, you can force message's date
 
 ```  

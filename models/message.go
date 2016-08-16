@@ -112,10 +112,11 @@ type MessageJSON struct {
 	Text         string `json:"text"`
 	Option       string `json:"option"`
 	Topic        string
-	IDReference  string  `json:"idReference"`
-	Action       string  `json:"action"`
-	DateCreation float64 `json:"dateCreation"`
-	Labels       []Label `json:"labels"`
+	IDReference  string   `json:"idReference"`
+	Action       string   `json:"action"`
+	DateCreation float64  `json:"dateCreation"`
+	Labels       []Label  `json:"labels"`
+	Replies      []string `json:"replies"`
 }
 
 func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, error) {
@@ -564,7 +565,7 @@ func getTree(messagesIn map[string][]Message, criteria *MessageCriteria, usernam
 }
 
 // Insert a new message on one topic
-func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation float64, labels []Label, isNotificationFromMention bool) error {
+func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation float64, labels []Label, replies []string, isNotificationFromMention bool) error {
 
 	if !isNotificationFromMention {
 		notificationsTopic := fmt.Sprintf("/Private/%s/Notifications", user.Username)
@@ -680,6 +681,13 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	go topic.UpdateTopicTags(message.Tags)
 	go topic.UpdateTopicLabels(message.Labels)
 	go topic.UpdateTopicLastMessage(now)
+
+	if len(replies) > 0 {
+		for _, textReply := range replies {
+			reply := Message{}
+			reply.Insert(user, topic, textReply, message.ID, -1, nil, nil, isNotificationFromMention)
+		}
+	}
 	return nil
 }
 
@@ -716,7 +724,7 @@ func (message *Message) insertNotification(author User, usernameMention string) 
 		return
 	}
 
-	if err := notif.Insert(author, topic, text, "", -1, labels, true); err != nil {
+	if err := notif.Insert(author, topic, text, "", -1, labels, nil, true); err != nil {
 		// not throw err here, just log
 		log.Errorf("Error while inserting notification message for %s, error: %s", usernameMention, err.Error())
 	}
@@ -1071,7 +1079,7 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 		}
 	}
 
-	return msgReply.Insert(user, topic, text, idRoot, -1, nil, false)
+	return msgReply.Insert(user, topic, text, idRoot, -1, nil, nil, false)
 }
 
 // AddToTasks add a message to user's tasks Topic
