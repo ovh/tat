@@ -734,7 +734,6 @@ func (message *Message) insertNotification(author User, usernameMention string) 
 func checkLabels(labels []Label, labelsToRemove []string) []Label {
 	var labelsChecked []Label
 	var labelsTextChecked []string
-	log.Debugf("checkLabels labelsToRemove:%+v", labelsToRemove)
 	for _, l := range labels {
 		if len(l.Text) < 1 {
 			continue
@@ -747,7 +746,6 @@ func checkLabels(labels []Label, labelsToRemove []string) []Label {
 			labelsTextChecked = append(labelsTextChecked, l.Text)
 		}
 	}
-	log.Debugf("labelsChecked:%+v", labelsChecked)
 	return labelsChecked
 }
 
