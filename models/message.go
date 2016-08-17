@@ -303,7 +303,7 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 func (message *Message) FindByID(id string) error {
 	err := Store().clMessages.Find(bson.M{"_id": id}).One(&message)
 	if err != nil {
-		log.Errorf("Error while fecthing message with id %s", id)
+		log.Errorf("Error while fetching message with id %s", id)
 	}
 	return err
 }
@@ -566,7 +566,7 @@ func getTree(messagesIn map[string][]Message, criteria *MessageCriteria, usernam
 }
 
 // Insert a new message on one topic
-func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation float64, labels []Label, replies []string, isNotificationFromMention bool) error {
+func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string, dateCreation float64, labels []Label, replies []string, isNotificationFromMention bool, messageRoot *Message) error {
 
 	if !isNotificationFromMention {
 		notificationsTopic := fmt.Sprintf("/Private/%s/Notifications", user.Username)
@@ -608,9 +608,14 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 
 	if inReplyOfID != "" { // reply
 		var messageReference = &Message{}
-		if err := messageReference.FindByID(inReplyOfID); err != nil {
-			return err
+		if messageRoot != nil {
+			messageReference = messageRoot
+		} else {
+			if err := messageReference.FindByID(inReplyOfID); err != nil {
+				return err
+			}
 		}
+
 		if messageReference.InReplyOfID != "" {
 			message.InReplyOfIDRoot = messageReference.InReplyOfIDRoot
 		} else {
@@ -686,7 +691,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	if len(replies) > 0 {
 		for _, textReply := range replies {
 			reply := Message{}
-			reply.Insert(user, topic, textReply, message.ID, -1, nil, nil, isNotificationFromMention)
+			reply.Insert(user, topic, textReply, message.ID, -1, nil, nil, isNotificationFromMention, message)
 		}
 	}
 	return nil
@@ -725,7 +730,7 @@ func (message *Message) insertNotification(author User, usernameMention string) 
 		return
 	}
 
-	if err := notif.Insert(author, topic, text, "", -1, labels, nil, true); err != nil {
+	if err := notif.Insert(author, topic, text, "", -1, labels, nil, true, nil); err != nil {
 		// not throw err here, just log
 		log.Errorf("Error while inserting notification message for %s, error: %s", usernameMention, err.Error())
 	}
@@ -1093,7 +1098,7 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 		}
 	}
 
-	return msgReply.Insert(user, topic, text, idRoot, -1, nil, nil, false)
+	return msgReply.Insert(user, topic, text, idRoot, -1, nil, nil, false, nil)
 }
 
 // AddToTasks add a message to user's tasks Topic
