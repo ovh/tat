@@ -116,6 +116,7 @@ type MessageJSON struct {
 	Action       string   `json:"action"`
 	DateCreation float64  `json:"dateCreation"`
 	Labels       []Label  `json:"labels"`
+	Options      []string `json:"options"`
 	Replies      []string `json:"replies"`
 }
 
@@ -667,7 +668,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 	}
 
 	if labels != nil {
-		message.Labels = checkLabels(labels)
+		message.Labels = checkLabels(labels, nil)
 	}
 
 	if err := Store().clMessages.Insert(message); err != nil {
@@ -730,14 +731,23 @@ func (message *Message) insertNotification(author User, usernameMention string) 
 	}
 }
 
-func checkLabels(labels []Label) []Label {
+func checkLabels(labels []Label, labelsToRemove []string) []Label {
 	var labelsChecked []Label
+	var labelsTextChecked []string
+	log.Debugf("checkLabels labelsToRemove:%+v", labelsToRemove)
 	for _, l := range labels {
+		if len(l.Text) < 1 {
+			continue
+		}
 		if len(l.Text) > lengthLabel {
 			l.Text = l.Text[0:lengthLabel]
 		}
-		labelsChecked = append(labelsChecked, l)
+		if !utils.ArrayContains(labelsToRemove, l.Text) && !utils.ArrayContains(labelsTextChecked, l.Text) {
+			labelsChecked = append(labelsChecked, l)
+			labelsTextChecked = append(labelsTextChecked, l.Text)
+		}
 	}
+	log.Debugf("labelsChecked:%+v", labelsChecked)
 	return labelsChecked
 }
 
@@ -937,12 +947,18 @@ func (message *Message) RemoveLabel(label string) error {
 
 // RemoveAllAndAddNewLabel removes all labels and add new label on message
 func (message *Message) RemoveAllAndAddNewLabel(labels []Label) error {
-	message.Labels = checkLabels(labels)
+	message.Labels = checkLabels(labels, nil)
 	return Store().clMessages.Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{
 			"dateUpdate": utils.TatTSFromNow(),
 			"labels":     message.Labels}})
+}
+
+// RemoveSomeAndAddNewLabel removes some labels and add new label on message
+func (message *Message) RemoveSomeAndAddNewLabel(labels []Label, labelsToRemove []string) error {
+	message.Labels = append(message.Labels, labels...)
+	return message.RemoveAllAndAddNewLabel(checkLabels(message.Labels, labelsToRemove))
 }
 
 // Like add a like to a message

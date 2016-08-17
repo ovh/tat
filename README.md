@@ -179,6 +179,17 @@ curl -XPUT \
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
+### Remove some labels and add new ones
+
+```
+curl -XPUT \
+    -H 'Content-Type: application/json' \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "relabel", "labels": [{"text": "labelA", "color": "#eeeeee"}, {"text": "labelB", "color": "#ffffff"}], "options": ["labelAToRemove", "labelAToRemove"] }'\
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
 ### Update a message
 
 ```

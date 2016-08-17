@@ -473,7 +473,7 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *model
 			return
 		}
 		info = gin.H{"info": fmt.Sprintf("label %s removed from message", messageIn.Text), "message": message}
-	} else if messageIn.Action == "relabel" {
+	} else if messageIn.Action == "relabel" && len(messageIn.Options) == 0 {
 		if err := message.RemoveAllAndAddNewLabel(messageIn.Labels); err != nil {
 			errInfo := fmt.Sprintf("Error while removing all labels and add new ones for a message %s", err.Error())
 			log.Errorf(errInfo)
@@ -481,6 +481,15 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *model
 			return
 		}
 		info = gin.H{"info": fmt.Sprintf("all labels removed and new labels %s added to message", messageIn.Text), "message": message}
+	} else if messageIn.Action == "relabel" && len(messageIn.Options) > 0 {
+		if err := message.RemoveSomeAndAddNewLabel(messageIn.Labels, messageIn.Options); err != nil {
+			errInfo := fmt.Sprintf("Error while removing some labels and add new ones for a message %s", err.Error())
+			log.Errorf(errInfo)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
+			return
+		}
+		info = gin.H{"info": fmt.Sprintf("Some labels removed and new labels %s added to message", messageIn.Text), "message": message}
+
 	} else {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action: "+messageIn.Action))
 		return
