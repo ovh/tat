@@ -234,6 +234,12 @@ func (*UsersController) Me(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user"})
 		return
 	}
+	gs, errGetGroupsOnlyName := user.GetGroupsOnlyName()
+	if errGetGroupsOnlyName != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while getting groups"})
+		return
+	}
+	user.Groups = gs
 	out := &userJSON{User: &user}
 	ctx.JSON(http.StatusOK, out)
 }
