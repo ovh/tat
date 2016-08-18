@@ -106,8 +106,8 @@ func (*GroupsController) preCheckUser(ctx *gin.Context, paramJSON *paramUserJSON
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return group, e
 	}
-	errfinding := group.FindByName(paramJSON.Groupname)
-	if errfinding != nil {
+
+	if errfinding := group.FindByName(paramJSON.Groupname); errfinding != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, errfinding)
 		return group, errfinding
 	}
@@ -116,7 +116,7 @@ func (*GroupsController) preCheckUser(ctx *gin.Context, paramJSON *paramUserJSON
 		return group, nil
 	}
 
-	if !group.IsUserAdmin(&user) {
+	if !group.IsUserAdmin(utils.GetCtxUsername(ctx)) {
 		e := fmt.Errorf("user %s is not admin on group %s", user.Username, group.Name)
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return models.Group{}, e

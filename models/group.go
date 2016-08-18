@@ -241,8 +241,8 @@ func (group *Group) addToHistory(user string, historyToAdd string) error {
 }
 
 // IsUserAdmin return true if user is admin on this group
-func (group *Group) IsUserAdmin(user *User) bool {
-	return utils.ArrayContains(group.AdminUsers, user.Username)
+func (group *Group) IsUserAdmin(username string) bool {
+	return utils.ArrayContains(group.AdminUsers, username)
 }
 
 // CountGroups returns the total number of groups in db
