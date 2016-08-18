@@ -1084,9 +1084,13 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 			}
 			if cur.Text == "doing:"+user.Username {
 				message.RemoveLabel("doing:" + user.Username)
+			} else if cur.Text == "done:"+user.Username {
+				message.RemoveLabel("done:" + user.Username)
+			} else if cur.Text == "done" {
+				message.RemoveLabel("done")
 			}
 		}
-		if nDoing <= 1 {
+		if nDoing >= 1 {
 			message.RemoveLabel("doing")
 		}
 	} else { // push
@@ -1095,6 +1099,12 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 		}
 		if !message.ContainsLabel("doing:" + user.Username) {
 			message.AddLabel(topic, "doing:"+user.Username, "#5484ed")
+		}
+		if message.ContainsLabel("open") {
+			message.RemoveLabel("open")
+		}
+		if message.ContainsLabel("done") {
+			message.RemoveLabel("done")
 		}
 	}
 
