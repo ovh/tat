@@ -105,7 +105,7 @@ func (u *UsersController) Create(ctx *gin.Context) {
 	foundUsername, errUsername := user.FindByUsername(userJSON.Username)
 	foundFullname, errFullname := user.FindByFullname(userJSON.Fullname)
 
-	if !foundEmail || !foundUsername || !foundFullname || errEmail != nil || errUsername != nil || errFullname != nil {
+	if foundEmail || foundUsername || foundFullname || errEmail != nil || errUsername != nil || errFullname != nil {
 		e := fmt.Errorf("Please check your username, email or fullname. If you are already registered, please reset your password")
 		AbortWithReturnError(ctx, http.StatusBadRequest, e)
 		return
