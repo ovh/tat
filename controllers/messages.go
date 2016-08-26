@@ -758,7 +758,9 @@ func (m *MessagesController) DeleteBulk(ctx *gin.Context) {
 
 func (m *MessagesController) messagesDeleteBulk(ctx *gin.Context, cascade, force bool) {
 	out, user, topic, criteria, httpCode, err := m.innerList(ctx)
-	criteria.TreeView = "onetree"
+	if criteria.TreeView == "" {
+		criteria.TreeView = "onetree"
+	}
 
 	if err != nil {
 		ctx.JSON(httpCode, gin.H{"error": err.Error()})
@@ -768,6 +770,7 @@ func (m *MessagesController) messagesDeleteBulk(ctx *gin.Context, cascade, force
 	messages, err := models.ListMessages(criteria, user.Username)
 	if err != nil {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		return
 	}
 	out.Messages = messages
 
