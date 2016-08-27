@@ -91,8 +91,9 @@ type MessageCriteria struct {
 
 // MessagesJSON represents a message and information if current topic is RW
 type MessagesJSON struct {
-	Messages  []Message `json:"messages"`
-	IsTopicRw bool      `json:"isTopicRw"`
+	Messages     []Message `json:"messages"`
+	IsTopicRw    bool      `json:"isTopicRw"`
+	IsTopicAdmin bool      `json:"isTopicAdmin"`
 }
 
 // MessagesCountJSON represents count of messages

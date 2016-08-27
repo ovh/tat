@@ -618,21 +618,23 @@ func (t *TopicsController) RemoveAdminGroup(ctx *gin.Context) {
 }
 
 type paramsJSON struct {
-	Topic               string                  `json:"topic"`
-	MaxLength           int                     `json:"maxlength"`
-	CanForceDate        bool                    `json:"canForceDate"`
-	CanUpdateMsg        bool                    `json:"canUpdateMsg"`
-	CanDeleteMsg        bool                    `json:"canDeleteMsg"`
-	CanUpdateAllMsg     bool                    `json:"canUpdateAllMsg"`
-	CanDeleteAllMsg     bool                    `json:"canDeleteAllMsg"`
-	IsROPublic          bool                    `json:"isROPublic"`
-	IsAutoComputeTags   bool                    `json:"isAutoComputeTags"`
-	IsAutoComputeLabels bool                    `json:"isAutoComputeLabels"`
-	Recursive           bool                    `json:"recursive"`
-	Parameters          []models.TopicParameter `json:"parameters"`
+	Topic                string                  `json:"topic"`
+	MaxLength            int                     `json:"maxlength"`
+	CanForceDate         bool                    `json:"canForceDate"`
+	CanUpdateMsg         bool                    `json:"canUpdateMsg"`
+	CanDeleteMsg         bool                    `json:"canDeleteMsg"`
+	CanUpdateAllMsg      bool                    `json:"canUpdateAllMsg"`
+	CanDeleteAllMsg      bool                    `json:"canDeleteAllMsg"`
+	AdminCanUpdateAllMsg bool                    `json:"adminCanUpdateAllMsg"`
+	AdminCanDeleteAllMsg bool                    `json:"adminCanDeleteAllMsg"`
+	IsROPublic           bool                    `json:"isROPublic"`
+	IsAutoComputeTags    bool                    `json:"isAutoComputeTags"`
+	IsAutoComputeLabels  bool                    `json:"isAutoComputeLabels"`
+	Recursive            bool                    `json:"recursive"`
+	Parameters           []models.TopicParameter `json:"parameters"`
 }
 
-// SetParam update Topic Parameters : MaxLength, CanForeceDate, CanUpdateMsg, CanDeleteMsg, CanUpdateAllMsg, CanDeleteAllMsg, IsROPublic
+// SetParam update Topic Parameters : MaxLength, CanForeceDate, CanUpdateMsg, CanDeleteMsg, CanUpdateAllMsg, CanDeleteAllMsg, AdminCanDeleteAllMsg, IsROPublic
 // admin only, except on Private topic
 func (t *TopicsController) SetParam(ctx *gin.Context) {
 	var paramsBind paramsJSON
@@ -661,6 +663,8 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 		paramsBind.CanDeleteMsg,
 		paramsBind.CanUpdateAllMsg,
 		paramsBind.CanDeleteAllMsg,
+		paramsBind.AdminCanUpdateAllMsg,
+		paramsBind.AdminCanDeleteAllMsg,
 		paramsBind.IsROPublic,
 		paramsBind.IsAutoComputeTags,
 		paramsBind.IsAutoComputeLabels,

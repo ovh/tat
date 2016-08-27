@@ -16,31 +16,33 @@ import (
 
 // Topic struct
 type Topic struct {
-	ID                  string           `bson:"_id"          json:"_id,omitempty"`
-	Topic               string           `bson:"topic"        json:"topic"`
-	Description         string           `bson:"description"  json:"description"`
-	ROGroups            []string         `bson:"roGroups"     json:"roGroups,omitempty"`
-	RWGroups            []string         `bson:"rwGroups"     json:"rwGroups,omitempty"`
-	ROUsers             []string         `bson:"roUsers"      json:"roUsers,omitempty"`
-	RWUsers             []string         `bson:"rwUsers"      json:"rwUsers,omitempty"`
-	AdminUsers          []string         `bson:"adminUsers"   json:"adminUsers,omitempty"`
-	AdminGroups         []string         `bson:"adminGroups"  json:"adminGroups,omitempty"`
-	History             []string         `bson:"history"      json:"history"`
-	MaxLength           int              `bson:"maxlength"    json:"maxlength"`
-	CanForceDate        bool             `bson:"canForceDate" json:"canForceDate"`
-	CanUpdateMsg        bool             `bson:"canUpdateMsg" json:"canUpdateMsg"`
-	CanDeleteMsg        bool             `bson:"canDeleteMsg" json:"canDeleteMsg"`
-	CanUpdateAllMsg     bool             `bson:"canUpdateAllMsg" json:"canUpdateAllMsg"`
-	CanDeleteAllMsg     bool             `bson:"canDeleteAllMsg" json:"canDeleteAllMsg"`
-	IsAutoComputeTags   bool             `bson:"isAutoComputeTags" json:"isAutoComputeTags"`
-	IsAutoComputeLabels bool             `bson:"isAutoComputeLabels" json:"isAutoComputeLabels"`
-	IsROPublic          bool             `bson:"isROPublic"   json:"isROPublic"`
-	DateModification    int64            `bson:"dateModification" json:"dateModificationn,omitempty"`
-	DateCreation        int64            `bson:"dateCreation" json:"dateCreation,omitempty"`
-	DateLastMessage     int64            `bson:"dateLastMessage" json:"dateLastMessage,omitempty"`
-	Parameters          []TopicParameter `bson:"parameters" json:"parameters,omitempty"`
-	Tags                []string         `bson:"tags" json:"tags,omitempty"`
-	Labels              []Label          `bson:"labels" json:"labels,omitempty"`
+	ID                   string           `bson:"_id"          json:"_id,omitempty"`
+	Topic                string           `bson:"topic"        json:"topic"`
+	Description          string           `bson:"description"  json:"description"`
+	ROGroups             []string         `bson:"roGroups"     json:"roGroups,omitempty"`
+	RWGroups             []string         `bson:"rwGroups"     json:"rwGroups,omitempty"`
+	ROUsers              []string         `bson:"roUsers"      json:"roUsers,omitempty"`
+	RWUsers              []string         `bson:"rwUsers"      json:"rwUsers,omitempty"`
+	AdminUsers           []string         `bson:"adminUsers"   json:"adminUsers,omitempty"`
+	AdminGroups          []string         `bson:"adminGroups"  json:"adminGroups,omitempty"`
+	History              []string         `bson:"history"      json:"history"`
+	MaxLength            int              `bson:"maxlength"    json:"maxlength"`
+	CanForceDate         bool             `bson:"canForceDate" json:"canForceDate"`
+	CanUpdateMsg         bool             `bson:"canUpdateMsg" json:"canUpdateMsg"`
+	CanDeleteMsg         bool             `bson:"canDeleteMsg" json:"canDeleteMsg"`
+	CanUpdateAllMsg      bool             `bson:"canUpdateAllMsg" json:"canUpdateAllMsg"`
+	CanDeleteAllMsg      bool             `bson:"canDeleteAllMsg" json:"canDeleteAllMsg"`
+	AdminCanUpdateAllMsg bool             `bson:"adminCanUpdateAllMsg" json:"adminCanUpdateAllMsg"`
+	AdminCanDeleteAllMsg bool             `bson:"adminCanDeleteAllMsg" json:"adminCanDeleteAllMsg"`
+	IsAutoComputeTags    bool             `bson:"isAutoComputeTags" json:"isAutoComputeTags"`
+	IsAutoComputeLabels  bool             `bson:"isAutoComputeLabels" json:"isAutoComputeLabels"`
+	IsROPublic           bool             `bson:"isROPublic"   json:"isROPublic"`
+	DateModification     int64            `bson:"dateModification" json:"dateModificationn,omitempty"`
+	DateCreation         int64            `bson:"dateCreation" json:"dateCreation,omitempty"`
+	DateLastMessage      int64            `bson:"dateLastMessage" json:"dateLastMessage,omitempty"`
+	Parameters           []TopicParameter `bson:"parameters" json:"parameters,omitempty"`
+	Tags                 []string         `bson:"tags" json:"tags,omitempty"`
+	Labels               []Label          `bson:"labels" json:"labels,omitempty"`
 }
 
 // TopicParameter struct, parameter on topics
@@ -180,45 +182,49 @@ func getTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 
 	if isAdmin {
 		b = bson.M{
-			"_id":                 1,
-			"topic":               1,
-			"description":         1,
-			"roGroups":            1,
-			"rwGroups":            1,
-			"roUsers":             1,
-			"rwUsers":             1,
-			"adminUsers":          1,
-			"adminGroups":         1,
-			"maxlength":           1,
-			"canForceDate":        1,
-			"canUpdateMsg":        1,
-			"canDeleteMsg":        1,
-			"canUpdateAllMsg":     1,
-			"canDeleteAllMsg":     1,
-			"isAutoComputeTags":   1,
-			"isAutoComputeLabels": 1,
-			"isROPublic":          1,
-			"dateModificationn":   1,
-			"dateCreation":        1,
-			"dateLastMessage":     1,
-			"parameters":          1,
+			"_id":                  1,
+			"topic":                1,
+			"description":          1,
+			"roGroups":             1,
+			"rwGroups":             1,
+			"roUsers":              1,
+			"rwUsers":              1,
+			"adminUsers":           1,
+			"adminGroups":          1,
+			"maxlength":            1,
+			"canForceDate":         1,
+			"canUpdateMsg":         1,
+			"canDeleteMsg":         1,
+			"canUpdateAllMsg":      1,
+			"canDeleteAllMsg":      1,
+			"adminCanUpdateAllMsg": 1,
+			"adminCanDeleteAllMsg": 1,
+			"isAutoComputeTags":    1,
+			"isAutoComputeLabels":  1,
+			"isROPublic":           1,
+			"dateModificationn":    1,
+			"dateCreation":         1,
+			"dateLastMessage":      1,
+			"parameters":           1,
 		}
 		if oneTopic {
 			b["history"] = 1
 		}
 	} else {
 		b = bson.M{
-			"topic":           1,
-			"description":     1,
-			"isROPublic":      1,
-			"canForceDate":    1,
-			"canUpdateMsg":    1,
-			"canDeleteMsg":    1,
-			"canUpdateAllMsg": 1,
-			"canDeleteAllMsg": 1,
-			"maxlength":       1,
-			"dateLastMessage": 1,
-			"parameters":      1,
+			"topic":                1,
+			"description":          1,
+			"isROPublic":           1,
+			"canForceDate":         1,
+			"canUpdateMsg":         1,
+			"canDeleteMsg":         1,
+			"canUpdateAllMsg":      1,
+			"canDeleteAllMsg":      1,
+			"adminCanUpdateAllMsg": 1,
+			"adminCanDeleteAllMsg": 1,
+			"maxlength":            1,
+			"dateLastMessage":      1,
+			"parameters":           1,
 		}
 	}
 	if withTags {
@@ -332,19 +338,21 @@ func listTopicsCursor(criteria *TopicCriteria, user *User) (*mgo.Query, error) {
 // InitPrivateTopic insert topic "/Private"
 func InitPrivateTopic() {
 	topic := &Topic{
-		ID:                  bson.NewObjectId().Hex(),
-		Topic:               "/Private",
-		Description:         "Private Topics",
-		DateCreation:        time.Now().Unix(),
-		MaxLength:           DefaultMessageMaxSize,
-		CanForceDate:        false,
-		CanUpdateMsg:        false,
-		CanDeleteMsg:        false,
-		CanUpdateAllMsg:     false,
-		CanDeleteAllMsg:     false,
-		IsROPublic:          false,
-		IsAutoComputeTags:   true,
-		IsAutoComputeLabels: true,
+		ID:                   bson.NewObjectId().Hex(),
+		Topic:                "/Private",
+		Description:          "Private Topics",
+		DateCreation:         time.Now().Unix(),
+		MaxLength:            DefaultMessageMaxSize,
+		CanForceDate:         false,
+		CanUpdateMsg:         false,
+		CanDeleteMsg:         false,
+		CanUpdateAllMsg:      false,
+		CanDeleteAllMsg:      false,
+		AdminCanUpdateAllMsg: false,
+		AdminCanDeleteAllMsg: false,
+		IsROPublic:           false,
+		IsAutoComputeTags:    true,
+		IsAutoComputeLabels:  true,
 	}
 	err := Store().clTopics.Insert(topic)
 	log.Infof("Initialize /Private Topic")
@@ -412,6 +420,8 @@ func (topic *Topic) Insert(user *User) error {
 		}
 		topic.CanUpdateAllMsg = parentTopic.CanUpdateAllMsg
 		topic.CanDeleteAllMsg = parentTopic.CanDeleteAllMsg
+		topic.AdminCanUpdateAllMsg = parentTopic.AdminCanUpdateAllMsg
+		topic.AdminCanDeleteAllMsg = parentTopic.AdminCanDeleteAllMsg
 		topic.IsROPublic = parentTopic.IsROPublic
 		topic.IsAutoComputeTags = parentTopic.IsAutoComputeTags
 		topic.IsAutoComputeLabels = parentTopic.IsAutoComputeLabels
@@ -834,9 +844,10 @@ func (topic *Topic) FindByID(id string, isAdmin bool, username string) error {
 	return err
 }
 
-// SetParam update param maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, isROPublic, parameters on topic
+// SetParam update param maxLength, canForceDate, canUpdateMsg, canDeleteMsg,
+// canUpdateAllMsg, canDeleteAllMsg, adminCanUpdateAllMsg, adminCanDeleteAllMsg, isROPublic, parameters on topic
 func (topic *Topic) SetParam(username string, recursive bool, maxLength int,
-	canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg,
+	canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanUpdateAllMsg, adminCanDeleteAllMsg,
 	isROPublic, isAutoComputeTags, isAutoComputeLabels bool, parameters []TopicParameter) error {
 
 	var selector bson.M
@@ -852,15 +863,17 @@ func (topic *Topic) SetParam(username string, recursive bool, maxLength int,
 	}
 
 	update := bson.M{
-		"maxlength":           maxLength,
-		"canForceDate":        canForceDate,
-		"canUpdateMsg":        canUpdateMsg,
-		"canDeleteMsg":        canDeleteMsg,
-		"canUpdateAllMsg":     canUpdateAllMsg,
-		"canDeleteAllMsg":     canDeleteAllMsg,
-		"isROPublic":          isROPublic,
-		"isAutoComputeTags":   isAutoComputeTags,
-		"isAutoComputeLabels": isAutoComputeLabels,
+		"maxlength":            maxLength,
+		"canForceDate":         canForceDate,
+		"canUpdateMsg":         canUpdateMsg,
+		"canDeleteMsg":         canDeleteMsg,
+		"canUpdateAllMsg":      canUpdateAllMsg,
+		"canDeleteAllMsg":      canDeleteAllMsg,
+		"adminCanUpdateAllMsg": adminCanUpdateAllMsg,
+		"adminCanDeleteAllMsg": adminCanDeleteAllMsg,
+		"isROPublic":           isROPublic,
+		"isAutoComputeTags":    isAutoComputeTags,
+		"isAutoComputeLabels":  isAutoComputeLabels,
 	}
 
 	if parameters != nil {
@@ -872,7 +885,7 @@ func (topic *Topic) SetParam(username string, recursive bool, maxLength int,
 		log.Errorf("Error while updateAll parameters : %s", err.Error())
 		return err
 	}
-	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, isROPublic:%t, isAutoComputeTags:%t, isAutoComputeLabels:%t", maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, isROPublic, isAutoComputeTags, isAutoComputeLabels)
+	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, adminCanDeleteAllMsg:%t isROPublic:%t, isAutoComputeTags:%t, isAutoComputeLabels:%t", maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanDeleteAllMsg, isROPublic, isAutoComputeTags, isAutoComputeLabels)
 	return topic.addToHistory(selector, username, h)
 }
 
@@ -1005,17 +1018,19 @@ func (topic *Topic) addToHistory(selector bson.M, user string, historyToAdd stri
 	return err
 }
 
-// IsUserRW return true if user can write on a this topic
+// GetUserRights return isRW, isAdmin for user
 // Check personal access to topic, and group access
-func (topic *Topic) IsUserRW(user *User) bool {
-	if utils.ArrayContains(topic.RWUsers, user.Username) ||
-		utils.ArrayContains(topic.AdminUsers, user.Username) {
-		return true
+func (topic *Topic) GetUserRights(user *User) (bool, bool) {
+
+	isUserAdmin := utils.ArrayContains(topic.AdminUsers, user.Username)
+	if isUserAdmin {
+		return true, true
 	}
+
 	userGroups, err := user.GetGroups()
 	if err != nil {
 		log.Errorf("Error while fetching user groups")
-		return false
+		return false, false
 	}
 
 	var groups []string
@@ -1023,7 +1038,10 @@ func (topic *Topic) IsUserRW(user *User) bool {
 		groups = append(groups, g.Name)
 	}
 
-	return utils.ItemInBothArrays(topic.RWGroups, groups)
+	isUserRW := utils.ArrayContains(topic.RWUsers, user.Username)
+	isRW := isUserRW || utils.ItemInBothArrays(topic.RWGroups, groups)
+	isAdmin := isUserAdmin || utils.ItemInBothArrays(topic.AdminUsers, groups)
+	return isRW, isAdmin
 }
 
 // IsUserReadAccess  return true if user has read access to topic

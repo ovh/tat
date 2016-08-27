@@ -144,7 +144,7 @@ func (m *MessagesController) innerList(ctx *gin.Context) (*models.MessagesJSON, 
 		if isReadAccess := topic.IsUserReadAccess(user); !isReadAccess {
 			return out, models.User{}, models.Topic{}, criteria, http.StatusForbidden, fmt.Errorf("No Read Access on topic %s", criteria.Topic)
 		}
-		out.IsTopicRw = topic.IsUserRW(&user)
+		out.IsTopicRw, out.IsTopicAdmin = topic.GetUserRights(&user)
 	} else if !topic.IsROPublic {
 		return out, models.User{}, models.Topic{}, criteria, http.StatusForbidden, fmt.Errorf("No Public Read Access Public to this topic")
 	} else if topic.IsROPublic && strings.HasPrefix(topic.Topic, "/Private") {
@@ -227,7 +227,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 		return
 	}
 
-	if isRw := topic.IsUserRW(&user); !isRw {
+	if isRw, _ := topic.GetUserRights(&user); !isRw {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No RW Access to topic " + messageIn.Topic)})
 		return
 	}
@@ -266,7 +266,8 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 		return
 	}
 
-	if !topic.IsUserRW(&user) {
+	isRW, isAdminOnTopic := topic.GetUserRights(&user)
+	if !isRW {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("No RW Access to topic : "+messageIn.Topic))
 		return
 	}
@@ -288,7 +289,7 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 	}
 
 	if messageIn.Action == "update" || messageIn.Action == "concat" {
-		m.updateMessage(ctx, &messageIn, messageReference, user, topic)
+		m.updateMessage(ctx, &messageIn, messageReference, user, topic, isAdminOnTopic)
 		return
 	}
 
@@ -385,10 +386,15 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 		return topic, fmt.Errorf(e)
 	}
 
-	if isRw := topic.IsUserRW(&user); !isRw {
+	isRW, isTopicAdmin := topic.GetUserRights(&user)
+	if !isRW {
 		e := fmt.Sprintf("No RW Access to topic %s", message.Topic)
 		ctx.JSON(http.StatusForbidden, gin.H{"error": e})
 		return topic, fmt.Errorf(e)
+	}
+
+	if topic.AdminCanDeleteAllMsg && isTopicAdmin {
+		return topic, nil
 	}
 
 	if !strings.HasPrefix(message.Topic, "/Private/"+user.Username) && !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
@@ -397,7 +403,7 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
 			return topic, fmt.Errorf(e)
 		}
-		e := fmt.Sprintf("Could not delete a message in a non private topic %s", message.Topic)
+		e := fmt.Sprintf("Could not delete a message in topic %s", message.Topic)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
 		return topic, fmt.Errorf(e)
 	}
@@ -567,17 +573,21 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *models
 	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
-func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
+func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic, isAdminOnTopic bool) {
 	info := ""
 
-	if !topic.CanUpdateMsg && !topic.CanUpdateAllMsg {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("You can't update a message on topic %s", topic.Topic)})
-		return
-	}
+	if isAdminOnTopic && topic.CanUpdateAllMsg {
+		// ok, user is admin on topic, and admin can update all msg
+	} else {
+		if !topic.CanUpdateMsg && !topic.CanUpdateAllMsg {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("You can't update a message on topic %s", topic.Topic)})
+			return
+		}
 
-	if !topic.CanUpdateAllMsg && message.Author.Username != user.Username {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Could not update a message from another user %s than you %s", message.Author.Username, user.Username)})
-		return
+		if !topic.CanUpdateAllMsg && message.Author.Username != user.Username {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Could not update a message from another user %s than you %s", message.Author.Username, user.Username)})
+			return
+		}
 	}
 
 	err := message.Update(user, topic, messageIn.Text, messageIn.Action)
@@ -602,7 +612,7 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *models.Mes
 	}
 
 	// Check if user can write msg from dest topic
-	if !topic.IsUserRW(&user) {
+	if isRW, _ := topic.GetUserRights(&user); !isRW {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No RW Access to topic %s", topic.Topic)})
 		return
 	}
