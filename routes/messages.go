@@ -34,13 +34,13 @@ func InitRoutesMessages(router *gin.Engine) {
 		gm.PUT("/*topic", messagesCtrl.Update)
 
 		// Delete a message
-		gm.DELETE("/nocascade/:idMessage", messagesCtrl.Delete)
+		gm.DELETE("/nocascade/:idMessage/*topic", messagesCtrl.Delete)
 
 		// Delete a message and its replies
-		gm.DELETE("/cascade/:idMessage", messagesCtrl.DeleteCascade)
+		gm.DELETE("/cascade/:idMessage/*topic", messagesCtrl.DeleteCascade)
 
 		// Delete a message and its replies, event if it's in a Tasks Topic of one user
-		gm.DELETE("/cascadeforce/:idMessage", messagesCtrl.DeleteCascadeForce)
+		gm.DELETE("/cascadeforce/:idMessage/*topic", messagesCtrl.DeleteCascadeForce)
 	}
 
 	g.Use(CheckPassword(), CheckAdmin())

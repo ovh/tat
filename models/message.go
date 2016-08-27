@@ -12,6 +12,7 @@ import (
 	"github.com/mvdan/xurls"
 	"github.com/ovh/tat/utils"
 	"github.com/yesnault/hashtag"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -19,6 +20,29 @@ import (
 var DefaultMessageMaxSize = 140
 
 const lengthLabel = 100
+
+const (
+	True             = "true"
+	False            = "false"
+	TreeViewOneTree  = "onetree"
+	TreeViewFullTree = "fulltree"
+
+	MessageActionUpdate     = "update"
+	MessageActionReply      = "reply"
+	MessageActionLike       = "like"
+	MessageActionUnlike     = "unlike"
+	MessageActionLabel      = "label"
+	MessageActionUnlabel    = "unlabel"
+	MessageActionVoteup     = "voteup"
+	MessageActionVotedown   = "votedown"
+	MessageActionUnvoteup   = "unvoteup"
+	MessageActionUnvotedown = "unvotedown"
+	MessageActionRelabel    = "relabel"
+	MessageActionConcat     = "concat"
+	MessageActionMove       = "move"
+	MessageActionTask       = "task"
+	MessageActionUntask     = "untask"
+)
 
 // Author struct
 type Author struct {
@@ -148,7 +172,7 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 		}
 		query = append(query, queryIDMessages)
 	}
-	if criteria.OnlyMsgRoot == "true" {
+	if criteria.OnlyMsgRoot == True {
 		queryOnlyMsgRoot := bson.M{"inReplyOfIDRoot": bson.M{"$eq": ""}}
 		query = append(query, queryOnlyMsgRoot)
 	}
@@ -301,8 +325,8 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 }
 
 // FindByID returns message by given ID
-func (message *Message) FindByID(id string) error {
-	err := Store().clMessages.Find(bson.M{"_id": id}).One(&message)
+func (message *Message) FindByID(id string, topic Topic) error {
+	err := getClMessages(topic).Find(bson.M{"_id": id}).One(&message)
 	if err != nil {
 		log.Errorf("Error while fetching message with id %s", id)
 	}
@@ -310,14 +334,14 @@ func (message *Message) FindByID(id string) error {
 }
 
 // ListMessages list messages with given criteria
-func ListMessages(criteria *MessageCriteria, username string) ([]Message, error) {
+func ListMessages(criteria *MessageCriteria, username string, topic Topic) ([]Message, error) {
 	var messages []Message
 
 	c, errc := buildMessageCriteria(criteria, username)
 	if errc != nil {
 		return messages, errc
 	}
-	err := Store().clMessages.Find(c).
+	err := getClMessages(topic).Find(c).
 		Sort("-dateCreation").
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
@@ -331,22 +355,22 @@ func ListMessages(criteria *MessageCriteria, username string) ([]Message, error)
 		return messages, nil
 	}
 
-	if criteria.TreeView == "onetree" || criteria.TreeView == "fulltree" {
-		messages, err = initTree(messages, criteria, username)
+	if criteria.TreeView == TreeViewOneTree || criteria.TreeView == TreeViewFullTree {
+		messages, err = initTree(messages, criteria, username, topic)
 		if err != nil {
 			log.Errorf("Error while Find All Messages (getTree) %s", err)
 		}
 	}
-	if criteria.TreeView == "onetree" {
-		messages, err = oneTreeMessages(messages, 1, criteria, username)
-	} else if criteria.TreeView == "fulltree" {
-		messages, err = fullTreeMessages(messages, 1, criteria, username)
+	if criteria.TreeView == TreeViewOneTree {
+		messages, err = oneTreeMessages(messages, 1, criteria, username, topic)
+	} else if criteria.TreeView == TreeViewFullTree {
+		messages, err = fullTreeMessages(messages, 1, criteria, username, topic)
 	}
 	if err != nil {
 		return messages, err
 	}
 
-	if criteria.TreeView == "onetree" &&
+	if criteria.TreeView == TreeViewOneTree &&
 		(criteria.LimitMinNbReplies != "" || criteria.LimitMaxNbReplies != "") {
 		return filterNbReplies(messages, criteria)
 	}
@@ -355,12 +379,12 @@ func ListMessages(criteria *MessageCriteria, username string) ([]Message, error)
 }
 
 // CountMessages list messages with given criteria
-func CountMessages(criteria *MessageCriteria, username string) (int, error) {
+func CountMessages(criteria *MessageCriteria, username string, topic Topic) (int, error) {
 	c, errc := buildMessageCriteria(criteria, username)
 	if errc != nil {
 		return -1, errc
 	}
-	count, err := Store().clMessages.Find(c).Count()
+	count, err := getClMessages(topic).Find(c).Count()
 	if err != nil {
 		log.Errorf("Error while Count Messages %s", err)
 	}
@@ -401,7 +425,7 @@ func filterNbReplies(messages []Message, criteria *MessageCriteria) ([]Message, 
 	return messagesFiltered, nil
 }
 
-func initTree(messages []Message, criteria *MessageCriteria, username string) ([]Message, error) {
+func initTree(messages []Message, criteria *MessageCriteria, username string, topic Topic) ([]Message, error) {
 	var ids []string
 	idMessages := ""
 	for i := 0; i <= len(messages)-1; i++ {
@@ -426,7 +450,7 @@ func initTree(messages []Message, criteria *MessageCriteria, username string) ([
 	if errc != nil {
 		return msgs, errc
 	}
-	err := Store().clMessages.Find(cr).Sort("-dateCreation").All(&msgs)
+	err := getClMessages(topic).Find(cr).Sort("-dateCreation").All(&msgs)
 	if err != nil {
 		log.Errorf("Error while Find Messages in getTree %s", err)
 		return messages, err
@@ -434,7 +458,7 @@ func initTree(messages []Message, criteria *MessageCriteria, username string) ([
 	return msgs, nil
 }
 
-func oneTreeMessages(messages []Message, nloop int, criteria *MessageCriteria, username string) ([]Message, error) {
+func oneTreeMessages(messages []Message, nloop int, criteria *MessageCriteria, username string, topic Topic) ([]Message, error) {
 	var tree []Message
 	if nloop > 25 {
 		e := "Infinite loop detected in oneTreeMessages"
@@ -467,16 +491,16 @@ func oneTreeMessages(messages []Message, nloop int, criteria *MessageCriteria, u
 	if len(replies) == 0 {
 		return tree, nil
 	}
-	t, err := getTree(replies, criteria, username)
+	t, err := getTree(replies, criteria, username, topic)
 	if err != nil {
 		return tree, err
 	}
 
-	ft, err := oneTreeMessages(t, nloop+1, criteria, username)
+	ft, err := oneTreeMessages(t, nloop+1, criteria, username, topic)
 	return append(ft, tree...), err
 }
 
-func fullTreeMessages(messages []Message, nloop int, criteria *MessageCriteria, username string) ([]Message, error) {
+func fullTreeMessages(messages []Message, nloop int, criteria *MessageCriteria, username string, topic Topic) ([]Message, error) {
 	var tree []Message
 	if nloop > 10 {
 		e := "Infinite loop detected in fullTreeMessages"
@@ -516,15 +540,15 @@ func fullTreeMessages(messages []Message, nloop int, criteria *MessageCriteria, 
 	if len(replies) == 0 {
 		return tree, nil
 	}
-	t, err := getTree(replies, criteria, username)
+	t, err := getTree(replies, criteria, username, topic)
 	if err != nil {
 		return tree, err
 	}
-	ft, err := fullTreeMessages(t, nloop+1, criteria, username)
+	ft, err := fullTreeMessages(t, nloop+1, criteria, username, topic)
 	return append(ft, tree...), err
 }
 
-func getTree(messagesIn map[string][]Message, criteria *MessageCriteria, username string) ([]Message, error) {
+func getTree(messagesIn map[string][]Message, criteria *MessageCriteria, username string, topic Topic) ([]Message, error) {
 	var messages []Message
 
 	toDelete := false
@@ -540,7 +564,7 @@ func getTree(messagesIn map[string][]Message, criteria *MessageCriteria, usernam
 		if errc != nil {
 			return msgs, errc
 		}
-		err := Store().clMessages.Find(cr).Sort("-dateCreation").All(&msgs)
+		err := getClMessages(topic).Find(cr).Sort("-dateCreation").All(&msgs)
 		if err != nil {
 			log.Errorf("Error while Find Messages in getTree %s", err)
 			return messages, err
@@ -612,7 +636,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 		if messageRoot != nil {
 			messageReference = messageRoot
 		} else {
-			if err := messageReference.FindByID(inReplyOfID); err != nil {
+			if err := messageReference.FindByID(inReplyOfID, topic); err != nil {
 				return err
 			}
 		}
@@ -631,7 +655,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 		}
 		messageReference.DateUpdate = dateToStore
 
-		err := Store().clMessages.Update(
+		err := getClMessages(topic).Update(
 			bson.M{"_id": messageReference.ID},
 			bson.M{"$set": bson.M{"dateUpdate": dateToStore},
 				"$inc": bson.M{"nbReplies": 1}})
@@ -677,7 +701,7 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 		message.Labels = checkLabels(labels, nil)
 	}
 
-	if err := Store().clMessages.Insert(message); err != nil {
+	if err := getClMessages(topic).Insert(message); err != nil {
 		log.Errorf("Error while inserting new message %s", err)
 		return err
 	}
@@ -790,7 +814,7 @@ func (message *Message) Update(user User, topic Topic, newText string, action st
 		return err
 	}
 
-	err = Store().clMessages.Update(
+	err = getClMessages(topic).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{
 			"text":         message.Text,
@@ -809,15 +833,15 @@ func (message *Message) Update(user User, topic Topic, newText string, action st
 }
 
 // Move moves a message to another topic
-func (message *Message) Move(user User, newTopic Topic) error {
+func (message *Message) Move(user User, fromTopic Topic, toTopic Topic) error {
 
 	// check Delete and RW are done in controller
 	c := &MessageCriteria{
 		IDMessage: message.ID,
-		TreeView:  "onetree",
+		TreeView:  TreeViewOneTree,
 	}
 
-	msgs, err := ListMessages(c, "")
+	msgs, err := ListMessages(c, "", fromTopic)
 	if err != nil {
 		return fmt.Errorf("Error while list Messages in Delete %s", err)
 	}
@@ -826,27 +850,36 @@ func (message *Message) Move(user User, newTopic Topic) error {
 	}
 
 	// here, ok, we can move
-	topicUpdate := []string{newTopic.Topic}
-	_, err = Store().clMessages.UpdateAll(
-		bson.M{"$or": []bson.M{{"_id": message.ID}, {"inReplyOfIDRoot": message.ID}}},
-		bson.M{"$set": bson.M{"topics": topicUpdate, "topic": newTopic.Topic}})
+	topicUpdate := []string{toTopic.Topic}
+
+	if fromTopic.Topic == toTopic.Topic {
+		_, err = getClMessages(fromTopic).UpdateAll(
+			bson.M{"$or": []bson.M{{"_id": message.ID}, {"inReplyOfIDRoot": message.ID}}},
+			bson.M{"$set": bson.M{"topics": topicUpdate, "topic": toTopic.Topic}})
+		if err != nil {
+			log.Errorf("Error while update messages (move topic to %s) idMsgRoot:%s err:%s", toTopic.Topic, message.ID, err)
+		}
+	} else {
+		//TODO if fromTopic != toTopic -> delete and insert
+		return fmt.Errorf("Not yet implemented, from -> to, diff topic (collection)")
+	}
 
 	if err != nil {
-		log.Errorf("Error while update messages (move topic to %s) idMsgRoot:%s err:%s", newTopic.Topic, message.ID, err)
+		log.Errorf("Error while update messages (move topic to %s) idMsgRoot:%s err:%s", toTopic.Topic, message.ID, err)
 	}
 
 	return nil
 }
 
 // Delete deletes a message from database
-func (message *Message) Delete(cascade bool) error {
+func (message *Message) Delete(cascade bool, topic Topic) error {
 	if message.InReplyOfID != "" {
 		var messageParent = &Message{}
-		if err := messageParent.FindByID(message.InReplyOfID); err != nil {
+		if err := messageParent.FindByID(message.InReplyOfID, topic); err != nil {
 			log.Errorf("message > Delete > Error while fetching message parent:%s", err.Error())
 			return err
 		}
-		if err := Store().clMessages.Update(
+		if err := getClMessages(topic).Update(
 			bson.M{"_id": messageParent.ID},
 			bson.M{"$inc": bson.M{"nbReplies": -1}}); err != nil {
 			log.Errorf("message > Delete > Error while updating message parent:%s", err.Error())
@@ -855,10 +888,10 @@ func (message *Message) Delete(cascade bool) error {
 	}
 
 	if cascade {
-		_, err := Store().clMessages.RemoveAll(bson.M{"$or": []bson.M{{"_id": message.ID}, {"inReplyOfIDRoot": message.ID}}})
+		_, err := getClMessages(topic).RemoveAll(bson.M{"$or": []bson.M{{"_id": message.ID}, {"inReplyOfIDRoot": message.ID}}})
 		return err
 	}
-	return Store().clMessages.Remove(bson.M{"_id": message.ID})
+	return getClMessages(topic).Remove(bson.M{"_id": message.ID})
 }
 
 func (message *Message) getLabel(label string) (int, Label, error) {
@@ -914,7 +947,7 @@ func (message *Message) AddLabel(topic Topic, label string, color string) (Label
 		return newLabel, nil
 	}
 
-	err := Store().clMessages.Update(
+	err := getClMessages(topic).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$push": bson.M{"labels": newLabel}})
@@ -929,14 +962,14 @@ func (message *Message) AddLabel(topic Topic, label string, color string) (Label
 }
 
 // RemoveLabel removes label from on message (label text matching)
-func (message *Message) RemoveLabel(label string) error {
+func (message *Message) RemoveLabel(label string, topic Topic) error {
 	idxLabel, l, err := message.getLabel(label)
 	if err != nil {
 		log.Infof("Remove Label is not possible, %s is not a label of this message", label)
 		return nil
 	}
 
-	err = Store().clMessages.Update(
+	err = getClMessages(topic).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$pull": bson.M{"labels": l}})
@@ -950,9 +983,9 @@ func (message *Message) RemoveLabel(label string) error {
 }
 
 // RemoveAllAndAddNewLabel removes all labels and add new label on message
-func (message *Message) RemoveAllAndAddNewLabel(labels []Label) error {
+func (message *Message) RemoveAllAndAddNewLabel(labels []Label, topic Topic) error {
 	message.Labels = checkLabels(labels, nil)
-	return Store().clMessages.Update(
+	return getClMessages(topic).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{
 			"dateUpdate": utils.TatTSFromNow(),
@@ -960,17 +993,17 @@ func (message *Message) RemoveAllAndAddNewLabel(labels []Label) error {
 }
 
 // RemoveSomeAndAddNewLabel removes some labels and add new label on message
-func (message *Message) RemoveSomeAndAddNewLabel(labels []Label, labelsToRemove []string) error {
+func (message *Message) RemoveSomeAndAddNewLabel(labels []Label, labelsToRemove []string, topic Topic) error {
 	message.Labels = append(message.Labels, labels...)
-	return message.RemoveAllAndAddNewLabel(checkLabels(message.Labels, labelsToRemove))
+	return message.RemoveAllAndAddNewLabel(checkLabels(message.Labels, labelsToRemove), topic)
 }
 
 // Like add a like to a message
-func (message *Message) Like(user User) error {
+func (message *Message) Like(user User, topic Topic) error {
 	if utils.ArrayContains(message.Likers, user.Username) {
 		return fmt.Errorf("Like not possible, %s is already a liker of this message", user.Username)
 	}
-	err := Store().clMessages.Update(
+	err := getClMessages(topic).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbLikes": 1},
@@ -984,11 +1017,11 @@ func (message *Message) Like(user User) error {
 }
 
 // Unlike removes a like from one message
-func (message *Message) Unlike(user User) error {
+func (message *Message) Unlike(user User, topic Topic) error {
 	if !utils.ArrayContains(message.Likers, user.Username) {
 		return fmt.Errorf("Unlike not possible, %s is not a liker of this message", user.Username)
 	}
-	err := Store().clMessages.Update(
+	err := getClMessages(topic).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbLikes": -1},
@@ -1009,12 +1042,12 @@ func (message *Message) Unlike(user User) error {
 }
 
 // VoteUP add a vote UP to a message
-func (message *Message) VoteUP(user User) error {
+func (message *Message) VoteUP(user User, topic Topic) error {
 	if utils.ArrayContains(message.VotersUP, user.Username) {
 		return fmt.Errorf("Vote UP not possible, %s is already a voters UP of this message", user.Username)
 	}
-	message.UnVoteDown(user)
-	return Store().clMessages.Update(
+	message.UnVoteDown(user, topic)
+	return getClMessages(topic).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbVotesUP": 1},
@@ -1022,12 +1055,12 @@ func (message *Message) VoteUP(user User) error {
 }
 
 // VoteDown add a vote Down to a message
-func (message *Message) VoteDown(user User) error {
+func (message *Message) VoteDown(user User, topic Topic) error {
 	if utils.ArrayContains(message.VotersDown, user.Username) {
 		return fmt.Errorf("Vote Down not possible, %s is already a voters Down of this message", user.Username)
 	}
-	message.UnVoteUP(user)
-	return Store().clMessages.Update(
+	message.UnVoteUP(user, topic)
+	return getClMessages(topic).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbVotesDown": 1},
@@ -1035,11 +1068,11 @@ func (message *Message) VoteDown(user User) error {
 }
 
 // UnVoteUP removes a vote up from a message
-func (message *Message) UnVoteUP(user User) error {
+func (message *Message) UnVoteUP(user User, topic Topic) error {
 	if !utils.ArrayContains(message.VotersUP, user.Username) {
 		return fmt.Errorf("Add Vote UP not possible, %s is not a voters UP of this message", user.Username)
 	}
-	return Store().clMessages.Update(
+	return getClMessages(topic).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbVotesUP": -1},
@@ -1047,11 +1080,11 @@ func (message *Message) UnVoteUP(user User) error {
 }
 
 // UnVoteDown removes a vote down from a message
-func (message *Message) UnVoteDown(user User) error {
+func (message *Message) UnVoteDown(user User, topic Topic) error {
 	if !utils.ArrayContains(message.VotersDown, user.Username) {
 		return fmt.Errorf("Remove Vote Down not possible, %s is not a voters Down of this message", user.Username)
 	}
-	return Store().clMessages.Update(
+	return getClMessages(topic).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": utils.TatTSFromNow()},
 			"$inc":  bson.M{"nbVotesDown": -1},
@@ -1084,15 +1117,15 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 				nDoing++
 			}
 			if cur.Text == "doing:"+user.Username {
-				message.RemoveLabel("doing:" + user.Username)
+				message.RemoveLabel("doing:"+user.Username, topic)
 			} else if cur.Text == "done:"+user.Username {
-				message.RemoveLabel("done:" + user.Username)
+				message.RemoveLabel("done:"+user.Username, topic)
 			} else if cur.Text == "done" {
-				message.RemoveLabel("done")
+				message.RemoveLabel("done", topic)
 			}
 		}
 		if nDoing >= 1 {
-			message.RemoveLabel("doing")
+			message.RemoveLabel("doing", topic)
 		}
 	} else { // push
 		if !message.ContainsLabel("doing") {
@@ -1102,10 +1135,10 @@ func (message *Message) addOrRemoveFromTasks(action string, user User, topic Top
 			message.AddLabel(topic, "doing:"+user.Username, "#5484ed")
 		}
 		if message.ContainsLabel("open") {
-			message.RemoveLabel("open")
+			message.RemoveLabel("open", topic)
 		}
 		if message.ContainsLabel("done") {
-			message.RemoveLabel("done")
+			message.RemoveLabel("done", topic)
 		}
 	}
 
@@ -1123,45 +1156,52 @@ func (message *Message) RemoveFromTasks(user User, topic Topic) error {
 }
 
 // CountMsgSinceDate return number of messages created on one topic from a given date
-func CountMsgSinceDate(topic string, date int64) (int, error) {
-	nb, err := Store().clMessages.Find(bson.M{"topic": topic, "dateCreation": bson.M{"$gte": date}}).Count()
+func CountMsgSinceDate(topic Topic, date int64) (int, error) {
+	nb, err := getClMessages(topic).Find(bson.M{"topic": topic.Topic, "dateCreation": bson.M{"$gte": date}}).Count()
 	if err != nil {
-		log.Errorf("Error while count messages with topic %s and dateCreation lte:%d err:%s", topic, date, err.Error())
+		log.Errorf("Error while count messages with topic %s and dateCreation lte:%d err:%s", topic.Topic, date, err.Error())
 	}
 	return nb, err
 }
 
 // ListTags returns all tags on one topic
-func ListTags(topic string) ([]string, error) {
+func ListTags(topic Topic) ([]string, error) {
 	var tags []string
-	err := Store().clMessages.
-		Find(bson.M{"topic": topic}).
+	err := getClMessages(topic).
+		Find(bson.M{"topic": topic.Topic}).
 		Distinct("tags", &tags)
 	if err != nil {
-		log.Errorf("Error while getting tags on topic %s, err:%s", topic, err.Error())
+		log.Errorf("Error while getting tags on topic %s, err:%s", topic.Topic, err.Error())
 	}
 	return tags, err
 }
 
 // ListLabels returns all labels on one topic
-func ListLabels(topic string) ([]Label, error) {
+func ListLabels(topic Topic) ([]Label, error) {
 	var labels []Label
-	err := Store().clMessages.
-		Find(bson.M{"topic": topic}).
+	err := getClMessages(topic).
+		Find(bson.M{"topic": topic.Topic}).
 		Distinct("labels", &labels)
 	if err != nil {
-		log.Errorf("Error while getting labels on topic %s, err:%s", topic, err.Error())
+		log.Errorf("Error while getting labels on topic %s, err:%s", topic.Topic, err.Error())
 	}
 	return labels, err
 }
 
-func changeUsernameOnMessages(oldUsername, newUsername string) {
-	changeAuthorUsernameOnMessages(oldUsername, newUsername)
-	changeUsernameOnMessagesTopics(oldUsername, newUsername)
+func changeUsernameOnMessages(oldUsername, newUsername string) error {
+	if err := changeAuthorUsernameOnMessages(oldUsername, newUsername); err != nil {
+		return err
+	}
+	if err := changeUsernameOnMessagesTopics(oldUsername, newUsername); err != nil {
+		return err
+	}
+	return nil
 }
 
 func changeAuthorUsernameOnMessages(oldUsername, newUsername string) error {
-	_, err := Store().clMessages.UpdateAll(
+	// TODO on all topics (with dedicated topics)
+	return fmt.Errorf("Not Yet Implemented")
+	/*_, err := getClMessages().UpdateAll(
 		bson.M{"author.username": oldUsername},
 		bson.M{"$set": bson.M{"author.username": newUsername}})
 
@@ -1169,65 +1209,72 @@ func changeAuthorUsernameOnMessages(oldUsername, newUsername string) error {
 		log.Errorf("Error while update username from %s to %s on Messages err:%s", oldUsername, newUsername, err.Error())
 	}
 
-	return err
+	return err*/
 }
 
 func changeUsernameOnMessagesTopics(oldUsername, newUsername string) error {
-	var messages []Message
 
-	err := Store().clMessages.Find(
-		bson.M{
-			"topic": bson.RegEx{Pattern: "^/Private/" + oldUsername + "/", Options: "i"},
-		}).All(&messages)
+	// TODO on all topics (with dedicated topics)
+	return fmt.Errorf("Not Yet Implemented")
 
-	if err != nil {
-		log.Errorf("Error while getting messages to update username from %s to %s on Topics %s", oldUsername, newUsername, err)
-	}
+	/*
+		var messages []Message
+		err := getClMessages().Find(
+			bson.M{
+				"topic": bson.RegEx{Pattern: "^/Private/" + oldUsername + "/", Options: "i"},
+			}).All(&messages)
 
-	for _, msg := range messages {
-		msg.Topics = []string{}
-		for _, topic := range msg.Topics {
-			newTopicName := strings.Replace(topic, oldUsername, newUsername, 1)
-			msg.Topics = append(msg.Topics, newTopicName)
+		if err != nil {
+			log.Errorf("Error while getting messages to update username from %s to %s on Topics %s", oldUsername, newUsername, err)
 		}
 
-		if errUpdate := Store().clMessages.Update(bson.M{"_id": msg.ID}, bson.M{"$set": bson.M{"topic": msg.Topic}}); errUpdate != nil {
-			log.Errorf("Error while update topic on message %s name from username %s to username %s :%s", msg.ID, oldUsername, newUsername, errUpdate)
-		}
-	}
+		for _, msg := range messages {
+			msg.Topics = []string{}
+			for _, topic := range msg.Topics {
+				newTopicName := strings.Replace(topic, oldUsername, newUsername, 1)
+				msg.Topics = append(msg.Topics, newTopicName)
+			}
 
-	return err
+			if errUpdate := getClMessages().Update(bson.M{"_id": msg.ID}, bson.M{"$set": bson.M{"topic": msg.Topic}}); errUpdate != nil {
+				log.Errorf("Error while update topic on message %s name from username %s to username %s :%s", msg.ID, oldUsername, newUsername, errUpdate)
+			}
+		}
+
+		return err
+	*/
 }
 
 // CountAllMessages returns the total number of messages in db
 func CountAllMessages() (int, error) {
-	return Store().clMessages.Count()
+	// TODO on all topics (with dedicated topics)
+	return -1, fmt.Errorf("Not Yet Implemented")
+	// return getClMessages().Count()
 }
 
 // ComputeReplies re-compute replies for all messages in one topic
-func ComputeReplies(topicName string) (int, error) {
+func ComputeReplies(topic Topic) (int, error) {
 
-	log.Debugf("ComputeReplies on topic %s", topicName)
+	log.Debugf("ComputeReplies on topic %s", topic.Topic)
 
 	nbCompute := 0
 	var messages []Message
 
 	var query = []bson.M{}
-	query = append(query, bson.M{"topic": topicName})
+	query = append(query, bson.M{"topic": topic.Topic})
 	query = append(query, bson.M{"inReplyOfID": bson.M{"$exists": true, "$ne": ""}})
-	if err := Store().clMessages.Find(bson.M{"$and": query}).All(&messages); err != nil {
-		log.Errorf("Error while find messages for compute replies on topic %s: %s", topicName, err)
+	if err := getClMessages(topic).Find(bson.M{"$and": query}).All(&messages); err != nil {
+		log.Errorf("Error while find messages for compute replies on topic %s: %s", topic.Topic, err)
 	}
 	log.Debugf("ComputeReplies query %s", query)
-	log.Debugf("ComputeReplies on topic %s, %d msg", topicName, len(messages))
+	log.Debugf("ComputeReplies on topic %s, %d msg", topic.Topic, len(messages))
 
 	for _, msg := range messages {
 		if msg.InReplyOfID == "" {
 			continue
 		}
 		c := &MessageCriteria{InReplyOfID: msg.InReplyOfID}
-		if nb, err := CountMessages(c, ""); err == nil {
-			err := Store().clMessages.Update(
+		if nb, err := CountMessages(c, "", topic); err == nil {
+			err := getClMessages(topic).Update(
 				bson.M{"_id": msg.InReplyOfID},
 				bson.M{"$set": bson.M{"nbReplies": nb}})
 			if err != nil {
@@ -1258,7 +1305,7 @@ func DistributionMessages(col string) ([]bson.M, error) {
 			},
 		},
 	}
-	pipe := Store().clMessages.Pipe(pipeline)
+	pipe := Store().clDefaultMessages.Pipe(pipeline)
 	results := []bson.M{}
 
 	err := pipe.All(&results)
@@ -1267,17 +1314,24 @@ func DistributionMessages(col string) ([]bson.M, error) {
 
 // CountEmptyTopic returns msg with empty topic field
 func CountEmptyTopic() (int, int, error) {
-	countNoTopic, err := Store().clMessages.Find(bson.M{"topic": bson.M{"$exists": false}}).Count()
+	countNoTopic, err := Store().clDefaultMessages.Find(bson.M{"topic": bson.M{"$exists": false}}).Count()
 	if err != nil {
 		log.Errorf("err noTopic:%s", err)
 		return -1, -1, err
 	}
 
-	countEmptyTopic, err2 := Store().clMessages.Find(bson.M{"topic": ""}).Count()
+	countEmptyTopic, err2 := Store().clDefaultMessages.Find(bson.M{"topic": ""}).Count()
 	if err2 != nil {
 		log.Errorf("err emptyTopic:%s", err2)
 		return -1, -1, err2
 	}
 
 	return countNoTopic, countEmptyTopic, nil
+}
+
+func getClMessages(topic Topic) *mgo.Collection {
+	if topic.Collection != "" {
+		return Store().session.DB(databaseName).C(topic.Collection)
+	}
+	return Store().clDefaultMessages
 }

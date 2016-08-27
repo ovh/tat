@@ -17,6 +17,7 @@ import (
 // Topic struct
 type Topic struct {
 	ID                   string           `bson:"_id"          json:"_id,omitempty"`
+	Collection           string           `bson:"collection"   json:"collection"`
 	Topic                string           `bson:"topic"        json:"topic"`
 	Description          string           `bson:"description"  json:"description"`
 	ROGroups             []string         `bson:"roGroups"     json:"roGroups,omitempty"`
@@ -92,7 +93,7 @@ func buildTopicCriteria(criteria *TopicCriteria, user *User) (bson.M, error) {
 		}
 		query = append(query, queryIDTopics)
 	}
-	if criteria.Topic != "" || criteria.OnlyFavorites == "true" {
+	if criteria.Topic != "" || criteria.OnlyFavorites == True {
 		queryTopics := bson.M{}
 		queryTopics["$or"] = []bson.M{}
 		for _, val := range strings.Split(criteria.Topic, ",") {
@@ -146,12 +147,12 @@ func buildTopicCriteria(criteria *TopicCriteria, user *User) (bson.M, error) {
 		query = append(query, bson.M{
 			"topic": bson.RegEx{Pattern: "^\\/Private\\/.*/Tasks", Options: "i"},
 		})
-	} else if criteria.GetForTatAdmin == "true" && user.IsAdmin {
+	} else if criteria.GetForTatAdmin == True && user.IsAdmin {
 		// requester is tat Admin and wants all topics, except /Private/* topics
 		query = append(query, bson.M{
 			"topic": bson.M{"$not": bson.RegEx{Pattern: "^\\/Private\\/.*", Options: "i"}},
 		})
-	} else if criteria.GetForTatAdmin == "true" && !user.IsAdmin {
+	} else if criteria.GetForTatAdmin == True && !user.IsAdmin {
 		log.Warnf("User %s (not a TatAdmin) try to list all topics as an admin", user.Username)
 	} else {
 		bsonUser := []bson.M{}
@@ -183,6 +184,7 @@ func getTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 	if isAdmin {
 		b = bson.M{
 			"_id":                  1,
+			"collection":           1,
 			"topic":                1,
 			"description":          1,
 			"roGroups":             1,
@@ -212,6 +214,7 @@ func getTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 		}
 	} else {
 		b = bson.M{
+			"collection":           1,
 			"topic":                1,
 			"description":          1,
 			"isROPublic":           1,
@@ -236,9 +239,18 @@ func getTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 	return b
 }
 
-// CountTopics return the total number of topics in db
+// CountTopics returns the total number of topics in db
 func CountTopics() (int, error) {
 	return Store().clTopics.Count()
+}
+
+// FindAllCollections returns the total number of topics in db
+func FindAllTopicsWithCollections() ([]Topic, error) {
+	var topics []Topic
+	err := Store().clTopics.Find(bson.M{"collection": bson.M{"$exists": true, "$ne": ""}}).
+		Select(bson.M{"_id": 1, "collection": 1, "topic": 1}).
+		All(&topics)
+	return topics, err
 }
 
 // ListTopics returns list of topics, matching criterias
@@ -454,7 +466,7 @@ func (topic *Topic) Delete(user *User) error {
 	}
 
 	c := &MessageCriteria{Topic: topic.Topic}
-	msgs, err := ListMessages(c, "")
+	msgs, err := ListMessages(c, "", *topic)
 	if err != nil {
 		return fmt.Errorf("Error while list Messages in Delete %s", err)
 	}
@@ -468,7 +480,7 @@ func (topic *Topic) Delete(user *User) error {
 
 // Truncate removes all messages in a topic
 func (topic *Topic) Truncate() (int, error) {
-	changeInfo, err := Store().clMessages.RemoveAll(bson.M{"topics": bson.M{"$in": [1]string{topic.Topic}}})
+	changeInfo, err := getClMessages(*topic).RemoveAll(bson.M{"topics": bson.M{"$in": [1]string{topic.Topic}}})
 	if err != nil {
 		return 0, err
 	}
@@ -478,7 +490,7 @@ func (topic *Topic) Truncate() (int, error) {
 // ComputeTags computes "cached" tags in topic
 // initialize tags, one entry per tag (unique)
 func (topic *Topic) ComputeTags() (int, error) {
-	tags, err := ListTags(topic.Topic)
+	tags, err := ListTags(*topic)
 	if err != nil {
 		return 0, err
 	}
@@ -493,7 +505,7 @@ func (topic *Topic) ComputeTags() (int, error) {
 // ComputeLabels computes "cached" labels on a topic
 // initialize labels, one entry per label (unicity with text & color)
 func (topic *Topic) ComputeLabels() (int, error) {
-	labels, err := ListLabels(topic.Topic)
+	labels, err := ListLabels(*topic)
 	if err != nil {
 		return 0, err
 	}
@@ -759,7 +771,7 @@ func AllTopicsComputeReplies() (string, error) {
 
 	nOk := 1
 	for _, topic := range topics {
-		nbCompute, err := ComputeReplies(topic.Topic)
+		nbCompute, err := ComputeReplies(topic)
 		if err != nil {
 			log.Errorf("Error while compute replies on topic %s: %s", topic.Topic, err.Error())
 		} else {

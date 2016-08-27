@@ -66,8 +66,8 @@ func (m *MessagesController) List(ctx *gin.Context) {
 		return
 	}
 
-	if criteria.OnlyCount == "true" {
-		count, e := models.CountMessages(criteria, user.Username)
+	if criteria.OnlyCount == models.True {
+		count, e := models.CountMessages(criteria, user.Username, topic)
 		if e != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
 			return
@@ -88,7 +88,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 		}()
 	}
 
-	messages, err := models.ListMessages(criteria, user.Username)
+	messages, err := models.ListMessages(criteria, user.Username, topic)
 	if err != nil {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 	}
@@ -104,7 +104,7 @@ func (m *MessagesController) innerList(ctx *gin.Context) (*models.MessagesJSON, 
 	// we can't use NotLabel or NotTag with fulltree or onetree
 	// this avoid potential wrong results associated with a short param limit
 	if (criteria.NotLabel != "" || criteria.NotTag != "") &&
-		(criteria.TreeView == "fulltree" || criteria.TreeView == "onetree") && criteria.OnlyMsgRoot == "" {
+		(criteria.TreeView == models.TreeViewFullTree || criteria.TreeView == models.TreeViewOneTree) && criteria.OnlyMsgRoot == "" {
 		return out, models.User{}, models.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("You can't use fulltree or onetree with NotLabel or NotTag")
 	}
 
@@ -166,36 +166,38 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON
 	}
 	messageIn.Topic = topicIn
 
-	if messageIn.IDReference == "" || messageIn.Action == "" {
-		if efind := topic.FindByTopic(messageIn.Topic, true, true, true, nil); efind != nil {
-			topica, _, edm := checkDMTopic(ctx, messageIn.Topic)
-			if edm != nil {
-				e := errors.New("Topic " + messageIn.Topic + " does not exist")
-				ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-				return messageIn, message, topic, e
-			}
-			topic = *topica
+	if efind := topic.FindByTopic(messageIn.Topic, true, true, true, nil); efind != nil {
+		topica, _, edm := checkDMTopic(ctx, messageIn.Topic)
+		if edm != nil {
+			e := errors.New("Topic " + messageIn.Topic + " does not exist")
+			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
+			return messageIn, message, topic, e
 		}
+		topic = *topica
+	}
+
+	if messageIn.IDReference == "" || messageIn.Action == "" {
+		// nothing here
 	} else if messageIn.IDReference != "" {
-		if efind := message.FindByID(messageIn.IDReference); efind != nil {
+		if efind := message.FindByID(messageIn.IDReference, topic); efind != nil {
 			e := errors.New("Message " + messageIn.IDReference + " does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 			return messageIn, message, topic, e
 		}
 
 		topicName := ""
-		if messageIn.Action == "update" {
+		if messageIn.Action == models.MessageActionUpdate {
 			topicName = messageIn.Topic
-		} else if messageIn.Action == "reply" ||
-			messageIn.Action == "like" || messageIn.Action == "unlike" ||
-			messageIn.Action == "label" || messageIn.Action == "unlabel" ||
-			messageIn.Action == "voteup" || messageIn.Action == "votedown" ||
-			messageIn.Action == "unvoteup" || messageIn.Action == "unvotedown" ||
-			messageIn.Action == "relabel" || messageIn.Action == "concat" {
+		} else if messageIn.Action == models.MessageActionReply ||
+			messageIn.Action == models.MessageActionLike || messageIn.Action == models.MessageActionUnlike ||
+			messageIn.Action == models.MessageActionLabel || messageIn.Action == models.MessageActionUnlabel ||
+			messageIn.Action == models.MessageActionVoteup || messageIn.Action == models.MessageActionVotedown ||
+			messageIn.Action == models.MessageActionUnvoteup || messageIn.Action == models.MessageActionUnvotedown ||
+			messageIn.Action == models.MessageActionRelabel || messageIn.Action == models.MessageActionConcat {
 			topicName = m.inverseIfDMTopic(ctx, message.Topic)
-		} else if messageIn.Action == "move" {
+		} else if messageIn.Action == models.MessageActionMove {
 			topicName = topicIn
-		} else if messageIn.Action == "task" || messageIn.Action == "untask" {
+		} else if messageIn.Action == models.MessageActionTask || messageIn.Action == models.MessageActionUntask {
 			topicName = m.inverseIfDMTopic(ctx, message.Topic)
 		} else {
 			e := errors.New("Invalid Call. IDReference not empty with unknown action")
@@ -245,7 +247,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 	info := fmt.Sprintf("Message created in %s", topic.Topic)
 
 	out := &models.MessageJSONOut{Message: message, Info: info}
-	go models.WSMessage(&models.WSMessageJSON{Action: "create", Username: user.Username, Message: message})
+	go models.WSMessage(&models.WSMessageJSON{Action: "create", Username: user.Username, Message: message}, topic)
 	ctx.JSON(http.StatusCreated, out)
 }
 
@@ -272,28 +274,28 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 		return
 	}
 
-	if messageIn.Action == "label" || messageIn.Action == "unlabel" || messageIn.Action == "relabel" {
+	if messageIn.Action == models.MessageActionLabel || messageIn.Action == models.MessageActionUnlabel || messageIn.Action == models.MessageActionRelabel {
 		m.addOrRemoveLabel(ctx, &messageIn, messageReference, user, topic)
 		return
 	}
 
-	if messageIn.Action == "voteup" || messageIn.Action == "votedown" ||
-		messageIn.Action == "unvoteup" || messageIn.Action == "unvotedown" {
+	if messageIn.Action == models.MessageActionVoteup || messageIn.Action == models.MessageActionVotedown ||
+		messageIn.Action == models.MessageActionUnvoteup || messageIn.Action == models.MessageActionUnvotedown {
 		m.voteMessage(ctx, &messageIn, messageReference, user, topic)
 		return
 	}
 
-	if messageIn.Action == "task" || messageIn.Action == "untask" {
+	if messageIn.Action == models.MessageActionTask || messageIn.Action == models.MessageActionUntask {
 		m.addOrRemoveTask(ctx, &messageIn, messageReference, user, topic)
 		return
 	}
 
-	if messageIn.Action == "update" || messageIn.Action == "concat" {
+	if messageIn.Action == models.MessageActionUpdate || messageIn.Action == models.MessageActionConcat {
 		m.updateMessage(ctx, &messageIn, messageReference, user, topic, isAdminOnTopic)
 		return
 	}
 
-	if messageIn.Action == "move" {
+	if messageIn.Action == models.MessageActionMove {
 		m.moveMessage(ctx, &messageIn, messageReference, user, topic)
 		return
 	}
@@ -323,8 +325,21 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 		return
 	}
 
+	topicIn, err := GetParam(ctx, "topic")
+	if err != nil {
+		return
+	}
+
+	topic := models.Topic{}
+	if errf := topic.FindByTopic(topicIn, true, false, false, nil); errf != nil {
+		log.Errorf("messageDelete> err:%s", errf)
+		e := fmt.Sprintf("Topic %s does not exist", topicIn)
+		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
+		return
+	}
+
 	message := models.Message{}
-	if err = message.FindByID(idMessageIn); err != nil {
+	if err = message.FindByID(idMessageIn, topic); err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Message %s does not exist", idMessageIn)})
 		return
 	}
@@ -334,7 +349,8 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 		return
 	}
 
-	topic, err := m.checkBeforeDelete(ctx, message, user, force)
+	// TODO remove double findByTopic
+	topic, err = m.checkBeforeDelete(ctx, message, user, force)
 	if err != nil {
 		// ctx writes in checkBeforeDelete
 		return
@@ -342,10 +358,10 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 
 	c := &models.MessageCriteria{
 		InReplyOfID: message.ID,
-		TreeView:    "onetree",
+		TreeView:    models.TreeViewOneTree,
 	}
 
-	msgs, err := models.ListMessages(c, "")
+	msgs, err := models.ListMessages(c, "", topic)
 	if err != nil {
 		log.Errorf("Error while list Messages in Delete %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while list Messages in Delete"})
@@ -365,13 +381,13 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 		return
 	}
 
-	if err = message.Delete(cascade); err != nil {
+	if err = message.Delete(cascade, topic); err != nil {
 		log.Errorf("Error while delete a message %s", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	go models.WSMessage(&models.WSMessageJSON{Action: "delete", Username: user.Username, Message: message})
+	go models.WSMessage(&models.WSMessageJSON{Action: "delete", Username: user.Username, Message: message}, topic)
 	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("Message deleted from %s", topic.Topic)})
 }
 
@@ -435,14 +451,14 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 
 	info := ""
 	if action == "like" {
-		if err := message.Like(user); err != nil {
+		if err := message.Like(user, topic); err != nil {
 			log.Errorf("Error while like a message %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		info = "like added"
 	} else if action == "unlike" {
-		if err := message.Unlike(user); err != nil {
+		if err := message.Unlike(user, topic); err != nil {
 			log.Errorf("Error while unlike a message %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -452,12 +468,12 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid action: " + action)})
 		return
 	}
-	go models.WSMessage(&models.WSMessageJSON{Action: action, Username: user.Username, Message: message})
+	go models.WSMessage(&models.WSMessageJSON{Action: action, Username: user.Username, Message: message}, topic)
 	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
 func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
-	if messageIn.Text == "" && messageIn.Action != "relabel" {
+	if messageIn.Text == "" && messageIn.Action != models.MessageActionRelabel {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid Text for label"))
 		return
 	}
@@ -471,24 +487,24 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *model
 			return
 		}
 		info = gin.H{"info": fmt.Sprintf("label %s added to message", addedLabel.Text), "label": addedLabel, "message": message}
-	} else if messageIn.Action == "unlabel" {
-		if err := message.RemoveLabel(messageIn.Text); err != nil {
+	} else if messageIn.Action == models.MessageActionUnlabel {
+		if err := message.RemoveLabel(messageIn.Text, topic); err != nil {
 			errInfo := fmt.Sprintf("Error while removing a label from a message %s", err.Error())
 			log.Errorf(errInfo)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
 			return
 		}
 		info = gin.H{"info": fmt.Sprintf("label %s removed from message", messageIn.Text), "message": message}
-	} else if messageIn.Action == "relabel" && len(messageIn.Options) == 0 {
-		if err := message.RemoveAllAndAddNewLabel(messageIn.Labels); err != nil {
+	} else if messageIn.Action == models.MessageActionRelabel && len(messageIn.Options) == 0 {
+		if err := message.RemoveAllAndAddNewLabel(messageIn.Labels, topic); err != nil {
 			errInfo := fmt.Sprintf("Error while removing all labels and add new ones for a message %s", err.Error())
 			log.Errorf(errInfo)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
 			return
 		}
 		info = gin.H{"info": fmt.Sprintf("all labels removed and new labels %s added to message", messageIn.Text), "message": message}
-	} else if messageIn.Action == "relabel" && len(messageIn.Options) > 0 {
-		if err := message.RemoveSomeAndAddNewLabel(messageIn.Labels, messageIn.Options); err != nil {
+	} else if messageIn.Action == models.MessageActionRelabel && len(messageIn.Options) > 0 {
+		if err := message.RemoveSomeAndAddNewLabel(messageIn.Labels, messageIn.Options, topic); err != nil {
 			errInfo := fmt.Sprintf("Error while removing some labels and add new ones for a message %s", err.Error())
 			log.Errorf(errInfo)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
@@ -500,7 +516,7 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *model
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action: "+messageIn.Action))
 		return
 	}
-	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
+	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
 	ctx.JSON(http.StatusCreated, info)
 }
 
@@ -508,22 +524,22 @@ func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *models.Mes
 	info := ""
 	errInfo := ""
 	if messageIn.Action == "voteup" {
-		if err := message.VoteUP(user); err != nil {
+		if err := message.VoteUP(user, topic); err != nil {
 			errInfo = fmt.Sprintf("Error while vote up a message %s", err.Error())
 		}
 		info = "Vote UP added to message"
-	} else if messageIn.Action == "votedown" {
-		if err := message.VoteDown(user); err != nil {
+	} else if messageIn.Action == models.MessageActionVotedown {
+		if err := message.VoteDown(user, topic); err != nil {
 			errInfo = fmt.Sprintf("Error while vote down a message %s", err.Error())
 		}
 		info = "Vote Down added to message"
-	} else if messageIn.Action == "unvoteup" {
-		if err := message.UnVoteUP(user); err != nil {
+	} else if messageIn.Action == models.MessageActionUnvoteup {
+		if err := message.UnVoteUP(user, topic); err != nil {
 			errInfo = fmt.Sprintf("Error while remove vote up from message %s", err.Error())
 		}
 		info = "Vote UP removed from message"
-	} else if messageIn.Action == "unvotedown" {
-		if err := message.UnVoteDown(user); err != nil {
+	} else if messageIn.Action == models.MessageActionUnvotedown {
+		if err := message.UnVoteDown(user, topic); err != nil {
 			errInfo = fmt.Sprintf("Error while remove vote down from message %s", err.Error())
 		}
 		info = "Vote Down removed from message"
@@ -536,17 +552,17 @@ func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *models.Mes
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
 		return
 	}
-	if err := message.FindByID(messageIn.IDReference); err != nil {
+	if err := message.FindByID(messageIn.IDReference, topic); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching message after voting"})
 		return
 	}
-	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
+	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
 	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
 func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
 	info := ""
-	if messageIn.Action == "task" {
+	if messageIn.Action == models.MessageActionTask {
 		if message.InReplyOfIDRoot != "" {
 			log.Warnf("This message is a reply, you can't task it (%s)", message.ID)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "This message is a reply, you can't task it"})
@@ -558,7 +574,7 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *models
 			return
 		}
 		info = fmt.Sprintf("New Task created in %s", models.GetPrivateTopicTaskName(user))
-	} else if messageIn.Action == "untask" {
+	} else if messageIn.Action == models.MessageActionUntask {
 		if err := message.RemoveFromTasks(user, topic); err != nil {
 			log.Errorf("Error while removing a message from tasks %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -569,7 +585,7 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *models
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
-	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
+	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
 	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
@@ -598,14 +614,14 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *models.M
 	}
 	info = fmt.Sprintf("Message updated in %s", topic.Topic)
 
-	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
+	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
 	out := &models.MessageJSONOut{Message: message, Info: info}
 	ctx.JSON(http.StatusOK, out)
 }
 
 func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
 	// Check if user can delete msg on from topic
-	_, err := m.checkBeforeDelete(ctx, message, user, true)
+	fromTopic, err := m.checkBeforeDelete(ctx, message, user, true)
 	if err != nil {
 		// ctx writes in checkBeforeDelete
 		return
@@ -625,7 +641,7 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *models.Mes
 
 	info := ""
 	if messageIn.Action == "move" {
-		err := message.Move(user, topic)
+		err := message.Move(user, fromTopic, topic)
 		if err != nil {
 			log.Errorf("Error while move a message to topic: %s err: %s", topic.Topic, err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error while move a message to topic %s", topic.Topic)})
@@ -636,7 +652,7 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *models.Mes
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
-	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message})
+	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
 	ctx.JSON(http.StatusCreated, gin.H{"info": info})
 }
 
@@ -769,7 +785,7 @@ func (m *MessagesController) DeleteBulk(ctx *gin.Context) {
 func (m *MessagesController) messagesDeleteBulk(ctx *gin.Context, cascade, force bool) {
 	out, user, topic, criteria, httpCode, err := m.innerList(ctx)
 	if criteria.TreeView == "" {
-		criteria.TreeView = "onetree"
+		criteria.TreeView = models.TreeViewOneTree
 	}
 
 	if err != nil {
@@ -777,7 +793,7 @@ func (m *MessagesController) messagesDeleteBulk(ctx *gin.Context, cascade, force
 		return
 	}
 
-	messages, err := models.ListMessages(criteria, user.Username)
+	messages, err := models.ListMessages(criteria, user.Username, topic)
 	if err != nil {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
@@ -807,13 +823,13 @@ func (m *MessagesController) messagesDeleteBulk(ctx *gin.Context, cascade, force
 
 	nbDelete := 0
 	for _, msg := range out.Messages {
-		if err = msg.Delete(cascade); err != nil {
+		if err = msg.Delete(cascade, topic); err != nil {
 			log.Errorf("Error while delete a message %s", err)
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 		nbDelete++
-		go models.WSMessage(&models.WSMessageJSON{Action: "delete", Username: user.Username, Message: msg})
+		go models.WSMessage(&models.WSMessageJSON{Action: "delete", Username: user.Username, Message: msg}, topic)
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("%d messages (cascade:%t) deleted from %s, limit criteria to %d messages root",

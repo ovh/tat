@@ -13,24 +13,24 @@ import (
 )
 
 const (
-	databaseName        = "tat"
-	collectionGroups    = "groups"
-	collectionMessages  = "messages"
-	collectionPresences = "presences"
-	collectionTopics    = "topics"
-	collectionUsers     = "users"
-	collectionSockets   = "sockets"
+	databaseName              = "tat"
+	collectionGroups          = "groups"
+	collectionDefaultMessages = "messages"
+	collectionPresences       = "presences"
+	collectionTopics          = "topics"
+	collectionUsers           = "users"
+	collectionSockets         = "sockets"
 )
 
 // MongoStore stores MongoDB Session and collections
 type MongoStore struct {
-	session     *mgo.Session
-	clGroups    *mgo.Collection
-	clMessages  *mgo.Collection
-	clPresences *mgo.Collection
-	clTopics    *mgo.Collection
-	clUsers     *mgo.Collection
-	clSockets   *mgo.Collection
+	session           *mgo.Session
+	clGroups          *mgo.Collection
+	clDefaultMessages *mgo.Collection
+	clPresences       *mgo.Collection
+	clTopics          *mgo.Collection
+	clUsers           *mgo.Collection
+	clSockets         *mgo.Collection
 }
 
 var _initCtx sync.Once
@@ -83,7 +83,7 @@ func NewStore() error {
 				tupleTagName := t[1]
 				tupleTagValue := t[2]
 				log.Warnf("SelectServers attach %s on replicaSet with tagName %s and value %s and %s", hostname, tupleTagName, tupleTagValue)
-				session.SelectServers(bson.D{{tupleTagName, tupleTagValue}})
+				session.SelectServers(bson.D{{Name: tupleTagName, Value: tupleTagValue}})
 				break
 			}
 		}
@@ -97,18 +97,33 @@ func NewStore() error {
 	}
 
 	_instance = &MongoStore{
-		session:     session,
-		clGroups:    session.DB(databaseName).C(collectionGroups),
-		clMessages:  session.DB(databaseName).C(collectionMessages),
-		clPresences: session.DB(databaseName).C(collectionPresences),
-		clTopics:    session.DB(databaseName).C(collectionTopics),
-		clUsers:     session.DB(databaseName).C(collectionUsers),
-		clSockets:   session.DB(databaseName).C(collectionSockets),
+		session:           session,
+		clGroups:          session.DB(databaseName).C(collectionGroups),
+		clDefaultMessages: session.DB(databaseName).C(collectionDefaultMessages),
+		clPresences:       session.DB(databaseName).C(collectionPresences),
+		clTopics:          session.DB(databaseName).C(collectionTopics),
+		clUsers:           session.DB(databaseName).C(collectionUsers),
+		clSockets:         session.DB(databaseName).C(collectionSockets),
 	}
 
 	initDb()
+	loadClMessages(_instance)
 	ensureIndexes(_instance)
 	return nil
+}
+
+// loadClMessages gets all topics, for each topic with "collection" setted, add
+// collection to store
+func loadClMessages(store *MongoStore) {
+	topics, err := FindAllTopicsWithCollections()
+	if err != nil {
+		log.Errorf("Error while FindAllTopicsWithCollections:%s", err)
+		return
+	}
+	for _, topic := range topics {
+		log.Debugf("Ensure index for topic: %s col: %s", topic.Topic, topic.Collection)
+		ensureIndexesMessages(store, topic.Collection)
+	}
 }
 
 // getDbParameter gets value of tat parameter
@@ -138,19 +153,13 @@ func initDb() {
 
 func ensureIndexes(store *MongoStore) {
 
-	listIndex(store.clMessages, false)
 	listIndex(store.clTopics, false)
 	listIndex(store.clGroups, false)
 	listIndex(store.clUsers, false)
 	listIndex(store.clPresences, false)
 
 	// messages
-	ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
-	ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "-dateCreation"}})
-	ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "tags"}})
-	ensureIndex(store.clMessages, mgo.Index{Key: []string{"topic", "labels.text"}})
-	ensureIndex(store.clMessages, mgo.Index{Key: []string{"inReplyOfID"}})
-	ensureIndex(store.clMessages, mgo.Index{Key: []string{"inReplyOfIDRoot"}})
+	ensureIndexesMessages(store, collectionDefaultMessages)
 
 	// topics
 	ensureIndex(store.clTopics, mgo.Index{Key: []string{"topic"}, Unique: true})
@@ -168,16 +177,26 @@ func ensureIndexes(store *MongoStore) {
 	ensureIndex(store.clPresences, mgo.Index{Key: []string{"topic", "userPresence.username"}, Unique: true})
 }
 
+func ensureIndexesMessages(store *MongoStore, collection string) {
+	listIndex(store.session.DB(databaseName).C(collection), false)
+	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
+	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "-dateCreation"}})
+	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "tags"}})
+	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "labels.text"}})
+	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"inReplyOfID"}})
+	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"inReplyOfIDRoot"}})
+}
+
 func listIndex(col *mgo.Collection, drop bool) {
 	indexes, err := col.Indexes()
 	if err != nil {
-		log.Warnf("Error while getting index : %s", err)
+		log.Warnf("Error while getting index: %s", err)
 	}
 	for _, index := range indexes {
 		log.Warnf("Info Index : Col %s : %+v", col.Name, index)
 		if drop {
 			if err := col.DropIndex(index.Key...); err != nil {
-				log.Warnf("Error while dropping index : %s", err)
+				log.Warnf("Error while dropping index: %s", err)
 			}
 		}
 	}
@@ -222,14 +241,14 @@ func RefreshStore() {
 // DBServerStatus returns serverStatus cmd
 func DBServerStatus() (bson.M, error) {
 	result := bson.M{}
-	err := _instance.session.Run(bson.D{{"serverStatus", 1}}, &result)
+	err := _instance.session.Run(bson.D{{Name: "serverStatus", Value: 1}}, &result)
 	return result, err
 }
 
 // DBStats returns dbstats cmd
 func DBStats() (bson.M, error) {
 	result := bson.M{}
-	err := _instance.session.DB("tat").Run(bson.D{{"dbStats", 1}, {"scale", 1024}}, &result)
+	err := _instance.session.DB("tat").Run(bson.D{{Name: "dbStats", Value: 1}, {Name: "scale", Value: 1024}}, &result)
 	return result, err
 }
 
@@ -241,21 +260,24 @@ func GetCollectionNames() ([]string, error) {
 // DBStatsCollection returns stats for given collection
 func DBStatsCollection(colName string) (bson.M, error) {
 	result := bson.M{}
-	err := _instance.session.DB("tat").Run(bson.D{{"collStats", colName}, {"scale", 1024}, {"indexDetails", true}}, &result)
+	err := _instance.session.DB("tat").Run(bson.D{{Name: "collStats", Value: colName},
+		{Name: "scale", Value: 1024},
+		{Name: "indexDetails", Value: true},
+	}, &result)
 	return result, err
 }
 
 // DBReplSetGetStatus returns replSetGetStatus cmd
 func DBReplSetGetStatus() (bson.M, error) {
 	result := bson.M{}
-	err := _instance.session.Run(bson.D{{"replSetGetStatus", 1}}, &result)
+	err := _instance.session.Run(bson.D{{Name: "replSetGetStatus", Value: 1}}, &result)
 	return result, err
 }
 
 // DBReplSetGetConfig returns replSetGetConfig cmd
 func DBReplSetGetConfig() (bson.M, error) {
 	result := bson.M{}
-	err := _instance.session.Run(bson.D{{"replSetGetConfig", 1}}, &result)
+	err := _instance.session.Run(bson.D{{Name: "replSetGetConfig", Value: 1}}, &result)
 	return result, err
 }
 

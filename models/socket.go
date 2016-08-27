@@ -577,7 +577,7 @@ func WSMessageNew(msg *WSMessageNewJSON) {
 }
 
 // WSMessage writes event messages
-func WSMessage(msg *WSMessageJSON) {
+func WSMessage(msg *WSMessageJSON, topic Topic) {
 	w := gin.H{"eventMsg": msg}
 
 	var oneTree, fullTree, msgs []Message
@@ -599,7 +599,7 @@ func WSMessage(msg *WSMessageJSON) {
 
 		// getting messages related to ID, only once
 		if !isGetMsgs {
-			msgs, _ = ListMessages(c, "")
+			msgs, _ = ListMessages(c, "", topic)
 			isGetMsgs = true
 		}
 
@@ -607,7 +607,7 @@ func WSMessage(msg *WSMessageJSON) {
 		case "onetree":
 			// only once to call oneTreeMessages
 			if len(oneTree) == 0 {
-				oneTree, _ = oneTreeMessages(msgs, 1, c, "")
+				oneTree, _ = oneTreeMessages(msgs, 1, c, "", topic)
 				if len(oneTree) == 0 {
 					// fake init oneTree
 					oneTree = []Message{msg.Message}
@@ -620,7 +620,7 @@ func WSMessage(msg *WSMessageJSON) {
 		case "fulltree":
 			// only once to call oneTreeMessages
 			if len(fullTree) == 0 {
-				fullTree, _ = fullTreeMessages(msgs, 1, c, "")
+				fullTree, _ = fullTreeMessages(msgs, 1, c, "", topic)
 				if len(fullTree) == 0 {
 					// fake init fullTree
 					fullTree = []Message{msg.Message}

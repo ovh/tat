@@ -228,7 +228,7 @@ curl -XPUT \
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	https://<tatHostname>:<tatPort>/message/nocascade/9797q87KJhqsfO7Usdqd
+	https://<tatHostname>:<tatPort>/message/nocascade/9797q87KJhqsfO7Usdqd/topic/subTopic
 ```
 
 ### Delete a message and its replies
@@ -236,7 +236,7 @@ curl -XDELETE \
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	https://<tatHostname>:<tatPort>/message/cascade/9797q87KJhqsfO7Usdqd
+	https://<tatHostname>:<tatPort>/message/cascade/9797q87KJhqsfO7Usdqd/topic/subTopic
 ```
 
 ### Delete a message and its replies, even if it's in Tasks Topic of one user
@@ -244,7 +244,7 @@ curl -XDELETE \
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	https://<tatHostname>:<tatPort>/message/cascadeforce/9797q87KJhqsfO7Usdqd
+	https://<tatHostname>:<tatPort>/message/cascadeforce/9797q87KJhqsfO7Usdqd/topic/subTopic
 ```
 
 ### Delete a list of messages
