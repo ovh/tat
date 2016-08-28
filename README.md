@@ -219,8 +219,8 @@ curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "move"}'\
-	https://<tatHostname>:<tatPort>/message/newTopic/newSub-topic
+	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "move", "option": "/newTopic/subNewTopic"}'\
+	https://<tatHostname>:<tatPort>/message/oldTOpic/oldSubTopic
 ```
 
 ### Delete a message

@@ -855,8 +855,18 @@ func (message *Message) Move(user User, fromTopic Topic, toTopic Topic) error {
 			log.Errorf("Error while update messages (move topic to %s) idMsgRoot:%s err:%s", toTopic.Topic, message.ID, err)
 		}
 	} else {
-		//TODO if fromTopic != toTopic -> delete and insert
-		return fmt.Errorf("Not yet implemented, from -> to, diff topic (collection)")
+		for _, msgToMove := range msgs {
+			msgToMove.Topic = toTopic.Topic
+			if errInsert := getClMessages(toTopic).Insert(msgToMove); errInsert != nil {
+				log.Errorf("Move> getClMessages(toTopic).Insert(message), err: %s", errInsert)
+				return fmt.Errorf("Error while inserting message to new topic, old message is not deleted")
+			}
+
+			if errRemove := getClMessages(fromTopic).RemoveId(msgToMove.ID); errRemove != nil {
+				log.Errorf("Move> getClMessages(toTopic).RemoveId(message), err: %s", errRemove)
+				return fmt.Errorf("Error while removing message from old topic")
+			}
+		}
 	}
 
 	if err != nil {

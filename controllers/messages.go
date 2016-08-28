@@ -296,6 +296,7 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 	}
 
 	if messageIn.Action == models.MessageActionMove {
+		// topic here is fromTopic
 		m.moveMessage(ctx, &messageIn, messageReference, user, topic)
 		return
 	}
@@ -612,12 +613,12 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *models.M
 	ctx.JSON(http.StatusOK, out)
 }
 
-func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, toTopic models.Topic) {
+func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, fromTopic models.Topic) {
 	// Check if user can delete msg on from topic
 
-	fromTopic := models.Topic{}
-	if err := fromTopic.FindByTopic(message.Topic, true, false, false, nil); err != nil {
-		e := fmt.Sprintf("Topic %s does not exist", message.Topic)
+	toTopic := models.Topic{}
+	if err := toTopic.FindByTopic(messageIn.Option, true, false, false, nil); err != nil {
+		e := fmt.Sprintf("Topic destination %s does not exist", message.Topic)
 		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
 		return
 	}
