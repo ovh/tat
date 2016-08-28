@@ -410,6 +410,7 @@ func (topic *Topic) Insert(user *User) error {
 	topic.IsROPublic = false
 	topic.IsAutoComputeLabels = true
 	topic.IsAutoComputeTags = true
+	topic.Collection = "messages" + topic.ID
 
 	if !isParentRootTopic {
 		topic.ROGroups = parentTopic.ROGroups
