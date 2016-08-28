@@ -754,18 +754,6 @@ func checkTopicParentDM(user models.User) error {
 	return nil
 }
 
-// CountEmptyTopic count msg with empty topic
-func (m *MessagesController) CountEmptyTopic(ctx *gin.Context) {
-	countNoTopic, countEmptyTopic, err := models.CountEmptyTopic()
-	if err != nil {
-		log.Errorf(">>CountEmptyTopic error CountConvertManyTopics true, err:%s", err)
-		return
-	}
-
-	out := fmt.Sprintf("counttopics countNoTopic:%d; countEmptyTopic:%d", countNoTopic, countEmptyTopic)
-	ctx.JSON(http.StatusOK, gin.H{"result": out})
-}
-
 // DeleteBulkCascade deletes messages and its replies, with criterias
 func (m *MessagesController) DeleteBulkCascade(ctx *gin.Context) {
 	m.messagesDeleteBulk(ctx, true, false)

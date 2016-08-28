@@ -42,10 +42,4 @@ func InitRoutesMessages(router *gin.Engine) {
 		// Delete a message and its replies, event if it's in a Tasks Topic of one user
 		gm.DELETE("/cascadeforce/:idMessage/*topic", messagesCtrl.DeleteCascadeForce)
 	}
-
-	g.Use(CheckPassword(), CheckAdmin())
-	{
-		g.POST("/countMessagesEmptyTopic", messagesCtrl.CountEmptyTopic)
-	}
-
 }

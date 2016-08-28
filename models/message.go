@@ -60,7 +60,6 @@ type Label struct {
 type Message struct {
 	ID              string    `bson:"_id"             json:"_id"`
 	Text            string    `bson:"text"            json:"text"`
-	Topics          []string  `bson:"topics"          json:"topics"`
 	Topic           string    `bson:"topic"           json:"topic"`
 	InReplyOfID     string    `bson:"inReplyOfID"     json:"inReplyOfID"`
 	InReplyOfIDRoot string    `bson:"inReplyOfIDRoot" json:"inReplyOfIDRoot"`
@@ -646,7 +645,6 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 		} else {
 			message.InReplyOfIDRoot = messageReference.ID
 		}
-		message.Topics = messageReference.Topics
 		message.Topic = messageReference.Topic
 
 		// if msgRef.dateCreation >= dateToStore -> dateToStore must be after
@@ -666,7 +664,6 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 		}
 
 	} else { // root message
-		message.Topics = append(message.Topics, topic.Topic)
 		message.Topic = topic.Topic
 		topicDM := "/Private/" + user.Username + "/DM/"
 		if strings.HasPrefix(topic.Topic, topicDM) {
@@ -675,8 +672,6 @@ func (message *Message) Insert(user User, topic Topic, text, inReplyOfID string,
 				log.Errorf("wrong topic name for DM")
 				return fmt.Errorf("Wrong topic name for DM:%s", topic.Topic)
 			}
-			topicInverse := "/Private/" + part[4] + "/DM/" + user.Username
-			message.Topics = append(message.Topics, topicInverse)
 		}
 	}
 
@@ -1310,23 +1305,6 @@ func DistributionMessages(col string) ([]bson.M, error) {
 
 	err := pipe.All(&results)
 	return results, err
-}
-
-// CountEmptyTopic returns msg with empty topic field
-func CountEmptyTopic() (int, int, error) {
-	countNoTopic, err := Store().clDefaultMessages.Find(bson.M{"topic": bson.M{"$exists": false}}).Count()
-	if err != nil {
-		log.Errorf("err noTopic:%s", err)
-		return -1, -1, err
-	}
-
-	countEmptyTopic, err2 := Store().clDefaultMessages.Find(bson.M{"topic": ""}).Count()
-	if err2 != nil {
-		log.Errorf("err emptyTopic:%s", err2)
-		return -1, -1, err2
-	}
-
-	return countNoTopic, countEmptyTopic, nil
 }
 
 func getClMessages(topic Topic) *mgo.Collection {
