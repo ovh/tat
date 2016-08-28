@@ -855,7 +855,9 @@ func (message *Message) Move(user User, fromTopic Topic, toTopic Topic) error {
 			log.Errorf("Error while update messages (move topic to %s) idMsgRoot:%s err:%s", toTopic.Topic, message.ID, err)
 		}
 	} else {
-		for _, msgToMove := range msgs {
+		msgsToMove := []Message{msgs[0]}
+		msgsToMove = append(msgsToMove, msgs[0].Replies...)
+		for _, msgToMove := range msgsToMove {
 			msgToMove.Topic = toTopic.Topic
 			if errInsert := getClMessages(toTopic).Insert(msgToMove); errInsert != nil {
 				log.Errorf("Move> getClMessages(toTopic).Insert(message), err: %s", errInsert)
