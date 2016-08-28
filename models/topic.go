@@ -1209,3 +1209,63 @@ func changeUsernameOnPrivateTopics(oldUsername, newUsername string) error {
 
 	return err
 }
+
+func (topic *Topic) MigrateToDedicatedTopic() error {
+
+	if topic.Collection != "" {
+		return fmt.Errorf("MigrateToDedicatedTopic> This topic is already dedicated on a collection")
+	}
+
+	topic.Collection = "messages" + topic.ID
+
+	errUpdate := Store().clTopics.Update(
+		bson.M{"_id": topic.ID},
+		bson.M{"$set": bson.M{"collection": topic.Collection}},
+	)
+	if errUpdate != nil {
+		return fmt.Errorf("MigrateToDedicatedTopic> Error while update Topic collection:%s", errUpdate)
+	}
+
+	return nil
+}
+
+func (topic *Topic) MigrateMessagesToDedicatedTopic(limit int) (int, error) {
+	criteria := &MessageCriteria{Topic: topic.Topic}
+
+	c, errc := buildMessageCriteria(criteria, "")
+	if errc != nil {
+		return -1, errc
+	}
+	var msgsToMigrate []Message
+	err := Store().session.DB(databaseName).C(collectionDefaultMessages).Find(c).
+		Sort("-dateCreation").
+		Skip(0).
+		Limit(limit).
+		All(&msgsToMigrate)
+
+	if err != nil {
+		log.Errorf("MigrateMessagesToDedicatedTopic> Error while Find msg %s", err)
+		return -1, err
+	}
+
+	if len(msgsToMigrate) == 0 {
+		log.Warnf("MigrateMessagesToDedicatedTopic> No message to migrate for topic %s", topic.Topic)
+		return 0, nil
+	}
+
+	nMigrated := 0
+	for _, msgToMigrate := range msgsToMigrate {
+		if errInsert := Store().session.DB(databaseName).C(topic.Collection).Insert(msgToMigrate); errInsert != nil {
+			log.Errorf("MigrateMessagesToDedicatedTopic> getClMessages(toTopic).Insert(message), err: %s", errInsert)
+			return nMigrated, errInsert
+		}
+
+		if errRemove := Store().session.DB(databaseName).C(collectionDefaultMessages).RemoveId(msgToMigrate.ID); errRemove != nil {
+			log.Errorf("MigrateMessagesToDedicatedTopic> getClMessages(toTopic).RemoveId(message), err: %s", errRemove)
+			return nMigrated, errRemove
+		}
+		nMigrated++
+	}
+
+	return nMigrated, nil
+}

@@ -47,6 +47,8 @@ func InitRoutesTopics(router *gin.Engine) {
 		admin.PUT("/compute/tags", topicsCtrl.AllComputeTags)
 		admin.PUT("/compute/labels", topicsCtrl.AllComputeLabels)
 		admin.PUT("/compute/replies", topicsCtrl.AllComputeReplies)
+		admin.PUT("/migrate/dedicated/*topic", topicsCtrl.MigrateToDedicatedTopic)
+		admin.PUT("/migrate/dedicatedmessages/:limit/*topic", topicsCtrl.MigrateMessagesForDedicatedTopic)
 		admin.PUT("/param", topicsCtrl.AllSetParam)
 	}
 }

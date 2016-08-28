@@ -732,3 +732,51 @@ func (t *TopicsController) AllComputeReplies(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"info": info})
 }
+
+func (t *TopicsController) MigrateToDedicatedTopic(ctx *gin.Context) {
+	topicRequest, err := GetParam(ctx, "topic")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	topic := models.Topic{}
+	if errfind := topic.FindByTopic(topicRequest, true, false, false, nil); errfind != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if errMigrate := topic.MigrateToDedicatedTopic(); errMigrate != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": errMigrate.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("%s is now dedicated", topicRequest)})
+}
+
+func (t *TopicsController) MigrateMessagesForDedicatedTopic(ctx *gin.Context) {
+	limit, e2 := strconv.Atoi(ctx.DefaultQuery("limit", "500"))
+	if e2 != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": e2.Error()})
+		return
+	}
+
+	topicRequest, err := GetParam(ctx, "topic")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	topic := models.Topic{}
+	if errfind := topic.FindByTopic(topicRequest, true, false, false, nil); errfind != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": errfind.Error()})
+		return
+	}
+
+	nMigrate, err := topic.MigrateMessagesToDedicatedTopic(limit)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error after %d migrate, err:%s", nMigrate, err.Error())})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("No error after migrate %d messages (%d asked for migrate)", nMigrate, limit)})
+}
