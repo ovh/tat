@@ -349,8 +349,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 		return
 	}
 
-	// TODO remove double findByTopic
-	topic, err = m.checkBeforeDelete(ctx, message, user, force)
+	err = m.checkBeforeDelete(ctx, message, user, force, topic)
 	if err != nil {
 		// ctx writes in checkBeforeDelete
 		return
@@ -370,7 +369,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 
 	if cascade {
 		for _, r := range msgs {
-			_, errCheck := m.checkBeforeDelete(ctx, r, user, force)
+			errCheck := m.checkBeforeDelete(ctx, r, user, force, topic)
 			if errCheck != nil {
 				// ctx writes in checkBeforeDelete
 				return
@@ -394,34 +393,28 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 // checkBeforeDelete checks
 // - if user is RW on topic
 // - if topic is Private OR is CanDeleteMsg or CanDeleteAllMsg
-func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.Message, user models.User, force bool) (models.Topic, error) {
-	topic := models.Topic{}
-	if err := topic.FindByTopic(message.Topic, true, false, false, nil); err != nil {
-		e := fmt.Sprintf("Topic %s does not exist", message.Topic)
-		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
-		return topic, fmt.Errorf(e)
-	}
+func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.Message, user models.User, force bool, topic models.Topic) error {
 
 	isRW, isTopicAdmin := topic.GetUserRights(&user)
 	if !isRW {
 		e := fmt.Sprintf("No RW Access to topic %s", message.Topic)
 		ctx.JSON(http.StatusForbidden, gin.H{"error": e})
-		return topic, fmt.Errorf(e)
+		return fmt.Errorf(e)
 	}
 
 	if topic.AdminCanDeleteAllMsg && isTopicAdmin {
-		return topic, nil
+		return nil
 	}
 
 	if !strings.HasPrefix(message.Topic, "/Private/"+user.Username) && !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
 		if !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
 			e := fmt.Sprintf("You can't delete a message from topic %s", topic.Topic)
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
-			return topic, fmt.Errorf(e)
+			return fmt.Errorf(e)
 		}
 		e := fmt.Sprintf("Could not delete a message in topic %s", message.Topic)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
-		return topic, fmt.Errorf(e)
+		return fmt.Errorf(e)
 	}
 
 	if !topic.CanDeleteAllMsg && message.Author.Username != user.Username {
@@ -429,7 +422,7 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 		if !force || (force && message.InReplyOfIDRoot == "") {
 			e := fmt.Sprintf("Could not delete a message from another user %s than you %s", message.Author.Username, user.Username)
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
-			return topic, fmt.Errorf(e)
+			return fmt.Errorf(e)
 		}
 	}
 
@@ -437,9 +430,9 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message models.
 	if !force && message.IsDoing() {
 		e := fmt.Sprintf("Could not delete a message with a doing label")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
-		return topic, fmt.Errorf(e)
+		return fmt.Errorf(e)
 	}
-	return topic, nil
+	return nil
 }
 
 func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, message models.Message, topic models.Topic, user models.User) {
@@ -619,17 +612,25 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *models.M
 	ctx.JSON(http.StatusOK, out)
 }
 
-func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, topic models.Topic) {
+func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *models.MessageJSON, message models.Message, user models.User, toTopic models.Topic) {
 	// Check if user can delete msg on from topic
-	fromTopic, err := m.checkBeforeDelete(ctx, message, user, true)
+
+	fromTopic := models.Topic{}
+	if err := fromTopic.FindByTopic(message.Topic, true, false, false, nil); err != nil {
+		e := fmt.Sprintf("Topic %s does not exist", message.Topic)
+		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
+		return
+	}
+
+	err := m.checkBeforeDelete(ctx, message, user, true, fromTopic)
 	if err != nil {
 		// ctx writes in checkBeforeDelete
 		return
 	}
 
 	// Check if user can write msg from dest topic
-	if isRW, _ := topic.GetUserRights(&user); !isRW {
-		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No RW Access to topic %s", topic.Topic)})
+	if isRW, _ := toTopic.GetUserRights(&user); !isRW {
+		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No RW Access to topic %s", toTopic.Topic)})
 		return
 	}
 
@@ -641,18 +642,18 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *models.Mes
 
 	info := ""
 	if messageIn.Action == "move" {
-		err := message.Move(user, fromTopic, topic)
+		err := message.Move(user, fromTopic, toTopic)
 		if err != nil {
-			log.Errorf("Error while move a message to topic: %s err: %s", topic.Topic, err)
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error while move a message to topic %s", topic.Topic)})
+			log.Errorf("Error while move a message to topic: %s err: %s", toTopic.Topic, err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error while move a message to topic %s", toTopic.Topic)})
 			return
 		}
-		info = fmt.Sprintf("Message move to %s", topic.Topic)
+		info = fmt.Sprintf("Message move to %s", toTopic.Topic)
 	} else {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
-	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
+	go models.WSMessage(&models.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, toTopic)
 	ctx.JSON(http.StatusCreated, gin.H{"info": info})
 }
 
@@ -790,14 +791,14 @@ func (m *MessagesController) messagesDeleteBulk(ctx *gin.Context, cascade, force
 
 	// check all before
 	for _, msg := range out.Messages {
-		_, errCheck := m.checkBeforeDelete(ctx, msg, user, force)
+		errCheck := m.checkBeforeDelete(ctx, msg, user, force, topic)
 		if errCheck != nil {
 			// ctx writes in checkBeforeDelete
 			return
 		}
 		if cascade {
 			for _, r := range msg.Replies {
-				_, errCheck := m.checkBeforeDelete(ctx, r, user, force)
+				errCheck := m.checkBeforeDelete(ctx, r, user, force, topic)
 				if errCheck != nil {
 					// ctx writes in checkBeforeDelete
 					return
