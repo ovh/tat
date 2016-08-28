@@ -1206,9 +1206,9 @@ func changeUsernameOnMessages(oldUsername, newUsername string) error {
 }
 
 func changeAuthorUsernameOnMessages(oldUsername, newUsername string) error {
-	// TODO on all topics (with dedicated topics)
-	return fmt.Errorf("Not Yet Implemented")
-	/*_, err := getClMessages().UpdateAll(
+
+	// default messages collection
+	_, err := Store().session.DB(databaseName).C(collectionDefaultMessages).UpdateAll(
 		bson.M{"author.username": oldUsername},
 		bson.M{"$set": bson.M{"author.username": newUsername}})
 
@@ -1216,46 +1216,82 @@ func changeAuthorUsernameOnMessages(oldUsername, newUsername string) error {
 		log.Errorf("Error while update username from %s to %s on Messages err:%s", oldUsername, newUsername, err.Error())
 	}
 
-	return err*/
+	// and all dedicated messages collections
+	topics, errFindAll := FindAllTopicsWithCollections()
+	if errFindAll != nil {
+		return errFindAll
+	}
+
+	for _, topic := range topics {
+		_, err := getClMessages(topic).UpdateAll(
+			bson.M{"author.username": oldUsername},
+			bson.M{"$set": bson.M{"author.username": newUsername}})
+
+		if err != nil {
+			log.Errorf("Error while update username from %s to %s on Messages err:%s", oldUsername, newUsername, err.Error())
+			return err
+		}
+	}
+	return nil
 }
 
 func changeUsernameOnMessagesTopics(oldUsername, newUsername string) error {
+	var topics []Topic
+	errFindTopics := Store().clTopics.Find(bson.M{"topic": bson.RegEx{Pattern: "^/Private/" + oldUsername + "/", Options: "i"}}).
+		Select(bson.M{"_id": 1, "collection": 1, "topic": 1}).
+		All(&topics)
+	if errFindTopics != nil {
+		return errFindTopics
+	}
 
-	// TODO on all topics (with dedicated topics)
-	return fmt.Errorf("Not Yet Implemented")
-
-	/*
+	collections := []string{collectionDefaultMessages}
+	for _, topic := range topics {
+		if topic.Collection != "" {
+			collections = append(collections, topic.Collection)
+		}
+	}
+	for _, collection := range collections {
 		var messages []Message
-		err := getClMessages().Find(
-			bson.M{
-				"topic": bson.RegEx{Pattern: "^/Private/" + oldUsername + "/", Options: "i"},
-			}).All(&messages)
+		err := Store().session.DB(databaseName).C(collection).Find(
+			bson.M{"topic": bson.RegEx{Pattern: "^/Private/" + oldUsername + "/", Options: "i"}}).All(&messages)
 
 		if err != nil {
 			log.Errorf("Error while getting messages to update username from %s to %s on Topics %s", oldUsername, newUsername, err)
 		}
 
+		// Not perf, check to update all msgs in a collection
 		for _, msg := range messages {
-			msg.Topics = []string{}
-			for _, topic := range msg.Topics {
-				newTopicName := strings.Replace(topic, oldUsername, newUsername, 1)
-				msg.Topics = append(msg.Topics, newTopicName)
-			}
-
-			if errUpdate := getClMessages().Update(bson.M{"_id": msg.ID}, bson.M{"$set": bson.M{"topic": msg.Topic}}); errUpdate != nil {
-				log.Errorf("Error while update topic on message %s name from username %s to username %s :%s", msg.ID, oldUsername, newUsername, errUpdate)
+			if errUpdate := Store().session.DB(databaseName).C(collection).
+				Update(bson.M{"_id": msg.ID}, bson.M{"$set": bson.M{"topic": msg.Topic}}); errUpdate != nil {
+				log.Errorf("Error while update topic on message %s name from username %s to username %s on collection %s, err:%s", msg.ID, oldUsername, newUsername, collection, errUpdate)
 			}
 		}
+	}
 
-		return err
-	*/
+	return nil
 }
 
 // CountAllMessages returns the total number of messages in db
 func CountAllMessages() (int, error) {
-	// TODO on all topics (with dedicated topics)
-	return -1, fmt.Errorf("Not Yet Implemented")
-	// return getClMessages().Count()
+
+	count, errDefault := Store().session.DB(databaseName).C(collectionDefaultMessages).Count()
+	if errDefault != nil {
+		return -1, errDefault
+	}
+
+	topics, errFindAll := FindAllTopicsWithCollections()
+	if errFindAll != nil {
+		return -1, errFindAll
+	}
+
+	for _, topic := range topics {
+		c, errCount := getClMessages(topic).Count()
+		if errCount != nil {
+			return -1, errCount
+		}
+		count += c
+	}
+	return count, nil
 }
 
 // ComputeReplies re-compute replies for all messages in one topic
