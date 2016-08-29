@@ -1256,6 +1256,8 @@ func (topic *Topic) MigrateToDedicatedTopic() error {
 		return fmt.Errorf("MigrateToDedicatedTopic> Error while update Topic collection:%s", errUpdate)
 	}
 
+	ensureIndexesMessages(Store(), topic.Collection)
+
 	return nil
 }
 

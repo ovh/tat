@@ -178,13 +178,24 @@ func ensureIndexes(store *MongoStore) {
 }
 
 func ensureIndexesMessages(store *MongoStore, collection string) {
-	listIndex(store.session.DB(databaseName).C(collection), false)
-	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
-	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "-dateCreation"}})
-	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "tags"}})
-	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "labels.text"}})
-	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"inReplyOfID"}})
-	ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"inReplyOfIDRoot"}})
+
+	if collection != collectionDefaultMessages {
+		listIndex(store.session.DB(databaseName).C(collection), true)
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"-dateUpdate", "-dateCreation"}})
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"-dateCreation"}})
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"tags"}})
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"labels.text"}})
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"inReplyOfID"}})
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"inReplyOfIDRoot"}})
+	} else {
+		listIndex(store.session.DB(databaseName).C(collection), false)
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "-dateCreation"}})
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "tags"}})
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"topic", "labels.text"}})
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"inReplyOfID"}})
+		ensureIndex(store.session.DB(databaseName).C(collection), mgo.Index{Key: []string{"inReplyOfIDRoot"}})
+	}
 }
 
 func listIndex(col *mgo.Collection, drop bool) {
@@ -193,7 +204,10 @@ func listIndex(col *mgo.Collection, drop bool) {
 		log.Warnf("Error while getting index: %s", err)
 	}
 	for _, index := range indexes {
-		log.Warnf("Info Index : Col %s : %+v", col.Name, index)
+		if strings.HasPrefix(index.Key[0], "_id") {
+			continue
+		}
+		log.Warnf("Info Index : Col %s : %+v - toRemove %t", col.Name, index, drop)
 		if drop {
 			if err := col.DropIndex(index.Key...); err != nil {
 				log.Warnf("Error while dropping index: %s", err)
