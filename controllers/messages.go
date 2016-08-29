@@ -166,6 +166,15 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (models.MessageJSON
 	}
 	messageIn.Topic = topicIn
 
+	if messageIn.Topic == "/" && messageIn.IDReference != "" {
+		if efind := message.FindByIDDefaultCollection(messageIn.IDReference); efind != nil {
+			e := errors.New("Invalid request, no topic and message " + messageIn.IDReference + " not found in default collection:" + efind.Error())
+			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
+			return messageIn, message, topic, e
+		}
+		messageIn.Topic = message.Topic
+	}
+
 	if efind := topic.FindByTopic(messageIn.Topic, true, true, true, nil); efind != nil {
 		topica, _, edm := checkDMTopic(ctx, messageIn.Topic)
 		if edm != nil {

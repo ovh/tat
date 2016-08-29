@@ -323,6 +323,16 @@ func buildMessageCriteria(criteria *MessageCriteria, username string) (bson.M, e
 	return bson.M{}, nil
 }
 
+// FindByIDDefaultCollection returns message by given ID
+// TODO remove this func after migrate all topic to dedicated
+func (message *Message) FindByIDDefaultCollection(id string) error {
+	err := Store().clDefaultMessages.Find(bson.M{"_id": id}).One(&message)
+	if err != nil {
+		log.Errorf("Error while fetching message with id %s", id)
+	}
+	return err
+}
+
 // FindByID returns message by given ID
 func (message *Message) FindByID(id string, topic Topic) error {
 	err := getClMessages(topic).Find(bson.M{"_id": id}).One(&message)
