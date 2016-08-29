@@ -844,13 +844,10 @@ func (message *Message) Move(user User, fromTopic Topic, toTopic Topic) error {
 		return fmt.Errorf("Error while list Messages in Delete (%s not unique!)", message.ID)
 	}
 
-	// here, ok, we can move
-	topicUpdate := []string{toTopic.Topic}
-
 	if fromTopic.Topic == toTopic.Topic {
 		_, err = getClMessages(fromTopic).UpdateAll(
 			bson.M{"$or": []bson.M{{"_id": message.ID}, {"inReplyOfIDRoot": message.ID}}},
-			bson.M{"$set": bson.M{"topics": topicUpdate, "topic": toTopic.Topic}})
+			bson.M{"$set": bson.M{"topic": toTopic.Topic}})
 		if err != nil {
 			log.Errorf("Error while update messages (move topic to %s) idMsgRoot:%s err:%s", toTopic.Topic, message.ID, err)
 		}

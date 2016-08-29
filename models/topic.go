@@ -445,6 +445,12 @@ func (topic *Topic) Insert(user *User) error {
 		log.Errorf("Error while inserting new topic %s", err)
 	}
 
+	if errC := Store().session.DB(databaseName).C(topic.Collection).Create(&mgo.CollectionInfo{ForceIdIndex: true}); errC != nil {
+		log.Errorf("Error while create new collection %s", topic.Collection)
+	}
+
+	ensureIndexesMessages(Store(), topic.Collection)
+
 	h := fmt.Sprintf("create a new topic :%s", topic.Topic)
 	err = topic.addToHistory(bson.M{"_id": topic.ID}, user.Username, h)
 	if err != nil {
@@ -476,12 +482,36 @@ func (topic *Topic) Delete(user *User) error {
 		return fmt.Errorf("Could not delete this topic, this topic have messages")
 	}
 
-	return Store().clTopics.Remove(bson.M{"_id": topic.ID})
+	if topic.Collection != "" {
+		if err := Store().session.DB(databaseName).C(topic.Collection).DropCollection(); err != nil {
+			return fmt.Errorf("Error while drop collection for topic %s err: %s", topic.Topic, err)
+		}
+	}
+
+	if err := Store().clTopics.Remove(bson.M{"_id": topic.ID}); err != nil {
+		return fmt.Errorf("Error while remove topic from topics collection: %s", err)
+	}
+
+	return nil
 }
 
 // Truncate removes all messages in a topic
 func (topic *Topic) Truncate() (int, error) {
-	changeInfo, err := getClMessages(*topic).RemoveAll(bson.M{"topics": bson.M{"$in": [1]string{topic.Topic}}})
+	var changeInfo *mgo.ChangeInfo
+	var err error
+	if topic.Collection != "" && topic.Collection != collectionDefaultMessages {
+		changeInfo, err = getClMessages(*topic).RemoveAll(bson.M{})
+	} else {
+		changeInfo, err = getClMessages(*topic).RemoveAll(bson.M{"topic": topic.Topic})
+		// TODO remove this after remove defaultMessagesCollection
+		changeInfoOld, errOld := getClMessages(*topic).RemoveAll(bson.M{"topics": bson.M{"$in": [1]string{topic.Topic}}})
+		if errOld != nil {
+			log.Warnf("Error while removing message with topics attribute: %s", errOld)
+		} else {
+			log.Infof("Remove %d message with old way, select on topics attribute", changeInfoOld.Removed)
+		}
+	}
+
 	if err != nil {
 		return 0, err
 	}
