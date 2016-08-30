@@ -34,6 +34,7 @@ func Ginrus(logger *logrus.Logger, timeFormat string, utc bool) gin.HandlerFunc 
 		}
 
 		username, _ := c.Get(TatHeaderUsername)
+		tatReferer, _ := c.Get(TatHeaderXTatRefererLower)
 
 		entry := logger.WithFields(logrus.Fields{
 			"status":      c.Writer.Status(),
@@ -45,6 +46,7 @@ func Ginrus(logger *logrus.Logger, timeFormat string, utc bool) gin.HandlerFunc 
 			"user-agent":  c.Request.UserAgent(),
 			"time":        end.Format(timeFormat),
 			"tatusername": username,
+			"tatfrom":     tatReferer,
 		})
 
 		if len(c.Errors) > 0 {

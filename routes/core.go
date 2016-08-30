@@ -24,6 +24,7 @@ type tatHeadersType struct {
 	username      string
 	password      string
 	trustUsername string
+	tatReferer    string
 }
 
 // CheckAdmin is a middleware, abort request if user is not admin
@@ -58,7 +59,7 @@ func CheckPassword() gin.HandlerFunc {
 			return
 		}
 
-		if err = storeInContext(ctx, user); err != nil {
+		if err = storeInContext(ctx, user, tatHeaders); err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			ctx.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -73,6 +74,7 @@ func extractTatHeaders(ctx *gin.Context) (tatHeadersType, error) {
 	var tatHeaders tatHeadersType
 
 	for k, v := range ctx.Request.Header {
+		log.Debugf("Hop %s", strings.ToLower(k))
 		if strings.ToLower(k) == utils.TatHeaderUsernameLower {
 			tatHeaders.username = v[0]
 		} else if strings.ToLower(k) == tatHeaderPasswordLower {
@@ -81,6 +83,8 @@ func extractTatHeaders(ctx *gin.Context) (tatHeadersType, error) {
 			tatHeaders.username = v[0]
 		} else if strings.ToLower(k) == tatHeaderPasswordLowerDash {
 			tatHeaders.password = v[0]
+		} else if strings.ToLower(k) == utils.TatHeaderXTatRefererLower {
+			tatHeaders.tatReferer = v[0]
 		} else if k == viper.GetString("header_trust_username") {
 			tatHeaders.trustUsername = v[0]
 		}
@@ -118,10 +122,11 @@ func validateTatHeaders(tatHeaders tatHeadersType) (models.User, error) {
 }
 
 // storeInContext stores username and isAdmin flag only
-func storeInContext(ctx *gin.Context, user models.User) error {
+func storeInContext(ctx *gin.Context, user models.User, tatHeaders tatHeadersType) error {
 	ctx.Set(utils.TatHeaderUsername, user.Username)
 	ctx.Set(utils.TatCtxIsAdmin, user.IsAdmin)
 	ctx.Set(utils.TatCtxIsSystem, user.IsSystem)
+	ctx.Set(utils.TatHeaderXTatRefererLower, tatHeaders.tatReferer)
 
 	if user.IsAdmin {
 		log.Debugf("user %s isAdmin", user.Username)

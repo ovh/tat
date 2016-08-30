@@ -14,6 +14,9 @@ var (
 	// TatHeaderUsernameLower is a Header in lowercase
 	TatHeaderUsernameLower = strings.ToLower(TatHeaderUsername)
 
+	// TatHeaderXTatRefererLower contains tat microservice name & version "X-TAT-FROM"
+	TatHeaderXTatRefererLower = strings.ToLower("X-Tat-Referer")
+
 	// TatHeaderUsernameLowerDash is a Header in lowercase, and dash : tat-username
 	TatHeaderUsernameLowerDash = strings.Replace(TatHeaderUsernameLower, "_", "-", -1)
 
