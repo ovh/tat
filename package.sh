@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd api
 for GOOS in darwin linux ; do
     GOARCH=amd64
     architecture="${GOOS}-${GOARCH}"

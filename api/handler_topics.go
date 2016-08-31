@@ -1,0 +1,787 @@
+package main
+
+import (
+	"errors"
+	"fmt"
+	"net/http"
+	"strconv"
+	"strings"
+
+	log "github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
+	"github.com/ovh/tat"
+	groupDB "github.com/ovh/tat/api/group"
+	messageDB "github.com/ovh/tat/api/message"
+	presenceDB "github.com/ovh/tat/api/presence"
+	topicDB "github.com/ovh/tat/api/topic"
+	userDB "github.com/ovh/tat/api/user"
+)
+
+// TopicsController contains all methods about topics manipulation
+type TopicsController struct{}
+
+func (*TopicsController) buildCriteria(ctx *gin.Context, user *tat.User) *tat.TopicCriteria {
+	c := tat.TopicCriteria{}
+	skip, e := strconv.Atoi(ctx.DefaultQuery("skip", "0"))
+	if e != nil {
+		skip = 0
+	}
+	c.Skip = skip
+	limit, e2 := strconv.Atoi(ctx.DefaultQuery("limit", "500"))
+	if e2 != nil {
+		limit = 500
+	}
+	c.Limit = limit
+	c.IDTopic = ctx.Query("idTopic")
+	c.Topic = ctx.Query("topic")
+	if c.Topic != "" && !strings.HasPrefix(c.Topic, "/") {
+		c.Topic = "/" + c.Topic
+	}
+	c.Description = ctx.Query("description")
+	c.DateMinCreation = ctx.Query("dateMinCreation")
+	c.DateMaxCreation = ctx.Query("dateMaxCreation")
+	c.GetNbMsgUnread = ctx.Query("getNbMsgUnread")
+	c.OnlyFavorites = ctx.Query("onlyFavorites")
+	c.GetForTatAdmin = ctx.Query("getForTatAdmin")
+	c.TopicPath = ctx.Query("topicPath")
+
+	if c.OnlyFavorites == "true" {
+		c.Topic = strings.Join(user.FavoritesTopics, ",")
+	}
+	return &c
+}
+
+// List returns the list of topics that can be viewed by user
+func (t *TopicsController) List(ctx *gin.Context) {
+	var user = &tat.User{}
+	found, err := userDB.FindByUsername(user, getCtxUsername(ctx))
+	if !found {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
+		return
+	}
+	criteria := t.buildCriteria(ctx, user)
+	count, topics, err := topicDB.ListTopics(criteria, user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching topics."})
+		return
+	}
+
+	out := &tat.TopicsJSON{Topics: topics, Count: count}
+
+	if criteria.GetNbMsgUnread == "true" {
+		c := &tat.PresenceCriteria{
+			Username: user.Username,
+		}
+		count, presences, err := presenceDB.ListPresencesAllFields(c)
+		if err != nil {
+			ctx.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		unread := make(map[string]int)
+		knownPresence := false
+		for _, topic := range topics {
+			if tat.ArrayContains(user.OffNotificationsTopics, topic.Topic) {
+				continue
+			}
+			knownPresence = false
+			for _, presence := range presences {
+				if topic.Topic != presence.Topic {
+					continue
+				}
+				knownPresence = true
+				if topic.DateLastMessage > presence.DatePresence {
+					unread[presence.Topic] = 1
+				}
+				break
+			}
+			if !knownPresence {
+				unread[topic.Topic] = -1
+			}
+		}
+		out.TopicsMsgUnread = unread
+		out.CountTopicsMsgUnread = count
+	}
+	ctx.JSON(http.StatusOK, out)
+}
+
+// OneTopic returns only requested topic, and only if user has read access
+func (t *TopicsController) OneTopic(ctx *gin.Context) {
+	topicRequest, err := GetParam(ctx, "topic")
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while getting topic in param"})
+		return
+	}
+	var user = tat.User{}
+	found, err := userDB.FindByUsername(&user, getCtxUsername(ctx))
+	if !found {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
+		return
+	}
+	topic := &tat.Topic{}
+
+	if errfind := topicDB.FindByTopic(topic, topicRequest, user.IsAdmin, true, true, &user); errfind != nil {
+		topic, _, err = checkDMTopic(ctx, topicRequest)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + topicRequest + " does not exist"})
+			return
+		}
+	}
+
+	if isReadAccess := topicDB.IsUserReadAccess(topic, user); !isReadAccess {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "No Read Access to this topic: " + user.Username + " " + topic.Topic})
+		return
+	}
+
+	out := &tat.TopicJSON{Topic: topic}
+	ctx.JSON(http.StatusOK, out)
+}
+
+// Create creates a new topic
+func (*TopicsController) Create(ctx *gin.Context) {
+	var topicIn tat.TopicCreateJSON
+	ctx.Bind(&topicIn)
+
+	var user = tat.User{}
+	found, err := userDB.FindByUsername(&user, getCtxUsername(ctx))
+	if !found {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
+		return
+	}
+
+	var topic tat.Topic
+	topic.Topic = topicIn.Topic
+	topic.Description = topicIn.Description
+
+	err = topicDB.Insert(&topic, &user)
+	if err != nil {
+		log.Errorf("Error while InsertTopic %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, topic)
+}
+
+// Delete deletes requested topic only if user is Tat admin, or admin on topic
+func (t *TopicsController) Delete(ctx *gin.Context) {
+	topicRequest, err := GetParam(ctx, "topic")
+	if err != nil {
+		return
+	}
+
+	var user = tat.User{}
+	found, err := userDB.FindByUsername(&user, getCtxUsername(ctx))
+	if !found {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user"})
+		return
+	}
+
+	paramJSON := tat.ParamTopicUserJSON{
+		Topic:     topicRequest,
+		Username:  user.Username,
+		Recursive: false,
+	}
+
+	topic, e := t.preCheckUser(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+	// If user delete a Topic under /Private/username, no check or RW to delete
+	if !strings.HasPrefix(topic.Topic, "/Private/"+user.Username) {
+		// check if user is Tat admin or admin on this topic
+		hasRW := topicDB.IsUserAdmin(&topic, &user)
+		if !hasRW {
+			ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Errorf("No RW access to topic %s (to delete it)", topic.Topic)})
+			return
+		}
+	}
+
+	c := &tat.MessageCriteria{Topic: topic.Topic}
+	msgs, err := messageDB.ListMessages(c, "", topic)
+	if err != nil {
+		log.Errorf("Error while list Messages in Delete %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while list Messages in Delete topic"})
+		return
+	}
+
+	if len(msgs) > 0 {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete this topic, this topic have messages"})
+		return
+	}
+
+	if err = topicDB.Delete(&topic, &user); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, "")
+}
+
+// Truncate deletes all messages in a topic only if user is Tat admin, or admin on topic
+func (t *TopicsController) Truncate(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+	if e != nil {
+		return
+	}
+
+	nbRemoved, err := topicDB.Truncate(&topic)
+	if err != nil {
+		log.Errorf("Error while truncate topic %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error while truncate topic " + topic.Topic})
+		return
+	}
+	// 201 returns
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("%d messages removed", nbRemoved)})
+}
+
+// ComputeTags computes tags on one topic
+func (t *TopicsController) ComputeTags(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+	if e != nil {
+		return
+	}
+
+	nbComputed, err := topicDB.ComputeTags(&topic)
+	if err != nil {
+		log.Errorf("Error while compute tags on topic %s: %s", topic.Topic, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error while compute tags on topic " + topic.Topic})
+		return
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("%d tags computed", nbComputed)})
+}
+
+// ComputeLabels computes labels on one topic
+func (t *TopicsController) ComputeLabels(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+	if e != nil {
+		return
+	}
+
+	nbComputed, err := topicDB.ComputeLabels(&topic)
+	if err != nil {
+		log.Errorf("Error while compute labels on topic %s: %s", topic.Topic, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error while compute labels on topic " + topic.Topic})
+		return
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("%d labels computed", nbComputed)})
+}
+
+// TruncateTags clear tags on one topic
+func (t *TopicsController) TruncateTags(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+	if e != nil {
+		return
+	}
+
+	if err := topicDB.TruncateTags(&topic); err != nil {
+		log.Errorf("Error while clear tags on topic %s: %s", topic.Topic, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error while clear tags on topic " + topic.Topic})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("%d tags cleared", len(topic.Tags))})
+}
+
+// TruncateLabels clear labels on one topic
+func (t *TopicsController) TruncateLabels(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+	if e != nil {
+		return
+	}
+
+	if err := topicDB.TruncateLabels(&topic); err != nil {
+		log.Errorf("Error while clear labels on topic %s: %s", topic.Topic, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error while clear labels on topic " + topic.Topic})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("%d labels cleared", len(topic.Labels))})
+}
+
+// preCheckUser checks if user in paramJSON exists and if current user is admin on topic
+func (t *TopicsController) preCheckUser(ctx *gin.Context, paramJSON *tat.ParamTopicUserJSON) (tat.Topic, error) {
+	user := tat.User{}
+	found, err := userDB.FindByUsername(&user, paramJSON.Username)
+	if !found {
+		e := errors.New("username " + paramJSON.Username + " does not exist")
+		ctx.AbortWithError(http.StatusInternalServerError, e)
+		return tat.Topic{}, e
+	} else if err != nil {
+		e := errors.New("Error while fetching username username " + paramJSON.Username)
+		ctx.AbortWithError(http.StatusInternalServerError, e)
+		return tat.Topic{}, e
+	}
+	return t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+}
+
+// preCheckGroup checks if group exists and is admin on topic
+func (t *TopicsController) preCheckGroup(ctx *gin.Context, paramJSON *tat.ParamGroupJSON) (tat.Topic, error) {
+	if groupExists := groupDB.IsGroupnameExists(paramJSON.Groupname); !groupExists {
+		e := errors.New("groupname" + paramJSON.Groupname + " does not exist")
+		ctx.AbortWithError(http.StatusInternalServerError, e)
+		return tat.Topic{}, e
+	}
+	return t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
+}
+
+func (t *TopicsController) preCheckUserAdminOnTopic(ctx *gin.Context, topicName string) (tat.Topic, error) {
+	topic := tat.Topic{}
+	if errfind := topicDB.FindByTopic(&topic, topicName, true, false, false, nil); errfind != nil {
+		e := errors.New(errfind.Error())
+		ctx.AbortWithError(http.StatusInternalServerError, e)
+		return topic, e
+	}
+
+	if isTatAdmin(ctx) { // if Tat admin, ok
+		return topic, nil
+	}
+
+	user, err := PreCheckUser(ctx)
+	if err != nil {
+		return tat.Topic{}, err
+	}
+
+	if !topicDB.IsUserAdmin(&topic, &user) {
+		e := fmt.Errorf("user %s is not admin on topic %s", user.Username, topic.Topic)
+		ctx.JSON(http.StatusForbidden, gin.H{"error": e})
+		return tat.Topic{}, e
+	}
+
+	return topic, nil
+}
+
+// AddRoUser add a readonly user on selected topic
+func (t *TopicsController) AddRoUser(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUser(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+	err := topicDB.AddRoUser(&topic, getCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
+	if err != nil {
+		log.Errorf("Error while adding read only user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// AddRwUser add a read / write user on selected topic
+func (t *TopicsController) AddRwUser(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUser(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+
+	err := topicDB.AddRwUser(&topic, getCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
+	if err != nil {
+		log.Errorf("Error while adding read write user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// AddAdminUser add an admin user on selected topic
+func (t *TopicsController) AddAdminUser(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUser(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+
+	if err := topicDB.AddAdminUser(&topic, getCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive); err != nil {
+		log.Errorf("Error while adding admin user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// RemoveRoUser removes a readonly user on selected topic
+func (t *TopicsController) RemoveRoUser(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUser(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+
+	err := topicDB.RemoveRoUser(&topic, getCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive)
+	if err != nil {
+		log.Errorf("Error while removing read only user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, "")
+}
+
+// RemoveRwUser removes a read / write user on selected topic
+func (t *TopicsController) RemoveRwUser(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUser(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+
+	if err := topicDB.RemoveRwUser(&topic, getCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive); err != nil {
+		log.Errorf("Error while removing read write user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// RemoveAdminUser removes an admin user on selected topic
+func (t *TopicsController) RemoveAdminUser(ctx *gin.Context) {
+	var paramJSON tat.ParamTopicUserJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckUser(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+
+	if err := topicDB.RemoveAdminUser(&topic, getCtxUsername(ctx), paramJSON.Username, paramJSON.Recursive); err != nil {
+		log.Errorf("Error while removing admin user: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// AddRoGroup add a readonly group on selected topic
+func (t *TopicsController) AddRoGroup(ctx *gin.Context) {
+	var paramJSON tat.ParamGroupJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckGroup(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+	if err := topicDB.AddRoGroup(&topic, getCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive); err != nil {
+		log.Errorf("Error while adding admin read only group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// AddRwGroup add a read write group on selected topic
+func (t *TopicsController) AddRwGroup(ctx *gin.Context) {
+	var paramJSON tat.ParamGroupJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckGroup(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+
+	if err := topicDB.AddRwGroup(&topic, getCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive); err != nil {
+		log.Errorf("Error while adding admin read write group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// AddAdminGroup add an admin group on selected topic
+func (t *TopicsController) AddAdminGroup(ctx *gin.Context) {
+	var paramJSON tat.ParamGroupJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckGroup(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+
+	if err := topicDB.AddAdminGroup(&topic, getCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive); err != nil {
+		log.Errorf("Error while adding admin admin group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// AddParameter add a parameter on selected topic
+func (t *TopicsController) AddParameter(ctx *gin.Context) {
+	var topicParameterBind tat.TopicParameterJSON
+	ctx.Bind(&topicParameterBind)
+	topic, e := t.preCheckUserAdminOnTopic(ctx, topicParameterBind.Topic)
+	if e != nil {
+		return
+	}
+
+	err := topicDB.AddParameter(&topic, getCtxUsername(ctx), topicParameterBind.Key, topicParameterBind.Value, topicParameterBind.Recursive)
+	if err != nil {
+		log.Errorf("Error while adding parameter: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// RemoveParameter add a parameter on selected topic
+func (t *TopicsController) RemoveParameter(ctx *gin.Context) {
+	var topicParameterBind tat.TopicParameterJSON
+	ctx.Bind(&topicParameterBind)
+
+	topic, e := t.preCheckUserAdminOnTopic(ctx, topicParameterBind.Topic)
+	if e != nil {
+		return
+	}
+
+	err := topicDB.RemoveParameter(&topic, getCtxUsername(ctx), topicParameterBind.Key, topicParameterBind.Value, topicParameterBind.Recursive)
+	if err != nil {
+		log.Errorf("Error while removing parameter: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, "")
+}
+
+// RemoveRoGroup removes a read only group on selected topic
+func (t *TopicsController) RemoveRoGroup(ctx *gin.Context) {
+	var paramJSON tat.ParamGroupJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckGroup(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+
+	err := topicDB.RemoveRoGroup(&topic, getCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
+	if err != nil {
+		log.Errorf("Error while removing read only group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, "")
+}
+
+// RemoveRwGroup removes a read write group on selected topic
+func (t *TopicsController) RemoveRwGroup(ctx *gin.Context) {
+	var paramJSON tat.ParamGroupJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckGroup(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+
+	err := topicDB.RemoveRwGroup(&topic, getCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
+	if err != nil {
+		log.Errorf("Error while removing read write group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, "")
+}
+
+// RemoveAdminGroup removes an admin group on selected topic
+func (t *TopicsController) RemoveAdminGroup(ctx *gin.Context) {
+	var paramJSON tat.ParamGroupJSON
+	ctx.Bind(&paramJSON)
+	topic, e := t.preCheckGroup(ctx, &paramJSON)
+	if e != nil {
+		return
+	}
+
+	err := topicDB.RemoveAdminGroup(&topic, getCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive)
+	if err != nil {
+		log.Errorf("Error while removing admin group: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, "")
+}
+
+type paramsJSON struct {
+	Topic                string               `json:"topic"`
+	MaxLength            int                  `json:"maxlength"`
+	CanForceDate         bool                 `json:"canForceDate"`
+	CanUpdateMsg         bool                 `json:"canUpdateMsg"`
+	CanDeleteMsg         bool                 `json:"canDeleteMsg"`
+	CanUpdateAllMsg      bool                 `json:"canUpdateAllMsg"`
+	CanDeleteAllMsg      bool                 `json:"canDeleteAllMsg"`
+	AdminCanUpdateAllMsg bool                 `json:"adminCanUpdateAllMsg"`
+	AdminCanDeleteAllMsg bool                 `json:"adminCanDeleteAllMsg"`
+	IsROPublic           bool                 `json:"isROPublic"`
+	IsAutoComputeTags    bool                 `json:"isAutoComputeTags"`
+	IsAutoComputeLabels  bool                 `json:"isAutoComputeLabels"`
+	Recursive            bool                 `json:"recursive"`
+	Parameters           []tat.TopicParameter `json:"parameters"`
+}
+
+// SetParam update Topic Parameters : MaxLength, CanForeceDate, CanUpdateMsg, CanDeleteMsg, CanUpdateAllMsg, CanDeleteAllMsg, AdminCanDeleteAllMsg, IsROPublic
+// admin only, except on Private topic
+func (t *TopicsController) SetParam(ctx *gin.Context) {
+	var paramsBind paramsJSON
+	ctx.Bind(&paramsBind)
+
+	topic := tat.Topic{}
+	var err error
+	if strings.HasPrefix(paramsBind.Topic, "/Private/"+getCtxUsername(ctx)) {
+		if errFind := topicDB.FindByTopic(&topic, paramsBind.Topic, false, false, false, nil); errFind != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching topic /Private/" + getCtxUsername(ctx)})
+			return
+		}
+	} else {
+		topic, err = t.preCheckUserAdminOnTopic(ctx, paramsBind.Topic)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	err = topicDB.SetParam(&topic, getCtxUsername(ctx),
+		paramsBind.Recursive,
+		paramsBind.MaxLength,
+		paramsBind.CanForceDate,
+		paramsBind.CanUpdateMsg,
+		paramsBind.CanDeleteMsg,
+		paramsBind.CanUpdateAllMsg,
+		paramsBind.CanDeleteAllMsg,
+		paramsBind.AdminCanUpdateAllMsg,
+		paramsBind.AdminCanDeleteAllMsg,
+		paramsBind.IsROPublic,
+		paramsBind.IsAutoComputeTags,
+		paramsBind.IsAutoComputeLabels,
+		paramsBind.Parameters)
+
+	if err != nil {
+		log.Errorf("Error while setting parameters: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("Topic %s updated", topic.Topic)})
+}
+
+// AllComputeTags Compute tags on all topics
+func (t *TopicsController) AllComputeTags(ctx *gin.Context) {
+	// It's only for admin, admin already checked in route
+	info, err := topicDB.AllTopicsComputeTags()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": info})
+}
+
+// AllComputeLabels Compute tags on all topics
+func (t *TopicsController) AllComputeLabels(ctx *gin.Context) {
+	// It's only for admin, admin already checked in route
+	info, err := topicDB.AllTopicsComputeLabels()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": info})
+}
+
+type attributeJSON struct {
+	ParamName  string `json:"paramName"`
+	ParamValue string `json:"paramValue"`
+}
+
+// AllSetParam set a param on all topics
+func (t *TopicsController) AllSetParam(ctx *gin.Context) {
+	// It's only for admin, admin already checked in route
+	var param attributeJSON
+	ctx.Bind(&param)
+
+	info, err := topicDB.AllTopicsSetParam(param.ParamName, param.ParamValue)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": info})
+}
+
+// AllComputeReplies computes replies on all topics
+func (t *TopicsController) AllComputeReplies(ctx *gin.Context) {
+	// It's only for admin, admin already checked in route
+	var param attributeJSON
+	ctx.Bind(&param)
+
+	info, err := messageDB.AllTopicsComputeReplies()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": info})
+}
+
+// MigrateToDedicatedTopic migrates a topic to dedicated collection on mongo
+func (t *TopicsController) MigrateToDedicatedTopic(ctx *gin.Context) {
+	topicRequest, err := GetParam(ctx, "topic")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	topic := tat.Topic{}
+	if errfind := topicDB.FindByTopic(&topic, topicRequest, true, false, false, nil); errfind != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if errMigrate := topicDB.MigrateToDedicatedTopic(&topic); errMigrate != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": errMigrate.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("%s is now dedicated", topicRequest)})
+}
+
+// MigrateMessagesForDedicatedTopic migrates all msg of a topic to a dedicated collection
+func (t *TopicsController) MigrateMessagesForDedicatedTopic(ctx *gin.Context) {
+	limit, e2 := strconv.Atoi(ctx.DefaultQuery("limit", "500"))
+	if e2 != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": e2.Error()})
+		return
+	}
+
+	topicRequest, err := GetParam(ctx, "topic")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	topic := tat.Topic{}
+	if errfind := topicDB.FindByTopic(&topic, topicRequest, true, false, false, nil); errfind != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": errfind.Error()})
+		return
+	}
+
+	nMigrate, err := messageDB.MigrateMessagesToDedicatedTopic(&topic, limit)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error after %d migrate, err:%s", nMigrate, err.Error())})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("No error after migrate %d messages (%d asked for migrate)", nMigrate, limit)})
+}
