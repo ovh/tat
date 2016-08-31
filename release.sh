@@ -38,8 +38,8 @@ then
         echo "Error: version mismatch '$current_tag' != 'v$version'"
     fi
 else
-    sed -i.bak "s/const VERSION =.*/const VERSION = \"$version\"/g" controllers/system.go
-    rm -f controllers/system.go.bak
+    sed -i.bak "s/const VERSION =.*/const VERSION = \"$version\"/g" api/system.go
+    rm -f api/system.go.bak
 
     sed -i.bak "s/TAT_VERSION=.*/TAT_VERSION=\"$version\" \&\& \\\/g" Dockerfile
     rm -f Dockerfile.bak

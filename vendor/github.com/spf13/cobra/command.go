@@ -21,6 +21,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	flag "github.com/spf13/pflag"
@@ -103,11 +104,13 @@ type Command struct {
 	commandsMaxUseLen         int
 	commandsMaxCommandPathLen int
 	commandsMaxNameLen        int
+	// is commands slice are sorted or not
+	commandsAreSorted bool
 
 	flagErrorBuf *bytes.Buffer
 
 	args          []string                 // actual args parsed from flags
-	output        *io.Writer               // nil means stderr; use Out() method instead
+	output        *io.Writer               // out writer if set in SetOutput(w)
 	usageFunc     func(*Command) error     // Usage can be defined by application
 	usageTemplate string                   // Can be defined by Application
 	helpTemplate  string                   // Can be defined by Application
@@ -120,31 +123,15 @@ type Command struct {
 	DisableSuggestions bool
 	// If displaying suggestions, allows to set the minimum levenshtein distance to display, must be > 0
 	SuggestionsMinimumDistance int
+
+	// Disable the flag parsing. If this is true all flags will be passed to the command as arguments.
+	DisableFlagParsing bool
 }
 
 // os.Args[1:] by default, if desired, can be overridden
 // particularly useful when testing.
 func (c *Command) SetArgs(a []string) {
 	c.args = a
-}
-
-func (c *Command) getOut(def io.Writer) io.Writer {
-	if c.output != nil {
-		return *c.output
-	}
-
-	if c.HasParent() {
-		return c.parent.Out()
-	}
-	return def
-}
-
-func (c *Command) Out() io.Writer {
-	return c.getOut(os.Stderr)
-}
-
-func (c *Command) getOutOrStdout() io.Writer {
-	return c.getOut(os.Stdout)
 }
 
 // SetOutput sets the destination for usage and error messages.
@@ -189,6 +176,26 @@ func (c *Command) SetGlobalNormalizationFunc(n func(f *flag.FlagSet, name string
 	}
 }
 
+func (c *Command) OutOrStdout() io.Writer {
+	return c.getOut(os.Stdout)
+}
+
+func (c *Command) OutOrStderr() io.Writer {
+	return c.getOut(os.Stderr)
+}
+
+func (c *Command) getOut(def io.Writer) io.Writer {
+	if c.output != nil {
+		return *c.output
+	}
+	if c.HasParent() {
+		return c.parent.getOut(def)
+	}
+	return def
+}
+
+// UsageFunc returns either the function set by SetUsageFunc for this command
+// or a parent, or it returns a default usage function
 func (c *Command) UsageFunc() (f func(*Command) error) {
 	if c.usageFunc != nil {
 		return c.usageFunc
@@ -198,16 +205,24 @@ func (c *Command) UsageFunc() (f func(*Command) error) {
 		return c.parent.UsageFunc()
 	}
 	return func(c *Command) error {
-		err := tmpl(c.Out(), c.UsageTemplate(), c)
+		c.mergePersistentFlags()
+		err := tmpl(c.OutOrStderr(), c.UsageTemplate(), c)
 		if err != nil {
-			fmt.Print(err)
+			c.Println(err)
 		}
 		return err
 	}
 }
 
+// Output the usage for the command
+// Used when a user provides invalid input
+// Can be defined by user by overriding UsageFunc
+func (c *Command) Usage() error {
+	return c.UsageFunc()(c)
+}
+
 // HelpFunc returns either the function set by SetHelpFunc for this command
-// or a parent, or it returns a function which calls c.Help()
+// or a parent, or it returns a function with default help behavior
 func (c *Command) HelpFunc() func(*Command, []string) {
 	cmd := c
 	for cmd != nil {
@@ -217,11 +232,29 @@ func (c *Command) HelpFunc() func(*Command, []string) {
 		cmd = cmd.parent
 	}
 	return func(*Command, []string) {
-		err := c.Help()
+		c.mergePersistentFlags()
+		err := tmpl(c.OutOrStdout(), c.HelpTemplate(), c)
 		if err != nil {
 			c.Println(err)
 		}
 	}
+}
+
+// Output the help for the command
+// Used when a user calls help [command]
+// Can be defined by user by overriding HelpFunc
+func (c *Command) Help() error {
+	c.HelpFunc()(c, []string{})
+	return nil
+}
+
+func (c *Command) UsageString() string {
+	tmpOutput := c.output
+	bb := new(bytes.Buffer)
+	c.SetOutput(bb)
+	c.Usage()
+	c.output = tmpOutput
+	return bb.String()
 }
 
 var minUsagePadding = 25
@@ -531,12 +564,17 @@ func (c *Command) execute(a []string) (err error) {
 		c.Println("\"help\" flag declared as non-bool. Please correct your code")
 		return err
 	}
+
 	if helpVal || !c.Runnable() {
 		return flag.ErrHelp
 	}
 
 	c.preRun()
+
 	argWoFlags := c.Flags().Args()
+	if c.DisableFlagParsing {
+		argWoFlags = a
+	}
 
 	for p := c; p != nil; p = p.Parent() {
 		if p.PersistentPreRunE != nil {
@@ -699,8 +737,7 @@ func (c *Command) initHelpCmd() {
 					c.Printf("Unknown help topic %#q.", args)
 					c.Root().Usage()
 				} else {
-					helpFunc := cmd.HelpFunc()
-					helpFunc(cmd, args)
+					cmd.Help()
 				}
 			},
 		}
@@ -714,8 +751,20 @@ func (c *Command) ResetCommands() {
 	c.helpCommand = nil
 }
 
-//Commands returns a slice of child commands.
+// Sorts commands by their names
+type commandSorterByName []*Command
+
+func (c commandSorterByName) Len() int           { return len(c) }
+func (c commandSorterByName) Swap(i, j int)      { c[i], c[j] = c[j], c[i] }
+func (c commandSorterByName) Less(i, j int) bool { return c[i].Name() < c[j].Name() }
+
+// Commands returns a sorted slice of child commands.
 func (c *Command) Commands() []*Command {
+	// do not sort commands if it already sorted or sorting was disabled
+	if EnableCommandSorting && !c.commandsAreSorted {
+		sort.Sort(commandSorterByName(c.commands))
+		c.commandsAreSorted = true
+	}
 	return c.commands
 }
 
@@ -744,6 +793,7 @@ func (c *Command) AddCommand(cmds ...*Command) {
 			x.SetGlobalNormalizationFunc(c.globNormFunc)
 		}
 		c.commands = append(c.commands, x)
+		c.commandsAreSorted = false
 	}
 }
 
@@ -781,48 +831,21 @@ main:
 	}
 }
 
-// Print is a convenience method to Print to the defined output
+// Print is a convenience method to Print to the defined output, fallback to Stderr if not set
 func (c *Command) Print(i ...interface{}) {
-	fmt.Fprint(c.Out(), i...)
+	fmt.Fprint(c.OutOrStderr(), i...)
 }
 
-// Println is a convenience method to Println to the defined output
+// Println is a convenience method to Println to the defined output, fallback to Stderr if not set
 func (c *Command) Println(i ...interface{}) {
 	str := fmt.Sprintln(i...)
 	c.Print(str)
 }
 
-// Printf is a convenience method to Printf to the defined output
+// Printf is a convenience method to Printf to the defined output, fallback to Stderr if not set
 func (c *Command) Printf(format string, i ...interface{}) {
 	str := fmt.Sprintf(format, i...)
 	c.Print(str)
-}
-
-// Output the usage for the command
-// Used when a user provides invalid input
-// Can be defined by user by overriding UsageFunc
-func (c *Command) Usage() error {
-	c.mergePersistentFlags()
-	err := c.UsageFunc()(c)
-	return err
-}
-
-// Output the help for the command
-// Used when a user calls help [command]
-// by the default HelpFunc in the commander
-func (c *Command) Help() error {
-	c.mergePersistentFlags()
-	err := tmpl(c.getOutOrStdout(), c.HelpTemplate(), c)
-	return err
-}
-
-func (c *Command) UsageString() string {
-	tmpOutput := c.output
-	bb := new(bytes.Buffer)
-	c.SetOutput(bb)
-	c.Usage()
-	c.output = tmpOutput
-	return bb.String()
 }
 
 // CommandPath returns the full path to this command.
@@ -970,7 +993,7 @@ func (c *Command) IsHelpCommand() bool {
 	return true
 }
 
-// HasHelpSubCommands determines if a command has any avilable 'help' sub commands
+// HasHelpSubCommands determines if a command has any available 'help' sub commands
 // that need to be shown in the usage/help default template under 'additional help
 // topics'
 func (c *Command) HasHelpSubCommands() bool {
@@ -1023,6 +1046,19 @@ func (c *Command) Flags() *flag.FlagSet {
 		c.flags.SetOutput(c.flagErrorBuf)
 	}
 	return c.flags
+}
+
+// LocalNonPersistentFlags are flags specific to this command which will NOT persist to subcommands
+func (c *Command) LocalNonPersistentFlags() *flag.FlagSet {
+	persistentFlags := c.PersistentFlags()
+
+	out := flag.NewFlagSet(c.Name(), flag.ContinueOnError)
+	c.LocalFlags().VisitAll(func(f *flag.Flag) {
+		if persistentFlags.Lookup(f.Name) == nil {
+			out.AddFlag(f)
+		}
+	})
+	return out
 }
 
 // Get the local FlagSet specifically set in the current command
@@ -1167,6 +1203,9 @@ func (c *Command) persistentFlag(name string) (flag *flag.Flag) {
 
 // ParseFlags parses persistent flag tree & local flags
 func (c *Command) ParseFlags(args []string) (err error) {
+	if c.DisableFlagParsing {
+		return nil
+	}
 	c.mergePersistentFlags()
 	err = c.Flags().Parse(args)
 	return
