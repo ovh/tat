@@ -1,16 +1,19 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/ovh/tat/cache"
 	"github.com/ovh/tat/utils"
 	"github.com/spf13/viper"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"gopkg.in/redis.v4"
 )
 
 // Contact User Struct.
@@ -447,10 +450,24 @@ func (user *User) FindByUsernameAndEmail(username, email string) error {
 
 //FindByUsername retrieve information from user with username
 func (user *User) FindByUsername(username string) (bool, error) {
-	err := Store().clUsers.
+	//Load from cache
+	bytes, err := cache.Client().Get("tat:users:" + username).Bytes()
+	if err != nil && err != redis.Nil {
+		log.Warnf("Unable to get user from cache")
+		goto loadFromDB
+	}
+	json.Unmarshal(bytes, user)
+	//If the user has beeen successfully loaded
+	if user.Username != "" {
+		log.Debugf("FindByUsername loaded from Cache")
+		return true, nil
+	}
+
+loadFromDB:
+	err = Store().clUsers.
 		Find(bson.M{"username": username}).
 		Select(user.getFieldsExceptAuth()).
-		One(&user)
+		One(user)
 
 	if err == mgo.ErrNotFound {
 		log.Infof("FindByUsername username %s not found", username)
@@ -459,6 +476,16 @@ func (user *User) FindByUsername(username string) (bool, error) {
 		log.Errorf("Error while fetching user with username %s err:%s", username, err)
 		return false, err
 	}
+
+	//Push to cache
+	bytes, err = json.Marshal(user)
+	if err != nil {
+		return false, err
+	}
+
+	log.Debugf("FindByUsername set %s in cache", username)
+	cache.Client().Set("tat:users:"+username, string(bytes), 12*time.Hour)
+
 	return true, nil
 }
 
