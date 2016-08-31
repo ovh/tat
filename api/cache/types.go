@@ -60,10 +60,8 @@ type Cache interface {
 	PTTL(key string) *redis.DurationCmd
 	Persist(key string) *redis.BoolCmd
 	Pipeline() *redis.Pipeline
-	Pipelined(fn func(*redis.Pipeline) error) ([]redis.Cmder, error)
 	PubSubChannels(pattern string) *redis.StringSliceCmd
 	PubSubNumPat() *redis.IntCmd
-	PubSubNumSub(channels ...string) *redis.StringIntMapCmd
 	Publish(channel, message string) *redis.IntCmd
 	RPop(key string) *redis.StringCmd
 	RPopLPush(source, destination string) *redis.StringCmd
@@ -95,7 +93,6 @@ type Cache interface {
 	SetRange(key string, offset int64, value string) *redis.IntCmd
 	SetXX(key string, value interface{}, expiration time.Duration) *redis.BoolCmd
 	Sort(key string, sort redis.Sort) *redis.StringSliceCmd
-	SortInterfaces(key string, sort redis.Sort) *redis.SliceCmd
 	StrLen(key string) *redis.IntCmd
 	String() string
 	Subscribe(channels ...string) (*redis.PubSub, error)

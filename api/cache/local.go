@@ -136,7 +136,7 @@ func (c *LocalCache) LTrim(key string, start, stop int64) *redis.StatusCmd {
 	return redis.NewStatusResult("OK", nil)
 }
 func (c *LocalCache) MGet(keys ...string) *redis.SliceCmd {
-	return *redis.NewSliceResult([]interface{}{}, nil)
+	return redis.NewSliceResult([]interface{}{}, nil)
 }
 func (c *LocalCache) MSet(pairs ...interface{}) *redis.StatusCmd {
 	return redis.NewStatusResult("OK", nil)
@@ -151,31 +151,25 @@ func (c *LocalCache) PExpireAt(key string, tm time.Time) *redis.BoolCmd {
 	return redis.NewBoolResult(false, nil)
 }
 func (c *LocalCache) Ping() *redis.StatusCmd {
-
+	return redis.NewStatusResult("OK", nil)
 }
 func (c *LocalCache) PSubscribe(channels ...string) (*redis.PubSub, error) {
-
+	return &redis.PubSub{}, nil
 }
 func (c *LocalCache) PTTL(key string) *redis.DurationCmd {
-
+	return redis.NewDurationResult(time.Second, nil)
 }
 func (c *LocalCache) Persist(key string) *redis.BoolCmd {
 	return redis.NewBoolResult(false, nil)
 }
 func (c *LocalCache) Pipeline() *redis.Pipeline {
-
-}
-func (c *LocalCache) Pipelined(fn func(*redis.Pipeline) error) ([]redis.Cmder, error) {
-
+	return &redis.Pipeline{}
 }
 func (c *LocalCache) PubSubChannels(pattern string) *redis.StringSliceCmd {
 	return redis.NewStringSliceResult([]string{}, nil)
 }
 func (c *LocalCache) PubSubNumPat() *redis.IntCmd {
 	return redis.NewIntResult(0, nil)
-}
-func (c *LocalCache) PubSubNumSub(channels ...string) *redis.StringIntMapCmd {
-
 }
 func (c *LocalCache) Publish(channel, message string) *redis.IntCmd {
 	return redis.NewIntResult(0, nil)
@@ -235,7 +229,7 @@ func (c *LocalCache) SRandMember(key string) *redis.StringCmd {
 	return redis.NewStringResult([]byte{}, nil)
 }
 func (c *LocalCache) SRandMemberN(key string, count int64) *redis.StringSliceCmd {
-
+	return redis.NewStringSliceResult([]string{}, nil)
 }
 func (c *LocalCache) SRem(key string, members ...interface{}) *redis.IntCmd {
 	return redis.NewIntResult(0, nil)
@@ -270,20 +264,17 @@ func (c *LocalCache) SetXX(key string, value interface{}, expiration time.Durati
 func (c *LocalCache) Sort(key string, sort redis.Sort) *redis.StringSliceCmd {
 	return redis.NewStringSliceResult([]string{}, nil)
 }
-func (c *LocalCache) SortInterfaces(key string, sort redis.Sort) *redis.SliceCmd {
-
-}
 func (c *LocalCache) StrLen(key string) *redis.IntCmd {
 	return redis.NewIntResult(0, nil)
 }
 func (c *LocalCache) String() string {
-
+	return ""
 }
 func (c *LocalCache) Subscribe(channels ...string) (*redis.PubSub, error) {
-
+	return &redis.PubSub{}, nil
 }
 func (c *LocalCache) TTL(key string) *redis.DurationCmd {
-
+	return redis.NewDurationResult(time.Second, nil)
 }
 func (c *LocalCache) Type(key string) *redis.StatusCmd {
 	return redis.NewStatusResult("OK", nil)
@@ -313,16 +304,16 @@ func (c *LocalCache) ZCount(key, min, max string) *redis.IntCmd {
 	return redis.NewIntResult(0, nil)
 }
 func (c *LocalCache) ZIncr(key string, member redis.Z) *redis.FloatCmd {
-
+	return redis.NewFloatResult(0.0, nil)
 }
 func (c *LocalCache) ZIncrBy(key string, increment float64, member string) *redis.FloatCmd {
-
+	return redis.NewFloatResult(0.0, nil)
 }
 func (c *LocalCache) ZIncrNX(key string, member redis.Z) *redis.FloatCmd {
-
+	return redis.NewFloatResult(0.0, nil)
 }
 func (c *LocalCache) ZIncrXX(key string, member redis.Z) *redis.FloatCmd {
-
+	return redis.NewFloatResult(0.0, nil)
 }
 func (c *LocalCache) ZInterStore(destination string, store redis.ZStore, keys ...string) *redis.IntCmd {
 	return redis.NewIntResult(0, nil)
@@ -340,17 +331,29 @@ func (c *LocalCache) ZRangeByScore(key string, opt redis.ZRangeBy) *redis.String
 	return redis.NewStringSliceResult([]string{}, nil)
 }
 
-func (c *LocalCache) ZRangeByScoreWithScores(key string, opt redis.ZRangeBy) *redis.ZSliceCmd {}
+func (c *LocalCache) ZRangeByScoreWithScores(key string, opt redis.ZRangeBy) *redis.ZSliceCmd {
+	return redis.NewZSliceCmdResult([]redis.Z{}, nil)
+}
 
-func (c *LocalCache) ZRangeWithScores(key string, start, stop int64) *redis.ZSliceCmd {}
+func (c *LocalCache) ZRangeWithScores(key string, start, stop int64) *redis.ZSliceCmd {
+	return redis.NewZSliceCmdResult([]redis.Z{}, nil)
+}
 
-func (c *LocalCache) ZRank(key, member string) *redis.IntCmd {}
+func (c *LocalCache) ZRank(key, member string) *redis.IntCmd {
+	return redis.NewIntResult(0, nil)
+}
 
-func (c *LocalCache) ZRem(key string, members ...interface{}) *redis.IntCmd {}
+func (c *LocalCache) ZRem(key string, members ...interface{}) *redis.IntCmd {
+	return redis.NewIntResult(0, nil)
+}
 
-func (c *LocalCache) ZRemRangeByRank(key string, start, stop int64) *redis.IntCmd {}
+func (c *LocalCache) ZRemRangeByRank(key string, start, stop int64) *redis.IntCmd {
+	return redis.NewIntResult(0, nil)
+}
 
-func (c *LocalCache) ZRemRangeByScore(key, min, max string) *redis.IntCmd {}
+func (c *LocalCache) ZRemRangeByScore(key, min, max string) *redis.IntCmd {
+	return redis.NewIntResult(0, nil)
+}
 
 func (c *LocalCache) ZRevRange(key string, start, stop int64) *redis.StringSliceCmd {
 	return redis.NewStringSliceResult([]string{}, nil)
@@ -364,14 +367,24 @@ func (c *LocalCache) ZRevRangeByScore(key string, opt redis.ZRangeBy) *redis.Str
 	return redis.NewStringSliceResult([]string{}, nil)
 }
 
-func (c *LocalCache) ZRevRangeByScoreWithScores(key string, opt redis.ZRangeBy) *redis.ZSliceCmd {}
+func (c *LocalCache) ZRevRangeByScoreWithScores(key string, opt redis.ZRangeBy) *redis.ZSliceCmd {
+	return redis.NewZSliceCmdResult([]redis.Z{}, nil)
+}
 
-func (c *LocalCache) ZRevRangeWithScores(key string, start, stop int64) *redis.ZSliceCmd {}
+func (c *LocalCache) ZRevRangeWithScores(key string, start, stop int64) *redis.ZSliceCmd {
+	return redis.NewZSliceCmdResult([]redis.Z{}, nil)
+}
 
-func (c *LocalCache) ZRevRank(key, member string) *redis.IntCmd {}
+func (c *LocalCache) ZRevRank(key, member string) *redis.IntCmd {
+	return redis.NewIntResult(0, nil)
+}
 
 func (c *LocalCache) ZScan(key string, cursor uint64, match string, count int64) redis.Scanner {
 	return redis.Scanner{}
 }
-func (c *LocalCache) ZScore(key, member string) *redis.FloatCmd                                 {}
-func (c *LocalCache) ZUnionStore(dest string, store redis.ZStore, keys ...string) *redis.IntCmd {}
+func (c *LocalCache) ZScore(key, member string) *redis.FloatCmd {
+	return redis.NewFloatResult(0.0, nil)
+}
+func (c *LocalCache) ZUnionStore(dest string, store redis.ZStore, keys ...string) *redis.IntCmd {
+	return redis.NewIntResult(0, nil)
+}

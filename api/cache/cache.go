@@ -23,7 +23,10 @@ func Client() Cache {
 
 	if redisHosts == "" {
 		//Mode in memory
+		instance = &LocalCache{}
+		goto testInstance
 	}
+
 	if len(redisHostsArray) > 1 {
 		//Mode in cluster
 	} else {
