@@ -48,5 +48,13 @@ testInstance:
 
 //Key convert string array in redis key
 func Key(s ...string) string {
+	var escape = func(s string) string {
+		return strings.Replace(s, ":", "_", -1)
+	}
+
+	for i := range s {
+		s[i] = escape(s[i])
+	}
+
 	return strings.Join(s, ":")
 }
