@@ -2,7 +2,10 @@ package tat
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
+
+	"github.com/ovh/tat/api/cache"
 )
 
 // Topic struct
@@ -58,6 +61,54 @@ type TopicCriteria struct {
 	GetForTatAdmin       string
 	GetForAllTasksTopics bool
 	Group                string
+}
+
+// CacheKey returns cacke key value
+func (t *TopicCriteria) CacheKey() string {
+	if t == nil {
+		return ""
+	}
+	var s = []string{}
+	if t.Skip != 0 {
+		s = append(s, "skip="+strconv.Itoa(t.Skip))
+	}
+	if t.Limit != 0 {
+		s = append(s, "limit="+strconv.Itoa(t.Limit))
+	}
+	if t.IDTopic != "" {
+		s = append(s, "id_topic="+t.IDTopic)
+	}
+	if t.Topic != "" {
+		s = append(s, "topic="+t.Topic)
+	}
+	if t.TopicPath != "" {
+		s = append(s, "topic_path="+t.TopicPath)
+	}
+	if t.Description != "" {
+		s = append(s, "description="+t.Description)
+	}
+	if t.DateMinCreation != "" {
+		s = append(s, "date_min_creation="+t.DateMinCreation)
+	}
+	if t.DateMaxCreation != "" {
+		s = append(s, "date_max_creation="+t.DateMaxCreation)
+	}
+	if t.GetNbMsgUnread != "" {
+		s = append(s, "get_nb_msg_unread="+t.GetNbMsgUnread)
+	}
+	if t.OnlyFavorites != "" {
+		s = append(s, "only_favorites="+t.OnlyFavorites)
+	}
+	if t.GetForTatAdmin != "" {
+		s = append(s, "get_for_tat_admin="+t.GetForTatAdmin)
+	}
+	if t.GetForAllTasksTopics {
+		s = append(s, "get_for_all_tasks_topics="+strconv.FormatBool(t.GetForAllTasksTopics))
+	}
+	if t.Group != "" {
+		s = append(s, "group="+t.Group)
+	}
+	return cache.Key(s...)
 }
 
 type ParamTopicUserJSON struct {

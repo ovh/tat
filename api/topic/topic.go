@@ -1,6 +1,7 @@
 package topic
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
+	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/group"
 	"github.com/ovh/tat/api/store"
 	"gopkg.in/mgo.v2"
@@ -203,19 +205,33 @@ func FindAllTopicsWithCollections() ([]tat.Topic, error) {
 }
 
 // ListTopics returns list of topics, matching criterias
-func ListTopics(criteria *tat.TopicCriteria, user *tat.User) (int, []tat.Topic, error) {
-	var topics []tat.Topic
+func ListTopics(criteria *tat.TopicCriteria, u *tat.User) (int, []tat.Topic, error) {
+	var topics, topicsUser, topicsMember []tat.Topic
 
-	cursor, errl := listTopicsCursor(criteria, user)
+	k := cache.Key("tat", "users", u.Username, "topics", "list_topics", criteria.CacheKey())
+	kcount := cache.Key("tat", "users", u.Username, "topics", "count_topics", criteria.CacheKey())
+
+	bytes, _ := cache.Client().Get(k).Bytes()
+	if len(bytes) > 0 {
+		json.Unmarshal(bytes, &topics)
+	}
+
+	ccount, _ := cache.Client().Get(kcount).Int64()
+	if len(topics) > 0 && ccount > 0 {
+		log.Debugf("topics (%s) loaded from cache", k)
+		return int(ccount), topics, nil
+	}
+
+	cursor, errl := listTopicsCursor(criteria, u)
 	if errl != nil {
-		return -1, topics, errl
+		return -1, nil, errl
 	}
 	count, errc := cursor.Count()
 	if errc != nil {
-		return count, topics, fmt.Errorf("Error while count Topics %s", errc)
+		return -1, nil, fmt.Errorf("Error while count Topics %s", errc)
 	}
 
-	err := cursor.Select(GetTopicSelectedFields(user.IsAdmin, false, false, false)).
+	err := cursor.Select(GetTopicSelectedFields(u.IsAdmin, false, false, false)).
 		Sort("topic").
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
@@ -223,18 +239,17 @@ func ListTopics(criteria *tat.TopicCriteria, user *tat.User) (int, []tat.Topic, 
 
 	if err != nil {
 		log.Errorf("Error while Find Topics %s", err)
-		return count, topics, err
+		return -1, nil, err
 	}
 
-	if user.IsAdmin {
-		return count, topics, err
+	if u.IsAdmin {
+		goto cacheAndReturn
 	}
 
-	var topicsUser []tat.Topic
 	// Get all topics where user is admin
-	topicsMember, err := getTopicsForMemberUser(user, nil)
+	topicsMember, err = getTopicsForMemberUser(u, nil)
 	if err != nil {
-		return count, topics, err
+		goto cacheAndReturn
 	}
 
 	for _, topic := range topics {
@@ -256,8 +271,17 @@ func ListTopics(criteria *tat.TopicCriteria, user *tat.User) (int, []tat.Topic, 
 			topicsUser = append(topicsUser, topic)
 		}
 	}
+	topics = topicsUser
 
-	return count, topicsUser, err
+cacheAndReturn:
+	cache.Client().Set(kcount, count, time.Hour)
+	bytes, _ = json.Marshal(topics)
+	if len(bytes) > 0 {
+		log.Debugf("Put %s in cache", k)
+		cache.Client().Set(k, string(bytes), time.Hour)
+	}
+	cache.Client().SAdd(cache.Key("tat", "users", u.Username, "topics"), k, kcount)
+	return count, topics, err
 }
 
 // getTopicsForMemberUser where user is an admin or a member
@@ -323,7 +347,13 @@ func InitPrivateTopic() {
 }
 
 // Insert creates a new topic. User is read write on topic
-func Insert(topic *tat.Topic, user *tat.User) error {
+func Insert(topic *tat.Topic, u *tat.User) error {
+	keys, _ := cache.Client().SMembers(cache.Key("tat", "users", u.Username, "topics")).Result()
+	if len(keys) > 0 {
+		cache.Client().Del(keys...)
+	}
+	cache.Client().Del(cache.Key("tat", "users", u.Username, "topics"))
+
 	err := CheckAndFixName(topic)
 	if err != nil {
 		return err
@@ -336,14 +366,14 @@ func Insert(topic *tat.Topic, user *tat.User) error {
 		}
 
 		// If user create a Topic in /Private/username, no check or RW to create
-		if !strings.HasPrefix(topic.Topic, "/Private/"+user.Username) {
+		if !strings.HasPrefix(topic.Topic, "/Private/"+u.Username) {
 			// check if user can create topic in /topic
-			hasRW := IsUserAdmin(parentTopic, user)
+			hasRW := IsUserAdmin(parentTopic, u)
 			if !hasRW {
 				return fmt.Errorf("No RW access to parent topic %s", parentTopic.Topic)
 			}
 		}
-	} else if !user.IsAdmin { // no parent topic, check admin
+	} else if !u.IsAdmin { // no parent topic, check admin
 		return fmt.Errorf("No write access to create parent topic %s", topic.Topic)
 	}
 
@@ -401,16 +431,21 @@ func Insert(topic *tat.Topic, user *tat.User) error {
 	store.EnsureIndexesMessages(topic.Collection)
 
 	h := fmt.Sprintf("create a new topic :%s", topic.Topic)
-	err = addToHistory(topic, bson.M{"_id": topic.ID}, user.Username, h)
+	err = addToHistory(topic, bson.M{"_id": topic.ID}, u.Username, h)
 	if err != nil {
 		log.Errorf("Error while inserting history for new topic %s", err)
 	}
 
-	return AddRwUser(topic, user.Username, user.Username, false)
+	return AddRwUser(topic, u.Username, u.Username, false)
 }
 
 // Delete deletes a topic from database
-func Delete(topic *tat.Topic, user *tat.User) error {
+func Delete(topic *tat.Topic, u *tat.User) error {
+	keys, _ := cache.Client().SMembers(cache.Key("tat", "users", u.Username, "topics")).Result()
+	if len(keys) > 0 {
+		cache.Client().Del(keys...)
+	}
+	cache.Client().Del(cache.Key("tat", "users", u.Username, "topics"))
 
 	if topic.Collection != "" {
 		if err := store.Tat().Session.DB(store.DatabaseName).C(topic.Collection).DropCollection(); err != nil {

@@ -202,6 +202,12 @@ func init() {
 
 	flags.Int("db-socket-timeout", 60, "Session DB Socket Timeout in seconds")
 	viper.BindPFlag("db_socket_timeout", flags.Lookup("db-socket-timeout"))
+
+	flags.String("redis-hosts", "", "Redis hosts (comma separated for cluster)")
+	viper.BindPFlag("redis_hosts", flags.Lookup("redis-hosts"))
+
+	flags.String("redis-password", "", "Redis password")
+	viper.BindPFlag("redis_password", flags.Lookup("redis-password"))
 }
 
 func main() {
