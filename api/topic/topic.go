@@ -280,7 +280,7 @@ cacheAndReturn:
 		log.Debugf("Put %s in cache", k)
 		cache.Client().Set(k, string(bytes), time.Hour)
 	}
-
+	cache.Client().SAdd(cache.Key("tat", "users", u.Username, "topics"), k, kcount)
 	return count, topics, err
 }
 
@@ -348,10 +348,11 @@ func InitPrivateTopic() {
 
 // Insert creates a new topic. User is read write on topic
 func Insert(topic *tat.Topic, u *tat.User) error {
-	keys, _ := cache.Client().Keys(cache.Key("tat", "users", u.Username, "topics", "*")).Result()
+	keys, _ := cache.Client().SMembers(cache.Key("tat", "users", u.Username, "topics")).Result()
 	if len(keys) > 0 {
 		cache.Client().Del(keys...)
 	}
+	cache.Client().Del(cache.Key("tat", "users", u.Username, "topics"))
 
 	err := CheckAndFixName(topic)
 	if err != nil {
@@ -440,10 +441,12 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 
 // Delete deletes a topic from database
 func Delete(topic *tat.Topic, u *tat.User) error {
-	keys, _ := cache.Client().Keys(cache.Key("tat", "users", u.Username, "topics", "*")).Result()
+	keys, _ := cache.Client().SMembers(cache.Key("tat", "users", u.Username, "topics")).Result()
 	if len(keys) > 0 {
 		cache.Client().Del(keys...)
 	}
+	cache.Client().Del(cache.Key("tat", "users", u.Username, "topics"))
+
 	if topic.Collection != "" {
 		if err := store.Tat().Session.DB(store.DatabaseName).C(topic.Collection).DropCollection(); err != nil {
 			return fmt.Errorf("Error while drop collection for topic %s err: %s", topic.Topic, err)

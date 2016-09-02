@@ -37,7 +37,6 @@ type Cache interface {
 	HVals(key string) *redis.StringSliceCmd
 	Incr(key string) *redis.IntCmd
 	IncrBy(key string, value int64) *redis.IntCmd
-	Keys(pattern string) *redis.StringSliceCmd
 	LIndex(key string, index int64) *redis.StringCmd
 	LInsert(key, op string, pivot, value interface{}) *redis.IntCmd
 	LInsertAfter(key string, pivot, value interface{}) *redis.IntCmd
