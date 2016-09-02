@@ -26,7 +26,7 @@ var mainCmd = &cobra.Command{
 		viper.AutomaticEnv()
 
 		router := gin.New()
-		router.Use(tatRecovery())
+		router.Use(tatRecovery)
 
 		if viper.GetBool("production") {
 			// Only log the warning severity or above.
