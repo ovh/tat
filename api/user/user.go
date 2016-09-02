@@ -1,13 +1,16 @@
 package user
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+
 	"github.com/ovh/tat"
+	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/group"
 	"github.com/ovh/tat/api/presence"
 	"github.com/ovh/tat/api/store"
@@ -15,6 +18,7 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"gopkg.in/redis.v4"
 )
 
 func buildUserCriteria(criteria *tat.UserCriteria) (bson.M, error) {
@@ -241,21 +245,20 @@ func regenerateAndStoreAuth(user *tat.User) (string, error) {
 	return password, err
 }
 
-func getFieldsExceptAuth() bson.M {
-	return bson.M{"username": 1,
-		"fullname":               1,
-		"email":                  1,
-		"isAdmin":                1,
-		"isSystem":               1,
-		"isArchived":             1,
-		"canWriteNotifications":  1,
-		"canListUsersAsAdmin":    1,
-		"dateCreation":           1,
-		"favoritesTopics":        1,
-		"offNotificationsTopics": 1,
-		"favoritesTags":          1,
-		"contacts":               1,
-	}
+var fieldsExceptAuth = bson.M{
+	"username":               1,
+	"fullname":               1,
+	"email":                  1,
+	"isAdmin":                1,
+	"isSystem":               1,
+	"isArchived":             1,
+	"canWriteNotifications":  1,
+	"canListUsersAsAdmin":    1,
+	"dateCreation":           1,
+	"favoritesTopics":        1,
+	"offNotificationsTopics": 1,
+	"favoritesTags":          1,
+	"contacts":               1,
 }
 
 // FindByUsernameAndPassword search username, use user's salt to generates hashedPassword
@@ -322,13 +325,14 @@ func TrustUsername(user *tat.User, username string) error {
 
 func setEmailAndFullnameFromTrustedUsername(user *tat.User) {
 	conf := viper.GetString("trusted_usernames_emails_fullnames")
+	tuples := strings.Split(conf, ",")
+
+	user.Fullname = user.Username
+	user.Email = user.Username + "@" + viper.GetString("default_domain")
+
 	if len(conf) < 2 {
-		setEmailFromDefaultDomain(user)
-		user.Fullname = user.Username
 		return
 	}
-
-	tuples := strings.Split(conf, ",")
 
 	for _, tuple := range tuples {
 		t := strings.Split(tuple, ":")
@@ -345,13 +349,6 @@ func setEmailAndFullnameFromTrustedUsername(user *tat.User) {
 			return
 		}
 	}
-	// default behaviour
-	setEmailFromDefaultDomain(user)
-	user.Fullname = user.Username
-}
-
-func setEmailFromDefaultDomain(user *tat.User) {
-	user.Email = user.Username + "@" + viper.GetString("default_domain")
 }
 
 // FindByUsernameAndPassword search username, use user's salt to generates tokenVerify
@@ -387,7 +384,7 @@ func findByUsernameAndTokenVerify(user *tat.User, username, tokenVerify string) 
 func FindByUsernameAndEmail(user *tat.User, username, email string) error {
 	err := store.Tat().CUsers.
 		Find(bson.M{"username": username, "email": email}).
-		Select(getFieldsExceptAuth()).
+		Select(fieldsExceptAuth).
 		One(&user)
 	if err != nil {
 		log.Errorf("Error while fetching user with username %s", username)
@@ -397,10 +394,25 @@ func FindByUsernameAndEmail(user *tat.User, username, email string) error {
 
 //FindByUsername retrieve information from user with username
 func FindByUsername(user *tat.User, username string) (bool, error) {
-	err := store.Tat().CUsers.
+
+	//Load from cache
+	bytes, err := cache.Client().Get(cache.Key("tat", "users", username)).Bytes()
+	if err != nil && err != redis.Nil {
+		log.Warnf("Unable to get user from cache")
+		goto loadFromDB
+	}
+	json.Unmarshal(bytes, user)
+	//If the user has beeen successfully loaded
+	if user.Username != "" {
+		log.Debugf("FindByUsername loaded from Cache")
+		return true, nil
+	}
+
+loadFromDB:
+	err = store.Tat().CUsers.
 		Find(bson.M{"username": username}).
-		Select(getFieldsExceptAuth()).
-		One(&user)
+		Select(fieldsExceptAuth).
+		One(user)
 
 	if err == mgo.ErrNotFound {
 		log.Infof("FindByUsername username %s not found", username)
@@ -409,6 +421,14 @@ func FindByUsername(user *tat.User, username string) (bool, error) {
 		log.Errorf("Error while fetching user with username %s err:%s", username, err)
 		return false, err
 	}
+
+	//Push to cache
+	bytes, err = json.Marshal(user)
+	if err != nil {
+		return false, err
+	}
+	cache.Client().Set(cache.Key("tat", "users", username), string(bytes), 12*time.Hour)
+
 	return true, nil
 }
 
@@ -416,7 +436,7 @@ func FindByUsername(user *tat.User, username string) (bool, error) {
 func FindByFullname(user *tat.User, fullname string) (bool, error) {
 	err := store.Tat().CUsers.
 		Find(bson.M{"fullname": fullname}).
-		Select(getFieldsExceptAuth()).
+		Select(fieldsExceptAuth).
 		One(&user)
 
 	if err == mgo.ErrNotFound {
@@ -432,7 +452,7 @@ func FindByFullname(user *tat.User, fullname string) (bool, error) {
 func FindByEmail(user *tat.User, email string) (bool, error) {
 	err := store.Tat().CUsers.
 		Find(bson.M{"email": email}).
-		Select(getFieldsExceptAuth()).
+		Select(fieldsExceptAuth).
 		One(&user)
 	if err == mgo.ErrNotFound {
 		return false, nil
