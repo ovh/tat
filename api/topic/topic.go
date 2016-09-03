@@ -169,6 +169,12 @@ func GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 			"topic":                1,
 			"description":          1,
 			"isROPublic":           1,
+			"roGroups":             1,
+			"rwGroups":             1,
+			"roUsers":              1,
+			"rwUsers":              1,
+			"adminUsers":           1,
+			"adminGroups":          1,
 			"canForceDate":         1,
 			"canUpdateMsg":         1,
 			"canDeleteMsg":         1,
@@ -206,7 +212,7 @@ func FindAllTopicsWithCollections() ([]tat.Topic, error) {
 
 // ListTopics returns list of topics, matching criterias
 func ListTopics(criteria *tat.TopicCriteria, u *tat.User) (int, []tat.Topic, error) {
-	var topics, topicsUser, topicsMember []tat.Topic
+	var topics []tat.Topic
 
 	k := cache.Key("tat", "users", u.Username, "topics", "list_topics", criteria.CacheKey())
 	kcount := cache.Key("tat", "users", u.Username, "topics", "count_topics", criteria.CacheKey())
@@ -246,33 +252,6 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User) (int, []tat.Topic, err
 		goto cacheAndReturn
 	}
 
-	// Get all topics where user is admin
-	topicsMember, err = getTopicsForMemberUser(u, nil)
-	if err != nil {
-		goto cacheAndReturn
-	}
-
-	for _, topic := range topics {
-		added := false
-		for _, topicMember := range topicsMember {
-			if topic.ID == topicMember.ID {
-				topic.AdminGroups = topicMember.AdminGroups
-				topic.AdminUsers = topicMember.AdminUsers
-				topic.ROUsers = topicMember.ROUsers
-				topic.RWUsers = topicMember.RWUsers
-				topic.RWGroups = topicMember.RWGroups
-				topic.ROGroups = topicMember.ROGroups
-				topicsUser = append(topicsUser, topic)
-				added = true
-				break
-			}
-		}
-		if !added {
-			topicsUser = append(topicsUser, topic)
-		}
-	}
-	topics = topicsUser
-
 cacheAndReturn:
 	cache.Client().Set(kcount, count, time.Hour)
 	bytes, _ = json.Marshal(topics)
@@ -284,34 +263,6 @@ cacheAndReturn:
 	cache.Client().SAdd(ku, k, kcount)
 	cache.Client().SAdd(cache.Key("tat", "topics", "keys"), ku, k, kcount)
 	return count, topics, err
-}
-
-// getTopicsForMemberUser where user is an admin or a member
-func getTopicsForMemberUser(u *tat.User, topic *tat.Topic) ([]tat.Topic, error) {
-	var topics []tat.Topic
-
-	userGroups, err := group.GetUserGroupsOnlyName(u.Username)
-	c := bson.M{}
-	c["$or"] = []bson.M{}
-	c["$or"] = append(c["$or"].([]bson.M), bson.M{"adminUsers": bson.M{"$in": [1]string{u.Username}}})
-	c["$or"] = append(c["$or"].([]bson.M), bson.M{"roUsers": bson.M{"$in": [1]string{u.Username}}})
-	c["$or"] = append(c["$or"].([]bson.M), bson.M{"rwUsers": bson.M{"$in": [1]string{u.Username}}})
-	if len(userGroups) > 0 {
-		c["$or"] = append(c["$or"].([]bson.M), bson.M{"adminGroups": bson.M{"$in": userGroups}})
-		c["$or"] = append(c["$or"].([]bson.M), bson.M{"roGroups": bson.M{"$in": userGroups}})
-		c["$or"] = append(c["$or"].([]bson.M), bson.M{"rwGroups": bson.M{"$in": userGroups}})
-	}
-
-	if topic != nil {
-		c["$and"] = []bson.M{}
-		c["$and"] = append(c["$and"].([]bson.M), bson.M{"topic": topic.Topic})
-	}
-
-	if err = store.Tat().CTopics.Find(c).All(&topics); err != nil {
-		log.Errorf("Error while getting topics for member user: %s", err.Error())
-	}
-
-	return topics, err
 }
 
 func listTopicsCursor(criteria *tat.TopicCriteria, user *tat.User) (*mgo.Query, error) {
@@ -813,22 +764,6 @@ func FindByTopic(topic *tat.Topic, topicIn string, isAdmin, withTags, withLabels
 		return fmt.Errorf(e)
 	}
 
-	if user != nil {
-		// Get all topics where user is admin
-		topicsMember, errTopicsMember := getTopicsForMemberUser(user, topic)
-		if errTopicsMember != nil {
-			return errTopicsMember
-		}
-
-		if len(topicsMember) == 1 {
-			topic.AdminGroups = topicsMember[0].AdminGroups
-			topic.AdminUsers = topicsMember[0].AdminUsers
-			topic.ROUsers = topicsMember[0].ROUsers
-			topic.RWUsers = topicsMember[0].RWUsers
-			topic.RWGroups = topicsMember[0].RWGroups
-			topic.ROGroups = topicsMember[0].ROGroups
-		}
-	}
 	return err
 }
 
