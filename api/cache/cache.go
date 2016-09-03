@@ -5,7 +5,7 @@ import (
 
 	"gopkg.in/redis.v4"
 
-	"github.com/Sirupsen/logrus"
+	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -40,10 +40,20 @@ func Client() Cache {
 
 testInstance:
 	if err := instance.Ping().Err(); err != nil {
-		logrus.Errorf("Unable to ping redis at %s : %s", redisHosts, err)
+		log.Errorf("Unable to ping redis at %s: %s", redisHosts, err)
 	}
 
 	return instance
+}
+
+// TestInstanceAtStartup pings redis and display error log if no redis, and Info
+// log is redis is here
+func TestInstanceAtStartup() {
+	if err := Client().Ping().Err(); err != nil {
+		log.Errorf("Unable to ping redis at %s: %s", viper.GetString("redis_hosts"), err)
+	} else {
+		log.Infof("Tat is linked to redis %s", viper.GetString("redis_hosts"))
+	}
 }
 
 //Key convert string array in redis key

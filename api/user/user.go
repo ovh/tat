@@ -427,6 +427,7 @@ loadFromDB:
 	if err != nil {
 		return false, err
 	}
+	log.Debugf("Push in cache tat:users:%s for 12h", username)
 	cache.Client().Set(cache.Key("tat", "users", username), string(bytes), 12*time.Hour)
 
 	return true, nil

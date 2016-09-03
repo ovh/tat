@@ -339,23 +339,18 @@ func InitPrivateTopic() {
 		IsAutoComputeTags:    true,
 		IsAutoComputeLabels:  true,
 	}
-	err := store.Tat().CTopics.Insert(topic)
 	log.Infof("Initialize /Private Topic")
-	if err != nil {
+	if err := store.Tat().CTopics.Insert(topic); err != nil {
 		log.Fatalf("Error while initialize /Private Topic %s", err)
 	}
 }
 
 // Insert creates a new topic. User is read write on topic
 func Insert(topic *tat.Topic, u *tat.User) error {
-	keys, _ := cache.Client().SMembers(cache.Key("tat", "users", u.Username, "topics")).Result()
-	if len(keys) > 0 {
-		cache.Client().Del(keys...)
-	}
-	cache.Client().Del(cache.Key("tat", "users", u.Username, "topics"))
+	// TODO if it's a /Private/username topic, we can clean only for a user
+	cache.CleanAllTopics()
 
-	err := CheckAndFixName(topic)
-	if err != nil {
+	if err := CheckAndFixName(topic); err != nil {
 		return err
 	}
 
@@ -441,11 +436,8 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 
 // Delete deletes a topic from database
 func Delete(topic *tat.Topic, u *tat.User) error {
-	keys, _ := cache.Client().SMembers(cache.Key("tat", "users", u.Username, "topics")).Result()
-	if len(keys) > 0 {
-		cache.Client().Del(keys...)
-	}
-	cache.Client().Del(cache.Key("tat", "users", u.Username, "topics"))
+	// TODO if it's a /Private/username topic, we can clean only for a user
+	cache.CleanAllTopics()
 
 	if topic.Collection != "" {
 		if err := store.Tat().Session.DB(store.DatabaseName).C(topic.Collection).DropCollection(); err != nil {

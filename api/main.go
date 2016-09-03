@@ -9,6 +9,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
+	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/group"
 	"github.com/ovh/tat/api/message"
 	"github.com/ovh/tat/api/store"
@@ -19,8 +20,7 @@ import (
 
 var mainCmd = &cobra.Command{
 	Use:   "tat",
-	Short: "Run Tat Engine",
-	Long:  `Run Tat Engine`,
+	Short: "Run TAT Engine",
 	Run: func(cmd *cobra.Command, args []string) {
 		viper.SetEnvPrefix("tat")
 		viper.AutomaticEnv()
@@ -71,6 +71,7 @@ var mainCmd = &cobra.Command{
 		topic.InitDB()
 		group.InitDB()
 		message.InitDB()
+		cache.TestInstanceAtStartup()
 
 		initRoutesGroups(router)
 		initRoutesMessages(router)

@@ -10,12 +10,14 @@ import (
 
 var userController = &UsersController{}
 
+// TestMe tests non-admin user, authenticated on tat
+// GET on /user/me
 func TestMe(t *testing.T) {
 	tests.Init(t)
 
 	r := tests.Router(t)
-	tests.HandleGET(t, "/me", CheckPassword(), userController.Me)
-	req, err := http.NewRequest("GET", r.BasePath()+"/me", nil)
+	tests.Handle(t, http.MethodGet, "/me", CheckPassword(), userController.Me)
+	req, err := http.NewRequest(http.MethodGet, r.BasePath()+"/me", nil)
 	req.Header.Add("X-Remote-User", "fsamin")
 
 	assert.NoError(t, err)

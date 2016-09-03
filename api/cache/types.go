@@ -6,7 +6,7 @@ import (
 	"gopkg.in/redis.v4"
 )
 
-//Cache
+// Cache interface redis
 type Cache interface {
 	Append(key, value string) *redis.IntCmd
 	BLPop(timeout time.Duration, keys ...string) *redis.StringSliceCmd
@@ -37,6 +37,7 @@ type Cache interface {
 	HVals(key string) *redis.StringSliceCmd
 	Incr(key string) *redis.IntCmd
 	IncrBy(key string, value int64) *redis.IntCmd
+	Keys(key string) *redis.StringSliceCmd
 	LIndex(key string, index int64) *redis.StringCmd
 	LInsert(key, op string, pivot, value interface{}) *redis.IntCmd
 	LInsertAfter(key string, pivot, value interface{}) *redis.IntCmd

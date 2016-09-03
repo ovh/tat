@@ -96,6 +96,9 @@ func (c *LocalCache) Incr(key string) *redis.IntCmd {
 func (c *LocalCache) IncrBy(key string, value int64) *redis.IntCmd {
 	return redis.NewIntResult(0, nil)
 }
+func (c *LocalCache) Keys(key string) *redis.StringSliceCmd {
+	return redis.NewStringSliceResult([]string{}, nil)
+}
 func (c *LocalCache) LIndex(key string, index int64) *redis.StringCmd {
 	return redis.NewStringResult([]byte{}, nil)
 }
