@@ -69,7 +69,7 @@ func Key(s ...string) string {
 	return strings.Join(s, ":")
 }
 
-func removeSomeMembers(key string, members []string) {
+func removeSomeMembers(key string, members ...string) {
 	m := make([]interface{}, len(members))
 	for i, member := range members {
 		m[i] = member

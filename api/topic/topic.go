@@ -946,62 +946,81 @@ func actionOnSet(topic *tat.Topic, operand, set, username, admin string, recursi
 
 // AddRoUser add a read only user to topic
 func AddRoUser(topic *tat.Topic, admin string, username string, recursive bool) error {
+	cache.CleanTopics(username)
 	return actionOnSet(topic, "$addToSet", "roUsers", username, admin, recursive, "add to ro")
 }
 
 // AddRwUser add a read write user to topic
 func AddRwUser(topic *tat.Topic, admin string, username string, recursive bool) error {
+	cache.CleanTopics(username)
 	return actionOnSet(topic, "$addToSet", "rwUsers", username, admin, recursive, "add to ro")
 }
 
 // AddAdminUser add a read write user to topic
 func AddAdminUser(topic *tat.Topic, admin string, username string, recursive bool) error {
+	cache.CleanTopics(username)
 	return actionOnSet(topic, "$addToSet", "adminUsers", username, admin, recursive, "add to admin")
 }
 
 // RemoveRoUser removes a read only user from topic
 func RemoveRoUser(topic *tat.Topic, admin string, username string, recursive bool) error {
+	cache.CleanTopics(username)
 	return actionOnSet(topic, "$pull", "roUsers", username, admin, recursive, "remove from ro")
 }
 
 // RemoveAdminUser removes a read only user from topic
 func RemoveAdminUser(topic *tat.Topic, admin string, username string, recursive bool) error {
+	cache.CleanTopics(username)
 	return actionOnSet(topic, "$pull", "adminUsers", username, admin, recursive, "remove from admin")
 }
 
 // RemoveRwUser removes a read write user from topic
 func RemoveRwUser(topic *tat.Topic, admin string, username string, recursive bool) error {
+	cache.CleanTopics(username)
 	return actionOnSet(topic, "$pull", "rwUsers", username, admin, recursive, "remove from rw")
 }
 
+func cleanCacheTopicsForUsersInGroup(groupname string) {
+	group, err := group.FindByName(groupname)
+	if err == nil {
+		cache.CleanTopics(group.Users...)
+	}
+}
+
 // AddRoGroup add a read only group to topic
-func AddRoGroup(topic *tat.Topic, admin string, username string, recursive bool) error {
-	return actionOnSet(topic, "$addToSet", "roGroups", username, admin, recursive, "add to ro")
+func AddRoGroup(topic *tat.Topic, admin string, groupname string, recursive bool) error {
+	cleanCacheTopicsForUsersInGroup(groupname)
+	return actionOnSet(topic, "$addToSet", "roGroups", groupname, admin, recursive, "add to ro")
 }
 
 // AddRwGroup add a read write group to topic
-func AddRwGroup(topic *tat.Topic, admin string, username string, recursive bool) error {
-	return actionOnSet(topic, "$addToSet", "rwGroups", username, admin, recursive, "add to ro")
+func AddRwGroup(topic *tat.Topic, admin string, groupname string, recursive bool) error {
+	cleanCacheTopicsForUsersInGroup(groupname)
+	return actionOnSet(topic, "$addToSet", "rwGroups", groupname, admin, recursive, "add to ro")
 }
 
 // AddAdminGroup add a admin group to topic
-func AddAdminGroup(topic *tat.Topic, admin string, username string, recursive bool) error {
-	return actionOnSet(topic, "$addToSet", "adminGroups", username, admin, recursive, "add to admin")
+func AddAdminGroup(topic *tat.Topic, admin string, groupname string, recursive bool) error {
+	cleanCacheTopicsForUsersInGroup(groupname)
+	return actionOnSet(topic, "$addToSet", "adminGroups", groupname, admin, recursive, "add to admin")
 }
 
 // RemoveAdminGroup removes a read write group from topic
-func RemoveAdminGroup(topic *tat.Topic, admin string, username string, recursive bool) error {
-	return actionOnSet(topic, "$pull", "adminGroups", username, admin, recursive, "remove from admin")
+func RemoveAdminGroup(topic *tat.Topic, admin string, groupname string, recursive bool) error {
+	cleanCacheTopicsForUsersInGroup(groupname)
+	return actionOnSet(topic, "$pull", "adminGroups", groupname, admin, recursive, "remove from admin")
 }
 
 // RemoveRoGroup removes a read only group from topic
-func RemoveRoGroup(topic *tat.Topic, admin string, username string, recursive bool) error {
-	return actionOnSet(topic, "$pull", "roGroups", username, admin, recursive, "remove from ro")
+func RemoveRoGroup(topic *tat.Topic, admin string, groupname string, recursive bool) error {
+	cleanCacheTopicsForUsersInGroup(groupname)
+	return actionOnSet(topic, "$pull", "roGroups", groupname, admin, recursive, "remove from ro")
 }
 
 // RemoveRwGroup removes a read write group from topic
-func RemoveRwGroup(topic *tat.Topic, admin string, username string, recursive bool) error {
-	return actionOnSet(topic, "$pull", "rwGroups", username, admin, recursive, "remove from rw")
+func RemoveRwGroup(topic *tat.Topic, admin string, groupname string, recursive bool) error {
+	cleanCacheTopicsForUsersInGroup(groupname)
+	return actionOnSet(topic, "$pull", "rwGroups", groupname, admin, recursive, "remove from rw")
 }
 
 // AddParameter add a parameter to the topic
