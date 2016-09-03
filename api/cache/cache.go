@@ -52,7 +52,7 @@ func TestInstanceAtStartup() {
 	if err := Client().Ping().Err(); err != nil {
 		log.Errorf("Unable to ping redis at %s: %s", viper.GetString("redis_hosts"), err)
 	} else {
-		log.Infof("Tat is linked to redis %s", viper.GetString("redis_hosts"))
+		log.Infof("TAT is linked to redis %s", viper.GetString("redis_hosts"))
 	}
 }
 
@@ -67,4 +67,12 @@ func Key(s ...string) string {
 	}
 
 	return strings.Join(s, ":")
+}
+
+func removeSomeMembers(key string, members []string) {
+	m := make([]interface{}, len(members))
+	for i, member := range members {
+		m[i] = member
+	}
+	Client().SRem(key, m...)
 }

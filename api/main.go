@@ -71,7 +71,6 @@ var mainCmd = &cobra.Command{
 		topic.InitDB()
 		group.InitDB()
 		message.InitDB()
-		cache.TestInstanceAtStartup()
 
 		initRoutesGroups(router)
 		initRoutesMessages(router)
@@ -90,7 +89,8 @@ var mainCmd = &cobra.Command{
 			MaxHeaderBytes: 1 << 20,
 		}
 
-		log.Infof("Running TAT on %s", viper.GetString("listen_port"))
+		log.Infof("TAT is running on %s", viper.GetString("listen_port"))
+		cache.TestInstanceAtStartup()
 
 		if err := s.ListenAndServe(); err != nil {
 			log.Info("Error while running ListenAndServe: %s", err.Error())

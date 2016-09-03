@@ -280,7 +280,9 @@ cacheAndReturn:
 		log.Debugf("Put %s in cache", k)
 		cache.Client().Set(k, string(bytes), time.Hour)
 	}
-	cache.Client().SAdd(cache.Key("tat", "users", u.Username, "topics"), k, kcount)
+	ku := cache.Key("tat", "users", u.Username, "topics")
+	cache.Client().SAdd(ku, k, kcount)
+	cache.Client().SAdd(cache.Key("tat", "topics", "keys"), ku, k, kcount)
 	return count, topics, err
 }
 
@@ -347,8 +349,11 @@ func InitPrivateTopic() {
 
 // Insert creates a new topic. User is read write on topic
 func Insert(topic *tat.Topic, u *tat.User) error {
-	// TODO if it's a /Private/username topic, we can clean only for a user
-	cache.CleanAllTopics()
+	if strings.HasPrefix(topic.Topic, "/Private/"+u.Username) {
+		cache.CleanTopics(u.Username)
+	} else {
+		cache.CleanAllTopics()
+	}
 
 	if err := CheckAndFixName(topic); err != nil {
 		return err
@@ -436,8 +441,11 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 
 // Delete deletes a topic from database
 func Delete(topic *tat.Topic, u *tat.User) error {
-	// TODO if it's a /Private/username topic, we can clean only for a user
-	cache.CleanAllTopics()
+	if strings.HasPrefix(topic.Topic, "/Private/"+u.Username) {
+		cache.CleanTopics(u.Username)
+	} else {
+		cache.CleanAllTopics()
+	}
 
 	if topic.Collection != "" {
 		if err := store.Tat().Session.DB(store.DatabaseName).C(topic.Collection).DropCollection(); err != nil {
