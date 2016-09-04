@@ -195,7 +195,7 @@ func (g *GroupsController) Delete(ctx *gin.Context) {
 	c.Limit = 10
 	c.Group = groupToDelete.Name
 
-	count, topics, err := topicDB.ListTopics(&c, &user)
+	count, topics, err := topicDB.ListTopics(&c, &user, false, false, false)
 	if err != nil {
 		log.Errorf("Error while getting topics associated to group %s:%s", groupToDelete.Name, err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Errorf("Error while getting topics associated to group")})

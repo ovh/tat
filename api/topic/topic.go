@@ -93,31 +93,33 @@ func buildTopicCriteria(criteria *tat.TopicCriteria, user *tat.User) (bson.M, er
 		query = append(query, bson.M{"dateCreation": bsonDate})
 	}
 
-	if criteria.GetForAllTasksTopics {
-		query = append(query, bson.M{
-			"topic": bson.RegEx{Pattern: "^\\/Private\\/.*/Tasks", Options: "i"},
-		})
-	} else if criteria.GetForTatAdmin == tat.True && user.IsAdmin {
-		// requester is tat Admin and wants all topics, except /Private/* topics
-		query = append(query, bson.M{
-			"topic": bson.M{"$not": bson.RegEx{Pattern: "^\\/Private\\/.*", Options: "i"}},
-		})
-	} else if criteria.GetForTatAdmin == tat.True && !user.IsAdmin {
-		log.Warnf("User %s (not a TatAdmin) try to list all topics as an admin", user.Username)
-	} else {
-		bsonUser := []bson.M{}
-		bsonUser = append(bsonUser, bson.M{"roUsers": bson.M{"$in": [1]string{user.Username}}})
-		bsonUser = append(bsonUser, bson.M{"rwUsers": bson.M{"$in": [1]string{user.Username}}})
-		bsonUser = append(bsonUser, bson.M{"adminUsers": bson.M{"$in": [1]string{user.Username}}})
-		userGroups, err := group.GetUserGroupsOnlyName(user.Username)
-		if err != nil {
-			log.Errorf("Error with getting groups for user %s", err)
+	if user != nil {
+		if criteria.GetForAllTasksTopics {
+			query = append(query, bson.M{
+				"topic": bson.RegEx{Pattern: "^\\/Private\\/.*/Tasks", Options: "i"},
+			})
+		} else if criteria.GetForTatAdmin == tat.True && user.IsAdmin {
+			// requester is tat Admin and wants all topics, except /Private/* topics
+			query = append(query, bson.M{
+				"topic": bson.M{"$not": bson.RegEx{Pattern: "^\\/Private\\/.*", Options: "i"}},
+			})
+		} else if criteria.GetForTatAdmin == tat.True && !user.IsAdmin {
+			log.Warnf("User %s (not a TatAdmin) try to list all topics as an admin", user.Username)
 		} else {
-			bsonUser = append(bsonUser, bson.M{"roGroups": bson.M{"$in": userGroups}})
-			bsonUser = append(bsonUser, bson.M{"rwGroups": bson.M{"$in": userGroups}})
-			bsonUser = append(bsonUser, bson.M{"adminGroups": bson.M{"$in": userGroups}})
+			bsonUser := []bson.M{}
+			bsonUser = append(bsonUser, bson.M{"roUsers": bson.M{"$in": [1]string{user.Username}}})
+			bsonUser = append(bsonUser, bson.M{"rwUsers": bson.M{"$in": [1]string{user.Username}}})
+			bsonUser = append(bsonUser, bson.M{"adminUsers": bson.M{"$in": [1]string{user.Username}}})
+			userGroups, err := group.GetUserGroupsOnlyName(user.Username)
+			if err != nil {
+				log.Errorf("Error with getting groups for user %s", err)
+			} else {
+				bsonUser = append(bsonUser, bson.M{"roGroups": bson.M{"$in": userGroups}})
+				bsonUser = append(bsonUser, bson.M{"rwGroups": bson.M{"$in": userGroups}})
+				bsonUser = append(bsonUser, bson.M{"adminGroups": bson.M{"$in": userGroups}})
+			}
+			query = append(query, bson.M{"$or": bsonUser})
 		}
-		query = append(query, bson.M{"$or": bsonUser})
 	}
 
 	if len(query) > 0 {
@@ -211,11 +213,16 @@ func FindAllTopicsWithCollections() ([]tat.Topic, error) {
 }
 
 // ListTopics returns list of topics, matching criterias
-func ListTopics(criteria *tat.TopicCriteria, u *tat.User) (int, []tat.Topic, error) {
+// /!\ user arg could be nil
+func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, withLabels bool) (int, []tat.Topic, error) {
 	var topics []tat.Topic
 
-	k := cache.Key("tat", "users", u.Username, "topics", "list_topics", criteria.CacheKey())
-	kcount := cache.Key("tat", "users", u.Username, "topics", "count_topics", criteria.CacheKey())
+	username := "internal"
+	if u != nil {
+		username = u.Username
+	}
+	k := cache.Key("tat", "users", username, "topics", "list_topics", criteria.CacheKey())
+	kcount := cache.Key("tat", "users", username, "topics", "count_topics", criteria.CacheKey())
 
 	bytes, _ := cache.Client().Get(k).Bytes()
 	if len(bytes) > 0 {
@@ -237,7 +244,7 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User) (int, []tat.Topic, err
 		return -1, nil, fmt.Errorf("Error while count Topics %s", errc)
 	}
 
-	err := cursor.Select(GetTopicSelectedFields(u.IsAdmin, false, false, false)).
+	err := cursor.Select(GetTopicSelectedFields(isAdmin, false, false, false)).
 		Sort("topic").
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
@@ -248,7 +255,7 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User) (int, []tat.Topic, err
 		return -1, nil, err
 	}
 
-	if u.IsAdmin {
+	if isAdmin {
 		goto cacheAndReturn
 	}
 
@@ -259,7 +266,7 @@ cacheAndReturn:
 		log.Debugf("Put %s in cache", k)
 		cache.Client().Set(k, string(bytes), time.Hour)
 	}
-	ku := cache.Key("tat", "users", u.Username, "topics")
+	ku := cache.Key("tat", "users", username, "topics")
 	cache.Client().SAdd(ku, k, kcount)
 	cache.Client().SAdd(cache.Key("tat", "topics", "keys"), ku, k, kcount)
 	return count, topics, err
@@ -328,8 +335,7 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 		return fmt.Errorf("No write access to create parent topic %s", topic.Topic)
 	}
 
-	var existing = &tat.Topic{}
-	if err = FindByTopic(existing, topic.Topic, true, false, false, nil); err == nil {
+	if _, err = FindByTopic(topic.Topic, true, false, false, nil); err == nil {
 		return fmt.Errorf("Topic Already Exists : %s", topic.Topic)
 	}
 
@@ -735,8 +741,7 @@ func getParentTopic(topic *tat.Topic) (bool, *tat.Topic, error) {
 		return true, nil, nil
 	}
 	var nameParent = topic.Topic[0:index]
-	var parentTopic = &tat.Topic{}
-	err := FindByTopic(parentTopic, nameParent, true, false, false, nil)
+	parentTopic, err := FindByTopic(nameParent, true, false, false, nil)
 	if err != nil {
 		log.Errorf("Error while fetching parent topic %s", err)
 	}
@@ -744,33 +749,48 @@ func getParentTopic(topic *tat.Topic) (bool, *tat.Topic, error) {
 }
 
 // FindByTopic returns topic by topicName.
-func FindByTopic(topic *tat.Topic, topicIn string, isAdmin, withTags, withLabels bool, user *tat.User) error {
-	topic.Topic = topicIn
+func FindByTopic(topicIn string, isAdmin, withTags, withLabels bool, user *tat.User) (*tat.Topic, error) {
+	topic := &tat.Topic{
+		Topic: topicIn,
+	}
 	if err := CheckAndFixName(topic); err != nil {
-		return err
+		return nil, err
 	}
-	err := store.Tat().CTopics.Find(bson.M{"topic": topic.Topic}).
-		Select(GetTopicSelectedFields(isAdmin, withTags, withLabels, true)).
-		One(&topic)
+	criteria := &tat.TopicCriteria{
+		Topic: topic.Topic,
+	}
+	nb, topics, err := ListTopics(criteria, user, isAdmin, withTags, withLabels)
+	if err != nil {
+		return nil, err
+	}
+	if nb != 1 && len(topics) != 1 {
+		return nil, fmt.Errorf("Invalid Request. Get many topics instead one")
+	}
+	return &topics[0], nil
 
-	if err != nil || topic.ID == "" {
-		username := ""
-		if user != nil {
-			username = user.Username
+	/*err := store.Tat().CTopics.Find(bson.M{"topic": topic.Topic}).
+			Select(GetTopicSelectedFields(isAdmin, withTags, withLabels, true)).
+			One(&topic)
+
+		if err != nil || topic.ID == "" {
+			username := ""
+			if user != nil {
+				username = user.Username
+			}
+			e := fmt.Sprintf("FindByTopic> Error while fetching topic %s, isAdmin:%t, username:%s", topic.Topic, isAdmin, username)
+			log.Debugf(e)
+			// TODO DM
+			return fmt.Errorf(e)
 		}
-		e := fmt.Sprintf("FindByTopic> Error while fetching topic %s, isAdmin:%t, username:%s", topic.Topic, isAdmin, username)
-		log.Debugf(e)
-		// TODO DM
-		return fmt.Errorf(e)
-	}
-
 	return err
+	*/
+
 }
 
 // IsTopicExists return true if topic exists, false otherwise
 func IsTopicExists(topicName string) bool {
-	var t = tat.Topic{}
-	return FindByTopic(&t, topicName, false, false, false, nil) == nil // no error, return true
+	_, err := FindByTopic(topicName, false, false, false, nil)
+	return err == nil // no error, return true
 }
 
 // FindByID return topic, matching given id

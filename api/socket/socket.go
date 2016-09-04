@@ -249,8 +249,7 @@ func preCheckWSTopics(socket *tat.Socket, msg tat.WSJSON) ([]tat.Topic, tat.User
 	topics = make([]tat.Topic, len(msg.Topics))
 
 	for i, topicName := range msg.Topics {
-		var tatTopic = tat.Topic{}
-		err := topicDB.FindByTopic(&tatTopic, strings.Trim(topicName, " "), true, false, false, nil)
+		tatTopic, err := topicDB.FindByTopic(strings.Trim(topicName, " "), true, false, false, nil)
 		if err != nil {
 			m := fmt.Sprintf("Invalid topic (%s) for action %s", topicName, msg.Action)
 			log.Errorf("%s error:%s", m, err.Error())
@@ -258,13 +257,12 @@ func preCheckWSTopics(socket *tat.Socket, msg tat.WSJSON) ([]tat.Topic, tat.User
 			return []tat.Topic{}, tat.User{}, errors.New(m)
 		}
 
-		isReadAccess := topicDB.IsUserReadAccess(&tatTopic, user)
-		if !isReadAccess {
+		if !topicDB.IsUserReadAccess(tatTopic, user) {
 			m := fmt.Sprintf("No Read Access on topic %s for action %s", topicName, msg.Action)
 			write(socket, gin.H{"action": msg.Action, "result": m, "status": http.StatusForbidden})
 			return []tat.Topic{}, tat.User{}, errors.New(m)
 		}
-		topics[i] = tatTopic
+		topics[i] = *tatTopic
 	}
 	return topics, user, nil
 }
@@ -284,7 +282,7 @@ func getTopicsOfUser(socket *tat.Socket, msg tat.WSJSON) (int, []tat.Topic, tat.
 		c.Skip = 0
 		c.Limit = 1000
 
-		count, topics, err := topicDB.ListTopics(&c, &user)
+		count, topics, err := topicDB.ListTopics(&c, &user, false, false, false)
 		if err != nil {
 			m := fmt.Sprintf("Error while getting topics for action %s", msg.Action)
 			write(socket, gin.H{"action": msg.Action, "result": m, "status": http.StatusBadRequest})

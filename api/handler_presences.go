@@ -56,13 +56,13 @@ func (m *PresencesController) listWithCriteria(ctx *gin.Context, criteria *tat.P
 	}
 
 	if criteria.Topic != "" {
-		var topic = tat.Topic{}
-		if err := topicDB.FindByTopic(&topic, criteria.Topic, true, false, false, nil); err != nil {
+		topic, err := topicDB.FindByTopic(criteria.Topic, true, false, false, nil)
+		if err != nil {
 			ctx.AbortWithError(http.StatusBadRequest, errors.New("topic "+criteria.Topic+" does not exist"))
 			return
 		}
 
-		if isReadAccess := topicDB.IsUserReadAccess(&topic, user); !isReadAccess {
+		if isReadAccess := topicDB.IsUserReadAccess(topic, user); !isReadAccess {
 			ctx.AbortWithError(http.StatusForbidden, errors.New("No Read Access to this topic."))
 			return
 		}
@@ -98,22 +98,22 @@ func (m *PresencesController) listWithCriteria(ctx *gin.Context, criteria *tat.P
 }
 
 func (m *PresencesController) preCheckTopic(ctx *gin.Context) (tat.PresenceJSON, tat.Topic, error) {
-	var topic = tat.Topic{}
 	var presenceIn tat.PresenceJSON
 	ctx.Bind(&presenceIn)
 
 	topicIn, err := GetParam(ctx, "topic")
 	if err != nil {
-		return presenceIn, topic, err
+		return presenceIn, tat.Topic{}, err
 	}
 	presenceIn.Topic = topicIn
 
-	if err = topicDB.FindByTopic(&topic, presenceIn.Topic, true, false, false, nil); err != nil {
+	topic, err := topicDB.FindByTopic(presenceIn.Topic, true, false, false, nil)
+	if err != nil {
 		e := errors.New("Topic " + presenceIn.Topic + " does not exist")
 		ctx.AbortWithError(http.StatusInternalServerError, e)
-		return presenceIn, topic, e
+		return presenceIn, tat.Topic{}, e
 	}
-	return presenceIn, topic, nil
+	return presenceIn, *topic, nil
 }
 
 func (*PresencesController) preCheckUser(ctx *gin.Context) (tat.User, error) {

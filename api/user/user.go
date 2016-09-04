@@ -578,7 +578,7 @@ func DisableNotificationsAllTopics(user *tat.User) error {
 		Skip:  0,
 		Limit: 9000000,
 	}
-	_, topics, err := topic.ListTopics(criteria, user)
+	_, topics, err := topic.ListTopics(criteria, user, false, false, false)
 	if err != nil {
 		return err
 	}
@@ -901,8 +901,8 @@ func CheckTopics(user *tat.User, fixTopics bool) string {
 		if shortName != "" {
 			topicName = fmt.Sprintf("%s/%s", topicName, shortName)
 		}
-		tatTopic := &tat.Topic{}
-		if errfinding := topic.FindByTopic(tatTopic, topicName, false, false, false, nil); errfinding != nil {
+
+		if _, errfinding := topic.FindByTopic(topicName, false, false, false, nil); errfinding != nil {
 			topicsInfo = fmt.Sprintf("%s %s KO : not exist; ", topicsInfo, topicName)
 			if fixTopics {
 				if err := CreatePrivateTopic(user, shortName); err != nil {

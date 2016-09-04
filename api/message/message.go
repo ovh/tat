@@ -651,12 +651,12 @@ func insertNotification(message *tat.Message, author tat.User, usernameMention s
 	text := fmt.Sprintf("#mention #idMessage:%s #topic:%s %s", message.ID, message.Topic, message.Text)
 	topicname := fmt.Sprintf("/Private/%s/Notifications", usernameMention)
 	labels := []tat.Label{{Text: "unread", Color: "#d04437"}}
-	var topic = tat.Topic{}
-	if err := topicDB.FindByTopic(&topic, topicname, false, false, false, nil); err != nil {
+	topic, err := topicDB.FindByTopic(topicname, false, false, false, nil)
+	if err != nil {
 		return
 	}
 
-	if err := Insert(&notif, author, topic, text, "", -1, labels, nil, true, nil); err != nil {
+	if err := Insert(&notif, author, *topic, text, "", -1, labels, nil, true, nil); err != nil {
 		// not throw err here, just log
 		log.Errorf("Error while inserting notification message for %s, error: %s", usernameMention, err.Error())
 	}
