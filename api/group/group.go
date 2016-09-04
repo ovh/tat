@@ -1,6 +1,7 @@
 package group
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
+	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/store"
 	"github.com/spf13/viper"
 	"gopkg.in/mgo.v2"
@@ -61,7 +63,6 @@ func buildGroupCriteria(criteria *tat.GroupCriteria, user *tat.User) (bson.M, er
 		if user != nil && !user.IsAdmin {
 			queryUser := bson.M{}
 			queryUser["$or"] = []bson.M{}
-			queryUser["$or"] = []bson.M{}
 			queryUser["$or"] = append(queryUser["$or"].([]bson.M), bson.M{"adminUsers": bson.M{"$in": [1]string{user.Username}}})
 			queryUser["$or"] = append(queryUser["$or"].([]bson.M), bson.M{"users": bson.M{"$in": [1]string{user.Username}}})
 			query = append(query, queryUser)
@@ -74,6 +75,13 @@ func buildGroupCriteria(criteria *tat.GroupCriteria, user *tat.User) (bson.M, er
 			queryDescriptions["$or"] = append(queryDescriptions["$or"].([]bson.M), bson.M{"description": val})
 		}
 		query = append(query, queryDescriptions)
+	}
+
+	if criteria.UserUsername != "" {
+		queryUser := bson.M{}
+		queryUser["$or"] = []bson.M{}
+		queryUser["$or"] = append(queryUser["$or"].([]bson.M), bson.M{"users": bson.M{"$in": [1]string{criteria.UserUsername}}})
+		query = append(query, queryUser)
 	}
 
 	var bsonDate = bson.M{}
@@ -110,7 +118,23 @@ func buildGroupCriteria(criteria *tat.GroupCriteria, user *tat.User) (bson.M, er
 func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int, []tat.Group, error) {
 	var groups []tat.Group
 
-	// TODO Cache
+	username := "internal"
+	if user != nil {
+		username = user.Username
+	}
+	k := cache.Key("tat", "users", username, "groups", "list_groups", criteria.CacheKey())
+	kcount := cache.Key("tat", "users", username, "groups", "count_groups", criteria.CacheKey())
+
+	bytes, _ := cache.Client().Get(k).Bytes()
+	if len(bytes) > 0 {
+		json.Unmarshal(bytes, &groups)
+	}
+
+	ccount, _ := cache.Client().Get(kcount).Int64()
+	if len(groups) > 0 && ccount > 0 {
+		log.Debugf("groups (%s) loaded from cache", k)
+		return int(ccount), groups, nil
+	}
 
 	cursor, errl := listGroupsCursor(criteria, user)
 	if errl != nil {
@@ -134,23 +158,18 @@ func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int,
 	if err != nil {
 		log.Errorf("Error while Find All Groups %s", err)
 	}
-	return count, groups, err
-}
 
-// getGroupsForMemberUser where user is an admin or a member
-func getGroupsForMemberUser(user *tat.User) ([]tat.Group, error) {
-	var groups []tat.Group
-	c := bson.M{}
-	c["$or"] = []bson.M{}
-	c["$or"] = append(c["$or"].([]bson.M), bson.M{"adminUsers": bson.M{"$in": [1]string{user.Username}}})
-	c["$or"] = append(c["$or"].([]bson.M), bson.M{"users": bson.M{"$in": [1]string{user.Username}}})
-
-	err := store.Tat().CGroups.Find(c).All(&groups)
-	if err != nil {
-		log.Errorf("Error while getting groups for admin user: %s", err.Error())
+	cache.Client().Set(kcount, count, time.Hour)
+	bytes, _ = json.Marshal(groups)
+	if len(bytes) > 0 {
+		log.Debugf("Put %s in cache", k)
+		cache.Client().Set(k, string(bytes), time.Hour)
 	}
+	ku := cache.Key("tat", "users", username, "groups")
+	cache.Client().SAdd(ku, k, kcount)
+	cache.Client().SAdd(cache.Key("tat", "groups", "keys"), ku, k, kcount)
+	return count, groups, err
 
-	return groups, err
 }
 
 func listGroupsCursor(criteria *tat.GroupCriteria, user *tat.User) (*mgo.Query, error) {
@@ -164,8 +183,7 @@ func listGroupsCursor(criteria *tat.GroupCriteria, user *tat.User) (*mgo.Query, 
 // Insert insert new group
 func Insert(group *tat.Group) error {
 
-	// TODO Clear Cache groups list
-
+	cache.CleanAllGroups()
 	group.ID = bson.NewObjectId().Hex()
 
 	group.DateCreation = time.Now().Unix()
@@ -202,7 +220,7 @@ func IsGroupnameExists(groupname string) bool {
 }
 
 func actionOnSet(group *tat.Group, operand, set, groupname, admin, history string) error {
-	// TODO Clear Cache groups list
+	cache.CleanAllGroups()
 
 	err := store.Tat().CGroups.Update(
 		bson.M{"_id": group.ID},
@@ -255,7 +273,7 @@ func CountGroups() (int, error) {
 // Update updates a group : name and description
 func Update(group *tat.Group, newGroupname, description string, user *tat.User) error {
 
-	// TODO Clear Cache groups list
+	cache.CleanAllGroups()
 
 	// Check if name already exists -> checked in controller
 	err := store.Tat().CGroups.Update(
@@ -274,7 +292,7 @@ func Update(group *tat.Group, newGroupname, description string, user *tat.User) 
 
 // Delete deletes a group
 func Delete(group *tat.Group, user *tat.User) error {
-	// TODO Clear Cache groups list
+	cache.CleanAllGroups()
 
 	if len(group.Users) > 0 {
 		return fmt.Errorf("Could not delete this group, this group have Users")
@@ -288,7 +306,7 @@ func Delete(group *tat.Group, user *tat.User) error {
 
 // ChangeUsernameOnGroups changes a username on groups
 func ChangeUsernameOnGroups(oldUsername, newUsername string) {
-	// TODO Clear Cache groups list
+	cache.CleanAllGroups()
 
 	// Users
 	_, err := store.Tat().CGroups.UpdateAll(
@@ -325,14 +343,12 @@ func GetUserGroupsOnlyName(username string) ([]string, error) {
 
 // GetGroups returns all user's groups
 func GetGroups(username string) ([]tat.Group, error) {
-	var groups []tat.Group
-
-	// TODO Add users to criteria and use Group List
-
-	err := store.Tat().CGroups.Find(bson.M{"users": bson.M{"$in": [1]string{username}}}).
-		Sort("-name").
-		All(&groups)
-
+	c := &tat.GroupCriteria{
+		UserUsername: username,
+		Skip:         0,
+		Limit:        1,
+	}
+	_, groups, err := ListGroups(c, nil, true)
 	if err != nil {
 		log.Errorf("Error while Find groups for user %s error:%s", username, err)
 	}

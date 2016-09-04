@@ -1,5 +1,11 @@
 package tat
 
+import (
+	"strconv"
+
+	"github.com/ovh/tat/api/cache"
+)
+
 // Group struct
 type Group struct {
 	ID           string   `bson:"_id"          json:"_id"`
@@ -19,6 +25,40 @@ type GroupCriteria struct {
 	Description     string
 	DateMinCreation string
 	DateMaxCreation string
+	UserUsername    string
+}
+
+// CacheKey returns cacke key value
+func (g *GroupCriteria) CacheKey() string {
+	if g == nil {
+		return ""
+	}
+	var s = []string{}
+	if g.Skip != 0 {
+		s = append(s, "skip="+strconv.Itoa(g.Skip))
+	}
+	if g.Limit != 0 {
+		s = append(s, "limit="+strconv.Itoa(g.Limit))
+	}
+	if g.IDGroup != "" {
+		s = append(s, "id_group="+g.IDGroup)
+	}
+	if g.Name != "" {
+		s = append(s, "name="+g.Name)
+	}
+	if g.Description != "" {
+		s = append(s, "description="+g.Description)
+	}
+	if g.DateMinCreation != "" {
+		s = append(s, "date_min_creation="+g.DateMinCreation)
+	}
+	if g.DateMaxCreation != "" {
+		s = append(s, "date_max_creation="+g.DateMaxCreation)
+	}
+	if g.UserUsername != "" {
+		s = append(s, "user_username="+g.UserUsername)
+	}
+	return cache.Key(s...)
 }
 
 type GroupsJSON struct {

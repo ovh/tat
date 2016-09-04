@@ -230,7 +230,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, t
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
 		return messageIn, message, tat.Topic{}, nil, e
 	}
-	return messageIn, message, *topic, nil, nil
+	return messageIn, message, *topic, &user, nil
 }
 
 // Create a new message on one topic
@@ -568,14 +568,14 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *tat.Me
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while adding a message to tasks"})
 			return
 		}
-		info = fmt.Sprintf("New Task created in %s", messageDB.GetPrivateTopicTaskName(user))
+		info = fmt.Sprintf("New Task created")
 	} else if messageIn.Action == tat.MessageActionUntask {
 		if err := messageDB.RemoveFromTasks(&message, user, topic); err != nil {
 			log.Errorf("Error while removing a message from tasks %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		info = fmt.Sprintf("Task removed from %s", messageDB.GetPrivateTopicTaskName(user))
+		info = fmt.Sprintf("Task removed")
 	} else {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return

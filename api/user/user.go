@@ -492,8 +492,10 @@ func AddFavoriteTopic(user *tat.User, topic string) error {
 		bson.M{"_id": user.ID},
 		bson.M{"$push": bson.M{"favoritesTopics": topic}})
 	if err != nil {
+		log.Errorf("Error while add favorite topic to user %s: %s", user.Username, err)
 		return err
 	}
+	cache.CleanUsernames(user.Username)
 	return nil
 }
 
@@ -514,8 +516,10 @@ func RemoveFavoriteTopic(user *tat.User, topic string) error {
 		bson.M{"$pull": bson.M{"favoritesTopics": t}})
 
 	if err != nil {
+		log.Errorf("Error while remove favorite topic from user %s: %s", user.Username, err)
 		return err
 	}
+	cache.CleanUsernames(user.Username)
 	return nil
 }
 
@@ -549,6 +553,7 @@ func EnableNotificationsTopic(user *tat.User, topic string) error {
 		return fmt.Errorf("Enable notifications on topic %s is not possible, notifications are already enabled", topicName)
 	}
 
+	cache.CleanUsernames(user.Username)
 	return store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$pull": bson.M{"offNotificationsTopics": t}})
@@ -560,6 +565,7 @@ func DisableNotificationsTopic(user *tat.User, topic string) error {
 		return fmt.Errorf("DisableNotificationsTopic not possible, notifications are already off on topic %s", topic)
 	}
 
+	cache.CleanUsernames(user.Username)
 	return store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$push": bson.M{"offNotificationsTopics": topic}})
@@ -567,6 +573,7 @@ func DisableNotificationsTopic(user *tat.User, topic string) error {
 
 // EnableNotificationsAllTopics removes all topics from user list offNotificationsTopics
 func EnableNotificationsAllTopics(user *tat.User) error {
+	cache.CleanUsernames(user.Username)
 	return store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$set": bson.M{"offNotificationsTopics": []bson.M{}}})
@@ -590,6 +597,7 @@ func DisableNotificationsAllTopics(user *tat.User) error {
 		}
 	}
 
+	cache.CleanUsernames(user.Username)
 	return store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$set": bson.M{"offNotificationsTopics": topicsToSet}})
@@ -618,6 +626,7 @@ func AddFavoriteTag(user *tat.User, tag string) error {
 	if containsFavoriteTag(user, tag) {
 		return fmt.Errorf("AddFavoriteTag not possible, %s is already a favorite tag", tag)
 	}
+	cache.CleanUsernames(user.Username)
 	return store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$push": bson.M{"favoritesTags": tag}})
@@ -630,6 +639,7 @@ func RemoveFavoriteTag(user *tat.User, tag string) error {
 		return fmt.Errorf("Remove favorite tag is not possible, %s is not a favorite of this user", tag)
 	}
 
+	cache.CleanUsernames(user.Username)
 	return store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$pull": bson.M{"favoritesTags": t}})
@@ -660,6 +670,7 @@ func AddContact(user *tat.User, contactUsername string, contactFullname string) 
 	}
 	var newContact = &tat.Contact{Username: contactUsername, Fullname: contactFullname}
 
+	cache.CleanUsernames(user.Username)
 	return store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$push": bson.M{"contacts": newContact}})
@@ -672,6 +683,7 @@ func RemoveContact(user *tat.User, contactUsername string) error {
 		return fmt.Errorf("Remove Contact is not possible, %s is not a contact of this user", contactUsername)
 	}
 
+	cache.CleanUsernames(user.Username)
 	return store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$pull": bson.M{"contacts": l}})
@@ -764,6 +776,7 @@ func Rename(user *tat.User, newUsername string) error {
 	topic.ChangeUsernameOnTopics(user.Username, newUsername)
 	group.ChangeUsernameOnGroups(user.Username, newUsername)
 	presence.ChangeAuthorUsernameOnPresences(user.Username, newUsername)
+	cache.CleanUsernames(user.Username)
 	return nil
 }
 
@@ -787,6 +800,7 @@ func Update(user *tat.User, newFullname, newEmail string) error {
 		return fmt.Errorf("Fullname %s already exists", newFullname)
 	}
 
+	cache.CleanUsernames(user.Username)
 	return store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$set": bson.M{"fullname": newFullname, "email": newEmail}})

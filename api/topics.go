@@ -128,7 +128,7 @@ func (t *TopicsController) OneTopic(ctx *gin.Context) {
 	if errfind != nil {
 		topic, _, err = checkDMTopic(ctx, topicRequest)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + topicRequest + " does not exist"})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + topicRequest + " does not exist or you have no access on it"})
 			return
 		}
 	}

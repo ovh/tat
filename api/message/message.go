@@ -1000,11 +1000,6 @@ func UnVoteDown(message *tat.Message, user tat.User, topic tat.Topic) error {
 			"$pull": bson.M{"votersDown": user.Username}})
 }
 
-// GetPrivateTopicTaskName return Tasks tat.Topic name of user
-func GetPrivateTopicTaskName(user tat.User) string {
-	return "/Private/" + user.Username + "/Tasks"
-}
-
 func addOrRemoveFromTasks(message *tat.Message, action string, user tat.User, topic tat.Topic) error {
 	if action != "pull" && action != "push" {
 		return fmt.Errorf("Wrong action to add or remove tasks:%s", action)

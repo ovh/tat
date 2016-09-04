@@ -253,11 +253,6 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 		return -1, nil, err
 	}
 
-	if isAdmin {
-		goto cacheAndReturn
-	}
-
-cacheAndReturn:
 	cache.Client().Set(kcount, count, time.Hour)
 	bytes, _ = json.Marshal(topics)
 	if len(bytes) > 0 {
