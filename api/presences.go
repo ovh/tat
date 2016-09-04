@@ -56,16 +56,12 @@ func (m *PresencesController) listWithCriteria(ctx *gin.Context, criteria *tat.P
 	}
 
 	if criteria.Topic != "" {
-		topic, err := topicDB.FindByTopic(criteria.Topic, true, false, false, nil)
+		_, err := topicDB.FindByTopic(criteria.Topic, true, false, false, user)
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, errors.New("topic "+criteria.Topic+" does not exist"))
+			ctx.AbortWithError(http.StatusBadRequest, errors.New("topic "+criteria.Topic+" does not exist or you have no Read Access on it"))
 			return
 		}
 
-		if isReadAccess := topicDB.IsUserReadAccess(topic, user); !isReadAccess {
-			ctx.AbortWithError(http.StatusForbidden, errors.New("No Read Access to this topic."))
-			return
-		}
 		// add / if search on topic
 		// as topic is in path, it can't start with a /
 		if criteria.Topic != "" && string(criteria.Topic[0]) != "/" {
@@ -97,28 +93,33 @@ func (m *PresencesController) listWithCriteria(ctx *gin.Context, criteria *tat.P
 	ctx.JSON(http.StatusOK, out)
 }
 
-func (m *PresencesController) preCheckTopic(ctx *gin.Context) (tat.PresenceJSON, tat.Topic, error) {
+func (m *PresencesController) preCheckTopic(ctx *gin.Context) (tat.PresenceJSON, tat.Topic, *tat.User, error) {
 	var presenceIn tat.PresenceJSON
 	ctx.Bind(&presenceIn)
 
 	topicIn, err := GetParam(ctx, "topic")
 	if err != nil {
-		return presenceIn, tat.Topic{}, err
+		return presenceIn, tat.Topic{}, nil, err
 	}
 	presenceIn.Topic = topicIn
 
-	topic, err := topicDB.FindByTopic(presenceIn.Topic, true, false, false, nil)
+	user, e := m.preCheckUser(ctx)
+	if e != nil {
+		return presenceIn, tat.Topic{}, nil, err
+	}
+
+	topic, err := topicDB.FindByTopic(presenceIn.Topic, true, false, false, user)
 	if err != nil {
 		e := errors.New("Topic " + presenceIn.Topic + " does not exist")
 		ctx.AbortWithError(http.StatusInternalServerError, e)
-		return presenceIn, tat.Topic{}, e
+		return presenceIn, tat.Topic{}, nil, e
 	}
-	return presenceIn, *topic, nil
+	return presenceIn, *topic, user, nil
 }
 
-func (*PresencesController) preCheckUser(ctx *gin.Context) (tat.User, error) {
-	var user = tat.User{}
-	found, err := userDB.FindByUsername(&user, getCtxUsername(ctx))
+func (*PresencesController) preCheckUser(ctx *gin.Context) (*tat.User, error) {
+	var user = &tat.User{}
+	found, err := userDB.FindByUsername(user, getCtxUsername(ctx))
 	var e error
 	if !found {
 		e = errors.New("User unknown")
@@ -128,31 +129,19 @@ func (*PresencesController) preCheckUser(ctx *gin.Context) (tat.User, error) {
 	if e != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, e)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
-		return user, e
+		return nil, e
 	}
 	return user, nil
 }
 
 func (m *PresencesController) create(ctx *gin.Context) {
-	presenceIn, topic, e := m.preCheckTopic(ctx)
+	presenceIn, topic, user, e := m.preCheckTopic(ctx)
 	if e != nil {
-		return
-	}
-
-	user, e := m.preCheckUser(ctx)
-	if e != nil {
-		return
-	}
-
-	if isReadAccess := topicDB.IsUserReadAccess(&topic, user); !isReadAccess {
-		e := errors.New("No Read Access to topic " + presenceIn.Topic + " for user " + user.Username)
-		ctx.AbortWithError(http.StatusForbidden, e)
-		ctx.JSON(http.StatusForbidden, gin.H{"error": e.Error()})
 		return
 	}
 
 	var presence = tat.Presence{}
-	if err := presenceDB.Upsert(&presence, user, topic, presenceIn.Status); err != nil {
+	if err := presenceDB.Upsert(&presence, *user, topic, presenceIn.Status); err != nil {
 		log.Errorf("Error while InsertPresence %s", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -187,20 +176,14 @@ func (m *PresencesController) CreateAndGet(ctx *gin.Context) {
 
 // Delete deletes all presences of one user, on one topic
 func (m *PresencesController) Delete(ctx *gin.Context) {
-	presenceIn, topic, e := m.preCheckTopic(ctx)
+	presenceIn, topic, userAction, e := m.preCheckTopic(ctx)
 	if e != nil {
 		return
 	}
 
-	var user = tat.User{}
-
-	user, e = m.preCheckUser(ctx)
-	if e != nil {
-		return
-	}
-
-	if user.IsAdmin {
-		found, err := userDB.FindByUsername(&user, presenceIn.Username)
+	userToDelete := &tat.User{}
+	if userAction.IsAdmin {
+		found, err := userDB.FindByUsername(userToDelete, presenceIn.Username)
 		if !found {
 			e := errors.New("User unknown while fetching user " + presenceIn.Username + " for delete presence")
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
@@ -210,20 +193,15 @@ func (m *PresencesController) Delete(ctx *gin.Context) {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
 			return
 		}
-	} else if isReadAccess := topicDB.IsUserReadAccess(&topic, user); !isReadAccess {
-		e := errors.New("No Read Access to topic " + presenceIn.Topic + " for user " + user.Username)
-		ctx.AbortWithError(http.StatusForbidden, e)
-		ctx.JSON(http.StatusForbidden, gin.H{"error": e.Error()})
-		return
 	}
 
-	if err := presenceDB.Delete(user, topic); err != nil {
+	if err := presenceDB.Delete(*userToDelete, topic); err != nil {
 		log.Errorf("Error while DeletePresence %s", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	presence := tat.Presence{Topic: topic.Topic, UserPresence: tat.UserPresence{Username: user.Username, Fullname: user.Fullname}}
+	presence := tat.Presence{Topic: topic.Topic, UserPresence: tat.UserPresence{Username: userToDelete.Username, Fullname: userToDelete.Fullname}}
 	go socket.WSPresence(&tat.WSPresenceJSON{Action: "delete", Presence: presence})
 	ctx.JSON(http.StatusOK, nil)
 }

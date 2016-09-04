@@ -133,11 +133,6 @@ func (t *TopicsController) OneTopic(ctx *gin.Context) {
 		}
 	}
 
-	if isReadAccess := topicDB.IsUserReadAccess(topic, user); !isReadAccess {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "No Read Access to this topic: " + user.Username + " " + topic.Topic})
-		return
-	}
-
 	out := &tat.TopicJSON{Topic: topic}
 	ctx.JSON(http.StatusOK, out)
 }
@@ -630,14 +625,13 @@ type paramsJSON struct {
 	CanDeleteAllMsg      bool                 `json:"canDeleteAllMsg"`
 	AdminCanUpdateAllMsg bool                 `json:"adminCanUpdateAllMsg"`
 	AdminCanDeleteAllMsg bool                 `json:"adminCanDeleteAllMsg"`
-	IsROPublic           bool                 `json:"isROPublic"`
 	IsAutoComputeTags    bool                 `json:"isAutoComputeTags"`
 	IsAutoComputeLabels  bool                 `json:"isAutoComputeLabels"`
 	Recursive            bool                 `json:"recursive"`
 	Parameters           []tat.TopicParameter `json:"parameters"`
 }
 
-// SetParam update Topic Parameters : MaxLength, CanForeceDate, CanUpdateMsg, CanDeleteMsg, CanUpdateAllMsg, CanDeleteAllMsg, AdminCanDeleteAllMsg, IsROPublic
+// SetParam update Topic Parameters : MaxLength, CanForeceDate, CanUpdateMsg, CanDeleteMsg, CanUpdateAllMsg, CanDeleteAllMsg, AdminCanDeleteAllMsg
 // admin only, except on Private topic
 func (t *TopicsController) SetParam(ctx *gin.Context) {
 	var paramsBind paramsJSON
@@ -669,7 +663,6 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 		paramsBind.CanDeleteAllMsg,
 		paramsBind.AdminCanUpdateAllMsg,
 		paramsBind.AdminCanDeleteAllMsg,
-		paramsBind.IsROPublic,
 		paramsBind.IsAutoComputeTags,
 		paramsBind.IsAutoComputeLabels,
 		paramsBind.Parameters)

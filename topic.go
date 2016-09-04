@@ -31,7 +31,6 @@ type Topic struct {
 	AdminCanDeleteAllMsg bool             `bson:"adminCanDeleteAllMsg" json:"adminCanDeleteAllMsg"`
 	IsAutoComputeTags    bool             `bson:"isAutoComputeTags" json:"isAutoComputeTags"`
 	IsAutoComputeLabels  bool             `bson:"isAutoComputeLabels" json:"isAutoComputeLabels"`
-	IsROPublic           bool             `bson:"isROPublic"   json:"isROPublic"`
 	DateModification     int64            `bson:"dateModification" json:"dateModificationn,omitempty"`
 	DateCreation         int64            `bson:"dateCreation" json:"dateCreation,omitempty"`
 	DateLastMessage      int64            `bson:"dateLastMessage" json:"dateLastMessage,omitempty"`
@@ -111,12 +110,14 @@ func (t *TopicCriteria) CacheKey() string {
 	return cache.Key(s...)
 }
 
+// ParamTopicUserJSON is used to update a parameter on topic
 type ParamTopicUserJSON struct {
 	Topic     string `json:"topic"` // topic topic
 	Username  string `json:"username"`
 	Recursive bool   `json:"recursive"`
 }
 
+// TopicCreateJSON is used to create a parameter on topic
 type TopicCreateJSON struct {
 	Topic       string `json:"topic" binding:"required"`
 	Description string `json:"description" binding:"required"`

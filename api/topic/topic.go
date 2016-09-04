@@ -156,7 +156,6 @@ func GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 			"adminCanDeleteAllMsg": 1,
 			"isAutoComputeTags":    1,
 			"isAutoComputeLabels":  1,
-			"isROPublic":           1,
 			"dateModificationn":    1,
 			"dateCreation":         1,
 			"dateLastMessage":      1,
@@ -170,7 +169,6 @@ func GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 			"collection":           1,
 			"topic":                1,
 			"description":          1,
-			"isROPublic":           1,
 			"roGroups":             1,
 			"rwGroups":             1,
 			"roUsers":              1,
@@ -295,7 +293,6 @@ func InitPrivateTopic() {
 		CanDeleteAllMsg:      false,
 		AdminCanUpdateAllMsg: false,
 		AdminCanDeleteAllMsg: false,
-		IsROPublic:           false,
 		IsAutoComputeTags:    true,
 		IsAutoComputeLabels:  true,
 	}
@@ -343,7 +340,6 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 	topic.DateCreation = time.Now().Unix()
 	topic.MaxLength = tat.DefaultMessageMaxSize // topic MaxLenth messages
 	topic.CanForceDate = false
-	topic.IsROPublic = false
 	topic.IsAutoComputeLabels = true
 	topic.IsAutoComputeTags = true
 	topic.Collection = "messages" + topic.ID
@@ -371,7 +367,6 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 		topic.CanDeleteAllMsg = parentTopic.CanDeleteAllMsg
 		topic.AdminCanUpdateAllMsg = parentTopic.AdminCanUpdateAllMsg
 		topic.AdminCanDeleteAllMsg = parentTopic.AdminCanDeleteAllMsg
-		topic.IsROPublic = parentTopic.IsROPublic
 		topic.IsAutoComputeTags = parentTopic.IsAutoComputeTags
 		topic.IsAutoComputeLabels = parentTopic.IsAutoComputeLabels
 		topic.Parameters = parentTopic.Parameters
@@ -805,10 +800,10 @@ func FindByID(topic *tat.Topic, id string, isAdmin bool, username string) error 
 }
 
 // SetParam update param maxLength, canForceDate, canUpdateMsg, canDeleteMsg,
-// canUpdateAllMsg, canDeleteAllMsg, adminCanUpdateAllMsg, adminCanDeleteAllMsg, isROPublic, parameters on topic
+// canUpdateAllMsg, canDeleteAllMsg, adminCanUpdateAllMsg, adminCanDeleteAllMsg, parameters on topic
 func SetParam(topic *tat.Topic, username string, recursive bool, maxLength int,
 	canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanUpdateAllMsg, adminCanDeleteAllMsg,
-	isROPublic, isAutoComputeTags, isAutoComputeLabels bool, parameters []tat.TopicParameter) error {
+	isAutoComputeTags, isAutoComputeLabels bool, parameters []tat.TopicParameter) error {
 
 	var selector bson.M
 
@@ -831,7 +826,6 @@ func SetParam(topic *tat.Topic, username string, recursive bool, maxLength int,
 		"canDeleteAllMsg":      canDeleteAllMsg,
 		"adminCanUpdateAllMsg": adminCanUpdateAllMsg,
 		"adminCanDeleteAllMsg": adminCanDeleteAllMsg,
-		"isROPublic":           isROPublic,
 		"isAutoComputeTags":    isAutoComputeTags,
 		"isAutoComputeLabels":  isAutoComputeLabels,
 	}
@@ -845,7 +839,7 @@ func SetParam(topic *tat.Topic, username string, recursive bool, maxLength int,
 		log.Errorf("Error while updateAll parameters : %s", err.Error())
 		return err
 	}
-	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, adminCanDeleteAllMsg:%t isROPublic:%t, isAutoComputeTags:%t, isAutoComputeLabels:%t", maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanDeleteAllMsg, isROPublic, isAutoComputeTags, isAutoComputeLabels)
+	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, adminCanDeleteAllMsg:%t isAutoComputeTags:%t, isAutoComputeLabels:%t", maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanDeleteAllMsg, isAutoComputeTags, isAutoComputeLabels)
 	return addToHistory(topic, selector, username, h)
 }
 
@@ -1021,43 +1015,6 @@ func GetUserRights(topic *tat.Topic, user *tat.User) (bool, bool) {
 	isRW := isUserRW || tat.ItemInBothArrays(topic.RWGroups, groups)
 	isAdmin := isUserAdmin || tat.ItemInBothArrays(topic.AdminUsers, groups)
 	return isRW, isAdmin
-}
-
-// IsUserReadAccess  return true if user has read access to topic
-func IsUserReadAccess(topic *tat.Topic, user tat.User) bool {
-	currentTopic := topic
-
-	if topic.IsROPublic {
-		return true
-	}
-
-	// if user not admin, reload topic with admin rights
-	if !user.IsAdmin {
-		currentTopic = &tat.Topic{}
-		if e := FindByID(currentTopic, topic.ID, true, user.Username); e != nil {
-			return false
-		}
-	}
-
-	if tat.ArrayContains(currentTopic.ROUsers, user.Username) ||
-		tat.ArrayContains(currentTopic.RWUsers, user.Username) ||
-		tat.ArrayContains(currentTopic.AdminUsers, user.Username) {
-		return true
-	}
-	userGroups, err := group.GetGroups(user.Username)
-	if err != nil {
-		log.Errorf("Error while fetching user groups for user %s", user.Username)
-		return false
-	}
-
-	var groups []string
-	for _, g := range userGroups {
-		groups = append(groups, g.Name)
-	}
-
-	return tat.ItemInBothArrays(currentTopic.RWGroups, groups) ||
-		tat.ItemInBothArrays(currentTopic.ROGroups, groups) ||
-		tat.ItemInBothArrays(currentTopic.AdminGroups, groups)
 }
 
 // IsUserAdmin return true if user is Tat admin or is admin on this topic

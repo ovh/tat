@@ -125,49 +125,49 @@ func (m *MessagesController) innerList(ctx *gin.Context) (*tat.MessagesJSON, tat
 		criteria.Topic = "/" + criteria.Topic
 	}
 
-	topic, errt := topicDB.FindByTopic(criteria.Topic, true, false, false, nil)
-	if errt != nil {
-		topicCriteria := ""
-		_, topicCriteria, err = checkDMTopic(ctx, criteria.Topic)
-		if err != nil {
-			return out, tat.User{}, tat.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("topic " + criteria.Topic + " does not exist")
-		}
-		// hack to get new created DM Topic
-		topic, errt = topicDB.FindByTopic(topicCriteria, true, false, false, nil)
-		if errt != nil {
-			return out, tat.User{}, tat.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("topic " + criteria.Topic + " does not exist (2)")
-		}
-		criteria.Topic = topicCriteria
-	}
-
 	var user tat.User
 	var e error
+
 	if getCtxUsername(ctx) != "" {
 		user, e = PreCheckUser(ctx)
 		if e != nil {
 			return out, tat.User{}, tat.Topic{}, criteria, http.StatusBadRequest, e
 		}
-		if isReadAccess := topicDB.IsUserReadAccess(topic, user); !isReadAccess {
-			return out, tat.User{}, tat.Topic{}, criteria, http.StatusForbidden, fmt.Errorf("No Read Access on topic %s", criteria.Topic)
-		}
-		out.IsTopicRw, out.IsTopicAdmin = topicDB.GetUserRights(topic, &user)
-	} else if !topic.IsROPublic {
-		return out, tat.User{}, tat.Topic{}, criteria, http.StatusForbidden, fmt.Errorf("No Public Read Access Public to this topic")
-	} else if topic.IsROPublic && strings.HasPrefix(topic.Topic, "/Private") {
-		return out, tat.User{}, tat.Topic{}, criteria, http.StatusForbidden, fmt.Errorf("No Public Read Access to this topic")
 	}
+
+	topic, errt := topicDB.FindByTopic(criteria.Topic, true, false, false, &user)
+	if errt != nil {
+		topicCriteria := ""
+		_, topicCriteria, err = checkDMTopic(ctx, criteria.Topic)
+		if err != nil {
+			return out, tat.User{}, tat.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("topic " + criteria.Topic + " does not exist or you have no read access on it")
+		}
+		// hack to get new created DM Topic
+		topic, errt = topicDB.FindByTopic(topicCriteria, true, false, false, &user)
+		if errt != nil {
+			return out, tat.User{}, tat.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("topic " + criteria.Topic + " does not exist or you have no read access on it (2)")
+		}
+		criteria.Topic = topicCriteria
+	}
+
+	out.IsTopicRw, out.IsTopicAdmin = topicDB.GetUserRights(topic, &user)
 
 	return out, user, *topic, criteria, -1, nil
 }
 
-func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, tat.Message, tat.Topic, error) {
+func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, tat.Message, tat.Topic, *tat.User, error) {
 	var message = tat.Message{}
 	var messageIn tat.MessageJSON
 	ctx.Bind(&messageIn)
 
+	user, e := PreCheckUser(ctx)
+	if e != nil {
+		return messageIn, message, tat.Topic{}, nil, e
+	}
+
 	topicIn, err := GetParam(ctx, "topic")
 	if err != nil {
-		return messageIn, message, tat.Topic{}, err
+		return messageIn, message, tat.Topic{}, nil, err
 	}
 	messageIn.Topic = topicIn
 
@@ -175,18 +175,18 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, t
 		if efind := messageDB.FindByIDDefaultCollection(&message, messageIn.IDReference); efind != nil {
 			e := errors.New("Invalid request, no topic and message " + messageIn.IDReference + " not found in default collection:" + efind.Error())
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-			return messageIn, message, tat.Topic{}, e
+			return messageIn, message, tat.Topic{}, nil, e
 		}
 		messageIn.Topic = message.Topic
 	}
 
-	topic, efind := topicDB.FindByTopic(messageIn.Topic, true, true, true, nil)
+	topic, efind := topicDB.FindByTopic(messageIn.Topic, true, true, true, &user)
 	if efind != nil {
 		topica, _, edm := checkDMTopic(ctx, messageIn.Topic)
 		if edm != nil {
 			e := errors.New("Topic " + messageIn.Topic + " does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-			return messageIn, message, tat.Topic{}, e
+			return messageIn, message, tat.Topic{}, nil, e
 		}
 		topic = topica
 	}
@@ -197,7 +197,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, t
 		if efind := messageDB.FindByID(&message, messageIn.IDReference, *topic); efind != nil {
 			e := errors.New("Message " + messageIn.IDReference + " does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-			return messageIn, message, tat.Topic{}, e
+			return messageIn, message, tat.Topic{}, nil, e
 		}
 
 		topicName := ""
@@ -217,35 +217,30 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, t
 		} else {
 			e := errors.New("Invalid Call. IDReference not empty with unknown action")
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
-			return messageIn, message, tat.Topic{}, e
+			return messageIn, message, tat.Topic{}, nil, e
 		}
-		topic, err = topicDB.FindByTopic(topicName, true, true, true, nil)
+		topic, err = topicDB.FindByTopic(topicName, true, true, true, &user)
 		if err != nil {
 			e := errors.New("Topic " + topicName + " does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-			return messageIn, message, tat.Topic{}, e
+			return messageIn, message, tat.Topic{}, nil, e
 		}
 	} else {
 		e := errors.New("Topic and IDReference are null. Wrong request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
-		return messageIn, message, tat.Topic{}, e
+		return messageIn, message, tat.Topic{}, nil, e
 	}
-	return messageIn, message, *topic, nil
+	return messageIn, message, *topic, nil, nil
 }
 
 // Create a new message on one topic
 func (m *MessagesController) Create(ctx *gin.Context) {
-	messageIn, _, topic, e := m.preCheckTopic(ctx)
+	messageIn, _, topic, user, e := m.preCheckTopic(ctx)
 	if e != nil {
 		return
 	}
 
-	user, e := PreCheckUser(ctx)
-	if e != nil {
-		return
-	}
-
-	if isRw, _ := topicDB.GetUserRights(&topic, &user); !isRw {
+	if isRw, _ := topicDB.GetUserRights(&topic, user); !isRw {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No RW Access to topic " + messageIn.Topic)})
 		return
 	}
@@ -253,7 +248,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 	var message = tat.Message{}
 
 	// New root message or reply
-	err := messageDB.Insert(&message, user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, false, nil)
+	err := messageDB.Insert(&message, *user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, false, nil)
 	if err != nil {
 		log.Errorf("%s", err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -269,51 +264,46 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 
 // Update a message : like, unlike, add label, etc...
 func (m *MessagesController) Update(ctx *gin.Context) {
-	messageIn, messageReference, topic, e := m.preCheckTopic(ctx)
-	if e != nil {
-		return
-	}
-
-	user, e := PreCheckUser(ctx)
+	messageIn, messageReference, topic, user, e := m.preCheckTopic(ctx)
 	if e != nil {
 		return
 	}
 
 	if messageIn.Action == "like" || messageIn.Action == "unlike" {
-		m.likeOrUnlike(ctx, messageIn.Action, messageReference, topic, user)
+		m.likeOrUnlike(ctx, messageIn.Action, messageReference, topic, *user)
 		return
 	}
 
-	isRW, isAdminOnTopic := topicDB.GetUserRights(&topic, &user)
+	isRW, isAdminOnTopic := topicDB.GetUserRights(&topic, user)
 	if !isRW {
 		ctx.AbortWithError(http.StatusForbidden, errors.New("No RW Access to topic : "+messageIn.Topic))
 		return
 	}
 
 	if messageIn.Action == tat.MessageActionLabel || messageIn.Action == tat.MessageActionUnlabel || messageIn.Action == tat.MessageActionRelabel {
-		m.addOrRemoveLabel(ctx, &messageIn, messageReference, user, topic)
+		m.addOrRemoveLabel(ctx, &messageIn, messageReference, *user, topic)
 		return
 	}
 
 	if messageIn.Action == tat.MessageActionVoteup || messageIn.Action == tat.MessageActionVotedown ||
 		messageIn.Action == tat.MessageActionUnvoteup || messageIn.Action == tat.MessageActionUnvotedown {
-		m.voteMessage(ctx, &messageIn, messageReference, user, topic)
+		m.voteMessage(ctx, &messageIn, messageReference, *user, topic)
 		return
 	}
 
 	if messageIn.Action == tat.MessageActionTask || messageIn.Action == tat.MessageActionUntask {
-		m.addOrRemoveTask(ctx, &messageIn, messageReference, user, topic)
+		m.addOrRemoveTask(ctx, &messageIn, messageReference, *user, topic)
 		return
 	}
 
 	if messageIn.Action == tat.MessageActionUpdate || messageIn.Action == tat.MessageActionConcat {
-		m.updateMessage(ctx, &messageIn, messageReference, user, topic, isAdminOnTopic)
+		m.updateMessage(ctx, &messageIn, messageReference, *user, topic, isAdminOnTopic)
 		return
 	}
 
 	if messageIn.Action == tat.MessageActionMove {
 		// topic here is fromTopic
-		m.moveMessage(ctx, &messageIn, messageReference, user, topic)
+		m.moveMessage(ctx, &messageIn, messageReference, *user, topic)
 		return
 	}
 
@@ -347,7 +337,12 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 		return
 	}
 
-	topic, errf := topicDB.FindByTopic(topicIn, true, false, false, nil)
+	user, e := PreCheckUser(ctx)
+	if e != nil {
+		return
+	}
+
+	topic, errf := topicDB.FindByTopic(topicIn, true, false, false, &user)
 	if errf != nil {
 		log.Errorf("messageDelete> err:%s", errf)
 		e := fmt.Sprintf("Topic %s does not exist", topicIn)
@@ -358,11 +353,6 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 	message := tat.Message{}
 	if err = messageDB.FindByID(&message, idMessageIn, *topic); err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Message %s does not exist", idMessageIn)})
-		return
-	}
-
-	user, e := PreCheckUser(ctx)
-	if e != nil {
 		return
 	}
 
@@ -453,11 +443,6 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message tat.Mes
 }
 
 func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, message tat.Message, topic tat.Topic, user tat.User) {
-	isReadAccess := topicDB.IsUserReadAccess(&topic, user)
-	if !isReadAccess {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New("No Read Access to topic "+message.Topic))
-		return
-	}
 
 	info := ""
 	if action == "like" {
@@ -631,17 +616,16 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *tat.Mess
 
 func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *tat.MessageJSON, message tat.Message, user tat.User, fromTopic tat.Topic) {
 
-	toTopic, err := topicDB.FindByTopic(messageIn.Option, true, false, false, nil)
-	if err != nil {
-		e := fmt.Sprintf("Topic destination %s does not exist", message.Topic)
-		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
+	// Check if user can delete msg on from topic
+	if err := m.checkBeforeDelete(ctx, message, user, true, fromTopic); err != nil {
+		// ctx writes in checkBeforeDelete
 		return
 	}
 
-	// Check if user can delete msg on from topic
-	err = m.checkBeforeDelete(ctx, message, user, true, fromTopic)
+	toTopic, err := topicDB.FindByTopic(messageIn.Option, true, false, false, &user)
 	if err != nil {
-		// ctx writes in checkBeforeDelete
+		e := fmt.Sprintf("Topic destination %s does not exist", message.Topic)
+		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
 		return
 	}
 

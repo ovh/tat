@@ -343,14 +343,9 @@ func (*UsersController) AddFavoriteTopic(ctx *gin.Context) {
 		return
 	}
 
-	topic, err := topicDB.FindByTopic(topicIn, true, false, false, nil)
+	topic, err := topicDB.FindByTopic(topicIn, true, false, false, &user)
 	if err != nil {
-		AbortWithReturnError(ctx, http.StatusBadRequest, errors.New("topic "+topicIn+" does not exist"))
-		return
-	}
-
-	if !topicDB.IsUserReadAccess(topic, user) {
-		AbortWithReturnError(ctx, http.StatusForbidden, errors.New("No Read Access to this topic"))
+		AbortWithReturnError(ctx, http.StatusBadRequest, errors.New("topic "+topicIn+" does not exist or you have no Read Access on it"))
 		return
 	}
 
@@ -391,14 +386,9 @@ func (*UsersController) EnableNotificationsTopic(ctx *gin.Context) {
 		return
 	}
 
-	topic, err := topicDB.FindByTopic(topicIn, true, false, false, nil)
+	topic, err := topicDB.FindByTopic(topicIn, true, false, false, &user)
 	if err != nil {
-		AbortWithReturnError(ctx, http.StatusBadRequest, errors.New("topic "+topicIn+" does not exist"))
-		return
-	}
-
-	if !topicDB.IsUserReadAccess(topic, user) {
-		AbortWithReturnError(ctx, http.StatusForbidden, errors.New("No Read Access to this topic"))
+		AbortWithReturnError(ctx, http.StatusBadRequest, errors.New("topic "+topicIn+" does not exist or you have no Read Access on it"))
 		return
 	}
 

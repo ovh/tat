@@ -1169,7 +1169,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    -d '{"topic": "/topicA", "recursive": "false", "maxlength": 140, "canForceDate": false, "canUpdateMsg": false, "canDeleteMsg": false, "canUpdateAllMsg": false, "canDeleteAllMsg": false, "adminCanUpdateAllMsg": false, "adminCanDeleteAllMsg": false, "isROPublic": false}' \
+    -d '{"topic": "/topicA", "recursive": "false", "maxlength": 140, "canForceDate": false, "canUpdateMsg": false, "canDeleteMsg": false, "canUpdateAllMsg": false, "canDeleteAllMsg": false, "adminCanUpdateAllMsg": false, "adminCanDeleteAllMsg": false}' \
     https://<tatHostname>:<tatPort>/topic/param
 ```
 
@@ -1182,7 +1182,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
     -H "Tat_password: passwordAdmin" \
-    -d '{"topic":"/Internal/Alerts","recursive":false,"maxlength":300,"canForceDate":false,"canUpdateMsg":false,"canDeleteMsg":true,"canUpdateAllMsg":false,"canDeleteAllMsg":false,"adminCanUpdateAllMsg":false,"adminCanDeleteAllMsg":false,"isROPublic":false,"parameters":[{"key":"agileview","value":"qsdf#qsdf"},{"key":"tatwebui.view.default","value":"standardview-list"},{"key":"tatwebui.view.forced","value":""}]}' \
+    -d '{"topic":"/Internal/Alerts","recursive":false,"maxlength":300,"canForceDate":false,"canUpdateMsg":false,"canDeleteMsg":true,"canUpdateAllMsg":false,"canDeleteAllMsg":false,"adminCanUpdateAllMsg":false,"adminCanDeleteAllMsg":false,"parameters":[{"key":"agileview","value":"qsdf#qsdf"},{"key":"tatwebui.view.default","value":"standardview-list"},{"key":"tatwebui.view.forced","value":""}]}' \
     https://<tatHostname>:<tatPort>/topic/param
 ```
 

@@ -231,66 +231,31 @@ func work(socket *tat.Socket, msg tat.WSJSON) {
 }
 
 func preCheckWSTopics(socket *tat.Socket, msg tat.WSJSON) ([]tat.Topic, tat.User, error) {
-	count, topics, user, err := getTopicsOfUser(socket, msg)
-	if err != nil {
-		return topics, user, err
-	}
-
-	// at least one topic found with "all"
-	if count > 1 {
-		return topics, user, nil
-	}
-
-	if len(msg.Topics) < 1 {
-		m := fmt.Sprintf("Invalid number of args (%d) for action %s", len(msg.Topics), msg.Action)
-		write(socket, gin.H{"action": msg.Action, "result": m, "status": http.StatusBadRequest})
-		return []tat.Topic{}, tat.User{}, errors.New(m)
-	}
-	topics = make([]tat.Topic, len(msg.Topics))
-
-	for i, topicName := range msg.Topics {
-		tatTopic, err := topicDB.FindByTopic(strings.Trim(topicName, " "), true, false, false, nil)
-		if err != nil {
-			m := fmt.Sprintf("Invalid topic (%s) for action %s", topicName, msg.Action)
-			log.Errorf("%s error:%s", m, err.Error())
-			write(socket, gin.H{"action": msg.Action, "result": m, "status": http.StatusBadRequest})
-			return []tat.Topic{}, tat.User{}, errors.New(m)
-		}
-
-		if !topicDB.IsUserReadAccess(tatTopic, user) {
-			m := fmt.Sprintf("No Read Access on topic %s for action %s", topicName, msg.Action)
-			write(socket, gin.H{"action": msg.Action, "result": m, "status": http.StatusForbidden})
-			return []tat.Topic{}, tat.User{}, errors.New(m)
-		}
-		topics[i] = *tatTopic
-	}
-	return topics, user, nil
-}
-
-func getTopicsOfUser(socket *tat.Socket, msg tat.WSJSON) (int, []tat.Topic, tat.User, error) {
 	var user = tat.User{}
 	found, err := userDB.FindByUsername(&user, socket.Username)
 	if !found || err != nil {
 		m := fmt.Sprintf("Internal Error getting User for action %s", msg.Action)
 		log.Errorf("%s :%s", m, err)
 		write(socket, gin.H{"action": msg.Action, "result": m, "status": http.StatusInternalServerError})
-		return 0, []tat.Topic{}, tat.User{}, errors.New(m)
+		return []tat.Topic{}, tat.User{}, errors.New(m)
 	}
 
+	c := tat.TopicCriteria{}
+	c.Skip = 0
+	c.Limit = 1000
 	if len(msg.Topics) == 1 && strings.Trim(msg.Topics[0], " ") == "all" {
-		c := tat.TopicCriteria{}
-		c.Skip = 0
-		c.Limit = 1000
-
-		count, topics, err := topicDB.ListTopics(&c, &user, false, false, false)
-		if err != nil {
-			m := fmt.Sprintf("Error while getting topics for action %s", msg.Action)
-			write(socket, gin.H{"action": msg.Action, "result": m, "status": http.StatusBadRequest})
-			return count, []tat.Topic{}, user, errors.New(m)
-		}
-		return count, topics, user, nil
+		// nothing, we select all topics
+	} else {
+		c.Topic = strings.Join(msg.Topics, ",")
 	}
-	return 0, []tat.Topic{}, user, nil
+
+	_, topics, err := topicDB.ListTopics(&c, &user, false, false, false)
+	if err != nil {
+		m := fmt.Sprintf("Error while getting topics for action %s", msg.Action)
+		write(socket, gin.H{"action": msg.Action, "result": m, "status": http.StatusBadRequest})
+		return nil, user, errors.New(m)
+	}
+	return topics, user, nil
 }
 
 func actionSubscribeMessages(socket *tat.Socket, msg tat.WSJSON) {
