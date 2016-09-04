@@ -49,6 +49,10 @@ testInstance:
 // TestInstanceAtStartup pings redis and display error log if no redis, and Info
 // log is redis is here
 func TestInstanceAtStartup() {
+	if viper.GetString("redis_hosts") == "" {
+		log.Infof("TAT is NOT linked to a redis")
+		return
+	}
 	if err := Client().Ping().Err(); err != nil {
 		log.Errorf("Unable to ping redis at %s: %s", viper.GetString("redis_hosts"), err)
 	} else {
