@@ -762,24 +762,6 @@ func FindByTopic(topicIn string, isAdmin, withTags, withLabels bool, user *tat.U
 		return nil, fmt.Errorf("Invalid Request. Get many topics instead one")
 	}
 	return &topics[0], nil
-
-	/*err := store.Tat().CTopics.Find(bson.M{"topic": topic.Topic}).
-			Select(GetTopicSelectedFields(isAdmin, withTags, withLabels, true)).
-			One(&topic)
-
-		if err != nil || topic.ID == "" {
-			username := ""
-			if user != nil {
-				username = user.Username
-			}
-			e := fmt.Sprintf("FindByTopic> Error while fetching topic %s, isAdmin:%t, username:%s", topic.Topic, isAdmin, username)
-			log.Debugf(e)
-			// TODO DM
-			return fmt.Errorf(e)
-		}
-	return err
-	*/
-
 }
 
 // IsTopicExists return true if topic exists, false otherwise
