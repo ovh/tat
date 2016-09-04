@@ -788,17 +788,6 @@ func IsTopicExists(topicName string) bool {
 	return err == nil // no error, return true
 }
 
-// FindByID return topic, matching given id
-func FindByID(topic *tat.Topic, id string, isAdmin bool, username string) error {
-	err := store.Tat().CTopics.Find(bson.M{"_id": id}).
-		Select(GetTopicSelectedFields(isAdmin, false, false, true)).
-		One(&topic)
-	if err != nil {
-		log.Errorf("Error while fetching topic with id:%s isAdmin:%t username:%s", id, isAdmin, username)
-	}
-	return err
-}
-
 // SetParam update param maxLength, canForceDate, canUpdateMsg, canDeleteMsg,
 // canUpdateAllMsg, canDeleteAllMsg, adminCanUpdateAllMsg, adminCanDeleteAllMsg, parameters on topic
 func SetParam(topic *tat.Topic, username string, recursive bool, maxLength int,
