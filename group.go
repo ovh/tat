@@ -1,6 +1,9 @@
 package tat
 
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+)
 
 // Group struct
 type Group struct {
@@ -76,4 +79,29 @@ type ParamGroupJSON struct {
 	Topic     string `json:"topic"`
 	Groupname string `json:"groupname"`
 	Recursive bool   `json:"recursive"`
+}
+
+func (c *Client) GroupList() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) GroupCreate() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) GroupUpdate() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) GroupDelete() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) GroupAddUser() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) GroupDeleteUser() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) GroupAddAdminUser() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) GroupDeleteAdminUser() error {
+	return fmt.Errorf("Not Yet Implemented")
 }

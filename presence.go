@@ -1,6 +1,7 @@
 package tat
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -48,4 +49,14 @@ type PresenceJSON struct {
 	Status   string `json:"status" binding:"required"`
 	Username string `json:"username,omitempty"`
 	Topic    string
+}
+
+func (c *Client) PresenceAdd() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) PresenceDelete() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) PresenceList() error {
+	return fmt.Errorf("Not Yet Implemented")
 }

@@ -1,7 +1,9 @@
 package tat
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
 )
@@ -163,4 +165,136 @@ func CheckAndFixNameTopic(topicName string) (string, error) {
 	}
 
 	return name, nil
+}
+
+// CreateTopic creates a topic
+func (c *Client) TopicCreate(t TopicCreateJSON) (*Topic, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	b, err := json.Marshal(t)
+	if err != nil {
+		ErrorLogFunc("Error while marshal topic: %s", err)
+		return nil, err
+	}
+
+	res, err := c.reqWant("POST", http.StatusCreated, "/topic", b)
+	if err != nil {
+		ErrorLogFunc("Error while marshal message for CreateTopic: %s", err)
+		return nil, err
+	}
+
+	DebugLogFunc("createTopicResponse : %s", string(res))
+
+	newTopic := &Topic{}
+	if err := json.Unmarshal(res, newTopic); err != nil {
+		return nil, err
+	}
+
+	return newTopic, nil
+}
+
+func (c *Client) TopicList() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicDelete() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicTruncate() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAddRoUser() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicComputeLabels() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicTruncateLabels() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicComputeTags() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicTruncateTags() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAllComputeLabels() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAllComputeTags() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAllComputeReplies() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAllSetParam() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAddRwUser() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAddAdminUser() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicDeleteRoUser() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicDeleteRwUser() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicDeleteAdminUser() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAddRoGroup() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAddRwGroup() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAddAdminGroup() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicDeleteRoGroup() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicDeleteRwGroup() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicDeleteAdminGroup() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicAddParameter() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicDeleteParameter() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+
+func (c *Client) TopicParameter() error {
+	return fmt.Errorf("Not Yet Implemented")
 }

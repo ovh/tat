@@ -2,7 +2,6 @@ package tat
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -51,7 +50,7 @@ var ErrClientNotInitiliazed = fmt.Errorf("Client is not initialized")
 //NewClient initialize a TAT client
 func NewClient(opts Options) (*Client, error) {
 	if opts.URL == "" || opts.Username == "" || opts.Password == "" {
-		return nil, fmt.Errorf("Invalid configuratio:. usersane, password and referer have to be setted")
+		return nil, fmt.Errorf("Invalid configuration: username, password and referer have to be setted")
 	}
 	c := &Client{
 		url:            opts.URL,
@@ -131,59 +130,4 @@ func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byt
 		return nil, fmt.Errorf("Error with ioutil.ReadAll %s", err.Error())
 	}
 	return body, nil
-}
-
-// CreateTopic creates a topic
-func (c *Client) CreateTopic(t TopicCreateJSON) (*Topic, error) {
-	if c == nil {
-		return nil, ErrClientNotInitiliazed
-	}
-
-	b, err := json.Marshal(t)
-	if err != nil {
-		ErrorLogFunc("Error while marshal topic: %s", err)
-		return nil, err
-	}
-
-	res, err := c.reqWant("POST", http.StatusCreated, "/topic", b)
-	if err != nil {
-		ErrorLogFunc("Error while marshal message for CreateTopic: %s", err)
-		return nil, err
-	}
-
-	DebugLogFunc("createTopicResponse : %s", string(res))
-
-	newTopic := &Topic{}
-	if err := json.Unmarshal(res, newTopic); err != nil {
-		return nil, err
-	}
-
-	return newTopic, nil
-}
-
-// AddMessage post a tat message
-func (c *Client) AddMessage(message MessageJSON) error {
-	if c == nil {
-		return ErrClientNotInitiliazed
-	}
-
-	if message.Topic == "" {
-		return fmt.Errorf("A message must have a Topic")
-	}
-
-	path := "/message" + message.Topic
-
-	b, err := json.Marshal(message)
-	if err != nil {
-		ErrorLogFunc("Error while marshal message: %s", err)
-		return err
-	}
-
-	if _, err := c.reqWant("POST", http.StatusCreated, path, b); err != nil {
-		ErrorLogFunc("Error while marshal message for AddMessage: %s", err)
-		return err
-	}
-
-	DebugLogFunc("Post %s done", message.Text)
-	return nil
 }

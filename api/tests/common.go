@@ -99,6 +99,7 @@ func handle(g *gin.RouterGroup, m string, s string, h ...gin.HandlerFunc) {
 	g.Handle(m, s, h...)
 }
 
+// FakeAuthHandler initiliazes gin context for tests
 func FakeAuthHandler(t *testing.T, username string, referer string, isAdmin bool, isSystem bool) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.Set(tat.TatHeaderUsername, username)

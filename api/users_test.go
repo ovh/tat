@@ -11,7 +11,7 @@ import (
 var userController = &UsersController{}
 
 // TestUserMe tests non-admin user, authenticated on tat
-// GET on /user/me
+// GET on /user/me, check HTTP 200
 func TestUserMe(t *testing.T) {
 	tests.Init(t)
 

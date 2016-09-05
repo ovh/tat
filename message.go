@@ -1,6 +1,11 @@
 package tat
 
-import "strconv"
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"strconv"
+)
 
 const (
 	// DefaultMessageMaxSize is max size of message, can be overrided by topic
@@ -216,4 +221,92 @@ type MessageJSON struct {
 	Labels       []Label  `json:"labels"`
 	Options      []string `json:"options"`
 	Replies      []string `json:"replies"`
+}
+
+// MessageAdd post a tat message
+func (c *Client) MessageAdd(message MessageJSON) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	if message.Topic == "" {
+		return nil, fmt.Errorf("A message must have a Topic")
+	}
+
+	path := "/message" + message.Topic
+
+	b, err := json.Marshal(message)
+	if err != nil {
+		ErrorLogFunc("Error while marshal message: %s", err)
+		return nil, err
+	}
+
+	body, err := c.reqWant("POST", http.StatusCreated, path, b)
+	if err != nil {
+		ErrorLogFunc("Error while marshal message for MessageAdd: %s", err)
+		return nil, err
+	}
+
+	out := &MessageJSONOut{}
+	if err := json.Unmarshal(body, out); err != nil {
+		return nil, err
+	}
+
+	DebugLogFunc("Post %s done", message.Text)
+	return out, nil
+}
+
+func (c *Client) MessageReply() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageDelete() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageDeleteBulk() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageUpdate() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageConcat() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageMove() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageTask() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageUntask() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageLike() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageUnlike() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageVoteUP() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageVoteDown() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageUnVoteUP() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageUnVoteDown() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageLabel() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageUnlabel() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageRelabel() error {
+	return fmt.Errorf("Not Yet Implemented")
+}
+func (c *Client) MessageList() error {
+	return fmt.Errorf("Not Yet Implemented")
 }
