@@ -10,9 +10,9 @@ import (
 
 var userController = &UsersController{}
 
-// TestMe tests non-admin user, authenticated on tat
+// TestUserMe tests non-admin user, authenticated on tat
 // GET on /user/me
-func TestMe(t *testing.T) {
+func TestUserMe(t *testing.T) {
 	tests.Init(t)
 
 	r := tests.Router(t)
