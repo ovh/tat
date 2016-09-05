@@ -1,10 +1,6 @@
 package tat
 
-import (
-	"strconv"
-
-	"github.com/ovh/tat/api/cache"
-)
+import "strconv"
 
 // Group struct
 type Group struct {
@@ -29,11 +25,11 @@ type GroupCriteria struct {
 }
 
 // CacheKey returns cacke key value
-func (g *GroupCriteria) CacheKey() string {
-	if g == nil {
-		return ""
-	}
+func (g *GroupCriteria) CacheKey() []string {
 	var s = []string{}
+	if g == nil {
+		return s
+	}
 	if g.Skip != 0 {
 		s = append(s, "skip="+strconv.Itoa(g.Skip))
 	}
@@ -58,7 +54,7 @@ func (g *GroupCriteria) CacheKey() string {
 	if g.UserUsername != "" {
 		s = append(s, "user_username="+g.UserUsername)
 	}
-	return cache.Key(s...)
+	return s
 }
 
 type GroupsJSON struct {

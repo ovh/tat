@@ -6,6 +6,7 @@ import (
 	"gopkg.in/redis.v4"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/ovh/tat"
 	"github.com/spf13/viper"
 )
 
@@ -29,6 +30,11 @@ func Client() Cache {
 
 	if len(redisHostsArray) > 1 {
 		//Mode in cluster
+		opts := &redis.ClusterOptions{
+			Addrs:    redisHostsArray,
+			Password: redisPassword,
+		}
+		instance = redis.NewClusterClient(opts)
 	} else {
 		//Mode master
 		opts := &redis.Options{
@@ -58,6 +64,12 @@ func TestInstanceAtStartup() {
 	} else {
 		log.Infof("TAT is linked to redis %s", viper.GetString("redis_hosts"))
 	}
+}
+
+//CriteriaKey returns the Redis Key
+func CriteriaKey(i tat.CacheableCriteria, s ...string) string {
+	k := i.CacheKey()
+	return Key(s...) + ":" + Key(k...)
 }
 
 //Key convert string array in redis key

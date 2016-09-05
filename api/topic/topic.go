@@ -219,8 +219,8 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 	if u != nil {
 		username = u.Username
 	}
-	k := cache.Key("tat", "users", username, "topics", "list_topics", criteria.CacheKey())
-	kcount := cache.Key("tat", "users", username, "topics", "count_topics", criteria.CacheKey())
+	k := cache.CriteriaKey(criteria, "tat", "users", username, "topics", "list_topics")
+	kcount := cache.CriteriaKey(criteria, "tat", "users", username, "topics", "count_topics")
 
 	bytes, _ := cache.Client().Get(k).Bytes()
 	if len(bytes) > 0 {

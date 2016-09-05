@@ -55,7 +55,6 @@ type Cache interface {
 	PExpire(key string, expiration time.Duration) *redis.BoolCmd
 	PExpireAt(key string, tm time.Time) *redis.BoolCmd
 	Ping() *redis.StatusCmd
-	PSubscribe(channels ...string) (*redis.PubSub, error)
 	PTTL(key string) *redis.DurationCmd
 	Persist(key string) *redis.BoolCmd
 	Pipeline() *redis.Pipeline
@@ -93,8 +92,6 @@ type Cache interface {
 	SetXX(key string, value interface{}, expiration time.Duration) *redis.BoolCmd
 	Sort(key string, sort redis.Sort) *redis.StringSliceCmd
 	StrLen(key string) *redis.IntCmd
-	String() string
-	Subscribe(channels ...string) (*redis.PubSub, error)
 	TTL(key string) *redis.DurationCmd
 	Type(key string) *redis.StatusCmd
 	ZAdd(key string, members ...redis.Z) *redis.IntCmd

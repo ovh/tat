@@ -122,8 +122,8 @@ func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int,
 	if user != nil {
 		username = user.Username
 	}
-	k := cache.Key("tat", "users", username, "groups", "list_groups", criteria.CacheKey())
-	kcount := cache.Key("tat", "users", username, "groups", "count_groups", criteria.CacheKey())
+	k := cache.CriteriaKey(criteria, "tat", "users", username, "groups", "list_groups")
+	kcount := cache.CriteriaKey(criteria, "tat", "users", username, "groups", "count_groups")
 
 	bytes, _ := cache.Client().Get(k).Bytes()
 	if len(bytes) > 0 {

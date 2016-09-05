@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/ovh/tat/api/cache"
 )
 
 // Topic struct
@@ -63,9 +61,9 @@ type TopicCriteria struct {
 }
 
 // CacheKey returns cacke key value
-func (t *TopicCriteria) CacheKey() string {
+func (t *TopicCriteria) CacheKey() []string {
 	if t == nil {
-		return ""
+		return []string{}
 	}
 	var s = []string{}
 	if t.Skip != 0 {
@@ -107,7 +105,7 @@ func (t *TopicCriteria) CacheKey() string {
 	if t.Group != "" {
 		s = append(s, "group="+t.Group)
 	}
-	return cache.Key(s...)
+	return s
 }
 
 // ParamTopicUserJSON is used to update a parameter on topic

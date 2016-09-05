@@ -150,9 +150,6 @@ func (c *LocalCache) PExpireAt(key string, tm time.Time) *redis.BoolCmd {
 func (c *LocalCache) Ping() *redis.StatusCmd {
 	return redis.NewStatusResult("OK", nil)
 }
-func (c *LocalCache) PSubscribe(channels ...string) (*redis.PubSub, error) {
-	return &redis.PubSub{}, nil
-}
 func (c *LocalCache) PTTL(key string) *redis.DurationCmd {
 	return redis.NewDurationResult(time.Second, nil)
 }
@@ -263,12 +260,6 @@ func (c *LocalCache) Sort(key string, sort redis.Sort) *redis.StringSliceCmd {
 }
 func (c *LocalCache) StrLen(key string) *redis.IntCmd {
 	return redis.NewIntResult(0, nil)
-}
-func (c *LocalCache) String() string {
-	return ""
-}
-func (c *LocalCache) Subscribe(channels ...string) (*redis.PubSub, error) {
-	return &redis.PubSub{}, nil
 }
 func (c *LocalCache) TTL(key string) *redis.DurationCmd {
 	return redis.NewDurationResult(time.Second, nil)
