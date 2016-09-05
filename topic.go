@@ -62,10 +62,10 @@ type TopicCriteria struct {
 
 // CacheKey returns cacke key value
 func (t *TopicCriteria) CacheKey() []string {
-	if t == nil {
-		return []string{}
-	}
 	var s = []string{}
+	if t == nil {
+		return s
+	}
 	if t.Skip != 0 {
 		s = append(s, "skip="+strconv.Itoa(t.Skip))
 	}

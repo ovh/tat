@@ -261,7 +261,7 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 	}
 	ku := cache.Key("tat", "users", username, "topics")
 	cache.Client().SAdd(ku, k, kcount)
-	cache.Client().SAdd(cache.Key("tat", "topics", "keys"), ku, k, kcount)
+	cache.Client().SAdd(cache.Key(cache.TatTopicsKeys()...), ku, k, kcount)
 	return count, topics, err
 }
 

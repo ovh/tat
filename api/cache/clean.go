@@ -4,9 +4,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-const keyTatTopicsKeys = "tat:topics:keys"
-const keyTatGroupsKeys = "tat:groups:keys"
-
 // cleanAllByType cleans all keys
 // tat:users:*:topics
 // tat:users:*:topics:*
@@ -45,28 +42,28 @@ func cleanForUsernames(key, ktype string, usernames ...string) {
 // tat:users:*:topics
 // tat:users:*:topics:*
 func CleanAllTopics() {
-	cleanAllByType(keyTatTopicsKeys)
+	cleanAllByType(Key(TatTopicsKeys()...))
 }
 
 // CleanAllGroups cleans all keys
 // tat:users:*:groups
 // tat:users:*:groups:*
 func CleanAllGroups() {
-	cleanAllByType(keyTatGroupsKeys)
+	cleanAllByType(Key(TatGroupsKeys()...))
 }
 
 // CleanTopics cleans all keys for a username and topics
 // tat:users:<username>:topics
 // tat:users:<username>:topics:*
 func CleanTopics(usernames ...string) {
-	cleanForUsernames(keyTatTopicsKeys, "topics", usernames...)
+	cleanForUsernames(Key(TatTopicsKeys()...), "topics", usernames...)
 }
 
 // CleanGroups cleans all keys for a username and groups
 // tat:users:<username>:groups
 // tat:users:<username>:groups:*
 func CleanGroups(usernames ...string) {
-	cleanForUsernames(keyTatGroupsKeys, "groups", usernames...)
+	cleanForUsernames(Key(TatGroupsKeys()...), "groups", usernames...)
 }
 
 // CleanUsernames cleans tat:users:<username>

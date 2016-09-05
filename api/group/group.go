@@ -167,7 +167,7 @@ func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int,
 	}
 	ku := cache.Key("tat", "users", username, "groups")
 	cache.Client().SAdd(ku, k, kcount)
-	cache.Client().SAdd(cache.Key("tat", "groups", "keys"), ku, k, kcount)
+	cache.Client().SAdd(cache.Key(cache.TatTopicsKeys()...), ku, k, kcount)
 	return count, groups, err
 
 }
