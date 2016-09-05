@@ -9,6 +9,7 @@ import (
 
 var messagesController = &MessagesController{}
 var topicsController = &TopicsController{}
+var usersController = &UsersController{}
 
 // TestUserMe tests non-admin user, authenticated on tat
 // GET on /user/me

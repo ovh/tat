@@ -49,8 +49,8 @@ var ErrClientNotInitiliazed = fmt.Errorf("Client is not initialized")
 
 //NewClient initialize a TAT client
 func NewClient(opts Options) (*Client, error) {
-	if opts.URL == "" || opts.Username == "" || opts.Password == "" {
-		return nil, fmt.Errorf("Invalid configuration: username, password and referer have to be setted")
+	if opts.URL == "" {
+		return nil, fmt.Errorf("Invalid configuration, please check url of Tat Engine")
 	}
 	c := &Client{
 		url:            opts.URL,

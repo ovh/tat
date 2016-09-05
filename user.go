@@ -1,7 +1,9 @@
 package tat
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 )
 
 // Contact User Struct.
@@ -46,6 +48,16 @@ type UsersJSON struct {
 	Users []User `json:"users"`
 }
 
+// UserCreateJSON is used for create a new user
+type UserCreateJSON struct {
+	Username string `json:"username"  binding:"required"`
+	Fullname string `json:"fullname"  binding:"required"`
+	Email    string `json:"email"     binding:"required"`
+	// Callback contains command to execute to verify account
+	// this command is displayed in ask for confirmation mail
+	Callback string `json:"callback"`
+}
+
 // UserCriteria is used to list users with criterias
 type UserCriteria struct {
 	Skip            int
@@ -68,72 +80,107 @@ type ContactsJSON struct {
 func (c *Client) UserList() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserMe() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserContacts() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserAddContact() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserRemoveContact() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserAddFavoriteTopic() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserRemoveFavoriteTopic() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserEnableNotificationsTopic() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserEnableNotificationsAllTopics() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserDisableNotificationsTopic() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserDisableNotificationsAllTopics() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserAddFavoriteTag() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserRemoveFavoriteTag() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
-func (c *Client) UserAdd() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// UserAdd creates a new user
+// if callback is "", "tatcli --url=:scheme://:host::port:path user verify --save :username :token" will
+// be used
+func (c *Client) UserAdd(u UserCreateJSON) ([]byte, error) {
+	if u.Callback == "" {
+		u.Callback = "tatcli --url=:scheme://:host::port:path user verify --save :username :token"
+	}
+	b, err := json.Marshal(u)
+	if err != nil {
+		ErrorLogFunc("UserAdd> Error while marshal user: %s", err)
+		return nil, err
+	}
+
+	return c.reqWant("POST", http.StatusCreated, "/user", b)
 }
+
 func (c *Client) UserReset() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserResetSystem() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserConvertToSystem() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserUpdateSystem() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserArchive() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserRename() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserUpdate() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserSetAdmin() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserVerify() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
+
 func (c *Client) UserCheck() error {
 	return fmt.Errorf("Not Yet Implemented")
 }

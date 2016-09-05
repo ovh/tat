@@ -10,9 +10,9 @@ import (
 )
 
 func createTopic(t *testing.T) (*tat.Topic, error) {
-	tests.Handle(t, http.MethodPost, "/topic", tests.FakeAuthHandler(t, "fsamin", "TAT-TEST", true, false), topicsController.Create)
-	client := tests.TATClient(t, "fsamin")
-	return client.CreateTopic(tat.TopicCreateJSON{
+	tests.Handle(t, http.MethodPost, "/topic", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.Create)
+	client := tests.TATClient(t, tests.AdminUser)
+	return client.TopicCreate(tat.TopicCreateJSON{
 		Topic:       "/" + tests.RandomString(t, 10),
 		Description: "this is a test",
 	})

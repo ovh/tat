@@ -76,17 +76,10 @@ func (u *UsersController) List(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, out)
 }
 
-type userCreateJSON struct {
-	Username string `json:"username"  binding:"required"`
-	Fullname string `json:"fullname"  binding:"required"`
-	Email    string `json:"email"     binding:"required"`
-	Callback string `json:"callback"`
-}
-
 // Create a new user, record Username, Fullname and Email
 // A mail is sent to ask user for validation
 func (u *UsersController) Create(ctx *gin.Context) {
-	var userJSON userCreateJSON
+	var userJSON tat.UserCreateJSON
 	ctx.Bind(&userJSON)
 	var userIn tat.User
 	userIn.Username = u.computeUsername(userJSON)
@@ -133,7 +126,7 @@ func (u *UsersController) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"info": fmt.Sprintf("please check your mail to validate your account.%s", info)})
 }
 
-func (u *UsersController) checkAllowedDomains(userJSON userCreateJSON) error {
+func (u *UsersController) checkAllowedDomains(userJSON tat.UserCreateJSON) error {
 	if viper.GetString("allowed_domains") != "" {
 		allowedDomains := strings.Split(viper.GetString("allowed_domains"), ",")
 		for _, domain := range allowedDomains {
@@ -148,7 +141,7 @@ func (u *UsersController) checkAllowedDomains(userJSON userCreateJSON) error {
 
 // computeUsername returns first.lastname for first.lastname@domainA.com if
 // parameter username_from_email=true on tat binary
-func (u *UsersController) computeUsername(userJSON userCreateJSON) string {
+func (u *UsersController) computeUsername(userJSON tat.UserCreateJSON) string {
 	if viper.GetBool("username_from_email") {
 		i := strings.Index(userJSON.Email, "@")
 		if i > 0 {

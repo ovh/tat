@@ -23,6 +23,8 @@ var testsRouterGroups = map[*testing.T]*gin.RouterGroup{}
 var testsEngine = map[*testing.T]*gin.Engine{}
 var testsIndex = 0
 
+const AdminUser = "tat.integration.tests.admin"
+
 // Init the test context with the database
 func Init(t *testing.T) {
 	if initiliazed {
