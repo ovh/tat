@@ -1,8 +1,11 @@
 package tat
 
-//Const
+// Version of Tat Engine
+// One Line for this, used by release.sh script
+// Keep "const Version on one line"
+const Version = "2.0.0"
+
 const (
-	Version                    = "2.0.0"
 	TatHeaderUsername          = "Tat_username"
 	TatHeaderPassword          = "Tat_password"
 	TatHeaderPasswordLower     = "tat_password"
