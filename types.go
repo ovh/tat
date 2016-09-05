@@ -1,8 +1,8 @@
 package tat
 
-// private
-var (
-	// TatHeaderUsername is a Header send by user with his username
+//Const
+const (
+	Version                    = "2.0.0"
 	TatHeaderUsername          = "Tat_username"
 	TatHeaderPassword          = "Tat_password"
 	TatHeaderPasswordLower     = "tat_password"
