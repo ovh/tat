@@ -9,6 +9,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
+	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/group"
 	"github.com/ovh/tat/api/message"
@@ -107,9 +108,9 @@ var versionCmd = &cobra.Command{
 	Long:  "The version of Tat Engine.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if versionNewLine {
-			fmt.Println(VERSION)
+			fmt.Println(tat.Version)
 		} else {
-			fmt.Print(VERSION)
+			fmt.Print(tat.Version)
 		}
 	},
 }

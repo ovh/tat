@@ -9,6 +9,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
+	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/group"
 	"github.com/ovh/tat/api/message"
 	"github.com/ovh/tat/api/presence"
@@ -55,7 +56,7 @@ func (*StatsController) Count(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"date":      now.Unix(),
 		"dateHuman": now,
-		"version":   VERSION,
+		"version":   tat.Version,
 		"groups":    nbGroups,
 		"messages":  nbMessages,
 		"presences": nbPresences,
@@ -77,7 +78,7 @@ func (*StatsController) Instance(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"date":      now.Unix(),
 		"dateHuman": now,
-		"version":   VERSION,
+		"version":   tat.Version,
 		"hostname":  hostname,
 		"ips":       externalIP(),
 	})
@@ -212,7 +213,7 @@ func (*StatsController) DBStatsCollections(ctx *gin.Context) {
 	g := gin.H{
 		"date":      now.Unix(),
 		"dateHuman": now,
-		"version":   VERSION,
+		"version":   tat.Version,
 	}
 	if err != nil {
 		log.Errorf("Error while getting collectionNames %s", err)

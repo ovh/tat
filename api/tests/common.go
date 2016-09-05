@@ -11,12 +11,13 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
+	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/store"
 	"github.com/spf13/viper"
 )
 
+var initiliazed = false
 var dbAddr, dbUser, dbPassword string
-
 var mutex = sync.Mutex{}
 var testsRouterGroups = map[*testing.T]*gin.RouterGroup{}
 var testsEngine = map[*testing.T]*gin.Engine{}
@@ -24,6 +25,9 @@ var testsIndex = 0
 
 // Init the test context with the database
 func Init(t *testing.T) {
+	if initiliazed {
+		return
+	}
 	log.SetLevel(log.DebugLevel)
 	log.SetFormatter(&log.TextFormatter{
 		ForceColors:      true,
@@ -48,13 +52,14 @@ func Init(t *testing.T) {
 	}
 
 	log.Infof(">>> Connected to database %s", dbAddr)
+	initiliazed = true
 }
 
 // Router prepare a gin router for test purpose
 func Router(t *testing.T) *gin.RouterGroup {
 	mutex.Lock()
 	defer mutex.Unlock()
-
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.GET("/", func(c *gin.Context) {
 		c.Status(200)
@@ -92,4 +97,27 @@ func Handle(t *testing.T, method, path string, handler ...gin.HandlerFunc) {
 
 func handle(g *gin.RouterGroup, m string, s string, h ...gin.HandlerFunc) {
 	g.Handle(m, s, h...)
+}
+
+func FakeAuthHandler(t *testing.T, username string, referer string, isAdmin bool, isSystem bool) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		ctx.Set(tat.TatHeaderUsername, username)
+		ctx.Set("Tat_isAdmin", isAdmin)
+		ctx.Set("Tat_isSystem", isSystem)
+		ctx.Set(tat.TatHeaderXTatRefererLower, referer)
+	}
+}
+
+// TATClient is a client
+func TATClient(t *testing.T, username string) *tat.Client {
+	g := testsRouterGroups[t].BasePath()
+	client, _ := tat.NewClient(tat.Options{
+		URL:      g,
+		Username: username,
+		Password: "no_password_for_tests",
+	})
+	tat.HTTPClient = getTestHTTPClient(t)
+	tat.ErrorLogFunc = t.Errorf
+	tat.DebugLogFunc = t.Logf
+	return client
 }

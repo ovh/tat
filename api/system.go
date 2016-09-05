@@ -4,18 +4,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ovh/tat"
 	"github.com/spf13/viper"
 )
-
-// VERSION is version of Tat.
-const VERSION = "2.0.0"
 
 // SystemController contains all methods about version
 type SystemController struct{}
 
 //GetVersion returns version of tat
 func (*SystemController) GetVersion(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{"version": VERSION})
+	ctx.JSON(http.StatusOK, gin.H{"version": tat.Version})
 }
 
 //GetCapabilites returns version of tat

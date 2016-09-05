@@ -33,6 +33,12 @@ type Options struct {
 	MaxTries       uint
 }
 
+type httpClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
+var HTTPClient httpClient
+
 // DebugLogFunc is a function that logs the provided message with optional fmt.Sprintf-style arguments. By default, logs to the default log.Logger.
 var DebugLogFunc func(string, ...interface{})
 
@@ -96,13 +102,15 @@ func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byt
 
 	c.initHeaders(req)
 
-	httpClient := &http.Client{
-		Transport: &httpcontrol.Transport{
-			RequestTimeout: c.requestTimeout,
-			MaxTries:       c.maxTries,
-		},
+	if HTTPClient == nil {
+		HTTPClient = &http.Client{
+			Transport: &httpcontrol.Transport{
+				RequestTimeout: c.requestTimeout,
+				MaxTries:       c.maxTries,
+			},
+		}
 	}
-	resp, err := httpClient.Do(req)
+	resp, err := HTTPClient.Do(req)
 
 	defer resp.Body.Close()
 
@@ -137,12 +145,20 @@ func (c *Client) CreateTopic(t TopicCreateJSON) (*Topic, error) {
 		return nil, err
 	}
 
-	if _, err := c.reqWant("POST", http.StatusCreated, "/topic", b); err != nil {
+	res, err := c.reqWant("POST", http.StatusCreated, "/topic", b)
+	if err != nil {
 		ErrorLogFunc("Error while marshal message for CreateTopic: %s", err)
 		return nil, err
 	}
 
-	return nil, nil
+	DebugLogFunc("createTopicResponse : %s", string(res))
+
+	newTopic := &Topic{}
+	if err := json.Unmarshal(res, newTopic); err != nil {
+		return nil, err
+	}
+
+	return newTopic, nil
 }
 
 // AddMessage post a tat message
