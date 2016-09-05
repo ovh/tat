@@ -1,6 +1,7 @@
 package message
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -11,11 +12,13 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/mvdan/xurls"
 	"github.com/ovh/tat"
+	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/store"
 	topicDB "github.com/ovh/tat/api/topic"
 	"github.com/yesnault/hashtag"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"gopkg.in/redis.v4"
 )
 
 const lengthLabel = 100
@@ -232,22 +235,90 @@ func FindByID(message *tat.Message, id string, topic tat.Topic) error {
 	return err
 }
 
+func messageListFromCache(criteria *tat.MessageCriteria) ([]tat.Message, error) {
+	keyList := cache.CriteriaKey(criteria, "tat", "messages", "list_messages")
+
+	msgIDs, err := cache.Client().ZRange(keyList, 0, -1).Result()
+	if err != nil {
+		if err == redis.Nil {
+			log.Debugf("key %s does not exist", keyList)
+			return []tat.Message{}, nil
+		}
+		log.Warnf("listMessagesFromCache: Unable to load msg ID: %s", err)
+		return []tat.Message{}, err
+	}
+	msgBytes, _ := cache.Client().MGet(msgIDs...).Result()
+	msg := []tat.Message{}
+	for _, bytes := range msgBytes {
+		m := &tat.Message{}
+		if bytes != redis.Nil {
+			if err := json.Unmarshal(bytes.([]byte), m); err != nil {
+				log.Warnf("Unsable to unmarshal messsage %v : %s", bytes, err)
+				continue
+			}
+			msg = append(msg, *m)
+		}
+	}
+
+	return msg, err
+}
+
+func cacheMessageList(criteria *tat.MessageCriteria, messages []tat.Message) error {
+	pipeline := cache.Client().Pipeline()
+	defer pipeline.Close()
+
+	keyList := cache.CriteriaKey(criteria, "tat", "messages", "list_messages")
+
+	pipeline.SAdd(cache.Key(cache.TatMessagesKeys()...), keyList)
+
+	for _, m := range messages {
+		keyMessage := cache.Key("tat", "messages", m.ID)
+		bytes, err := json.Marshal(m)
+		if err != nil {
+			log.Warnf("cacheListMessages: Unable to jsonify message: %s", err)
+			return err
+		}
+		z := redis.Z{
+			Member: m.ID,
+			Score:  m.DateCreation,
+		}
+		pipeline.ZAdd(keyList, z)
+		pipeline.Set(keyMessage, string(bytes), 0)
+	}
+
+	if _, err := pipeline.Exec(); err != nil {
+		log.Warnf("cacheListMessages: Error executing pipeline: %s", err)
+		return err
+	}
+	return nil
+}
+
 // ListMessages list messages with given criteria
 func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topic) ([]tat.Message, error) {
 	var messages []tat.Message
+	var err error
 
 	c, errc := buildMessageCriteria(criteria, username)
 	if errc != nil {
 		return messages, errc
 	}
-	err := store.GetCMessages(topic.Collection).Find(c).
-		Sort("-dateCreation").
-		Skip(criteria.Skip).
-		Limit(criteria.Limit).
-		All(&messages)
 
+	messages, err = messageListFromCache(criteria)
 	if err != nil {
-		log.Errorf("Error while Find All Messages %s", err)
+		log.Errorf("Error while Find All Messages %s from cache", err)
+	}
+
+	if len(messages) > 0 {
+		err = store.GetCMessages(topic.Collection).Find(c).
+			Sort("-dateCreation").
+			Skip(criteria.Skip).
+			Limit(criteria.Limit).
+			All(&messages)
+		if err != nil {
+			log.Errorf("Error while Find All Messages %s", err)
+			return messages, err
+		}
+		cacheMessageList(criteria, messages)
 	}
 
 	if len(messages) == 0 {

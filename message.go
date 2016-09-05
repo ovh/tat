@@ -1,5 +1,7 @@
 package tat
 
+import "strconv"
+
 const (
 	// DefaultMessageMaxSize is max size of message, can be overrided by topic
 	DefaultMessageMaxSize = 140
@@ -96,6 +98,92 @@ type MessageCriteria struct {
 	LimitMaxNbVotesDown string
 	OnlyMsgRoot         string
 	OnlyCount           string
+}
+
+// CacheKey returns cacke key value
+func (m *MessageCriteria) CacheKey() []string {
+	s := []string{}
+	if m == nil {
+		return s
+	}
+
+	if m.Skip != 0 {
+		s = append(s, "Skip="+strconv.Itoa(m.Skip))
+	}
+	if m.Limit != 0 {
+		s = append(s, "Limit="+strconv.Itoa(m.Limit))
+	}
+	if m.TreeView != "" {
+		s = append(s, "TreeView="+m.TreeView)
+	}
+	if m.IDMessage != "" {
+		s = append(s, "IDMessage="+m.IDMessage)
+	}
+	if m.AllIDMessage != "" {
+		s = append(s, "AllIDMessage="+m.AllIDMessage)
+	}
+	if m.Text != "" {
+		s = append(s, "Text="+m.Text)
+	}
+	if m.NotLabel != "" {
+		s = append(s, "NotLabel="+m.NotLabel)
+	}
+	if m.AndLabel != "" {
+		s = append(s, "AndLabel="+m.AndLabel)
+	}
+	if m.Tag != "" {
+		s = append(s, "Tag="+m.Tag)
+	}
+	if m.NotTag != "" {
+		s = append(s, "NotTag="+m.NotTag)
+	}
+	if m.AndTag != "" {
+		s = append(s, "AndTag="+m.AndTag)
+	}
+	if m.Username != "" {
+		s = append(s, "Username="+m.Username)
+	}
+	if m.DateMinCreation != "" {
+		s = append(s, "DateMinCreation="+m.DateMinCreation)
+	}
+	if m.DateMinCreation != "" {
+		s = append(s, "DateMinCreation="+m.DateMinCreation)
+	}
+	if m.DateMaxCreation != "" {
+		s = append(s, "DateMaxCreation="+m.DateMaxCreation)
+	}
+	if m.DateMinUpdate != "" {
+		s = append(s, "DateMinUpdate="+m.DateMinUpdate)
+	}
+	if m.DateMaxUpdate != "" {
+		s = append(s, "DateMaxUpdate="+m.DateMaxUpdate)
+	}
+	if m.LimitMinNbReplies != "" {
+		s = append(s, "LimitMinNbReplies="+m.LimitMinNbReplies)
+	}
+	if m.LimitMaxNbReplies != "" {
+		s = append(s, "LimitMaxNbReplies="+m.LimitMaxNbReplies)
+	}
+	if m.LimitMinNbVotesUP != "" {
+		s = append(s, "LimitMinNbVotesUP="+m.LimitMinNbVotesUP)
+	}
+	if m.LimitMinNbVotesDown != "" {
+		s = append(s, "LimitMinNbVotesDown="+m.LimitMinNbVotesDown)
+	}
+	if m.LimitMaxNbVotesUP != "" {
+		s = append(s, "LimitMaxNbVotesUP="+m.LimitMaxNbVotesUP)
+	}
+	if m.LimitMaxNbVotesDown != "" {
+		s = append(s, "LimitMaxNbVotesDown="+m.LimitMaxNbVotesDown)
+	}
+	if m.OnlyMsgRoot != "" {
+		s = append(s, "OnlyMsgRoot="+m.OnlyMsgRoot)
+	}
+	if m.OnlyCount != "" {
+		s = append(s, "OnlyCount="+m.OnlyCount)
+	}
+
+	return s
 }
 
 // MessagesJSON represents a message and information if current topic is RW
