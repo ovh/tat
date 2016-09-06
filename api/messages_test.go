@@ -17,7 +17,7 @@ func TestMessagesList(t *testing.T) {
 	tests.Init(t)
 	tests.Router(t)
 
-	topic, err := createTopic(t)
+	topic, err := createTopic(t, "")
 	assert.NotNil(t, topic)
 	assert.NoError(t, err)
 	t.Logf("Topic %s created", topic.Topic)
