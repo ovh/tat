@@ -9,6 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var topicsController = &TopicsController{}
+
 func TestTopicCreateListAndDelete(t *testing.T) {
 	tests.Init(t)
 	tests.Router(t)
@@ -49,7 +51,6 @@ func TestListTopicsFromCache(t *testing.T) {
 	tests.Router(t)
 
 	tests.Handle(t, http.MethodPost, "/topic", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.Create)
-	tests.Handle(t, http.MethodPut, "/topic/add/admingroup", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.AddAdminGroup)
 	tests.Handle(t, http.MethodGet, "/topics", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.List)
 	tests.Handle(t, http.MethodDelete, "/topic/*topic", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.Delete)
 
@@ -71,17 +72,27 @@ func TestListTopicsFromCache(t *testing.T) {
 	assert.NotNil(t, topics)
 	assert.NoError(t, err)
 
-	err = client.TopicAddAdminGroup(topic.Topic, "admin_group", false)
+	assert.Equal(t, 1, topics.Count)
+	assert.Equal(t, 1, len(topics.Topics))
+
+	_, err = client.TopicCreate(tat.TopicCreateJSON{
+		Topic:       "/" + tests.RandomString(t, 10),
+		Description: "this is a test",
+	})
+	assert.NoError(t, err)
+
+	_, err = client.TopicCreate(tat.TopicCreateJSON{
+		Topic:       "/" + tests.RandomString(t, 10),
+		Description: "this is a test",
+	})
 	assert.NoError(t, err)
 
 	topics, err = client.TopicList(nil)
-	var found bool
-	for _, to := range topics.Topics {
-		if to.ID == topic.ID {
-			assert.NotEmpty(t, to.AdminGroups)
-		}
-	}
-	assert.True(t, found)
+	assert.NotNil(t, topics)
+	assert.NoError(t, err)
+
+	assert.Equal(t, 3, topics.Count)
+	assert.Equal(t, 3, len(topics.Topics))
 
 	err = client.TopicDelete(topic.Topic)
 	assert.NoError(t, err)

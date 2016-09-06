@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var userController = &UsersController{}
+var usersController = &UsersController{}
 
 // TestUserMe tests non-admin user, authenticated on tat
 // GET on /user/me, check HTTP 200
@@ -18,7 +18,7 @@ func TestUserMe(t *testing.T) {
 	tests.Init(t)
 
 	r := tests.Router(t)
-	tests.Handle(t, http.MethodGet, "/me", CheckPassword(), userController.Me)
+	tests.Handle(t, http.MethodGet, "/me", CheckPassword(), usersController.Me)
 	req, err := http.NewRequest(http.MethodGet, r.BasePath()+"/me", nil)
 	req.Header.Add("X-Remote-User", tests.AdminUser)
 
