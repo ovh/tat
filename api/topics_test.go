@@ -18,7 +18,7 @@ func createTopic(t *testing.T) (*tat.Topic, error) {
 	})
 }
 
-func TestCreateTopic(t *testing.T) {
+func TestTopicCreate(t *testing.T) {
 	tests.Init(t)
 	tests.Router(t)
 	topic, err := createTopic(t)
