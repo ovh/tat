@@ -404,7 +404,6 @@ func FindByUsername(user *tat.User, username string) (bool, error) {
 	json.Unmarshal(bytes, user)
 	//If the user has beeen successfully loaded
 	if user.Username != "" {
-		log.Debugf("FindByUsername loaded from Cache")
 		return true, nil
 	}
 

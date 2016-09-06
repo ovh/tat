@@ -258,7 +258,7 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 	cache.Client().Set(kcount, count, time.Hour)
 	bytes, _ = json.Marshal(topics)
 	if len(bytes) > 0 {
-		log.Debugf("Put %s in cache", k)
+		log.Debugf("ListTopics>>> Put %s in cache", k)
 		cache.Client().Set(k, string(bytes), time.Hour)
 	}
 	ku := cache.Key("tat", "users", username, "topics")
@@ -301,11 +301,8 @@ func InitPrivateTopic() {
 
 // Insert creates a new topic. User is read write on topic
 func Insert(topic *tat.Topic, u *tat.User) error {
-	if strings.HasPrefix(topic.Topic, "/Private/"+u.Username) {
-		cache.CleanTopics(u.Username)
-	} else {
-		cache.CleanAllTopics()
-	}
+	log.Debugf("Insert>>> Clean topics cache for user %s", u.Username)
+	cache.CleanTopics(u.Username)
 
 	if err := CheckAndFixName(topic); err != nil {
 		return err
@@ -388,11 +385,8 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 
 // Delete deletes a topic from database
 func Delete(topic *tat.Topic, u *tat.User) error {
-	if strings.HasPrefix(topic.Topic, "/Private/"+u.Username) {
-		cache.CleanTopics(u.Username)
-	} else {
-		cache.CleanAllTopics()
-	}
+	log.Debugf("Delete>>> Clean topics cache for user %s", u.Username)
+	cache.CleanTopics(u.Username)
 
 	if topic.Collection != "" {
 		if err := store.Tat().Session.DB(store.DatabaseName).C(topic.Collection).DropCollection(); err != nil {
