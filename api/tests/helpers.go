@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// RandomString have to be used only for tests
 func RandomString(t *testing.T, strlen int) string {
 	rand.Seed(time.Now().UTC().UnixNano())
 	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
