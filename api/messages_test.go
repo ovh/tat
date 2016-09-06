@@ -1,8 +1,10 @@
 package main
 
 import (
+	"net/http"
 	"testing"
 
+	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/tests"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,7 +19,13 @@ func TestMessagesList(t *testing.T) {
 	tests.Init(t)
 	tests.Router(t)
 
-	topic, err := createTopic(t, "")
+	tests.Handle(t, http.MethodPost, "/topic", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.Create)
+	client := tests.TATClient(t, tests.AdminUser)
+	topic, err := client.TopicCreate(tat.TopicCreateJSON{
+		Topic:       "/" + tests.RandomString(t, 10),
+		Description: "this is a test",
+	})
+
 	assert.NotNil(t, topic)
 	assert.NoError(t, err)
 	if topic != nil {

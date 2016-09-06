@@ -16,12 +16,15 @@ import (
 	"github.com/spf13/viper"
 )
 
-var initiliazed = false
-var dbAddr, dbUser, dbPassword string
-var mutex = sync.Mutex{}
-var testsRouterGroups = map[*testing.T]*gin.RouterGroup{}
-var testsEngine = map[*testing.T]*gin.Engine{}
-var testsIndex = 0
+var (
+	initiliazed                = false
+	dbAddr, dbUser, dbPassword string
+	redisAddr, redisPassword   string
+	mutex                      = sync.Mutex{}
+	testsRouterGroups          = map[*testing.T]*gin.RouterGroup{}
+	testsEngine                = map[*testing.T]*gin.Engine{}
+	testsIndex                 = 0
+)
 
 const AdminUser = "tat.integration.tests.admin"
 
@@ -39,12 +42,16 @@ func Init(t *testing.T) {
 	flag.StringVar(&dbAddr, "db-addr", "127.0.0.1:27017", "Address of the mongodb server")
 	flag.StringVar(&dbUser, "db-user", "", "User to authenticate with the mongodb server")
 	flag.StringVar(&dbPassword, "db-password", "", "Password to authenticate with the mongodb server")
+	flag.StringVar(&redisAddr, "redis-addr", "127.0.0.1:6379", "Address of the redis server")
+	flag.StringVar(&redisPassword, "redis-password", "", "Password to authenticate with the redis server")
 
 	flag.Parse()
 
 	viper.Set("db_addr", dbAddr)
 	viper.Set("db_user", dbUser)
 	viper.Set("db_password", dbPassword)
+	viper.Set("redis_hosts", redisAddr)
+	viper.Set("redis_password", redisPassword)
 	viper.Set("header_trust_username", "X-Remote-User")
 
 	if err := store.NewStore(); err != nil {
