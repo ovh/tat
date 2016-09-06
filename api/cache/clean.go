@@ -8,7 +8,6 @@ import (
 // tat:users:*:topics
 // tat:users:*:topics:*
 func cleanAllByType(key string) {
-	log.Debugf("Cache CleanAllTopics > enter")
 	keys, _ := Client().SMembers(key).Result()
 	if len(keys) > 0 {
 		log.Debugf("Clean cache on %d keys %s", len(keys), keys)
@@ -32,8 +31,6 @@ func cleanForUsernames(key, ktype string, usernames ...string) {
 			Client().Del(keys...)
 			removeSomeMembers(key, append(keys, k)...)
 			removeSomeMembers(k, keys...)
-		} else {
-			log.Debugf("No cache to clean for vakey tat:users:%s:%s", keys, ktype)
 		}
 	}
 }
@@ -42,6 +39,7 @@ func cleanForUsernames(key, ktype string, usernames ...string) {
 // tat:users:*:topics
 // tat:users:*:topics:*
 func CleanAllTopics() {
+	log.Debugf("Cache CleanAllTopics")
 	cleanAllByType(Key(TatTopicsKeys()...))
 }
 
@@ -49,6 +47,7 @@ func CleanAllTopics() {
 // tat:users:*:groups
 // tat:users:*:groups:*
 func CleanAllGroups() {
+	log.Debugf("Cache CleanAllTopics")
 	cleanAllByType(Key(TatGroupsKeys()...))
 }
 

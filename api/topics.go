@@ -145,7 +145,7 @@ func (*TopicsController) Create(ctx *gin.Context) {
 	var user = tat.User{}
 	found, err := userDB.FindByUsername(&user, getCtxUsername(ctx))
 	if !found {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User unknown"})
 		return
 	} else if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
@@ -159,7 +159,7 @@ func (*TopicsController) Create(ctx *gin.Context) {
 	err = topicDB.Insert(&topic, &user)
 	if err != nil {
 		log.Errorf("Error while InsertTopic %s", err)
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(tat.Error(err))
 		return
 	}
 	ctx.JSON(http.StatusCreated, topic)
@@ -228,6 +228,7 @@ func (t *TopicsController) Truncate(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -247,6 +248,7 @@ func (t *TopicsController) ComputeTags(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -265,6 +267,7 @@ func (t *TopicsController) ComputeLabels(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -283,6 +286,7 @@ func (t *TopicsController) TruncateTags(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -300,6 +304,7 @@ func (t *TopicsController) TruncateLabels(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -330,9 +335,7 @@ func (t *TopicsController) preCheckUser(ctx *gin.Context, paramJSON *tat.ParamTo
 // preCheckGroup checks if group exists and is admin on topic
 func (t *TopicsController) preCheckGroup(ctx *gin.Context, paramJSON *tat.ParamGroupJSON) (*tat.Topic, error) {
 	if groupExists := groupDB.IsGroupnameExists(paramJSON.Groupname); !groupExists {
-		e := errors.New("groupname" + paramJSON.Groupname + " does not exist")
-		ctx.AbortWithError(http.StatusInternalServerError, e)
-		return nil, e
+		return nil, tat.NewError(http.StatusNotFound, "groupname %s does not exist", paramJSON.Groupname)
 	}
 	return t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 }
@@ -342,7 +345,6 @@ func (t *TopicsController) preCheckUserAdminOnTopic(ctx *gin.Context, topicName 
 	topic, errfind := topicDB.FindByTopic(topicName, true, false, false, nil)
 	if errfind != nil {
 		e := errors.New(errfind.Error())
-		ctx.AbortWithError(http.StatusInternalServerError, e)
 		return nil, e
 	}
 
@@ -476,6 +478,7 @@ func (t *TopicsController) AddRoGroup(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 	if err := topicDB.AddRoGroup(topic, getCtxUsername(ctx), paramJSON.Groupname, paramJSON.Recursive); err != nil {
@@ -492,6 +495,7 @@ func (t *TopicsController) AddRwGroup(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -510,6 +514,7 @@ func (t *TopicsController) AddAdminGroup(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -528,6 +533,7 @@ func (t *TopicsController) AddParameter(ctx *gin.Context) {
 	ctx.Bind(&topicParameterBind)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, topicParameterBind.Topic)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -548,6 +554,7 @@ func (t *TopicsController) RemoveParameter(ctx *gin.Context) {
 
 	topic, e := t.preCheckUserAdminOnTopic(ctx, topicParameterBind.Topic)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -567,6 +574,7 @@ func (t *TopicsController) RemoveRoGroup(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -585,6 +593,7 @@ func (t *TopicsController) RemoveRwGroup(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -603,6 +612,7 @@ func (t *TopicsController) RemoveAdminGroup(ctx *gin.Context) {
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
+		ctx.JSON(tat.Error(e))
 		return
 	}
 
@@ -648,7 +658,7 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 	} else {
 		topic, err = t.preCheckUserAdminOnTopic(ctx, paramsBind.Topic)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, err)
+			ctx.JSON(tat.Error(err))
 			return
 		}
 	}

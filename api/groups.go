@@ -169,9 +169,6 @@ func (g *GroupsController) Update(ctx *gin.Context) {
 // Delete deletes requested group
 // only for Tat admin
 func (g *GroupsController) Delete(ctx *gin.Context) {
-	var paramJSON groupUpdateJSON
-	ctx.Bind(&paramJSON)
-
 	groupName, err := GetParam(ctx, "group")
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Group in query"})
@@ -180,7 +177,7 @@ func (g *GroupsController) Delete(ctx *gin.Context) {
 
 	groupToDelete, err := groupDB.FindByName(groupName)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Group"})
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Invalid Group"})
 		return
 	}
 

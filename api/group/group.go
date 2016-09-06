@@ -162,7 +162,7 @@ func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int,
 	cache.Client().Set(kcount, count, time.Hour)
 	bytes, _ = json.Marshal(groups)
 	if len(bytes) > 0 {
-		log.Debugf("Put %s in cache", k)
+		log.Debugf("ListGroups>>> Put %s in cache", k)
 		cache.Client().Set(k, string(bytes), time.Hour)
 	}
 	ku := cache.Key("tat", "users", username, "groups")

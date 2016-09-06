@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"net/http"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/cache"
@@ -256,7 +258,7 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 	cache.Client().Set(kcount, count, time.Hour)
 	bytes, _ = json.Marshal(topics)
 	if len(bytes) > 0 {
-		log.Debugf("Put %s in cache", k)
+		log.Debugf("ListTopics>>> Put %s in cache", k)
 		cache.Client().Set(k, string(bytes), time.Hour)
 	}
 	ku := cache.Key("tat", "users", username, "topics")
@@ -299,11 +301,8 @@ func InitPrivateTopic() {
 
 // Insert creates a new topic. User is read write on topic
 func Insert(topic *tat.Topic, u *tat.User) error {
-	if strings.HasPrefix(topic.Topic, "/Private/"+u.Username) {
-		cache.CleanTopics(u.Username)
-	} else {
-		cache.CleanAllTopics()
-	}
+	log.Debugf("Insert>>> Clean topics cache for user %s", u.Username)
+	cache.CleanTopics(u.Username)
 
 	if err := CheckAndFixName(topic); err != nil {
 		return err
@@ -312,23 +311,21 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 	isParentRootTopic, parentTopic, err := getParentTopic(topic)
 	if !isParentRootTopic {
 		if err != nil {
-			return fmt.Errorf("Parent Topic not found %s", topic.Topic)
+			return tat.NewError(http.StatusNotFound, "Parent Topic not found %s", topic.Topic)
 		}
-
 		// If user create a Topic in /Private/username, no check or RW to create
 		if !strings.HasPrefix(topic.Topic, "/Private/"+u.Username) {
 			// check if user can create topic in /topic
 			hasRW := IsUserAdmin(parentTopic, u)
 			if !hasRW {
-				return fmt.Errorf("No RW access to parent topic %s", parentTopic.Topic)
+				return tat.NewError(http.StatusUnauthorized, "No RW access to parent topic %s", parentTopic.Topic)
 			}
 		}
 	} else if !u.IsAdmin { // no parent topic, check admin
-		return fmt.Errorf("No write access to create parent topic %s", topic.Topic)
+		return tat.NewError(http.StatusUnauthorized, "No write access to create parent topic %s", topic.Topic)
 	}
-
 	if _, err = FindByTopic(topic.Topic, true, false, false, nil); err == nil {
-		return fmt.Errorf("Topic Already Exists : %s", topic.Topic)
+		return tat.NewError(http.StatusConflict, "Topic Already Exists : %s", topic.Topic)
 	}
 
 	topic.ID = bson.NewObjectId().Hex()
@@ -388,11 +385,8 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 
 // Delete deletes a topic from database
 func Delete(topic *tat.Topic, u *tat.User) error {
-	if strings.HasPrefix(topic.Topic, "/Private/"+u.Username) {
-		cache.CleanTopics(u.Username)
-	} else {
-		cache.CleanAllTopics()
-	}
+	log.Debugf("Delete>>> Clean topics cache for user %s", u.Username)
+	cache.CleanTopics(u.Username)
 
 	if topic.Collection != "" {
 		if err := store.Tat().Session.DB(store.DatabaseName).C(topic.Collection).DropCollection(); err != nil {
