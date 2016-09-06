@@ -26,6 +26,7 @@ var (
 	testsIndex                 = 0
 )
 
+// AdminUser used for integration tests
 const AdminUser = "tat.integration.tests.admin"
 
 // Init the test context with the database
