@@ -325,28 +325,124 @@ func (c *Client) TopicDeleteAdminUser() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
 
-func (c *Client) TopicAddRoGroup() error {
-	return fmt.Errorf("Not Yet Implemented")
+//TopicAddRoGroup adds a read-only group on a topic
+func (c *Client) TopicAddRoGroup(topic, groupname string, recursive bool) error {
+	t := map[string]interface{}{
+		"topic":     topic,
+		"groupname": groupname,
+		"recursive": recursive,
+	}
+	b, err := json.Marshal(t)
+	if err != nil {
+		ErrorLogFunc("Error marshalling %v: %s", t, err)
+		return err
+	}
+
+	if _, err = c.reqWant(http.MethodPut, 200, "/topic/add/rogroup", b); err != nil {
+		ErrorLogFunc("Error adding RO Group: %s", err)
+		return err
+	}
+	return nil
 }
 
-func (c *Client) TopicAddRwGroup() error {
-	return fmt.Errorf("Not Yet Implemented")
+//TopicAddRwGroup adds a read-write group on a topic
+func (c *Client) TopicAddRwGroup(topic, groupname string, recursive bool) error {
+	t := map[string]interface{}{
+		"topic":     topic,
+		"groupname": groupname,
+		"recursive": recursive,
+	}
+	b, err := json.Marshal(t)
+	if err != nil {
+		ErrorLogFunc("Error marshalling %v: %s", t, err)
+		return err
+	}
+
+	if _, err = c.reqWant(http.MethodPut, 200, "/topic/add/rwgroup", b); err != nil {
+		ErrorLogFunc("Error adding RW Group: %s", err)
+		return err
+	}
+	return nil
 }
 
-func (c *Client) TopicAddAdminGroup() error {
-	return fmt.Errorf("Not Yet Implemented")
+//TopicAddAdminGroup adds an admin group on a topic
+func (c *Client) TopicAddAdminGroup(topic, groupname string, recursive bool) error {
+	t := map[string]interface{}{
+		"topic":     topic,
+		"groupname": groupname,
+		"recursive": recursive,
+	}
+	b, err := json.Marshal(t)
+	if err != nil {
+		ErrorLogFunc("Error marshalling %v: %s", t, err)
+		return err
+	}
+
+	if _, err = c.reqWant(http.MethodPut, 200, "/topic/add/admingroup", b); err != nil {
+		ErrorLogFunc("Error adding Admin Group: %s", err)
+		return err
+	}
+	return nil
 }
 
-func (c *Client) TopicDeleteRoGroup() error {
-	return fmt.Errorf("Not Yet Implemented")
+//TopicDeleteRoGroup deletes a read-only group on a topic
+func (c *Client) TopicDeleteRoGroup(topic, groupname string, recursive bool) error {
+	t := map[string]interface{}{
+		"topic":     topic,
+		"groupname": groupname,
+		"recursive": recursive,
+	}
+	b, err := json.Marshal(t)
+	if err != nil {
+		ErrorLogFunc("Error marshalling %v: %s", t, err)
+		return err
+	}
+
+	if _, err = c.reqWant(http.MethodPut, 200, "/topic/remove/rogroup", b); err != nil {
+		ErrorLogFunc("Error deleting RO Group: %s", err)
+		return err
+	}
+	return nil
 }
 
-func (c *Client) TopicDeleteRwGroup() error {
-	return fmt.Errorf("Not Yet Implemented")
+//TopicDeleteRwGroup deletes a read-write group on a topic
+func (c *Client) TopicDeleteRwGroup(topic, groupname string, recursive bool) error {
+	t := map[string]interface{}{
+		"topic":     topic,
+		"groupname": groupname,
+		"recursive": recursive,
+	}
+	b, err := json.Marshal(t)
+	if err != nil {
+		ErrorLogFunc("Error marshalling %v: %s", t, err)
+		return err
+	}
+
+	if _, err = c.reqWant(http.MethodPut, 200, "/topic/remove/rwgroup", b); err != nil {
+		ErrorLogFunc("Error deleting RW Group: %s", err)
+		return err
+	}
+	return nil
 }
 
-func (c *Client) TopicDeleteAdminGroup() error {
-	return fmt.Errorf("Not Yet Implemented")
+//TopicDeleteAdminGroup deletes an admin group on a topic
+func (c *Client) TopicDeleteAdminGroup(topic, groupname string, recursive bool) error {
+	t := map[string]interface{}{
+		"topic":     topic,
+		"groupname": groupname,
+		"recursive": recursive,
+	}
+	b, err := json.Marshal(t)
+	if err != nil {
+		ErrorLogFunc("Error marshalling %v: %s", t, err)
+		return err
+	}
+
+	if _, err = c.reqWant(http.MethodPut, 200, "/topic/remove/admingroup", b); err != nil {
+		ErrorLogFunc("Error deleting Admin Group: %s", err)
+		return err
+	}
+	return nil
 }
 
 func (c *Client) TopicAddParameter() error {
