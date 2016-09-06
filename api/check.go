@@ -93,10 +93,11 @@ func extractTatHeaders(ctx *gin.Context) (tatHeadersType, error) {
 			tatHeaders.tatReferer = v[0]
 		} else if k == viper.GetString("header_trust_username") {
 			tatHeaders.trustUsername = v[0]
-		} else if strings.ToLower(k) == "x-" + tatHeaderUsernameLower {
+		} else if strings.ToLower(k) == "x-"+tatHeaderUsernameLower {
 			tatHeaders.username = v[0]
-		} else if strings.ToLower(k) == "x-" + tatHeaderPasswordLower {
+		} else if strings.ToLower(k) == "x-"+tatHeaderPasswordLower {
 			tatHeaders.password = v[0]
+		}
 	}
 
 	if tatHeaders.password != "" && tatHeaders.username != "" {
