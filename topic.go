@@ -167,7 +167,7 @@ func CheckAndFixNameTopic(topicName string) (string, error) {
 	return name, nil
 }
 
-// CreateTopic creates a topic
+// TopicCreate creates a topic
 func (c *Client) TopicCreate(t TopicCreateJSON) (*Topic, error) {
 	if c == nil {
 		return nil, ErrClientNotInitiliazed
@@ -195,12 +195,74 @@ func (c *Client) TopicCreate(t TopicCreateJSON) (*Topic, error) {
 	return newTopic, nil
 }
 
-func (c *Client) TopicList() error {
-	return fmt.Errorf("Not Yet Implemented")
+//TopicList list all topics according to criterias. Default behavior (criteria is Nil) will limit 10 topics.
+func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	if criteria == nil {
+		criteria = &TopicCriteria{
+			Skip:  0,
+			Limit: 10,
+		}
+	}
+
+	var n string
+	if criteria.Topic != "" {
+		n += "&topic=" + criteria.Topic
+	}
+	if criteria.TopicPath != "" {
+		n += "&topicPath=" + criteria.TopicPath
+	}
+	if criteria.IDTopic != "" {
+		n += "&idTopic=" + criteria.IDTopic
+	}
+	if criteria.Description != "" {
+		n += "&Description=" + criteria.Description
+	}
+	if criteria.DateMinCreation != "" {
+		n += "&DateMinCreation=" + criteria.DateMinCreation
+	}
+	if criteria.DateMaxCreation != "" {
+		n += "&DateMaxCreation=" + criteria.DateMaxCreation
+	}
+	if criteria.GetNbMsgUnread != "" {
+		n += "&getNbMsgUnread=" + criteria.GetNbMsgUnread
+	}
+	if criteria.OnlyFavorites != "" {
+		n += "&onlyFavorites=" + criteria.OnlyFavorites
+	}
+	if criteria.GetForTatAdmin == "true" {
+		n += "&getForTatAdmin=" + criteria.GetForTatAdmin
+	}
+
+	path := fmt.Sprintf("/topics?skip=%d&limit=%d%s", criteria.Skip, criteria.Limit, n)
+
+	body, err := c.reqWant(http.MethodGet, 200, path, nil)
+	if err != nil {
+		ErrorLogFunc("Error getting topic list: %s", err)
+		return nil, err
+	}
+
+	DebugLogFunc("Topic List Reponse: %s", string(body))
+	var topics = TopicsJSON{}
+	if err := json.Unmarshal(body, &topics); err != nil {
+		ErrorLogFunc("Error getting topic list: %s", err)
+		return nil, err
+	}
+
+	return &topics, nil
 }
 
-func (c *Client) TopicDelete() error {
-	return fmt.Errorf("Not Yet Implemented")
+//TopicDelete delete a topics
+func (c *Client) TopicDelete(topicPath string) error {
+	_, err := c.reqWant(http.MethodDelete, 200, "/topic"+topicPath, nil)
+	if err != nil {
+		ErrorLogFunc("Error deleting topic list: %s", err)
+		return err
+	}
+	return nil
 }
 
 func (c *Client) TopicTruncate() error {
