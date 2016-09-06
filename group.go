@@ -1,7 +1,9 @@
 package tat
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"strconv"
 )
 
@@ -84,15 +86,49 @@ type ParamGroupJSON struct {
 func (c *Client) GroupList() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
-func (c *Client) GroupCreate() error {
+
+//GroupCreate creates a group
+func (c *Client) GroupCreate(g GroupJSON) (*Group, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	b, err := json.Marshal(g)
+	if err != nil {
+		ErrorLogFunc("Error while marshal group: %s", err)
+		return nil, err
+	}
+
+	res, err := c.reqWant(http.MethodPost, http.StatusCreated, "/group", b)
+	if err != nil {
+		ErrorLogFunc("Error while marshal group for GroupCreate: %s", err)
+		return nil, err
+	}
+
+	DebugLogFunc("GroupCreate : %s", string(res))
+
+	newGroup := &Group{}
+	if err := json.Unmarshal(res, newGroup); err != nil {
+		return nil, err
+	}
+
+	return newGroup, nil
+}
+
+func (c *Client) GroupUpdate(groupname string) error {
 	return fmt.Errorf("Not Yet Implemented")
 }
-func (c *Client) GroupUpdate() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+//GroupDelete delete a group
+func (c *Client) GroupDelete(groupname string) error {
+	_, err := c.reqWant(http.MethodDelete, http.StatusOK, "/group/edit/"+groupname, nil)
+	if err != nil {
+		ErrorLogFunc("Error while deleting group: %s", err)
+		return err
+	}
+	return nil
 }
-func (c *Client) GroupDelete() error {
-	return fmt.Errorf("Not Yet Implemented")
-}
+
 func (c *Client) GroupAddUser() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
