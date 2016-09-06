@@ -24,6 +24,10 @@ func TestTopicCreate(t *testing.T) {
 	topic, err := createTopic(t, "")
 	assert.NotNil(t, topic)
 	assert.NoError(t, err)
+	if topic == nil {
+		t.Fail()
+		return
+	}
 	t.Logf("Topic %s created", topic.Topic)
 	assert.NotZero(t, topic.ID)
 }

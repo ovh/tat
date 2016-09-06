@@ -145,7 +145,7 @@ func (*TopicsController) Create(ctx *gin.Context) {
 	var user = tat.User{}
 	found, err := userDB.FindByUsername(&user, getCtxUsername(ctx))
 	if !found {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User unknown"})
 		return
 	} else if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
@@ -159,7 +159,7 @@ func (*TopicsController) Create(ctx *gin.Context) {
 	err = topicDB.Insert(&topic, &user)
 	if err != nil {
 		log.Errorf("Error while InsertTopic %s", err)
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(tat.Error(err))
 		return
 	}
 	ctx.JSON(http.StatusCreated, topic)

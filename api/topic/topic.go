@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"net/http"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/cache"
@@ -312,23 +314,21 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 	isParentRootTopic, parentTopic, err := getParentTopic(topic)
 	if !isParentRootTopic {
 		if err != nil {
-			return fmt.Errorf("Parent Topic not found %s", topic.Topic)
+			return tat.NewError(http.StatusNotFound, "Parent Topic not found %s", topic.Topic)
 		}
-
 		// If user create a Topic in /Private/username, no check or RW to create
 		if !strings.HasPrefix(topic.Topic, "/Private/"+u.Username) {
 			// check if user can create topic in /topic
 			hasRW := IsUserAdmin(parentTopic, u)
 			if !hasRW {
-				return fmt.Errorf("No RW access to parent topic %s", parentTopic.Topic)
+				return tat.NewError(http.StatusUnauthorized, "No RW access to parent topic %s", parentTopic.Topic)
 			}
 		}
 	} else if !u.IsAdmin { // no parent topic, check admin
-		return fmt.Errorf("No write access to create parent topic %s", topic.Topic)
+		return tat.NewError(http.StatusUnauthorized, "No write access to create parent topic %s", topic.Topic)
 	}
-
 	if _, err = FindByTopic(topic.Topic, true, false, false, nil); err == nil {
-		return fmt.Errorf("Topic Already Exists : %s", topic.Topic)
+		return tat.NewError(http.StatusConflict, "Topic Already Exists : %s", topic.Topic)
 	}
 
 	topic.ID = bson.NewObjectId().Hex()
