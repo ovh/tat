@@ -338,7 +338,7 @@ func (c *Client) TopicAddRoGroup(topic, groupname string, recursive bool) error 
 		return err
 	}
 
-	if _, err = c.reqWant(http.MethodPut, 200, "/topic/add/rogroup", b); err != nil {
+	if _, err = c.reqWant(http.MethodPut, http.StatusCreated, "/topic/add/rogroup", b); err != nil {
 		ErrorLogFunc("Error adding RO Group: %s", err)
 		return err
 	}
@@ -358,7 +358,7 @@ func (c *Client) TopicAddRwGroup(topic, groupname string, recursive bool) error 
 		return err
 	}
 
-	if _, err = c.reqWant(http.MethodPut, 200, "/topic/add/rwgroup", b); err != nil {
+	if _, err = c.reqWant(http.MethodPut, http.StatusCreated, "/topic/add/rwgroup", b); err != nil {
 		ErrorLogFunc("Error adding RW Group: %s", err)
 		return err
 	}
@@ -378,7 +378,7 @@ func (c *Client) TopicAddAdminGroup(topic, groupname string, recursive bool) err
 		return err
 	}
 
-	if _, err = c.reqWant(http.MethodPut, 200, "/topic/add/admingroup", b); err != nil {
+	if _, err = c.reqWant(http.MethodPut, http.StatusCreated, "/topic/add/admingroup", b); err != nil {
 		ErrorLogFunc("Error adding Admin Group: %s", err)
 		return err
 	}
