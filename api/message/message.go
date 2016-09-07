@@ -235,41 +235,57 @@ func FindByID(message *tat.Message, id string, topic tat.Topic) error {
 	return err
 }
 
-func messageListFromCache(criteria *tat.MessageCriteria) ([]tat.Message, error) {
-	keyList := cache.CriteriaKey(criteria, "tat", "messages", "list_messages")
-
+func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]tat.Message, error) {
+	keyList := cache.CriteriaKey(criteria, "tat", "messages", topic.Topic, "list_messages")
+	log.Debugf("messageListFromCache>>> Load %s", keyList)
 	msgIDs, err := cache.Client().ZRange(keyList, 0, -1).Result()
 	if err != nil {
 		if err == redis.Nil {
-			log.Debugf("key %s does not exist", keyList)
+			log.Debugf("messageListFromCache>>> key %s does not exist", keyList)
 			return []tat.Message{}, nil
 		}
-		log.Warnf("listMessagesFromCache: Unable to load msg ID: %s", err)
+		log.Warnf("listMessagesFromCache>>> Unable to load msg ID: %s", err)
 		return []tat.Message{}, err
 	}
+
+	log.Debugf("messageListFromCache>>> Load messages from cache : %s %s", keyList, msgIDs) //<-- ceci est vide
+	if len(msgIDs) == 0 {
+		return []tat.Message{}, nil
+	}
+
 	msgBytes, _ := cache.Client().MGet(msgIDs...).Result()
+	log.Debugf("messageListFromCache>>> Messages ID loaded from cache : %s %s", keyList, msgBytes)
 	msg := []tat.Message{}
 	for _, bytes := range msgBytes {
-		m := &tat.Message{}
-		if bytes != redis.Nil {
-			if err := json.Unmarshal(bytes.([]byte), m); err != nil {
-				log.Warnf("Unsable to unmarshal messsage %v : %s", bytes, err)
-				continue
+		if bytes != nil {
+			m := &tat.Message{}
+			log.Debugf("messageListFromCache>>> %T %s", bytes, bytes)
+			if bytes != redis.Nil {
+				if err := json.Unmarshal([]byte(bytes.(string)), m); err != nil {
+					log.Warnf("messageListFromCache>>> Unable to unmarshal messsage %v : %s", bytes, err)
+					continue
+				}
+				msg = append(msg, *m)
 			}
-			msg = append(msg, *m)
 		}
 	}
 
 	return msg, err
 }
 
-func cacheMessageList(criteria *tat.MessageCriteria, messages []tat.Message) error {
+func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages []tat.Message) error {
+	if len(messages) == 0 {
+		return nil
+	}
+
 	pipeline := cache.Client().Pipeline()
 	defer pipeline.Close()
 
-	keyList := cache.CriteriaKey(criteria, "tat", "messages", "list_messages")
-
-	pipeline.SAdd(cache.Key(cache.TatMessagesKeys()...), keyList)
+	keyList := cache.CriteriaKey(criteria, "tat", "messages", topic.Topic, "list_messages")
+	log.Debugf("cacheMessageList>>> Push %s in cache", keyList)
+	keyListList := cache.Key(cache.TatMessagesKeys()...)
+	log.Debugf("cacheMessageList>>> Saving key %s in %s", keyList, keyListList)
+	pipeline.SAdd(keyListList, keyList)
 
 	for _, m := range messages {
 		keyMessage := cache.Key("tat", "messages", m.ID)
@@ -279,7 +295,7 @@ func cacheMessageList(criteria *tat.MessageCriteria, messages []tat.Message) err
 			return err
 		}
 		z := redis.Z{
-			Member: m.ID,
+			Member: keyMessage,
 			Score:  m.DateCreation,
 		}
 		pipeline.ZAdd(keyList, z)
@@ -290,6 +306,7 @@ func cacheMessageList(criteria *tat.MessageCriteria, messages []tat.Message) err
 		log.Warnf("cacheListMessages: Error executing pipeline: %s", err)
 		return err
 	}
+	log.Debugf("cacheMessageList>>> %s cached", keyList)
 	return nil
 }
 
@@ -303,12 +320,12 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 		return messages, errc
 	}
 
-	messages, err = messageListFromCache(criteria)
+	messages, err = messageListFromCache(criteria, &topic)
 	if err != nil {
 		log.Errorf("Error while Find All Messages %s from cache", err)
 	}
 
-	if len(messages) > 0 {
+	if len(messages) == 0 {
 		err = store.GetCMessages(topic.Collection).Find(c).
 			Sort("-dateCreation").
 			Skip(criteria.Skip).
@@ -318,7 +335,7 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 			log.Errorf("Error while Find All Messages %s", err)
 			return messages, err
 		}
-		cacheMessageList(criteria, messages)
+		cacheMessageList(criteria, &topic, messages)
 	}
 
 	if len(messages) == 0 {
@@ -551,6 +568,8 @@ func getTree(messagesIn map[string][]tat.Message, criteria *tat.MessageCriteria,
 
 // Insert a new message on one topic
 func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyOfID string, dateCreation float64, labels []tat.Label, replies []string, isNotificationFromMention bool, messageRoot *tat.Message) error {
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
 
 	if !isNotificationFromMention {
 		notificationsTopic := fmt.Sprintf("/Private/%s/Notifications", user.Username)
@@ -774,7 +793,6 @@ func CheckAndFixText(message *tat.Message, topic tat.Topic) error {
 // Update updates a message from database
 // action could be concat (for adding additional text to message or update)
 func Update(message *tat.Message, user tat.User, topic tat.Topic, newText string, action string) error {
-
 	if action == "concat" {
 		message.Text += newText
 	} else {
@@ -797,6 +815,9 @@ func Update(message *tat.Message, user tat.User, topic tat.Topic, newText string
 	if err != nil {
 		log.Errorf("Error while update a message %s", err)
 	}
+
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
 
 	go topicDB.UpdateTopicTags(&topic, message.Tags)
 
@@ -848,6 +869,9 @@ func Move(message *tat.Message, user tat.User, fromTopic tat.Topic, toTopic tat.
 		log.Errorf("Error while update messages (move topic to %s) idMsgRoot:%s err:%s", toTopic.Topic, message.ID, err)
 	}
 
+	cache.CleanMessagesLists(fromTopic.Topic)
+	cache.CleanMessagesLists(toTopic.Topic)
+
 	return nil
 }
 
@@ -871,7 +895,13 @@ func Delete(message *tat.Message, cascade bool, topic tat.Topic) error {
 		_, err := store.GetCMessages(topic.Collection).RemoveAll(bson.M{"$or": []bson.M{{"_id": message.ID}, {"inReplyOfIDRoot": message.ID}}})
 		return err
 	}
-	return store.GetCMessages(topic.Collection).Remove(bson.M{"_id": message.ID})
+	if err := store.GetCMessages(topic.Collection).Remove(bson.M{"_id": message.ID}); err != nil {
+		return err
+	}
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
+
+	return nil
 }
 
 func getLabel(message *tat.Message, label string) (int, tat.Label, error) {
@@ -936,6 +966,8 @@ func AddLabel(message *tat.Message, topic tat.Topic, label string, color string)
 		return tat.Label{}, err
 	}
 	message.Labels = append(message.Labels, newLabel)
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
 
 	go topicDB.UpdateTopicLabels(&topic, message.Labels)
 	return newLabel, nil
@@ -959,17 +991,27 @@ func RemoveLabel(message *tat.Message, label string, topic tat.Topic) error {
 	}
 
 	message.Labels = append(message.Labels[:idxLabel], message.Labels[idxLabel+1:]...)
+
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
 	return nil
 }
 
 // RemoveAllAndAddNewLabel removes all labels and add new label on message
 func RemoveAllAndAddNewLabel(message *tat.Message, labels []tat.Label, topic tat.Topic) error {
 	message.Labels = checkLabels(labels, nil)
-	return store.GetCMessages(topic.Collection).Update(
+	err := store.GetCMessages(topic.Collection).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{
 			"dateUpdate": tat.TSFromNow(),
 			"labels":     message.Labels}})
+	if err != nil {
+		return err
+	}
+
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
+	return nil
 }
 
 // RemoveSomeAndAddNewLabel removes some labels and add new label on message
@@ -992,7 +1034,10 @@ func Like(message *tat.Message, user tat.User, topic tat.Topic) error {
 	if err == nil {
 		message.NbLikes++
 		message.Likers = append(message.Likers, user.Username)
+		//Clean the cache for this topic
+		cache.CleanMessagesLists(topic.Topic)
 	}
+
 	return err
 }
 
@@ -1016,6 +1061,8 @@ func Unlike(message *tat.Message, user tat.User, topic tat.Topic) error {
 			}
 		}
 		message.Likers = likers
+		//Clean the cache for this topic
+		cache.CleanMessagesLists(topic.Topic)
 	}
 
 	return err
@@ -1027,11 +1074,17 @@ func VoteUP(message *tat.Message, user tat.User, topic tat.Topic) error {
 		return fmt.Errorf("Vote UP not possible, %s is already a voters UP of this message", user.Username)
 	}
 	UnVoteDown(message, user, topic)
-	return store.GetCMessages(topic.Collection).Update(
+	err := store.GetCMessages(topic.Collection).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": tat.TSFromNow()},
 			"$inc":  bson.M{"nbVotesUP": 1},
 			"$push": bson.M{"votersUP": user.Username}})
+	if err != nil {
+		return nil
+	}
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
+	return nil
 }
 
 // VoteDown add a vote Down to a message
@@ -1040,11 +1093,17 @@ func VoteDown(message *tat.Message, user tat.User, topic tat.Topic) error {
 		return fmt.Errorf("Vote Down not possible, %s is already a voters Down of this message", user.Username)
 	}
 	UnVoteUP(message, user, topic)
-	return store.GetCMessages(topic.Collection).Update(
+	err := store.GetCMessages(topic.Collection).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": tat.TSFromNow()},
 			"$inc":  bson.M{"nbVotesDown": 1},
 			"$push": bson.M{"votersDown": user.Username}})
+	if err != nil {
+		return nil
+	}
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
+	return nil
 }
 
 // UnVoteUP removes a vote up from a message
@@ -1052,11 +1111,17 @@ func UnVoteUP(message *tat.Message, user tat.User, topic tat.Topic) error {
 	if !tat.ArrayContains(message.VotersUP, user.Username) {
 		return fmt.Errorf("Add Vote UP not possible, %s is not a voters UP of this message", user.Username)
 	}
-	return store.GetCMessages(topic.Collection).Update(
+	err := store.GetCMessages(topic.Collection).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": tat.TSFromNow()},
 			"$inc":  bson.M{"nbVotesUP": -1},
 			"$pull": bson.M{"votersUP": user.Username}})
+	if err != nil {
+		return nil
+	}
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
+	return nil
 }
 
 // UnVoteDown removes a vote down from a message
@@ -1064,11 +1129,17 @@ func UnVoteDown(message *tat.Message, user tat.User, topic tat.Topic) error {
 	if !tat.ArrayContains(message.VotersDown, user.Username) {
 		return fmt.Errorf("Remove Vote Down not possible, %s is not a voters Down of this message", user.Username)
 	}
-	return store.GetCMessages(topic.Collection).Update(
+	err := store.GetCMessages(topic.Collection).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{"dateUpdate": tat.TSFromNow()},
 			"$inc":  bson.M{"nbVotesDown": -1},
 			"$pull": bson.M{"votersDown": user.Username}})
+	if err != nil {
+		return nil
+	}
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
+	return nil
 }
 
 func addOrRemoveFromTasks(message *tat.Message, action string, user tat.User, topic tat.Topic) error {
@@ -1168,6 +1239,9 @@ func changeAuthorUsernameOnMessages(oldUsername, newUsername string) error {
 	}
 
 	for _, topic := range topics {
+		//Clean the cache for this topic
+		cache.CleanMessagesLists(topic.Topic)
+
 		_, err := store.GetCMessages(topic.Collection).UpdateAll(
 			bson.M{"author.username": oldUsername},
 			bson.M{"$set": bson.M{"author.username": newUsername}})
@@ -1192,6 +1266,8 @@ func ChangeUsernameOnMessagesTopics(oldUsername, newUsername string) error {
 
 	collections := []string{store.CollectionDefaultMessages}
 	for _, topic := range topics {
+		//Clean the cache for this topic
+		cache.CleanMessagesLists(topic.Topic)
 		if topic.Collection != "" {
 			collections = append(collections, topic.Collection)
 		}
@@ -1311,6 +1387,9 @@ func ComputeReplies(topic tat.Topic) (int, error) {
 		}
 	}
 
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
+
 	return nbCompute, nil
 }
 
@@ -1372,13 +1451,15 @@ func MigrateMessagesToDedicatedTopic(topic *tat.Topic, limit int) (int, error) {
 			log.Errorf("MigrateMessagesToDedicatedTopic> getClMessages(toTopic).Insert(message), err: %s", errInsert)
 			return nMigrated, errInsert
 		}
-
 		if errRemove := store.Tat().Session.DB(store.DatabaseName).C(store.CollectionDefaultMessages).RemoveId(msgToMigrate.ID); errRemove != nil {
 			log.Errorf("MigrateMessagesToDedicatedTopic> getClMessages(toTopic).RemoveId(message), err: %s", errRemove)
 			return nMigrated, errRemove
 		}
 		nMigrated++
 	}
+
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
 
 	return nMigrated, nil
 }

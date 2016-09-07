@@ -111,7 +111,9 @@ func (m *MessageCriteria) CacheKey() []string {
 	if m == nil {
 		return s
 	}
-
+	if m.Topic != "" {
+		s = append(s, "Topic="+m.Topic)
+	}
 	if m.Skip != 0 {
 		s = append(s, "Skip="+strconv.Itoa(m.Skip))
 	}
@@ -252,16 +254,31 @@ func (c *Client) MessageAdd(message MessageJSON) (*MessageJSONOut, error) {
 		return nil, err
 	}
 
-	DebugLogFunc("Post %s done", message.Text)
 	return out, nil
 }
 
 func (c *Client) MessageReply() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
-func (c *Client) MessageDelete() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+//MessageDelete deletes a message. cascade : delete message and its replies. cascadeForce : delete message and its replies, event if it's in a Tasks Topic of one user
+func (c *Client) MessageDelete(id, topic string, cascase bool, cascadeForce bool) error {
+	var err error
+	if cascase {
+		_, err = c.reqWant(http.MethodDelete, 200, "/messages/cascade/"+id+topic, nil)
+	} else if cascadeForce {
+		_, err = c.reqWant(http.MethodDelete, 200, "/messages/cascadeforce/"+id+topic, nil)
+	} else {
+		_, err = c.reqWant(http.MethodDelete, 200, "/message/nocascade/"+id+topic, nil)
+	}
+
+	if err != nil {
+		ErrorLogFunc("Error deleting messages: %s", err)
+		return err
+	}
+	return nil
 }
+
 func (c *Client) MessageDeleteBulk() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
@@ -307,6 +324,110 @@ func (c *Client) MessageUnlabel() error {
 func (c *Client) MessageRelabel() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
-func (c *Client) MessageList() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+//MessageList lists messages on a topic according to criterias
+func (c *Client) MessageList(topic string, criteria *MessageCriteria) (*MessagesJSON, error) {
+	if criteria == nil {
+		criteria = &MessageCriteria{
+			Skip:  0,
+			Limit: 100,
+		}
+	}
+	criteria.Topic = topic
+
+	u := ""
+	if criteria.TreeView != "" {
+		u += "&treeView=" + criteria.TreeView
+	}
+	if criteria.IDMessage != "" {
+		u += "&idMessage=" + criteria.IDMessage
+	}
+	if criteria.InReplyOfID != "" {
+		u += "&inReplyOfID=" + criteria.InReplyOfID
+	}
+	if criteria.InReplyOfIDRoot != "" {
+		u += "&inReplyOfIDRoot=" + criteria.InReplyOfIDRoot
+	}
+	if criteria.AllIDMessage != "" {
+		u += "&allIDMessage=" + criteria.AllIDMessage
+	}
+	if criteria.Text != "" {
+		u += "&text=" + criteria.Text
+	}
+	if criteria.Topic != "" {
+		u += "&topic=" + criteria.Topic
+	}
+	if criteria.Label != "" {
+		u += "&label=" + criteria.Label
+	}
+	if criteria.NotLabel != "" {
+		u += "&notLabel=" + criteria.NotLabel
+	}
+	if criteria.AndLabel != "" {
+		u += "&andLabel=" + criteria.AndLabel
+	}
+	if criteria.Tag != "" {
+		u += "&tag=" + criteria.Tag
+	}
+	if criteria.NotTag != "" {
+		u += "&notTag=" + criteria.NotTag
+	}
+	if criteria.AndTag != "" {
+		u += "&andTag=" + criteria.AndTag
+	}
+	if criteria.DateMinCreation != "" {
+		u += "&dateMinCreation=" + criteria.DateMinCreation
+	}
+	if criteria.DateMaxCreation != "" {
+		u += "&dateMaxCreation=" + criteria.DateMaxCreation
+	}
+	if criteria.DateMinUpdate != "" {
+		u += "&dateMinUpdate=" + criteria.DateMinUpdate
+	}
+	if criteria.DateMaxUpdate != "" {
+		u += "&dateMaxUpdate=" + criteria.DateMaxUpdate
+	}
+	if criteria.Username != "" {
+		u += "&username=" + criteria.Username
+	}
+	if criteria.LimitMinNbReplies != "" {
+		u += "&limitMinNbReplies=" + criteria.LimitMinNbReplies
+	}
+	if criteria.LimitMaxNbReplies != "" {
+		u += "&limitMaxNbReplies=" + criteria.LimitMaxNbReplies
+	}
+	if criteria.LimitMinNbVotesUP != "" {
+		u += "&limitMinNbVotesUP=" + criteria.LimitMinNbVotesUP
+	}
+	if criteria.LimitMaxNbVotesUP != "" {
+		u += "&limitMaxNbVotesUP=" + criteria.LimitMaxNbVotesUP
+	}
+	if criteria.LimitMinNbVotesDown != "" {
+		u += "&limitMinNbVotesDown=" + criteria.LimitMinNbVotesDown
+	}
+	if criteria.LimitMaxNbVotesDown != "" {
+		u += "&limitMaxNbVotesDown=" + criteria.LimitMaxNbVotesDown
+	}
+	if criteria.OnlyMsgRoot == "true" {
+		u += "&onlyMsgRoot=true"
+	}
+	if criteria.OnlyCount == "true" {
+		u += "&onlyCount=true"
+	}
+	path := fmt.Sprintf("/messages%s?skip=%d&limit=%d%s", criteria.Topic, criteria.Skip, criteria.Limit, u)
+
+	body, err := c.reqWant(http.MethodGet, 200, path, nil)
+	if err != nil {
+		ErrorLogFunc("Error getting messages list: %s", err)
+		return nil, err
+	}
+
+	DebugLogFunc("Messages List Reponse: %s", string(body))
+	var messages = MessagesJSON{}
+	if err := json.Unmarshal(body, &messages); err != nil {
+		ErrorLogFunc("Error getting messages list: %s", err)
+		return nil, err
+	}
+
+	return &messages, nil
 }

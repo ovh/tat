@@ -202,15 +202,15 @@ func (t *TopicsController) Delete(ctx *gin.Context) {
 		}
 	}
 
-	c := &tat.MessageCriteria{Topic: topic.Topic}
-	msgs, err := messageDB.ListMessages(c, "", *topic)
+	c := &tat.MessageCriteria{Topic: topic.Topic, OnlyCount: "true"}
+	count, err := messageDB.CountMessages(c, user.Username, *topic)
 	if err != nil {
 		log.Errorf("Error while list Messages in Delete %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while list Messages in Delete topic"})
 		return
 	}
 
-	if len(msgs) > 0 {
+	if count > 0 {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete this topic, this topic have messages"})
 		return
 	}

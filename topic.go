@@ -204,7 +204,7 @@ func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
 	if criteria == nil {
 		criteria = &TopicCriteria{
 			Skip:  0,
-			Limit: 10,
+			Limit: 100,
 		}
 	}
 
@@ -265,8 +265,19 @@ func (c *Client) TopicDelete(topicPath string) error {
 	return nil
 }
 
-func (c *Client) TopicTruncate() error {
-	return fmt.Errorf("Not Yet Implemented")
+//TopicTruncate deletes all messages in a topic
+func (c *Client) TopicTruncate(topic string) error {
+	b, err := json.Marshal(map[string]string{"topic": topic})
+	if err != nil {
+		ErrorLogFunc("Error truncating topic: %s", err)
+		return err
+	}
+	_, err = c.reqWant(http.MethodPut, http.StatusCreated, "/topic/truncate", b)
+	if err != nil {
+		ErrorLogFunc("Error truncating topic: %s", err)
+		return err
+	}
+	return nil
 }
 
 func (c *Client) TopicAddRoUser() error {
@@ -453,6 +464,39 @@ func (c *Client) TopicDeleteParameter() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
 
-func (c *Client) TopicParameter() error {
-	return fmt.Errorf("Not Yet Implemented")
+//TopicParameters updates param on one topic
+type TopicParameters struct {
+	MaxLength            int
+	CanForceDate         bool
+	CanUpdateMsg         bool
+	CanDeleteMsg         bool
+	CanUpdateAllMsg      bool
+	CanDeleteAllMsg      bool
+	AdminCanUpdateAllMsg bool
+	AdminCanDeleteAllMsg bool
+	IsAutoComputeTags    bool
+	IsAutoComputeLabels  bool
+}
+
+//TopicParameter updates param on one topic
+func (c *Client) TopicParameter(topic string, recursive bool, params TopicParameters) error {
+	t := map[string]interface{}{
+		"topic":                topic,
+		"recursive":            recursive,
+		"canForceDate":         params.CanForceDate,
+		"canUpdateMsg":         params.CanUpdateMsg,
+		"canDeleteMsg":         params.CanDeleteMsg,
+		"canUpdateAllMsg":      params.CanUpdateAllMsg,
+		"canDeleteAllMsg":      params.CanDeleteAllMsg,
+		"adminCanUpdateAllMsg": params.AdminCanUpdateAllMsg,
+		"adminCanDeleteAllMsg": params.AdminCanDeleteAllMsg,
+		"isAutoComputeTags":    params.IsAutoComputeTags,
+		"isAutoComputeLabels":  params.IsAutoComputeLabels,
+	}
+	b, err := json.Marshal(t)
+	if _, err = c.reqWant(http.MethodPut, 201, "/topic/param", b); err != nil {
+		ErrorLogFunc("Error updating params: %s", err)
+		return err
+	}
+	return nil
 }

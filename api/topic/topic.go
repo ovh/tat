@@ -231,7 +231,7 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 
 	ccount, _ := cache.Client().Get(kcount).Int64()
 	if len(topics) > 0 && ccount > 0 {
-		log.Debugf("topics (%s) loaded from cache", k)
+		log.Debugf("ListTopics>>> topics (%s) loaded from cache", k)
 		return int(ccount), topics, nil
 	}
 
@@ -302,7 +302,7 @@ func InitPrivateTopic() {
 // Insert creates a new topic. User is read write on topic
 func Insert(topic *tat.Topic, u *tat.User) error {
 	log.Debugf("Insert>>> Clean topics cache for user %s", u.Username)
-	cache.CleanTopics(u.Username)
+	cache.CleanTopicsList(u.Username)
 
 	if err := CheckAndFixName(topic); err != nil {
 		return err
@@ -386,7 +386,7 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 // Delete deletes a topic from database
 func Delete(topic *tat.Topic, u *tat.User) error {
 	log.Debugf("Delete>>> Clean topics cache for user %s", u.Username)
-	cache.CleanTopics(u.Username)
+	cache.CleanTopicsList(u.Username)
 
 	if topic.Collection != "" {
 		if err := store.Tat().Session.DB(store.DatabaseName).C(topic.Collection).DropCollection(); err != nil {
@@ -501,6 +501,7 @@ func UpdateTopicTags(topic *tat.Topic, tags []string) {
 		} else {
 			log.Debugf("UpdateTopicTags> Topic %s ", topic.Topic)
 		}
+		cache.CleanAllTopicsLists()
 	}
 }
 
@@ -536,6 +537,7 @@ func UpdateTopicLabels(topic *tat.Topic, labels []tat.Label) {
 		} else {
 			log.Debugf("UpdateTopicLabels> Topic %s ", topic.Topic)
 		}
+		cache.CleanAllTopicsLists()
 	}
 }
 
@@ -855,44 +857,44 @@ func actionOnSet(topic *tat.Topic, operand, set, username, admin string, recursi
 
 // AddRoUser add a read only user to topic
 func AddRoUser(topic *tat.Topic, admin string, username string, recursive bool) error {
-	cache.CleanTopics(username)
+	cache.CleanTopicsList(username)
 	return actionOnSet(topic, "$addToSet", "roUsers", username, admin, recursive, "add to ro")
 }
 
 // AddRwUser add a read write user to topic
 func AddRwUser(topic *tat.Topic, admin string, username string, recursive bool) error {
-	cache.CleanTopics(username)
+	cache.CleanTopicsList(username)
 	return actionOnSet(topic, "$addToSet", "rwUsers", username, admin, recursive, "add to ro")
 }
 
 // AddAdminUser add a read write user to topic
 func AddAdminUser(topic *tat.Topic, admin string, username string, recursive bool) error {
-	cache.CleanTopics(username)
+	cache.CleanTopicsList(username)
 	return actionOnSet(topic, "$addToSet", "adminUsers", username, admin, recursive, "add to admin")
 }
 
 // RemoveRoUser removes a read only user from topic
 func RemoveRoUser(topic *tat.Topic, admin string, username string, recursive bool) error {
-	cache.CleanTopics(username)
+	cache.CleanTopicsList(username)
 	return actionOnSet(topic, "$pull", "roUsers", username, admin, recursive, "remove from ro")
 }
 
 // RemoveAdminUser removes a read only user from topic
 func RemoveAdminUser(topic *tat.Topic, admin string, username string, recursive bool) error {
-	cache.CleanTopics(username)
+	cache.CleanTopicsList(username)
 	return actionOnSet(topic, "$pull", "adminUsers", username, admin, recursive, "remove from admin")
 }
 
 // RemoveRwUser removes a read write user from topic
 func RemoveRwUser(topic *tat.Topic, admin string, username string, recursive bool) error {
-	cache.CleanTopics(username)
+	cache.CleanTopicsList(username)
 	return actionOnSet(topic, "$pull", "rwUsers", username, admin, recursive, "remove from rw")
 }
 
 func cleanCacheTopicsForUsersInGroup(groupname string) {
 	group, err := group.FindByName(groupname)
 	if err == nil {
-		cache.CleanTopics(group.Users...)
+		cache.CleanTopicsList(group.Users...)
 	}
 }
 

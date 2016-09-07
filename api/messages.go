@@ -246,7 +246,6 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 	}
 
 	var message = tat.Message{}
-
 	// New root message or reply
 	err := messageDB.Insert(&message, *user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, false, nil)
 	if err != nil {
@@ -416,7 +415,7 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message tat.Mes
 	if !strings.HasPrefix(message.Topic, "/Private/"+user.Username) && !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
 		if !topic.CanDeleteMsg && !topic.CanDeleteAllMsg {
 			e := fmt.Sprintf("You can't delete a message from topic %s", topic.Topic)
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
+			ctx.JSON(http.StatusForbidden, gin.H{"error": e})
 			return fmt.Errorf(e)
 		}
 		e := fmt.Sprintf("Could not delete a message in topic %s", message.Topic)
