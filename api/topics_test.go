@@ -46,6 +46,28 @@ func TestTopicCreateListAndDelete(t *testing.T) {
 
 }
 
+func TestTruncateAndDeleteAllTopics(t *testing.T) {
+	tests.Init(t)
+	tests.Router(t)
+
+	tests.Handle(t, http.MethodGet, "/topics", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.List)
+	tests.Handle(t, http.MethodPut, "/topic/truncate", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.Truncate)
+	tests.Handle(t, http.MethodDelete, "/topic/*topic", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.Delete)
+	client := tests.TATClient(t, tests.AdminUser)
+
+	topics, err := client.TopicList(nil)
+	assert.NotNil(t, topics)
+	assert.NoError(t, err)
+
+	t.Log("Delete all topics")
+	for _, to := range topics.Topics {
+		err := client.TopicTruncate(to.Topic)
+		assert.NoError(t, err)
+		err = client.TopicDelete(to.Topic)
+		assert.NoError(t, err)
+	}
+}
+
 func TestListTopicsFromCache(t *testing.T) {
 	tests.Init(t)
 	tests.Router(t)

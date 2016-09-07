@@ -132,7 +132,7 @@ func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int,
 
 	ccount, _ := cache.Client().Get(kcount).Int64()
 	if len(groups) > 0 && ccount > 0 {
-		log.Debugf("groups (%s) loaded from cache", k)
+		log.Debugf("ListGroups>>> groups (%s) loaded from cache", k)
 		return int(ccount), groups, nil
 	}
 
