@@ -157,7 +157,7 @@ func (c *LocalCache) Persist(key string) *redis.BoolCmd {
 	return redis.NewBoolResult(false, nil)
 }
 func (c *LocalCache) Pipeline() *redis.Pipeline {
-	return &redis.Pipeline{}
+	return nil
 }
 func (c *LocalCache) PubSubChannels(pattern string) *redis.StringSliceCmd {
 	return redis.NewStringSliceResult([]string{}, nil)
