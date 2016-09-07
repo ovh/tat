@@ -152,7 +152,7 @@ func EnsureIndexes() {
 func EnsureIndexesMessages(collection string) {
 
 	if collection != CollectionDefaultMessages {
-		listIndex(_instance.Session.DB(DatabaseName).C(collection), true)
+		//listIndex(_instance.Session.DB(DatabaseName).C(collection), true)
 		ensureIndex(_instance.Session.DB(DatabaseName).C(collection), mgo.Index{Key: []string{"-dateUpdate", "-dateCreation"}})
 		ensureIndex(_instance.Session.DB(DatabaseName).C(collection), mgo.Index{Key: []string{"-dateCreation"}})
 		ensureIndex(_instance.Session.DB(DatabaseName).C(collection), mgo.Index{Key: []string{"tags"}})
@@ -160,7 +160,7 @@ func EnsureIndexesMessages(collection string) {
 		ensureIndex(_instance.Session.DB(DatabaseName).C(collection), mgo.Index{Key: []string{"inReplyOfID"}})
 		ensureIndex(_instance.Session.DB(DatabaseName).C(collection), mgo.Index{Key: []string{"inReplyOfIDRoot"}})
 	} else {
-		listIndex(_instance.Session.DB(DatabaseName).C(collection), false)
+		//listIndex(_instance.Session.DB(DatabaseName).C(collection), false)
 		ensureIndex(_instance.Session.DB(DatabaseName).C(collection), mgo.Index{Key: []string{"topic", "-dateUpdate", "-dateCreation"}})
 		ensureIndex(_instance.Session.DB(DatabaseName).C(collection), mgo.Index{Key: []string{"topic", "-dateCreation"}})
 		ensureIndex(_instance.Session.DB(DatabaseName).C(collection), mgo.Index{Key: []string{"topic", "tags"}})
