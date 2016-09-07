@@ -279,6 +279,10 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 	}
 
 	pipeline := cache.Client().Pipeline()
+	if pipeline == nil {
+		return nil
+	}
+
 	defer pipeline.Close()
 
 	keyList := cache.CriteriaKey(criteria, "tat", "messages", topic.Topic, "list_messages")
