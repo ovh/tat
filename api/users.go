@@ -217,10 +217,6 @@ func (u *UsersController) Reset(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"info": "please check your mail to validate your account"})
 }
 
-type userJSON struct {
-	User *tat.User `json:"user"`
-}
-
 // Me retrieves all information about me (exception information about Authentication)
 func (*UsersController) Me(ctx *gin.Context) {
 	var user = tat.User{}
@@ -238,7 +234,7 @@ func (*UsersController) Me(ctx *gin.Context) {
 		return
 	}
 	user.Groups = gs
-	out := &userJSON{User: &user}
+	out := &tat.UserJSON{User: user}
 	ctx.JSON(http.StatusOK, out)
 }
 

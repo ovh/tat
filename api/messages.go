@@ -184,7 +184,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, t
 	if efind != nil {
 		topica, _, edm := checkDMTopic(ctx, messageIn.Topic)
 		if edm != nil {
-			e := errors.New("Topic " + messageIn.Topic + " does not exist")
+			e := errors.New("Topic " + messageIn.Topic + " does not exist or you have no read access on it")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 			return messageIn, message, tat.Topic{}, nil, e
 		}
@@ -195,7 +195,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, t
 		// nothing here
 	} else if messageIn.IDReference != "" {
 		if efind := messageDB.FindByID(&message, messageIn.IDReference, *topic); efind != nil {
-			e := errors.New("Message " + messageIn.IDReference + " does not exist")
+			e := errors.New("Message " + messageIn.IDReference + " does not exist or you have no read access on it")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 			return messageIn, message, tat.Topic{}, nil, e
 		}

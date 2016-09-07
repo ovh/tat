@@ -77,12 +77,29 @@ type ContactsJSON struct {
 	ContactsPresences      *[]Presence `json:"contactsPresence"`
 }
 
+// UserJSON used by GET /user/me
+type UserJSON struct {
+	User User `json:"user"`
+}
+
 func (c *Client) UserList() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
 
-func (c *Client) UserMe() error {
-	return fmt.Errorf("Not Yet Implemented")
+func (c *Client) UserMe() (*UserJSON, error) {
+	b, err := c.reqWant("GET", http.StatusOK, "/user/me", nil)
+
+	if err != nil {
+		ErrorLogFunc("Error while GET /user/me: %s", err)
+		return nil, err
+	}
+
+	userJSON := &UserJSON{}
+	if err := json.Unmarshal(b, userJSON); err != nil {
+		return nil, err
+	}
+
+	return userJSON, nil
 }
 
 func (c *Client) UserContacts() error {
