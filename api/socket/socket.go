@@ -447,12 +447,6 @@ func deleteUserFromMessage(socket *tat.Socket, topicName string) {
 	subscriptionMessages.Unlock()
 }
 
-func deleteUserFromMessagesCount(socket *tat.Socket) {
-	subscriptionMessagesNew.Lock()
-	deleteUserFromAllList(socket, subscriptionMessagesNew.m)
-	subscriptionMessagesNew.Unlock()
-}
-
 func deleteUserFromMessageCount(socket *tat.Socket, topicName string) {
 	subscriptionMessagesNew.Lock()
 	deleteUserFromList(socket, topicName, subscriptionMessagesNew.m)

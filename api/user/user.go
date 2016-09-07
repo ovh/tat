@@ -810,22 +810,6 @@ func CountUsers() (int, error) {
 	return store.Tat().CUsers.Count()
 }
 
-func createTopics(user *tat.User) error {
-	err := CreatePrivateTopic(user, "")
-	if err != nil {
-		return err
-	}
-	err = CreatePrivateTopic(user, "Tasks")
-	if err != nil {
-		return err
-	}
-	err = CreatePrivateTopic(user, "Notifications")
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 // CreatePrivateTopic creates a Private Topic. Name of topic will be :
 // /Private/username and if subTopic != "", it will be :
 // /Private/username/subTopic
@@ -908,7 +892,7 @@ func CheckDefaultGroup(user *tat.User, fixDefaultGroup bool) string {
 // CheckTopics check default topics for user and creates them if fixTopics is true
 func CheckTopics(user *tat.User, fixTopics bool) string {
 	topicsInfo := ""
-	topicNames := [...]string{"", "Tasks", "Notifications"}
+	topicNames := [...]string{"", "Notifications"}
 	for _, shortName := range topicNames {
 		topicName := fmt.Sprintf("/Private/%s", user.Username)
 		if shortName != "" {

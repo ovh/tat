@@ -84,13 +84,7 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 		query = append(query, bson.M{"text": bson.RegEx{Pattern: "^.*" + regexp.QuoteMeta(criteria.Text) + ".*$", Options: "im"}})
 	}
 
-	// Task
-	if criteria.Topic == "/Private/"+username+"/Tasks" {
-		queryLabels := bson.M{}
-		queryLabels["$or"] = []bson.M{{"topic": "/Private/" + username + "/Tasks"}}
-		queryLabels["$or"] = append(queryLabels["$or"].([]bson.M), bson.M{"labels": bson.M{"$elemMatch": bson.M{"text": bson.M{"$in": []string{"doing:" + username}}}}})
-		query = append(query, queryLabels)
-	} else if criteria.Topic != "" {
+	if criteria.Topic != "" {
 		queryTopics := bson.M{}
 		queryTopics["$or"] = []bson.M{}
 		for _, t := range strings.Split(criteria.Topic, ",") {
@@ -261,8 +255,8 @@ func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]ta
 			m := &tat.Message{}
 			log.Debugf("messageListFromCache>>> %T %s", bytes, bytes)
 			if bytes != redis.Nil {
-				if err := json.Unmarshal([]byte(bytes.(string)), m); err != nil {
-					log.Warnf("messageListFromCache>>> Unable to unmarshal messsage %v : %s", bytes, err)
+				if errm := json.Unmarshal([]byte(bytes.(string)), m); errm != nil {
+					log.Warnf("messageListFromCache>>> Unable to unmarshal messsage %v : %s", bytes, errm)
 					continue
 				}
 				msg = append(msg, *m)
@@ -908,46 +902,6 @@ func Delete(message *tat.Message, cascade bool, topic tat.Topic) error {
 	return nil
 }
 
-func getLabel(message *tat.Message, label string) (int, tat.Label, error) {
-	for idx, cur := range message.Labels {
-		if cur.Text == label {
-			return idx, cur, nil
-		}
-	}
-	l := tat.Label{}
-	return -1, l, fmt.Errorf("label %s not found", label)
-}
-
-// ContainsLabel returns true if message contains label
-func ContainsLabel(message *tat.Message, label string) bool {
-	_, _, err := getLabel(message, label)
-	return err == nil
-}
-
-// IsDoing returns true if message contains label doing or starts with doing:
-func IsDoing(message *tat.Message) bool {
-	for _, label := range message.Labels {
-		if label.Text == "doing" || strings.HasPrefix(label.Text, "doing:") {
-			return true
-		}
-	}
-	return false
-}
-
-func getTag(message *tat.Message, tag string) (int, string, error) {
-	for idx, cur := range message.Tags {
-		if cur == tag {
-			return idx, cur, nil
-		}
-	}
-	return -1, "", fmt.Errorf("tag %s not found", tag)
-}
-
-func containsTag(message *tat.Message, tag string) bool {
-	_, _, err := getTag(message, tag)
-	return err == nil
-}
-
 //AddLabel add a label to a message
 //truncated to 100 char in text label
 func AddLabel(message *tat.Message, topic tat.Topic, label string, color string) (tat.Label, error) {
@@ -956,7 +910,7 @@ func AddLabel(message *tat.Message, topic tat.Topic, label string, color string)
 	}
 
 	var newLabel = tat.Label{Text: label, Color: color}
-	if ContainsLabel(message, label) {
+	if message.ContainsLabel(label) {
 		log.Infof("AddLabel not possible, %s is already a label of message %s", label, message.ID)
 		return newLabel, nil
 	}
@@ -979,7 +933,7 @@ func AddLabel(message *tat.Message, topic tat.Topic, label string, color string)
 
 // RemoveLabel removes label from on message (label text matching)
 func RemoveLabel(message *tat.Message, label string, topic tat.Topic) error {
-	idxLabel, l, err := getLabel(message, label)
+	idxLabel, l, err := message.GetLabel(label)
 	if err != nil {
 		log.Infof("Remove Label is not possible, %s is not a label of this message", label)
 		return nil
@@ -1178,16 +1132,16 @@ func addOrRemoveFromTasks(message *tat.Message, action string, user tat.User, to
 			RemoveLabel(message, "doing", topic)
 		}
 	} else { // push
-		if !ContainsLabel(message, "doing") {
+		if !message.ContainsLabel("doing") {
 			AddLabel(message, topic, "doing", "#5484ed")
 		}
-		if !ContainsLabel(message, "doing:"+user.Username) {
+		if !message.ContainsLabel("doing:" + user.Username) {
 			AddLabel(message, topic, "doing:"+user.Username, "#5484ed")
 		}
-		if ContainsLabel(message, "open") {
+		if message.ContainsLabel("open") {
 			RemoveLabel(message, "open", topic)
 		}
-		if ContainsLabel(message, "done") {
+		if message.ContainsLabel("done") {
 			RemoveLabel(message, "done", topic)
 		}
 	}

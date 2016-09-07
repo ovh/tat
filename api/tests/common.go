@@ -114,7 +114,6 @@ func FakeAuthHandler(t *testing.T, username string, referer string, isAdmin bool
 	return func(ctx *gin.Context) {
 		ctx.Set(tat.TatHeaderUsername, username)
 		ctx.Set("Tat_isAdmin", isAdmin)
-		ctx.Set("Tat_isSystem", isSystem)
 		ctx.Set(tat.TatHeaderXTatRefererLower, referer)
 	}
 }

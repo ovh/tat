@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -408,10 +409,10 @@ func (c *Client) MessageList(topic string, criteria *MessageCriteria) (*Messages
 	if criteria.LimitMaxNbVotesDown != "" {
 		u += "&limitMaxNbVotesDown=" + criteria.LimitMaxNbVotesDown
 	}
-	if criteria.OnlyMsgRoot == "true" {
+	if criteria.OnlyMsgRoot == True {
 		u += "&onlyMsgRoot=true"
 	}
-	if criteria.OnlyCount == "true" {
+	if criteria.OnlyCount == True {
 		u += "&onlyCount=true"
 	}
 	path := fmt.Sprintf("/messages%s?skip=%d&limit=%d%s", criteria.Topic, criteria.Skip, criteria.Limit, u)
@@ -430,4 +431,47 @@ func (c *Client) MessageList(topic string, criteria *MessageCriteria) (*Messages
 	}
 
 	return &messages, nil
+}
+
+// GetLabel returns label, and position if message contains label
+func (m *Message) GetLabel(label string) (int, Label, error) {
+	for idx, cur := range m.Labels {
+		if cur.Text == label {
+			return idx, cur, nil
+		}
+	}
+	l := Label{}
+	return -1, l, fmt.Errorf("label %s not found", label)
+}
+
+// ContainsLabel returns true if message contains label
+func (m *Message) ContainsLabel(label string) bool {
+	_, _, err := m.GetLabel(label)
+	return err == nil
+}
+
+// IsDoing returns true if message contains label doing or starts with doing:
+func (m *Message) IsDoing() bool {
+	for _, label := range m.Labels {
+		if label.Text == "doing" || strings.HasPrefix(label.Text, "doing:") {
+			return true
+		}
+	}
+	return false
+}
+
+// GetTag returns position, tag is message contains tag
+func (m *Message) GetTag(tag string) (int, string, error) {
+	for idx, cur := range m.Tags {
+		if cur == tag {
+			return idx, cur, nil
+		}
+	}
+	return -1, "", fmt.Errorf("tag %s not found", tag)
+}
+
+// ContainsTag returns true if message contains tag
+func (m *Message) ContainsTag(tag string) bool {
+	_, _, err := m.GetTag(tag)
+	return err == nil
 }

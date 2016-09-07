@@ -22,22 +22,14 @@ var (
 	// tatCtxIsAdmin is used in Gin Context True if user is admin
 	tatCtxIsAdmin = "Tat_isAdmin"
 
-	// tatCtxIsSystem is used in Gin Context True if user is a system user
-	tatCtxIsSystem = "Tat_isSystem"
+	// TatHeaderPassword contains tat password
+	tatHeaderPasswordLower     = "tat_password"
+	tatHeaderPasswordLowerDash = "tat-password"
 )
 
 // isTatAdmin return true if user is admin. Get value in gin.Context
 func isTatAdmin(ctx *gin.Context) bool {
 	value, exist := ctx.Get(tatCtxIsAdmin)
-	if value != nil && exist && value.(bool) == true {
-		return true
-	}
-	return false
-}
-
-// IsTatSystem return true if user is a system user. Get value in gin.Context
-func IsTatSystem(ctx *gin.Context) bool {
-	value, exist := ctx.Get(tatCtxIsSystem)
 	if value != nil && exist && value.(bool) == true {
 		return true
 	}

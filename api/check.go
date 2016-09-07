@@ -14,19 +14,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// private
-var (
-	tatHeaderPassword          = "Tat_password"
-	tatHeaderPasswordLower     = "tat_password"
-	tatHeaderPasswordLowerDash = "tat-password"
-
-	// TatHeaderUsernameLower is a Header in lowercase
-	TatHeaderUsernameLower = strings.ToLower(tat.TatHeaderUsername)
-
-	// TatHeaderUsernameLowerDash is a Header in lowercase, and dash : tat-username
-	TatHeaderUsernameLowerDash = strings.Replace(TatHeaderUsernameLower, "_", "-", -1)
-)
-
 type tatHeadersType struct {
 	username      string
 	password      string
@@ -135,7 +122,6 @@ func validateTatHeaders(tatHeaders tatHeadersType) (tat.User, error) {
 func storeInContext(ctx *gin.Context, user tat.User, tatHeaders tatHeadersType) error {
 	ctx.Set(tat.TatHeaderUsername, user.Username)
 	ctx.Set(tatCtxIsAdmin, user.IsAdmin)
-	ctx.Set(tatCtxIsSystem, user.IsSystem)
 	ctx.Set(tat.TatHeaderXTatRefererLower, tatHeaders.tatReferer)
 
 	if user.IsAdmin {

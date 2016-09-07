@@ -433,7 +433,7 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message tat.Mes
 	}
 
 	// if label done on msg, can delete it
-	if !force && messageDB.IsDoing(&message) {
+	if !force && message.IsDoing() {
 		e := fmt.Sprintf("Could not delete a message with a doing label")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": e})
 		return fmt.Errorf(e)

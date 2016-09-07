@@ -3,7 +3,6 @@ package store
 import (
 	"os"
 	"strings"
-	"sync"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -36,7 +35,6 @@ type MongoStore struct {
 	CSockets         *mgo.Collection
 }
 
-var _initCtx sync.Once
 var _instance *MongoStore
 
 // Tat returns mongoDB instance for Tat
