@@ -229,31 +229,31 @@ func FindByID(message *tat.Message, id string, topic tat.Topic) error {
 	return err
 }
 
-func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]tat.Message, error) {
+// messageListFromCache returns msglist, isInCache, error
+func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]tat.Message, bool, error) {
 	keyList := cache.CriteriaKey(criteria, "tat", "messages", topic.Topic, "list_messages")
 	log.Debugf("messageListFromCache>>> Load %s", keyList)
 	msgIDs, err := cache.Client().ZRange(keyList, 0, -1).Result()
 	if err != nil {
 		if err == redis.Nil {
 			log.Debugf("messageListFromCache>>> key %s does not exist", keyList)
-			return []tat.Message{}, nil
+			return []tat.Message{}, false, nil
 		}
 		log.Warnf("listMessagesFromCache>>> Unable to load msg ID: %s", err)
-		return []tat.Message{}, err
+		return []tat.Message{}, false, err
 	}
 
-	log.Debugf("messageListFromCache>>> Load messages from cache : %s %s", keyList, msgIDs) //<-- ceci est vide
 	if len(msgIDs) == 0 {
-		return []tat.Message{}, nil
+		return []tat.Message{}, true, nil
 	}
 
 	msgBytes, _ := cache.Client().MGet(msgIDs...).Result()
-	log.Debugf("messageListFromCache>>> Messages ID loaded from cache : %s %s", keyList, msgBytes)
+	//log.Debugf("messageListFromCache>>> Messages ID loaded from cache : %s %s", keyList, msgBytes)
 	msg := []tat.Message{}
 	for _, bytes := range msgBytes {
 		if bytes != nil {
 			m := &tat.Message{}
-			log.Debugf("messageListFromCache>>> %T %s", bytes, bytes)
+			//	log.Debugf("messageListFromCache>>> %T %s", bytes, bytes)
 			if bytes != redis.Nil {
 				if errm := json.Unmarshal([]byte(bytes.(string)), m); errm != nil {
 					log.Warnf("messageListFromCache>>> Unable to unmarshal messsage %v : %s", bytes, errm)
@@ -264,7 +264,7 @@ func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]ta
 		}
 	}
 
-	return msg, err
+	return msg, true, err
 }
 
 func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages []tat.Message) error {
@@ -310,33 +310,33 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 
 // ListMessages list messages with given criteria
 func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topic) ([]tat.Message, error) {
-	var messages []tat.Message
-	var err error
-
 	c, errc := buildMessageCriteria(criteria, username)
 	if errc != nil {
-		return messages, errc
+		return []tat.Message{}, errc
 	}
 
-	messages, err = messageListFromCache(criteria, &topic)
+	messages, isInCache, err := messageListFromCache(criteria, &topic)
 	if err != nil {
 		log.Errorf("Error while Find All Messages %s from cache", err)
 	}
 
-	if len(messages) == 0 {
-		err = store.GetCMessages(topic.Collection).Find(c).
-			Sort("-dateCreation").
-			Skip(criteria.Skip).
-			Limit(criteria.Limit).
-			All(&messages)
-		if err != nil {
-			log.Errorf("Error while Find All Messages %s", err)
-			return messages, err
-		}
-		cacheMessageList(criteria, &topic, messages)
+	if isInCache {
+		return messages, err
+	}
+
+	err = store.GetCMessages(topic.Collection).Find(c).
+		Sort("-dateCreation").
+		Skip(criteria.Skip).
+		Limit(criteria.Limit).
+		All(&messages)
+	if err != nil {
+		log.Errorf("Error while Find All Messages %s", err)
+		return messages, err
 	}
 
 	if len(messages) == 0 {
+		// cache no msg for this request
+		cacheMessageList(criteria, &topic, messages)
 		return messages, nil
 	}
 
@@ -360,6 +360,7 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 		return filterNbReplies(messages, criteria)
 	}
 
+	cacheMessageList(criteria, &topic, messages)
 	return messages, err
 }
 
@@ -387,9 +388,9 @@ func filterNbReplies(messages []tat.Message, criteria *tat.MessageCriteria) ([]t
 	}
 
 	for _, msg := range messages {
-		if (minReplies >= 0 && len(msg.Replies) >= minReplies) ||
-			(maxReplies >= 0 && len(msg.Replies) <= maxReplies) ||
-			(minReplies >= 0 && maxReplies >= 0 && len(msg.Replies) >= minReplies && len(msg.Replies) <= maxReplies) {
+		if (int64(minReplies) >= 0 && msg.NbReplies >= int64(minReplies)) ||
+			(int64(maxReplies) >= 0 && msg.NbReplies <= int64(maxReplies)) ||
+			(int64(minReplies) >= 0 && int64(maxReplies) >= 0 && msg.NbReplies >= int64(minReplies) && msg.NbReplies <= int64(maxReplies)) {
 			messagesFiltered = append(messagesFiltered, msg)
 		}
 	}
