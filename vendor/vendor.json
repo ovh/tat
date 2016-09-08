@@ -215,6 +215,12 @@
 			"revisionTime": "2016-07-03T23:56:20Z"
 		},
 		{
+			"checksumSHA1": "+4r0PnLwwyhO5/jvU5R/TEJb4kA=",
+			"path": "gopkg.in/bsm/ratelimit.v1",
+			"revision": "db14e161995a5177acef654cb0dd785e8ee8bc22",
+			"revisionTime": "2016-02-20T15:49:07Z"
+		},
+		{
 			"checksumSHA1": "1Kc7sbvcA9MOUV9q+/LLwhX2LYA=",
 			"path": "gopkg.in/go-playground/validator.v8",
 			"revision": "25f1823069d853eccffbde025dca1812fa09c14b",
@@ -249,6 +255,48 @@
 			"path": "gopkg.in/mgo.v2/internal/scram",
 			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
 			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "wzIIXqRUdbCacnE4UmwrmdqPWZY=",
+			"path": "gopkg.in/redis.v4",
+			"revision": "788a36eee7796dbad237c33f9f73873a7feee292",
+			"revisionTime": "2016-09-08T13:48:19Z"
+		},
+		{
+			"checksumSHA1": "4HbfnrL1KOz/6nsdBAPeL0oUXzc=",
+			"path": "gopkg.in/redis.v4/internal",
+			"revision": "788a36eee7796dbad237c33f9f73873a7feee292",
+			"revisionTime": "2016-09-08T13:48:19Z"
+		},
+		{
+			"checksumSHA1": "l+1jiOGUyjHP0u0mB+KiT/UHVcY=",
+			"path": "gopkg.in/redis.v4/internal/consistenthash",
+			"revision": "788a36eee7796dbad237c33f9f73873a7feee292",
+			"revisionTime": "2016-09-08T13:48:19Z"
+		},
+		{
+			"checksumSHA1": "2g6I7ogdqKeDLwDO+mHn75XSajI=",
+			"path": "gopkg.in/redis.v4/internal/errors",
+			"revision": "788a36eee7796dbad237c33f9f73873a7feee292",
+			"revisionTime": "2016-09-08T13:48:19Z"
+		},
+		{
+			"checksumSHA1": "6XSNzBg5bzd2TjEfC/q41tPT/Zg=",
+			"path": "gopkg.in/redis.v4/internal/hashtag",
+			"revision": "788a36eee7796dbad237c33f9f73873a7feee292",
+			"revisionTime": "2016-09-08T13:48:19Z"
+		},
+		{
+			"checksumSHA1": "iNTNDlfYLkwrmZzLMG+O3PBHSCw=",
+			"path": "gopkg.in/redis.v4/internal/pool",
+			"revision": "788a36eee7796dbad237c33f9f73873a7feee292",
+			"revisionTime": "2016-09-08T13:48:19Z"
+		},
+		{
+			"checksumSHA1": "BGzuM8ZpMCmTKWnb/3CtrV4OwDU=",
+			"path": "gopkg.in/redis.v4/internal/proto",
+			"revision": "788a36eee7796dbad237c33f9f73873a7feee292",
+			"revisionTime": "2016-09-08T13:48:19Z"
 		},
 		{
 			"checksumSHA1": "+OgOXBoiQ+X+C2dsAeiOHwBIEH0=",
