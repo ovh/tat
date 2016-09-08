@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/http"
 	"testing"
 
 	"github.com/ovh/tat"
@@ -13,10 +12,17 @@ var groupsController = GroupsController{}
 
 func TestAddAndDeleteGroup(t *testing.T) {
 	tests.Init(t)
-	tests.Router(t)
+	router := tests.Router(t)
 	client := tests.TATClient(t, tests.AdminUser)
-	tests.Handle(t, http.MethodPost, "/group", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), groupsController.Create)
-	tests.Handle(t, http.MethodDelete, "/group/edit/:group", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), groupsController.Delete)
+
+	initRoutesGroups(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesMessages(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesPresences(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesTopics(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesUsers(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesStats(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesSystem(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesSockets(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 
 	group, err := client.GroupCreate(tat.GroupJSON{
 		Description: "Group admin for tests",

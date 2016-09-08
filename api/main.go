@@ -73,14 +73,16 @@ var mainCmd = &cobra.Command{
 		group.InitDB()
 		message.InitDB()
 
-		initRoutesGroups(router)
-		initRoutesMessages(router)
-		initRoutesPresences(router)
-		initRoutesTopics(router)
-		initRoutesUsers(router)
-		initRoutesStats(router)
-		initRoutesSystem(router)
-		initRoutesSockets(router)
+		routerRoot := router.Group("")
+
+		initRoutesGroups(routerRoot, CheckPassword())
+		initRoutesMessages(routerRoot, CheckPassword())
+		initRoutesPresences(routerRoot, CheckPassword())
+		initRoutesTopics(routerRoot, CheckPassword())
+		initRoutesUsers(routerRoot, CheckPassword())
+		initRoutesStats(routerRoot, CheckPassword())
+		initRoutesSystem(routerRoot, CheckPassword())
+		initRoutesSockets(routerRoot, CheckPassword())
 
 		s := &http.Server{
 			Addr:           ":" + viper.GetString("listen_port"),

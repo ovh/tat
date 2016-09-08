@@ -6,12 +6,11 @@ import (
 )
 
 // initRoutesGroups initialized routes for Groups Controller
-func initRoutesGroups(router *gin.Engine) {
-
+func initRoutesGroups(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	groupsCtrl := &GroupsController{}
 
 	g := router.Group("/")
-	g.Use(CheckPassword())
+	g.Use(checkPassword)
 	{
 		g.GET("/groups", groupsCtrl.List)
 
@@ -21,7 +20,7 @@ func initRoutesGroups(router *gin.Engine) {
 		g.PUT("/group/remove/adminuser", groupsCtrl.RemoveAdminUser)
 
 		admin := router.Group("/group")
-		admin.Use(CheckPassword(), CheckAdmin())
+		admin.Use(checkPassword, CheckAdmin())
 		{
 			admin.POST("", groupsCtrl.Create)
 			admin.DELETE("edit/:group", groupsCtrl.Delete)
@@ -31,11 +30,11 @@ func initRoutesGroups(router *gin.Engine) {
 }
 
 // initRoutesMessages initialized routes for Messages Controller
-func initRoutesMessages(router *gin.Engine) {
+func initRoutesMessages(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	messagesCtrl := &MessagesController{}
 
 	g := router.Group("/messages")
-	g.Use(CheckPassword())
+	g.Use(checkPassword)
 	{
 		g.GET("/*topic", messagesCtrl.List)
 		g.DELETE("/nocascade/*topic", messagesCtrl.DeleteBulk)
@@ -50,7 +49,7 @@ func initRoutesMessages(router *gin.Engine) {
 	}
 
 	gm := router.Group("/message")
-	gm.Use(CheckPassword())
+	gm.Use(checkPassword)
 	{
 		//Create a message, a reply
 		gm.POST("/*topic", messagesCtrl.Create)
@@ -70,10 +69,10 @@ func initRoutesMessages(router *gin.Engine) {
 }
 
 // initRoutesPresences initialized routes for Presences Controller
-func initRoutesPresences(router *gin.Engine) {
+func initRoutesPresences(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	presencesCtrl := &PresencesController{}
 	g := router.Group("/")
-	g.Use(CheckPassword())
+	g.Use(checkPassword)
 	{
 		// List Presences
 		g.GET("presences", presencesCtrl.List)
@@ -84,21 +83,21 @@ func initRoutesPresences(router *gin.Engine) {
 		g.DELETE("presences/*topic", presencesCtrl.Delete)
 	}
 	admin := router.Group("/presencesadmin")
-	admin.Use(CheckPassword(), CheckAdmin())
+	admin.Use(checkPassword, CheckAdmin())
 	{
 		admin.GET("/checkall", presencesCtrl.CheckAllPresences)
 	}
 }
 
 // initRoutesSockets initialized routes for Sockets Controller
-func initRoutesSockets(router *gin.Engine) {
+func initRoutesSockets(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	socketsCtrl := &SocketsController{}
 
 	if viper.GetBool("websocket_enabled") {
 		router.GET("/socket/ws", socketsCtrl.WS)
 
 		admin := router.Group("/sockets")
-		admin.Use(CheckPassword(), CheckAdmin())
+		admin.Use(checkPassword, CheckAdmin())
 		{
 			admin.GET("/dump", socketsCtrl.Dump)
 		}
@@ -106,11 +105,11 @@ func initRoutesSockets(router *gin.Engine) {
 }
 
 // initRoutesStats initialized routes for Stats Controller
-func initRoutesStats(router *gin.Engine) {
+func initRoutesStats(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	statsCtrl := &StatsController{}
 
 	admin := router.Group("/stats")
-	admin.Use(CheckPassword(), CheckAdmin())
+	admin.Use(checkPassword, CheckAdmin())
 	{
 		admin.GET("/count", statsCtrl.Count)
 		admin.GET("/instance", statsCtrl.Instance)
@@ -126,7 +125,7 @@ func initRoutesStats(router *gin.Engine) {
 }
 
 // initRoutesSystem initialized routes for System Controller
-func initRoutesSystem(router *gin.Engine) {
+func initRoutesSystem(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	systemCtrl := &SystemController{}
 	router.GET("/version", systemCtrl.GetVersion)
 
@@ -134,11 +133,11 @@ func initRoutesSystem(router *gin.Engine) {
 }
 
 // initRoutesTopics initialized routes for Topics Controller
-func initRoutesTopics(router *gin.Engine) {
+func initRoutesTopics(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	topicsCtrl := &TopicsController{}
 
 	g := router.Group("/")
-	g.Use(CheckPassword())
+	g.Use(checkPassword)
 	{
 		g.GET("/topics", topicsCtrl.List)
 		g.POST("/topic", topicsCtrl.Create)
@@ -170,7 +169,7 @@ func initRoutesTopics(router *gin.Engine) {
 	}
 
 	admin := router.Group("/topics")
-	admin.Use(CheckPassword(), CheckAdmin())
+	admin.Use(checkPassword, CheckAdmin())
 	{
 		admin.PUT("/compute/tags", topicsCtrl.AllComputeTags)
 		admin.PUT("/compute/labels", topicsCtrl.AllComputeLabels)
@@ -182,16 +181,16 @@ func initRoutesTopics(router *gin.Engine) {
 }
 
 // initRoutesUsers initialized routes for Users Controller
-func initRoutesUsers(router *gin.Engine) {
+func initRoutesUsers(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	usersCtrl := &UsersController{}
 
 	gs := router.Group("/users")
-	gs.Use(CheckPassword())
+	gs.Use(checkPassword)
 	{
 		gs.GET("", usersCtrl.List)
 	}
 	g := router.Group("/user")
-	g.Use(CheckPassword())
+	g.Use(checkPassword)
 	{
 		g.GET("/me", usersCtrl.Me)
 		g.GET("/me/contacts/:sinceSeconds", usersCtrl.Contacts)
@@ -210,7 +209,7 @@ func initRoutesUsers(router *gin.Engine) {
 	}
 
 	admin := router.Group("/user")
-	admin.Use(CheckPassword(), CheckAdmin())
+	admin.Use(checkPassword, CheckAdmin())
 	{
 		admin.PUT("/convert", usersCtrl.Convert)
 		admin.PUT("/archive", usersCtrl.Archive)
