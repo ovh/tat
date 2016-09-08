@@ -1389,32 +1389,37 @@ curl -XGET https://<tatHostname>:<tatPort>/capabilities
 ## Tat Flags Options
 
 ```
-      --allowed-domains="": Users have to use theses emails domains. Empty: no-restriction. Ex: --allowed-domains=domainA.org,domainA.com
-      --db-addr="127.0.0.1:27017": Address of the mongodb server
-      --db-password="": Password to authenticate with the mongodb server. If "false", db-password is not used
-      --db-rs-tags="": Link hostname with tag on mongodb replica set - Optional: hostnameA:tagName:value,hostnameB:tagName:value. If "false", db-rs-tags is not used
-      --db-user="": User to authenticate with the mongodb server. If "false", db-user is not used
-      --default-domain="": Default domains for mail for trusted username
-      --default-group="": Default Group for new user
-      --exposed-host="localhost": Tat Engine Hostname exposed to client
-      --exposed-path="": Tat Engine Path exposed to client, ex: host:port/tat/engine /tat/engine is exposed path
-      --exposed-port="8080": Tat Engine Port exposed to client
-      --exposed-scheme="http": Tat URI Scheme http or https exposed to client
-      --header-trust-username="": Header Trust Username: for example, if X-Remote-User and X-Remote-User received in header -> auto accept user without testing tat_password. Use it with precaution
- -h, --help=false: help for tat
-      --listen-port="8080": Tat Engine Listen Port
-      --no-smtp=false: No SMTP mode
-      --production=false: Production mode
-      --smtp-from="": SMTP From
-      --smtp-host="": SMTP Host
-      --smtp-password="": SMTP Password
-      --smtp-port="": SMTP Port
-      --smtp-tls=false: SMTP TLS
-      --smtp-user="": SMTP Username
-      --tat-log-level="": Tat Log Level: debug, info or warn
-      --trusted-usernames-emails-fullnames="": Tuples trusted username / email / fullname. Example: username:email:Firstname1_Fullname1,username2:email2:Firstname2_Fullname2
-      --username-from-email=false: Username are extracted from first part of email. first.lastame@domainA.org -> username: first.lastname
-      --websocket-enabled=false: Enable or not websockets on this instance
+Flags:
+      --allowed-domains string                      Users have to use theses emails domains. Empty: no-restriction. Ex: --allowed-domains=domainA.org,domainA.com
+      --db-addr string                              Address of the mongodb server (default "127.0.0.1:27017")
+      --db-password string                          Password to authenticate with the mongodb server. If "false", db-password is not used
+      --db-rs-tags string                           Link hostname with tag on mongodb replica set - Optional: hostnameA:tagName:value,hostnameB:tagName:value. If "false", db-rs-tags is not used
+      --db-socket-timeout int                       Session DB Socket Timeout in seconds (default 60)
+      --db-user string                              User to authenticate with the mongodb server. If "false", db-user is not used
+      --default-domain string                       Default domains for mail for trusted username
+      --default-group string                        Default Group for new user
+      --exposed-host string                         Tat Engine Hostname exposed to client (default "localhost")
+      --exposed-path string                         Tat Engine Path exposed to client, ex: host:port/tat/engine /tat/engine is exposed path
+      --exposed-port string                         Tat Engine Port exposed to client (default "8080")
+      --exposed-scheme string                       Tat URI Scheme http or https exposed to client (default "http")
+      --header-trust-username string                Header Trust Username: for example, if X-Remote-User and X-Remote-User received in header -> auto accept user without testing tat_password. Use it with precaution
+      --listen-port string                          Tat Engine Listen Port (default "8080")
+      --no-smtp                                     No SMTP mode
+      --production                                  Production mode
+      --read-timeout int                            Read Timeout in seconds (default 50)
+      --redis-hosts string                          Optional - Used for Cache - Redis hosts (comma separated for cluster)
+      --redis-password string                       Optional - Used for Cache - Redis password
+      --smtp-from string                            SMTP From
+      --smtp-host string                            SMTP Host
+      --smtp-password string                        SMTP Password
+      --smtp-port string                            SMTP Port
+      --smtp-tls                                    SMTP TLS
+      --smtp-user string                            SMTP Username
+      --tat-log-level string                        Tat Log Level: debug, info or warn
+      --trusted-usernames-emails-fullnames string   Tuples trusted username / email / fullname. Example: username:email:Firstname1_Fullname1,username2:email2:Firstname2_Fullname2
+      --username-from-email                         Username are extracted from first part of email. first.lastame@domainA.org -> username: first.lastname
+      --websocket-enabled                           Enable or not websockets on this instance
+      --write-timeout int                           Write Timeout in seconds (default 50)
 
 ```
 
@@ -1439,7 +1444,7 @@ docker run -it --rm --name tat-instance1 --link tat-mongo:mongodb \
 ## Dev RUN
 
 ```
-go get && go build && ./tat --no-smtp=true --help
+cd cd $GOPATH/src/github.com/ovh/tat/api && go build && ./api --no-smtp=true --help
 ```
 
 If you want to create a user with tatcli:
@@ -1467,13 +1472,13 @@ is same than
 
 # Hacking
 
-Best with go >= 1.6.
+Best with go >= 1.7.
 
 ```bash
 mkdir -p $GOPATH/src/github.com/ovh
 cd $GOPATH/src/github.com/ovh
 git clone git@github.com:ovh/tat.git
-cd $GOPATH/src/github.com/ovh/tat
+cd $GOPATH/src/github.com/ovh/tat/api
 go build
 ```
 
