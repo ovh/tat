@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/http"
 	"testing"
 
 	"github.com/ovh/tat"
@@ -13,17 +12,18 @@ var messagesCtrl = &MessagesController{}
 
 func TestMessagesList(t *testing.T) {
 	tests.Init(t)
-	tests.Router(t)
-
-	tests.Handle(t, http.MethodPost, "/topic", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.Create)
-	tests.Handle(t, http.MethodPut, "/topic/truncate", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.Truncate)
-	tests.Handle(t, http.MethodPut, "/topic/param", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.SetParam)
-	tests.Handle(t, http.MethodDelete, "/topic/*topic", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), topicsController.Delete)
-	tests.Handle(t, http.MethodPost, "/message/*topic", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), messagesCtrl.Create)
-	tests.Handle(t, http.MethodDelete, "/message/nocascade/:idMessage/*topic", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), messagesCtrl.Delete)
-	tests.Handle(t, http.MethodGet, "/messages/*topic", tests.FakeAuthHandler(t, tests.AdminUser, "TAT-TEST", true, false), messagesCtrl.List)
-
+	router := tests.Router(t)
 	client := tests.TATClient(t, tests.AdminUser)
+
+	initRoutesGroups(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesMessages(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesPresences(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesTopics(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesUsers(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesStats(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesSystem(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesSockets(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+
 	topic, err := client.TopicCreate(tat.TopicCreateJSON{
 		Topic:       "/" + tests.RandomString(t, 10),
 		Description: "this is a test",
