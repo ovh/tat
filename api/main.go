@@ -208,6 +208,12 @@ func init() {
 	flags.String("redis-hosts", "", "Redis hosts (comma separated for cluster)")
 	viper.BindPFlag("redis_hosts", flags.Lookup("redis-hosts"))
 
+	flags.String("redis-master", "", "Redis master name")
+	viper.BindPFlag("redis_master", flags.Lookup("redis-master"))
+
+	flags.String("redis-sentinels", "", "Redis sentinels (comma separated)")
+	viper.BindPFlag("redis_sentinels", flags.Lookup("redis-sentinels"))
+
 	flags.String("redis-password", "", "Redis password")
 	viper.BindPFlag("redis_password", flags.Lookup("redis-password"))
 }

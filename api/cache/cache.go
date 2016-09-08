@@ -15,38 +15,64 @@ var instance Cache
 //Client returns Cache interface
 func Client() Cache {
 	redisHosts := viper.GetString("redis_hosts")
+	redisMaster := viper.GetString("redis_master")
+	redisSentinels := viper.GetString("redis_sentinels")
 	redisPassword := viper.GetString("redis_password")
 	redisHostsArray := strings.Split(redisHosts, ",")
+	redisSentinelsArray := strings.Split(redisSentinels, ",")
 
 	if instance != nil {
 		goto testInstance
 	}
 
-	if redisHosts == "" {
+	if redisHosts == "" && redisSentinels == "" {
 		//Mode in memory
+		log.Warningf("Configuring fake redis client. You should consider to start at least a standalone redis client.")
 		instance = &LocalCache{}
 		goto testInstance
 	}
 
 	if len(redisHostsArray) > 1 {
-		//Mode in cluster
+		//Mode cluster
+		log.Infof("Configuring Redis Cluster client for %s", redisHosts)
 		opts := &redis.ClusterOptions{
 			Addrs:    redisHostsArray,
 			Password: redisPassword,
 		}
 		instance = redis.NewClusterClient(opts)
-	} else {
+		goto testInstance
+	}
+
+	if len(redisHostsArray) == 1 && redisHosts != "" {
 		//Mode master
+		log.Infof("Configuring Redis client for %s", redisHosts)
 		opts := &redis.Options{
 			Addr:     redisHosts,
 			Password: redisPassword,
 		}
 		instance = redis.NewClient(opts)
+		goto testInstance
 	}
+
+	if len(redisSentinelsArray) > 1 && redisMaster != "" {
+		//Mode sentinels
+		log.Infof("Configuring Failover Redis client for master %s on sentinels %s", redisMaster, redisSentinels)
+		opts := &redis.FailoverOptions{
+			MasterName:    redisMaster,
+			Password:      redisPassword,
+			SentinelAddrs: redisSentinelsArray,
+		}
+		instance = redis.NewFailoverClient(opts)
+		goto testInstance
+	}
+
+	log.Errorf("Invalid Redis configuration. For Redis Cluster: use --redis-hosts=my-redis-host1.local:6379,my-redis-host2.local:6379. For Redis Sentinels : use --redis-master=mymaster --redis-sentinels=my-redis-host1.local:26379,my-redis-host2.local:26379. For Standalone Redis:  --redis-hosts=my-redis-host1.local:6379")
+	log.Errorf("Configuring fake Redis client. You should consider to fix your configuration.")
+	instance = &LocalCache{}
 
 testInstance:
 	if err := instance.Ping().Err(); err != nil {
-		log.Errorf("Unable to ping redis at %s: %s", redisHosts, err)
+		log.Errorf("Unable to ping Redis at %s", err)
 	}
 
 	return instance
@@ -55,15 +81,11 @@ testInstance:
 // TestInstanceAtStartup pings redis and display error log if no redis, and Info
 // log is redis is here
 func TestInstanceAtStartup() {
-	if viper.GetString("redis_hosts") == "" {
+	if viper.GetString("redis_hosts") == "" && viper.GetString("redis_sentinels") == "" {
 		log.Infof("TAT is NOT linked to a redis")
 		return
 	}
-	if err := Client().Ping().Err(); err != nil {
-		log.Errorf("Unable to ping redis at %s: %s", viper.GetString("redis_hosts"), err)
-	} else {
-		log.Infof("TAT is linked to redis %s", viper.GetString("redis_hosts"))
-	}
+	Client()
 }
 
 //CriteriaKey returns the Redis Key
