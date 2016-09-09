@@ -124,10 +124,10 @@ func getDbParameter(key string) string {
 
 // EnsureIndexes fixes index at startup
 func EnsureIndexes() {
-	listIndex(_instance.CTopics, false)
-	listIndex(_instance.CGroups, false)
-	listIndex(_instance.CUsers, false)
-	listIndex(_instance.CPresences, false)
+	//listIndex(_instance.CTopics, false)
+	//listIndex(_instance.CGroups, false)
+	//listIndex(_instance.CUsers, false)
+	//listIndex(_instance.CPresences, false)
 
 	// messages
 	EnsureIndexesMessages(CollectionDefaultMessages)
