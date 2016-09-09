@@ -38,7 +38,7 @@ var mainCmd = &cobra.Command{
 		router := gin.New()
 		router.Use(tatRecovery)
 
-		if viper.GetBool("production") {
+		if !viper.GetBool("production") {
 			router.Use(gin.Logger())
 		}
 
