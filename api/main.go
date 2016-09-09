@@ -26,17 +26,20 @@ var mainCmd = &cobra.Command{
 		viper.SetEnvPrefix("tat")
 		viper.AutomaticEnv()
 
-		router := gin.New()
-		router.Use(tatRecovery)
-
 		if viper.GetBool("production") {
 			// Only log the warning severity or above.
 			log.SetLevel(log.InfoLevel)
 			gin.SetMode(gin.ReleaseMode)
 			log.SetFormatter(&log.JSONFormatter{})
 		} else {
-			router.Use(gin.Logger())
 			log.SetLevel(log.DebugLevel)
+		}
+
+		router := gin.New()
+		router.Use(tatRecovery)
+
+		if viper.GetBool("production") {
+			router.Use(gin.Logger())
 		}
 
 		if viper.GetString("tat_log_level") != "" {
