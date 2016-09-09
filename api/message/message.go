@@ -233,21 +233,25 @@ func FindByID(message *tat.Message, id string, topic tat.Topic) error {
 func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]tat.Message, bool, error) {
 	keyList := cache.CriteriaKey(criteria, "tat", "messages", topic.Topic, "list_messages")
 	log.Debugf("messageListFromCache>>> Load %s", keyList)
-	msgIDs, err := cache.Client().ZRange(keyList, 0, -1).Result()
+
+	c := cache.Client()
+	if inCache, err := c.Exists(keyList).Result(); !inCache || err != nil {
+		log.Debugf("messageListFromCache>>> key %s does not exist", keyList)
+		return []tat.Message{}, false, nil
+	}
+
+	msgIDs, err := c.ZRevRange(keyList, 0, -1).Result()
 	if err != nil {
-		if err == redis.Nil {
-			log.Debugf("messageListFromCache>>> key %s does not exist", keyList)
-			return []tat.Message{}, false, nil
-		}
 		log.Warnf("listMessagesFromCache>>> Unable to load msg ID: %s", err)
 		return []tat.Message{}, false, err
 	}
 
 	if len(msgIDs) == 0 {
+		log.Debugf("messageListFromCache>>> len(msgIDs)== 0, return, err:", err)
 		return []tat.Message{}, true, nil
 	}
 
-	msgBytes, _ := cache.Client().MGet(msgIDs...).Result()
+	msgBytes, _ := c.MGet(msgIDs...).Result()
 	//log.Debugf("messageListFromCache>>> Messages ID loaded from cache : %s %s", keyList, msgBytes)
 	msg := []tat.Message{}
 	for _, bytes := range msgBytes {
@@ -268,9 +272,6 @@ func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]ta
 }
 
 func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages []tat.Message) error {
-	if len(messages) == 0 {
-		return nil
-	}
 
 	pipeline := cache.Client().Pipeline()
 	if pipeline == nil {
