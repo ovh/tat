@@ -104,6 +104,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 
 func (m *MessagesController) innerList(ctx *gin.Context) (*tat.MessagesJSON, tat.User, tat.Topic, *tat.MessageCriteria, int, error) {
 	var criteria = m.buildCriteria(ctx)
+	log.Debugf("criteria::---> %+v", criteria)
 	out := &tat.MessagesJSON{}
 
 	// we can't use NotLabel or NotTag with fulltree or onetree

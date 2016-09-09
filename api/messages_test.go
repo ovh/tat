@@ -67,7 +67,7 @@ func TestMessagesList(t *testing.T) {
 	assert.Equal(t, 1, len(messages.Messages))
 
 	message, err = client.MessageAdd(tat.MessageJSON{
-		Text:  "test2 test2",
+		Text:  "#test2 #test2",
 		Topic: topic.Topic,
 	})
 	assert.NotNil(t, message)
@@ -85,6 +85,11 @@ func TestMessagesList(t *testing.T) {
 		t.Fail()
 		return
 	}
+
+	messagesSearch, err := client.MessageList(topic.Topic, &tat.MessageCriteria{Text: "#test2"})
+	assert.NoError(t, err)
+
+	assert.Equal(t, 1, len(messagesSearch.Messages))
 
 	if messages.Messages[0].DateCreation < messages.Messages[1].DateCreation {
 		t.Log("Wrong order")

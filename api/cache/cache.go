@@ -97,7 +97,8 @@ func CriteriaKey(i tat.CacheableCriteria, s ...string) string {
 //Key convert string array in redis key
 func Key(s ...string) string {
 	var escape = func(s string) string {
-		return strings.Replace(s, ":", "_", -1)
+		r := strings.Replace(s, ":", "_", -1)
+		return strings.Replace(r, " ", "", -1)
 	}
 
 	for i := range s {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -127,11 +128,20 @@ func (m *MessageCriteria) CacheKey() []string {
 	if m.IDMessage != "" {
 		s = append(s, "IDMessage="+m.IDMessage)
 	}
+	if m.InReplyOfID != "" {
+		s = append(s, "InReplyOfID="+m.InReplyOfID)
+	}
+	if m.InReplyOfIDRoot != "" {
+		s = append(s, "InReplyOfIDRoot="+m.InReplyOfIDRoot)
+	}
 	if m.AllIDMessage != "" {
 		s = append(s, "AllIDMessage="+m.AllIDMessage)
 	}
 	if m.Text != "" {
 		s = append(s, "Text="+m.Text)
+	}
+	if m.Label != "" {
+		s = append(s, "Label="+m.Label)
 	}
 	if m.NotLabel != "" {
 		s = append(s, "NotLabel="+m.NotLabel)
@@ -336,86 +346,90 @@ func (c *Client) MessageList(topic string, criteria *MessageCriteria) (*Messages
 	}
 	criteria.Topic = topic
 
-	u := ""
+	v := url.Values{}
+	v.Set("skip", string(criteria.Skip))
+	v.Set("limit", string(criteria.Limit))
+
 	if criteria.TreeView != "" {
-		u += "&treeView=" + criteria.TreeView
+		v.Set("treeView", criteria.TreeView)
 	}
 	if criteria.IDMessage != "" {
-		u += "&idMessage=" + criteria.IDMessage
+		v.Set("idMessage", criteria.IDMessage)
 	}
 	if criteria.InReplyOfID != "" {
-		u += "&inReplyOfID=" + criteria.InReplyOfID
+		v.Set("inReplyOfID", criteria.InReplyOfID)
 	}
 	if criteria.InReplyOfIDRoot != "" {
-		u += "&inReplyOfIDRoot=" + criteria.InReplyOfIDRoot
+		v.Set("inReplyOfIDRoot", criteria.InReplyOfIDRoot)
 	}
 	if criteria.AllIDMessage != "" {
-		u += "&allIDMessage=" + criteria.AllIDMessage
+		v.Set("allIDMessage", criteria.AllIDMessage)
 	}
 	if criteria.Text != "" {
-		u += "&text=" + criteria.Text
+		v.Set("text", criteria.Text)
 	}
 	if criteria.Topic != "" {
-		u += "&topic=" + criteria.Topic
+		v.Set("topic", criteria.Topic)
 	}
 	if criteria.Label != "" {
-		u += "&label=" + criteria.Label
+		v.Set("label", criteria.Label)
 	}
 	if criteria.NotLabel != "" {
-		u += "&notLabel=" + criteria.NotLabel
+		v.Set("notLabel", criteria.NotLabel)
 	}
 	if criteria.AndLabel != "" {
-		u += "&andLabel=" + criteria.AndLabel
+		v.Set("andLabel", criteria.AndLabel)
 	}
 	if criteria.Tag != "" {
-		u += "&tag=" + criteria.Tag
+		v.Set("tag", criteria.Tag)
 	}
 	if criteria.NotTag != "" {
-		u += "&notTag=" + criteria.NotTag
+		v.Set("notTag", criteria.NotTag)
 	}
 	if criteria.AndTag != "" {
-		u += "&andTag=" + criteria.AndTag
+		v.Set("andTag", criteria.AndTag)
 	}
 	if criteria.DateMinCreation != "" {
-		u += "&dateMinCreation=" + criteria.DateMinCreation
+		v.Set("dateMinCreation", criteria.DateMinCreation)
 	}
 	if criteria.DateMaxCreation != "" {
-		u += "&dateMaxCreation=" + criteria.DateMaxCreation
+		v.Set("dateMaxCreation", criteria.DateMaxCreation)
 	}
 	if criteria.DateMinUpdate != "" {
-		u += "&dateMinUpdate=" + criteria.DateMinUpdate
+		v.Set("dateMinUpdate", criteria.DateMinUpdate)
 	}
 	if criteria.DateMaxUpdate != "" {
-		u += "&dateMaxUpdate=" + criteria.DateMaxUpdate
+		v.Set("dateMaxUpdate", criteria.DateMaxUpdate)
 	}
 	if criteria.Username != "" {
-		u += "&username=" + criteria.Username
+		v.Set("username", criteria.Username)
 	}
 	if criteria.LimitMinNbReplies != "" {
-		u += "&limitMinNbReplies=" + criteria.LimitMinNbReplies
+		v.Set("limitMinNbReplies", criteria.LimitMinNbReplies)
 	}
 	if criteria.LimitMaxNbReplies != "" {
-		u += "&limitMaxNbReplies=" + criteria.LimitMaxNbReplies
+		v.Set("limitMaxNbReplies", criteria.LimitMaxNbReplies)
 	}
 	if criteria.LimitMinNbVotesUP != "" {
-		u += "&limitMinNbVotesUP=" + criteria.LimitMinNbVotesUP
+		v.Set("limitMinNbVotesUP", criteria.LimitMinNbVotesUP)
 	}
 	if criteria.LimitMaxNbVotesUP != "" {
-		u += "&limitMaxNbVotesUP=" + criteria.LimitMaxNbVotesUP
+		v.Set("limitMaxNbVotesUP", criteria.LimitMaxNbVotesUP)
 	}
 	if criteria.LimitMinNbVotesDown != "" {
-		u += "&limitMinNbVotesDown=" + criteria.LimitMinNbVotesDown
+		v.Set("limitMinNbVotesDown", criteria.LimitMinNbVotesDown)
 	}
 	if criteria.LimitMaxNbVotesDown != "" {
-		u += "&limitMaxNbVotesDown=" + criteria.LimitMaxNbVotesDown
+		v.Set("limitMaxNbVotesDown", criteria.LimitMaxNbVotesDown)
 	}
 	if criteria.OnlyMsgRoot == True {
-		u += "&onlyMsgRoot=true"
+		v.Set("onlyMsgRoot", "true")
 	}
 	if criteria.OnlyCount == True {
-		u += "&onlyCount=true"
+		v.Set("onlyCount", "true")
 	}
-	path := fmt.Sprintf("/messages%s?skip=%d&limit=%d%s", criteria.Topic, criteria.Skip, criteria.Limit, u)
+	path := fmt.Sprintf("/messages%s?%s", criteria.Topic, v.Encode())
+	DebugLogFunc("MessageList>>> Path requested: %s", path)
 
 	body, err := c.reqWant(http.MethodGet, 200, path, nil)
 	if err != nil {
@@ -423,7 +437,7 @@ func (c *Client) MessageList(topic string, criteria *MessageCriteria) (*Messages
 		return nil, err
 	}
 
-	DebugLogFunc("Messages List Reponse: %s", string(body))
+	DebugLogFunc("MessageList>>> Messages List Reponse: %s", string(body))
 	var messages = MessagesJSON{}
 	if err := json.Unmarshal(body, &messages); err != nil {
 		ErrorLogFunc("Error getting messages list: %s", err)
