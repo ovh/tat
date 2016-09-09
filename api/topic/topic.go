@@ -802,6 +802,7 @@ func SetParam(topic *tat.Topic, username string, recursive bool, maxLength int,
 		return err
 	}
 	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, adminCanDeleteAllMsg:%t isAutoComputeTags:%t, isAutoComputeLabels:%t", maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanDeleteAllMsg, isAutoComputeTags, isAutoComputeLabels)
+	cache.CleanAllTopicsLists()
 	return addToHistory(topic, selector, username, h)
 }
 
