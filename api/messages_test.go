@@ -35,6 +35,9 @@ func TestMessagesList(t *testing.T) {
 		t.Logf("Topic %s created", topic.Topic)
 	}
 
+	defer client.TopicDelete(topic.Topic)
+	defer client.TopicTruncate(topic.Topic)
+
 	err = client.TopicParameter(topic.Topic, false, tat.TopicParameters{
 		CanDeleteMsg:         true,
 		AdminCanDeleteAllMsg: true,
@@ -78,6 +81,15 @@ func TestMessagesList(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, 2, len(messages.Messages))
+	if len(messages.Messages) != 2 {
+		t.Fail()
+		return
+	}
+
+	if messages.Messages[0].DateCreation < messages.Messages[1].DateCreation {
+		t.Log("Wrong order")
+		t.Fail()
+	}
 
 	err = client.MessageDelete(message.Message.ID, topic.Topic, false, false)
 	assert.NoError(t, err)
@@ -87,8 +99,5 @@ func TestMessagesList(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, 1, len(messages.Messages))
-
-	client.TopicTruncate(topic.Topic)
-	client.TopicDelete(topic.Topic)
 
 }
