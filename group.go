@@ -62,12 +62,13 @@ func (g *GroupCriteria) CacheKey() []string {
 	return s
 }
 
+// GroupsJSON is used by Tat Engine, for groups list
 type GroupsJSON struct {
 	Count  int     `json:"count"`
 	Groups []Group `json:"groups"`
 }
 
-type ParamUserJSON struct {
+type ParamGroupUserJSON struct {
 	Groupname string `json:"groupname"`
 	Username  string `json:"username"`
 }
@@ -83,8 +84,18 @@ type ParamGroupJSON struct {
 	Recursive bool   `json:"recursive"`
 }
 
-func (c *Client) GroupList() error {
-	return fmt.Errorf("Not Yet Implemented")
+func (c *Client) GroupList(skip, limit int) (*GroupsJSON, error) {
+	path := fmt.Sprintf("/groups?skip=%d&limit=%d", skip, limit)
+	out, err := c.reqWant("GET", http.StatusOK, path, nil)
+	if err != nil {
+		ErrorLogFunc("Error while listing groups: %s", err)
+		return nil, err
+	}
+	groups := &GroupsJSON{}
+	if err := json.Unmarshal(out, groups); err != nil {
+		return nil, err
+	}
+	return groups, nil
 }
 
 //GroupCreate creates a group
@@ -115,8 +126,18 @@ func (c *Client) GroupCreate(g GroupJSON) (*Group, error) {
 	return newGroup, nil
 }
 
-func (c *Client) GroupUpdate(groupname string) error {
-	return fmt.Errorf("Not Yet Implemented")
+// GroupUpdate updates a group
+func (c *Client) GroupUpdate(groupname, newGroupname, newDescription string) error {
+
+	m := GroupJSON{Name: newGroupname, Description: newDescription}
+	jsonStr, err := json.Marshal(m)
+
+	_, err = c.reqWant("PUT", http.StatusOK, "/group/edit/"+groupname, jsonStr)
+	if err != nil {
+		ErrorLogFunc("Error while updating group: %s", err)
+		return err
+	}
+	return nil
 }
 
 //GroupDelete delete a group
@@ -129,15 +150,42 @@ func (c *Client) GroupDelete(groupname string) error {
 	return nil
 }
 
-func (c *Client) GroupAddUser() error {
-	return fmt.Errorf("Not Yet Implemented")
+// GroupAddUsers adds users on a group
+func (c *Client) GroupAddUsers(groupname string, users []string) error {
+	return c.groupAddRemoveUsers("PUT", "/group/add/user", groupname, users)
 }
-func (c *Client) GroupDeleteUser() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// GroupDeleteUsers deletes users from a group
+func (c *Client) GroupDeleteUsers(groupname string, users []string) error {
+	return c.groupAddRemoveUsers("PUT", "/group/remove/user", groupname, users)
 }
-func (c *Client) GroupAddAdminUser() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// GroupAddAdminUsers adds an admin user on a group
+func (c *Client) GroupAddAdminUsers(groupname string, users []string) error {
+	return c.groupAddRemoveUsers("PUT", "/group/add/adminuser", groupname, users)
 }
-func (c *Client) GroupDeleteAdminUser() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// GroupDeleteAdminUser removes admin users from a group
+func (c *Client) GroupDeleteAdminUsers(groupname string, users []string) error {
+	return c.groupAddRemoveUsers("PUT", "/group/remove/adminuser", groupname, users)
+}
+
+func (c *Client) groupAddRemoveUsers(method, path, groupname string, users []string) error {
+	for _, username := range users {
+		t := ParamGroupUserJSON{Groupname: groupname, Username: username}
+
+		b, err := json.Marshal(t)
+		if err != nil {
+			ErrorLogFunc("Error while marshal group: %s", err)
+			return err
+		}
+
+		_, err = c.reqWant(method, http.StatusCreated, path, b)
+		if err != nil {
+			ErrorLogFunc("Error while deleting group: %s", err)
+			return err
+		}
+		return nil
+	}
+	return nil
 }

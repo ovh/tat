@@ -79,7 +79,7 @@ func (*GroupsController) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, groupIn)
 }
 
-func (*GroupsController) preCheckUser(ctx *gin.Context, paramJSON *tat.ParamUserJSON) (tat.Group, error) {
+func (*GroupsController) preCheckUser(ctx *gin.Context, paramJSON *tat.ParamGroupUserJSON) (tat.Group, error) {
 	user := tat.User{}
 	found, err := userDB.FindByUsername(&user, paramJSON.Username)
 	if err != nil {
@@ -215,7 +215,7 @@ func (g *GroupsController) Delete(ctx *gin.Context) {
 
 // AddUser add a user to a group
 func (g *GroupsController) AddUser(ctx *gin.Context) {
-	var paramJSON tat.ParamUserJSON
+	var paramJSON tat.ParamGroupUserJSON
 	ctx.Bind(&paramJSON)
 	group, e := g.preCheckUser(ctx, &paramJSON)
 	if e != nil {
@@ -230,7 +230,7 @@ func (g *GroupsController) AddUser(ctx *gin.Context) {
 
 // RemoveUser removes user from a group
 func (g *GroupsController) RemoveUser(ctx *gin.Context) {
-	var paramJSON tat.ParamUserJSON
+	var paramJSON tat.ParamGroupUserJSON
 	ctx.Bind(&paramJSON)
 	group, e := g.preCheckUser(ctx, &paramJSON)
 	if e != nil {
@@ -245,7 +245,7 @@ func (g *GroupsController) RemoveUser(ctx *gin.Context) {
 
 // AddAdminUser add a user to a group
 func (g *GroupsController) AddAdminUser(ctx *gin.Context) {
-	var paramJSON tat.ParamUserJSON
+	var paramJSON tat.ParamGroupUserJSON
 	ctx.Bind(&paramJSON)
 	group, e := g.preCheckUser(ctx, &paramJSON)
 	if e != nil {
@@ -260,7 +260,7 @@ func (g *GroupsController) AddAdminUser(ctx *gin.Context) {
 
 // RemoveAdminUser removes user from a group
 func (g *GroupsController) RemoveAdminUser(ctx *gin.Context) {
-	var paramJSON tat.ParamUserJSON
+	var paramJSON tat.ParamGroupUserJSON
 	ctx.Bind(&paramJSON)
 	group, e := g.preCheckUser(ctx, &paramJSON)
 	if e != nil {

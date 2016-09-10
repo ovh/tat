@@ -249,71 +249,261 @@ func (c *Client) MessageAdd(message MessageJSON) (*MessageJSONOut, error) {
 	return c.processForMessageJSONOut("POST", "/message"+message.Topic, 201, message)
 }
 
-func (c *Client) MessageReply() error {
-	return fmt.Errorf("Not Yet Implemented")
+// MessageReply post a reply to a message
+func (c *Client) MessageReply(topic, idMessage string, reply string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Action:      MessageActionReply,
+		Topic:       topic,
+		IDReference: idMessage,
+		Text:        reply,
+	}
+	return c.processForMessageJSONOut("POST", "/message"+message.Topic, 201, message)
 }
 
-// MessageDelete deletes a message. cascade : delete message and its replies. cascadeForce : delete message and its replies, event if it's in a Tasks Topic of one user
-// TODO add return from api
-func (c *Client) MessageDelete(id, topic string, cascade bool, cascadeForce bool) error {
+// MessageDelete delete a message.
+// cascade : delete message and its replies. cascadeForce : delete message and its replies, event if it's in a Tasks Topic of one user
+func (c *Client) MessageDelete(id, topic string, cascade bool, cascadeForce bool) ([]byte, error) {
 	var err error
+	var out []byte
 	if cascade {
-		_, err = c.reqWant(http.MethodDelete, 200, "/messages/cascade/"+id+topic, nil)
+		out, err = c.reqWant(http.MethodDelete, 200, "/message/cascade/"+id+topic, nil)
 	} else if cascadeForce {
-		_, err = c.reqWant(http.MethodDelete, 200, "/messages/cascadeforce/"+id+topic, nil)
+		out, err = c.reqWant(http.MethodDelete, 200, "/message/cascadeforce/"+id+topic, nil)
 	} else {
-		_, err = c.reqWant(http.MethodDelete, 200, "/message/nocascade/"+id+topic, nil)
+		out, err = c.reqWant(http.MethodDelete, 200, "/message/nocascade/"+id+topic, nil)
+	}
+
+	if err != nil {
+		ErrorLogFunc("Error deleting message: %s", err)
+		return nil, err
+	}
+	return out, nil
+}
+
+// MessagesDeleteBulk Delete a list of messages
+// delete message and its replies. cascadeForce : delete message and its replies, event if it's in a Tasks Topic of one user
+func (c *Client) MessagesDeleteBulk(topic string, cascade bool, cascadeForce bool, criteria MessageCriteria) ([]byte, error) {
+	var err error
+	var out []byte
+
+	path := fmt.Sprintf("%s%s", criteria.Topic, criteria.GetURL())
+
+	if cascade {
+		out, err = c.reqWant(http.MethodDelete, 200, "/messages/cascade/"+path, nil)
+	} else if cascadeForce {
+		out, err = c.reqWant(http.MethodDelete, 200, "/messages/cascadeforce/"+path, nil)
+	} else {
+		out, err = c.reqWant(http.MethodDelete, 200, "/messages/nocascade/"+path, nil)
 	}
 
 	if err != nil {
 		ErrorLogFunc("Error deleting messages: %s", err)
-		return err
+		return nil, err
 	}
-	return nil
+	return out, nil
 }
 
-func (c *Client) MessageDeleteBulk() error {
-	return fmt.Errorf("Not Yet Implemented")
+// MessageUpdate updates a message
+func (c *Client) MessageUpdate(topic, idMessage string, newText string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Action:      MessageActionUpdate,
+		Topic:       topic,
+		IDReference: idMessage,
+		Text:        newText,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageUpdate() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+/* MessageConcat is same as:
+```
+curl -XPUT \
+    -H 'Content-Type: application/json' \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "concat", "text": " additional text"}'\
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+*/
+func (c *Client) MessageConcat(topic, idMessage string, addText string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Action:      MessageActionConcat,
+		Topic:       topic,
+		IDReference: idMessage,
+		Text:        addText,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 200, message)
 }
-func (c *Client) MessageConcat() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageMove moves a message from a topic to another
+func (c *Client) MessageMove(oldTopic, idMessage, newTopic string) ([]byte, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       oldTopic,
+		IDReference: idMessage,
+		Action:      MessageActionMove,
+		Option:      newTopic,
+	}
+	return c.processForMessageJSONOutBytes("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageMove() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageTask creates a task from a message
+func (c *Client) MessageTask(topic, idMessage string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Action:      MessageActionTask,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageTask() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageUntask removes doing and doing:username label from a message
+func (c *Client) MessageUntask(topic, idMessage string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Action:      MessageActionUntask,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageUntask() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageLike add a like to a message
+func (c *Client) MessageLike(topic, idMessage string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Action:      MessageActionLike,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageLike() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageUnlike removes a like from a message
+func (c *Client) MessageUnlike(topic, idMessage string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Action:      MessageActionUnlike,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageUnlike() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageVoteUP add a vote UP to a message
+func (c *Client) MessageVoteUP(topic, idMessage string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Action:      MessageActionVoteup,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageVoteUP() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageVoteDown add a vote down to a message
+func (c *Client) MessageVoteDown(topic, idMessage string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Action:      MessageActionVotedown,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageVoteDown() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageUnVoteUP removes a vote UP from a message
+func (c *Client) MessageUnVoteUP(topic, idMessage string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Action:      MessageActionUnvoteup,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageUnVoteUP() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageUnVoteDown removes a vote down
+func (c *Client) MessageUnVoteDown(topic, idMessage string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Action:      MessageActionUnvotedown,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageUnVoteDown() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageLabel add a label to a message
+func (c *Client) MessageLabel(topic, idMessage string, labels []Label) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Labels:      labels,
+		Action:      MessageActionLabel,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageLabel() error {
-	return fmt.Errorf("Not Yet Implemented")
+
+// MessageUnlabel removes a label from one message
+func (c *Client) MessageUnlabel(topic, idMessage, label string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Text:        label,
+		Action:      MessageActionUnlabel,
+	}
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
-func (c *Client) MessageUnlabel() error {
-	return fmt.Errorf("Not Yet Implemented")
-}
+
+// MessageRelabel removes all labels and add new ones to a message
 func (c *Client) MessageRelabel(topic, idMessage string, labels []Label, options []string) (*MessageJSONOut, error) {
 	if c == nil {
 		return nil, ErrClientNotInitiliazed
@@ -330,7 +520,7 @@ func (c *Client) MessageRelabel(topic, idMessage string, labels []Label, options
 	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
 
-func (c *Client) processForMessageJSONOut(method, path string, want int, message MessageJSON) (*MessageJSONOut, error) {
+func (c *Client) processForMessageJSONOutBytes(method, path string, want int, message MessageJSON) ([]byte, error) {
 	b, err := json.Marshal(message)
 	if err != nil {
 		ErrorLogFunc("Error while marshal message: %s", err)
@@ -342,13 +532,108 @@ func (c *Client) processForMessageJSONOut(method, path string, want int, message
 		ErrorLogFunc("Error while marshal message: %s", err)
 		return nil, err
 	}
+	return body, err
+}
 
+func (c *Client) processForMessageJSONOut(method, path string, want int, message MessageJSON) (*MessageJSONOut, error) {
+
+	body, err := c.processForMessageJSONOutBytes(method, path, want, message)
+	if err != nil {
+		return nil, err
+	}
 	out := &MessageJSONOut{}
 	if err := json.Unmarshal(body, out); err != nil {
 		return nil, err
 	}
 
 	return out, nil
+}
+
+// GetURL returns URL for messageCriteria
+func (c *MessageCriteria) GetURL() string {
+	v := url.Values{}
+	v.Set("skip", string(c.Skip))
+	v.Set("limit", string(c.Limit))
+
+	if c.TreeView != "" {
+		v.Set("treeView", c.TreeView)
+	}
+	if c.IDMessage != "" {
+		v.Set("idMessage", c.IDMessage)
+	}
+	if c.InReplyOfID != "" {
+		v.Set("inReplyOfID", c.InReplyOfID)
+	}
+	if c.InReplyOfIDRoot != "" {
+		v.Set("inReplyOfIDRoot", c.InReplyOfIDRoot)
+	}
+	if c.AllIDMessage != "" {
+		v.Set("allIDMessage", c.AllIDMessage)
+	}
+	if c.Text != "" {
+		v.Set("text", c.Text)
+	}
+	if c.Topic != "" {
+		v.Set("topic", c.Topic)
+	}
+	if c.Label != "" {
+		v.Set("label", c.Label)
+	}
+	if c.NotLabel != "" {
+		v.Set("notLabel", c.NotLabel)
+	}
+	if c.AndLabel != "" {
+		v.Set("andLabel", c.AndLabel)
+	}
+	if c.Tag != "" {
+		v.Set("tag", c.Tag)
+	}
+	if c.NotTag != "" {
+		v.Set("notTag", c.NotTag)
+	}
+	if c.AndTag != "" {
+		v.Set("andTag", c.AndTag)
+	}
+	if c.DateMinCreation != "" {
+		v.Set("dateMinCreation", c.DateMinCreation)
+	}
+	if c.DateMaxCreation != "" {
+		v.Set("dateMaxCreation", c.DateMaxCreation)
+	}
+	if c.DateMinUpdate != "" {
+		v.Set("dateMinUpdate", c.DateMinUpdate)
+	}
+	if c.DateMaxUpdate != "" {
+		v.Set("dateMaxUpdate", c.DateMaxUpdate)
+	}
+	if c.Username != "" {
+		v.Set("username", c.Username)
+	}
+	if c.LimitMinNbReplies != "" {
+		v.Set("limitMinNbReplies", c.LimitMinNbReplies)
+	}
+	if c.LimitMaxNbReplies != "" {
+		v.Set("limitMaxNbReplies", c.LimitMaxNbReplies)
+	}
+	if c.LimitMinNbVotesUP != "" {
+		v.Set("limitMinNbVotesUP", c.LimitMinNbVotesUP)
+	}
+	if c.LimitMaxNbVotesUP != "" {
+		v.Set("limitMaxNbVotesUP", c.LimitMaxNbVotesUP)
+	}
+	if c.LimitMinNbVotesDown != "" {
+		v.Set("limitMinNbVotesDown", c.LimitMinNbVotesDown)
+	}
+	if c.LimitMaxNbVotesDown != "" {
+		v.Set("limitMaxNbVotesDown", c.LimitMaxNbVotesDown)
+	}
+	if c.OnlyMsgRoot == True {
+		v.Set("onlyMsgRoot", "true")
+	}
+	if c.OnlyCount == True {
+		v.Set("onlyCount", "true")
+	}
+	return v.Encode()
 }
 
 //MessageList lists messages on a topic according to criterias
@@ -361,89 +646,7 @@ func (c *Client) MessageList(topic string, criteria *MessageCriteria) (*Messages
 	}
 	criteria.Topic = topic
 
-	v := url.Values{}
-	v.Set("skip", string(criteria.Skip))
-	v.Set("limit", string(criteria.Limit))
-
-	if criteria.TreeView != "" {
-		v.Set("treeView", criteria.TreeView)
-	}
-	if criteria.IDMessage != "" {
-		v.Set("idMessage", criteria.IDMessage)
-	}
-	if criteria.InReplyOfID != "" {
-		v.Set("inReplyOfID", criteria.InReplyOfID)
-	}
-	if criteria.InReplyOfIDRoot != "" {
-		v.Set("inReplyOfIDRoot", criteria.InReplyOfIDRoot)
-	}
-	if criteria.AllIDMessage != "" {
-		v.Set("allIDMessage", criteria.AllIDMessage)
-	}
-	if criteria.Text != "" {
-		v.Set("text", criteria.Text)
-	}
-	if criteria.Topic != "" {
-		v.Set("topic", criteria.Topic)
-	}
-	if criteria.Label != "" {
-		v.Set("label", criteria.Label)
-	}
-	if criteria.NotLabel != "" {
-		v.Set("notLabel", criteria.NotLabel)
-	}
-	if criteria.AndLabel != "" {
-		v.Set("andLabel", criteria.AndLabel)
-	}
-	if criteria.Tag != "" {
-		v.Set("tag", criteria.Tag)
-	}
-	if criteria.NotTag != "" {
-		v.Set("notTag", criteria.NotTag)
-	}
-	if criteria.AndTag != "" {
-		v.Set("andTag", criteria.AndTag)
-	}
-	if criteria.DateMinCreation != "" {
-		v.Set("dateMinCreation", criteria.DateMinCreation)
-	}
-	if criteria.DateMaxCreation != "" {
-		v.Set("dateMaxCreation", criteria.DateMaxCreation)
-	}
-	if criteria.DateMinUpdate != "" {
-		v.Set("dateMinUpdate", criteria.DateMinUpdate)
-	}
-	if criteria.DateMaxUpdate != "" {
-		v.Set("dateMaxUpdate", criteria.DateMaxUpdate)
-	}
-	if criteria.Username != "" {
-		v.Set("username", criteria.Username)
-	}
-	if criteria.LimitMinNbReplies != "" {
-		v.Set("limitMinNbReplies", criteria.LimitMinNbReplies)
-	}
-	if criteria.LimitMaxNbReplies != "" {
-		v.Set("limitMaxNbReplies", criteria.LimitMaxNbReplies)
-	}
-	if criteria.LimitMinNbVotesUP != "" {
-		v.Set("limitMinNbVotesUP", criteria.LimitMinNbVotesUP)
-	}
-	if criteria.LimitMaxNbVotesUP != "" {
-		v.Set("limitMaxNbVotesUP", criteria.LimitMaxNbVotesUP)
-	}
-	if criteria.LimitMinNbVotesDown != "" {
-		v.Set("limitMinNbVotesDown", criteria.LimitMinNbVotesDown)
-	}
-	if criteria.LimitMaxNbVotesDown != "" {
-		v.Set("limitMaxNbVotesDown", criteria.LimitMaxNbVotesDown)
-	}
-	if criteria.OnlyMsgRoot == True {
-		v.Set("onlyMsgRoot", "true")
-	}
-	if criteria.OnlyCount == True {
-		v.Set("onlyCount", "true")
-	}
-	path := fmt.Sprintf("/messages%s?%s", criteria.Topic, v.Encode())
+	path := fmt.Sprintf("/messages%s?%s", criteria.Topic, criteria.GetURL())
 	DebugLogFunc("MessageList>>> Path requested: %s", path)
 
 	body, err := c.reqWant(http.MethodGet, 200, path, nil)

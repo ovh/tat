@@ -98,7 +98,7 @@ func TestMessagesList(t *testing.T) {
 		t.Fail()
 	}
 
-	err = client.MessageDelete(message.Message.ID, topic.Topic, false, false)
+	_, err = client.MessageDelete(message.Message.ID, topic.Topic, false, false)
 	assert.NoError(t, err)
 
 	messages, err = client.MessageList(topic.Topic, nil)

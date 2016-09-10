@@ -37,6 +37,7 @@ type httpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
+// HTTPClient is HTTClient or testHTTPClient for tests
 var HTTPClient httpClient
 
 // DebugLogFunc is a function that logs the provided message with optional fmt.Sprintf-style arguments. By default, logs to the default log.Logger.
