@@ -115,6 +115,8 @@ curl -XPOST \
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
+Return HTTP 201 if OK
+
 ### Reply to a message
 ```
 curl -XPOST \
@@ -178,6 +180,8 @@ curl -XPUT \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "relabel", "labels": [{"text": "labelA", "color": "#eeeeee"}, {"text": "labelB", "color": "#ffffff"}]}'\
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
+
+Return HTTP 201 if OK
 
 ### Remove some labels and add new ones
 

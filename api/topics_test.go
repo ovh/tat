@@ -44,7 +44,7 @@ func TestTopicCreateListAndDelete(t *testing.T) {
 
 	t.Log("Delete all topics")
 	for _, to := range topics.Topics {
-		err := client.TopicDelete(to.Topic)
+		_, err := client.TopicDelete(tat.TopicNameJSON{Topic: to.Topic})
 		assert.NoError(t, err)
 	}
 
@@ -70,9 +70,9 @@ func TestTruncateAndDeleteAllTopics(t *testing.T) {
 
 	t.Log("Delete all topics")
 	for _, to := range topics.Topics {
-		err := client.TopicTruncate(to.Topic)
+		err := client.TopicTruncate(tat.TopicNameJSON{Topic: to.Topic})
 		assert.NoError(t, err)
-		err = client.TopicDelete(to.Topic)
+		_, err = client.TopicDelete(tat.TopicNameJSON{Topic: to.Topic})
 		assert.NoError(t, err)
 	}
 }
@@ -130,6 +130,6 @@ func TestListTopicsFromCache(t *testing.T) {
 	assert.Equal(t, 3, topics.Count)
 	assert.Equal(t, 3, len(topics.Topics))
 
-	err = client.TopicDelete(topic.Topic)
+	_, err = client.TopicDelete(tat.TopicNameJSON{Topic: topic.Topic})
 	assert.NoError(t, err)
 }

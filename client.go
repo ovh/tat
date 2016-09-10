@@ -2,12 +2,13 @@ package tat
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"time"
-
 	"log"
+	"net/http"
+	"strings"
+	"time"
 
 	"github.com/facebookgo/httpcontrol"
 )
@@ -86,6 +87,11 @@ func (c *Client) initHeaders(req *http.Request) error {
 	return nil
 }
 
+// IsHTTPS returns true if url begins with https
+func (c *Client) IsHTTPS() bool {
+	return strings.HasPrefix(c.url, "https")
+}
+
 func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byte) ([]byte, error) {
 	if c == nil {
 		return nil, ErrClientNotInitiliazed
@@ -130,4 +136,14 @@ func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byt
 		return nil, fmt.Errorf("Error with ioutil.ReadAll %s", err.Error())
 	}
 	return body, nil
+}
+
+// Print display on stdout the value in json
+func Print(v interface{}) {
+	jsonStr, err := json.Marshal(v)
+	if err != nil {
+		ErrorLogFunc("Error while convert response from tat:%s", err)
+		return
+	}
+	fmt.Print(string(jsonStr))
 }

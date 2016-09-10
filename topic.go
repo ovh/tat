@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -143,6 +144,17 @@ type TopicJSON struct {
 	Topic *Topic `json:"topic"`
 }
 
+// TopicNameJSON represents struct, only topic name
+type TopicNameJSON struct {
+	Topic string `json:"topic"`
+}
+
+// ParamJSON is used to update a param on a topic (attr. Parameters on Topic struct)
+type ParamJSON struct {
+	ParamName  string `json:"paramName"`
+	ParamValue string `json:"paramValue"`
+}
+
 // CheckAndFixNameTopic Add a / to topic name is it is not present
 // return an error if length of name is < 4 or > 100
 func CheckAndFixNameTopic(topicName string) (string, error) {
@@ -208,33 +220,37 @@ func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
 		}
 	}
 
+	v := url.Values{}
+	v.Set("skip", string(criteria.Skip))
+	v.Set("limit", string(criteria.Limit))
+
 	var n string
 	if criteria.Topic != "" {
-		n += "&topic=" + criteria.Topic
+		v.Set("topic", criteria.Topic)
 	}
 	if criteria.TopicPath != "" {
-		n += "&topicPath=" + criteria.TopicPath
+		v.Set("topicPath", criteria.TopicPath)
 	}
 	if criteria.IDTopic != "" {
-		n += "&idTopic=" + criteria.IDTopic
+		v.Set("idTopic", criteria.IDTopic)
 	}
 	if criteria.Description != "" {
-		n += "&Description=" + criteria.Description
+		v.Set("Description", criteria.Description)
 	}
 	if criteria.DateMinCreation != "" {
-		n += "&DateMinCreation=" + criteria.DateMinCreation
+		v.Set("DateMinCreation", criteria.DateMinCreation)
 	}
 	if criteria.DateMaxCreation != "" {
-		n += "&DateMaxCreation=" + criteria.DateMaxCreation
+		v.Set("DateMaxCreation", criteria.DateMaxCreation)
 	}
 	if criteria.GetNbMsgUnread != "" {
-		n += "&getNbMsgUnread=" + criteria.GetNbMsgUnread
+		v.Set("getNbMsgUnread", criteria.GetNbMsgUnread)
 	}
 	if criteria.OnlyFavorites != "" {
-		n += "&onlyFavorites=" + criteria.OnlyFavorites
+		v.Set("onlyFavorites", criteria.OnlyFavorites)
 	}
 	if criteria.GetForTatAdmin == "true" {
-		n += "&getForTatAdmin=" + criteria.GetForTatAdmin
+		v.Set("getForTatAdmin", criteria.GetForTatAdmin)
 	}
 
 	path := fmt.Sprintf("/topics?skip=%d&limit=%d%s", criteria.Skip, criteria.Limit, n)
@@ -256,18 +272,18 @@ func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
 }
 
 //TopicDelete delete a topics
-func (c *Client) TopicDelete(topicPath string) error {
-	_, err := c.reqWant(http.MethodDelete, 200, "/topic"+topicPath, nil)
+func (c *Client) TopicDelete(t TopicNameJSON) ([]byte, error) {
+	out, err := c.reqWant(http.MethodDelete, 200, "/topic"+t.Topic, nil)
 	if err != nil {
 		ErrorLogFunc("Error deleting topic list: %s", err)
-		return err
+		return nil, err
 	}
-	return nil
+	return out, nil
 }
 
 //TopicTruncate deletes all messages in a topic
-func (c *Client) TopicTruncate(topic string) error {
-	b, err := json.Marshal(map[string]string{"topic": topic})
+func (c *Client) TopicTruncate(t TopicNameJSON) error {
+	b, err := json.Marshal(t)
 	if err != nil {
 		ErrorLogFunc("Error truncating topic: %s", err)
 		return err
@@ -284,16 +300,26 @@ func (c *Client) TopicAddRoUser() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
 
-func (c *Client) TopicComputeLabels() error {
-	return fmt.Errorf("Not Yet Implemented")
+func (c *Client) TopicComputeLabels(t TopicNameJSON) ([]byte, error) {
+	jsonStr, err := json.Marshal(t)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.reqWant("PUT", http.StatusCreated, "/topic/compute/labels", jsonStr)
 }
 
 func (c *Client) TopicTruncateLabels() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
 
-func (c *Client) TopicComputeTags() error {
-	return fmt.Errorf("Not Yet Implemented")
+func (c *Client) TopicComputeTags(t TopicNameJSON) ([]byte, error) {
+	jsonStr, err := json.Marshal(t)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.reqWant("PUT", http.StatusCreated, "/topic/compute/tags", jsonStr)
 }
 
 func (c *Client) TopicTruncateTags() error {
@@ -312,8 +338,13 @@ func (c *Client) TopicAllComputeReplies() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
 
-func (c *Client) TopicAllSetParam() error {
-	return fmt.Errorf("Not Yet Implemented")
+func (c *Client) TopicAllSetParam(p ParamJSON) ([]byte, error) {
+	jsonStr, err := json.Marshal(p)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.reqWant("PUT", http.StatusOK, "/topics/param", jsonStr)
 }
 
 func (c *Client) TopicAddRwUser() error {
@@ -466,37 +497,32 @@ func (c *Client) TopicDeleteParameter() error {
 
 //TopicParameters updates param on one topic
 type TopicParameters struct {
-	MaxLength            int
-	CanForceDate         bool
-	CanUpdateMsg         bool
-	CanDeleteMsg         bool
-	CanUpdateAllMsg      bool
-	CanDeleteAllMsg      bool
-	AdminCanUpdateAllMsg bool
-	AdminCanDeleteAllMsg bool
-	IsAutoComputeTags    bool
-	IsAutoComputeLabels  bool
+	Topic                string `json:"topic"`
+	MaxLength            int    `json:"maxlength"`
+	CanForceDate         bool   `json:"canForceDate"`
+	CanUpdateMsg         bool   `json:"canUpdateMsg"`
+	CanDeleteMsg         bool   `json:"canDeleteMsg"`
+	CanUpdateAllMsg      bool   `json:"canUpdateAllMsg"`
+	CanDeleteAllMsg      bool   `json:"canDeleteAllMsg"`
+	AdminCanUpdateAllMsg bool   `json:"adminCanUpdateAllMsg"`
+	AdminCanDeleteAllMsg bool   `json:"adminCanDeleteAllMsg"`
+	IsAutoComputeTags    bool   `json:"isAutoComputeTags"`
+	IsAutoComputeLabels  bool   `json:"isAutoComputeLabels"`
+	Recursive            bool   `json:"recursive"`
 }
 
 //TopicParameter updates param on one topic
-func (c *Client) TopicParameter(topic string, recursive bool, params TopicParameters) error {
-	t := map[string]interface{}{
-		"topic":                topic,
-		"recursive":            recursive,
-		"canForceDate":         params.CanForceDate,
-		"canUpdateMsg":         params.CanUpdateMsg,
-		"canDeleteMsg":         params.CanDeleteMsg,
-		"canUpdateAllMsg":      params.CanUpdateAllMsg,
-		"canDeleteAllMsg":      params.CanDeleteAllMsg,
-		"adminCanUpdateAllMsg": params.AdminCanUpdateAllMsg,
-		"adminCanDeleteAllMsg": params.AdminCanDeleteAllMsg,
-		"isAutoComputeTags":    params.IsAutoComputeTags,
-		"isAutoComputeLabels":  params.IsAutoComputeLabels,
+func (c *Client) TopicParameter(params TopicParameters) ([]byte, error) {
+	b, err := json.Marshal(params)
+	if err != nil {
+		ErrorLogFunc("Error while Unmarshal topic params: %s", err)
+		return nil, err
 	}
-	b, err := json.Marshal(t)
-	if _, err = c.reqWant(http.MethodPut, 201, "/topic/param", b); err != nil {
+
+	out, err := c.reqWant(http.MethodPut, 201, "/topic/param", b)
+	if err != nil {
 		ErrorLogFunc("Error updating params: %s", err)
-		return err
+		return nil, err
 	}
-	return nil
+	return out, nil
 }

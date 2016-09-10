@@ -35,10 +35,12 @@ func TestMessagesList(t *testing.T) {
 		t.Logf("Topic %s created", topic.Topic)
 	}
 
-	defer client.TopicDelete(topic.Topic)
-	defer client.TopicTruncate(topic.Topic)
+	defer client.TopicDelete(tat.TopicNameJSON{Topic: topic.Topic})
+	defer client.TopicTruncate(tat.TopicNameJSON{Topic: topic.Topic})
 
-	err = client.TopicParameter(topic.Topic, false, tat.TopicParameters{
+	_, err = client.TopicParameter(tat.TopicParameters{
+		Topic:                topic.Topic,
+		Recursive:            false,
 		CanDeleteMsg:         true,
 		AdminCanDeleteAllMsg: true,
 	})

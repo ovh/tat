@@ -246,36 +246,18 @@ func (c *Client) MessageAdd(message MessageJSON) (*MessageJSONOut, error) {
 		return nil, fmt.Errorf("A message must have a Topic")
 	}
 
-	path := "/message" + message.Topic
-
-	b, err := json.Marshal(message)
-	if err != nil {
-		ErrorLogFunc("Error while marshal message: %s", err)
-		return nil, err
-	}
-
-	body, err := c.reqWant("POST", http.StatusCreated, path, b)
-	if err != nil {
-		ErrorLogFunc("Error while marshal message for MessageAdd: %s", err)
-		return nil, err
-	}
-
-	out := &MessageJSONOut{}
-	if err := json.Unmarshal(body, out); err != nil {
-		return nil, err
-	}
-
-	return out, nil
+	return c.processForMessageJSONOut("POST", "/message"+message.Topic, 201, message)
 }
 
 func (c *Client) MessageReply() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
 
-//MessageDelete deletes a message. cascade : delete message and its replies. cascadeForce : delete message and its replies, event if it's in a Tasks Topic of one user
-func (c *Client) MessageDelete(id, topic string, cascase bool, cascadeForce bool) error {
+// MessageDelete deletes a message. cascade : delete message and its replies. cascadeForce : delete message and its replies, event if it's in a Tasks Topic of one user
+// TODO add return from api
+func (c *Client) MessageDelete(id, topic string, cascade bool, cascadeForce bool) error {
 	var err error
-	if cascase {
+	if cascade {
 		_, err = c.reqWant(http.MethodDelete, 200, "/messages/cascade/"+id+topic, nil)
 	} else if cascadeForce {
 		_, err = c.reqWant(http.MethodDelete, 200, "/messages/cascadeforce/"+id+topic, nil)
@@ -332,8 +314,41 @@ func (c *Client) MessageLabel() error {
 func (c *Client) MessageUnlabel() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
-func (c *Client) MessageRelabel() error {
-	return fmt.Errorf("Not Yet Implemented")
+func (c *Client) MessageRelabel(topic, idMessage string, labels []Label, options []string) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	message := MessageJSON{
+		Topic:       topic,
+		IDReference: idMessage,
+		Labels:      labels,
+		Options:     options,
+		Action:      MessageActionRelabel,
+	}
+
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
+}
+
+func (c *Client) processForMessageJSONOut(method, path string, want int, message MessageJSON) (*MessageJSONOut, error) {
+	b, err := json.Marshal(message)
+	if err != nil {
+		ErrorLogFunc("Error while marshal message: %s", err)
+		return nil, err
+	}
+
+	body, err := c.reqWant(method, want, path, b)
+	if err != nil {
+		ErrorLogFunc("Error while marshal message: %s", err)
+		return nil, err
+	}
+
+	out := &MessageJSONOut{}
+	if err := json.Unmarshal(body, out); err != nil {
+		return nil, err
+	}
+
+	return out, nil
 }
 
 //MessageList lists messages on a topic according to criterias

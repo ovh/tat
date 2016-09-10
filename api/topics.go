@@ -224,7 +224,7 @@ func (t *TopicsController) Delete(ctx *gin.Context) {
 
 // Truncate deletes all messages in a topic only if user is Tat admin, or admin on topic
 func (t *TopicsController) Truncate(ctx *gin.Context) {
-	var paramJSON tat.ParamTopicUserJSON
+	var paramJSON tat.TopicNameJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
@@ -244,7 +244,7 @@ func (t *TopicsController) Truncate(ctx *gin.Context) {
 
 // ComputeTags computes tags on one topic
 func (t *TopicsController) ComputeTags(ctx *gin.Context) {
-	var paramJSON tat.ParamTopicUserJSON
+	var paramJSON tat.TopicNameJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
@@ -263,7 +263,7 @@ func (t *TopicsController) ComputeTags(ctx *gin.Context) {
 
 // ComputeLabels computes labels on one topic
 func (t *TopicsController) ComputeLabels(ctx *gin.Context) {
-	var paramJSON tat.ParamTopicUserJSON
+	var paramJSON tat.TopicNameJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
@@ -282,7 +282,7 @@ func (t *TopicsController) ComputeLabels(ctx *gin.Context) {
 
 // TruncateTags clear tags on one topic
 func (t *TopicsController) TruncateTags(ctx *gin.Context) {
-	var paramJSON tat.ParamTopicUserJSON
+	var paramJSON tat.TopicNameJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
@@ -300,7 +300,7 @@ func (t *TopicsController) TruncateTags(ctx *gin.Context) {
 
 // TruncateLabels clear labels on one topic
 func (t *TopicsController) TruncateLabels(ctx *gin.Context) {
-	var paramJSON tat.ParamTopicUserJSON
+	var paramJSON tat.TopicNameJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckUserAdminOnTopic(ctx, paramJSON.Topic)
 	if e != nil {
@@ -707,15 +707,10 @@ func (t *TopicsController) AllComputeLabels(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"info": info})
 }
 
-type attributeJSON struct {
-	ParamName  string `json:"paramName"`
-	ParamValue string `json:"paramValue"`
-}
-
 // AllSetParam set a param on all topics
 func (t *TopicsController) AllSetParam(ctx *gin.Context) {
 	// It's only for admin, admin already checked in route
-	var param attributeJSON
+	var param tat.ParamJSON
 	ctx.Bind(&param)
 
 	info, err := topicDB.AllTopicsSetParam(param.ParamName, param.ParamValue)
@@ -729,7 +724,7 @@ func (t *TopicsController) AllSetParam(ctx *gin.Context) {
 // AllComputeReplies computes replies on all topics
 func (t *TopicsController) AllComputeReplies(ctx *gin.Context) {
 	// It's only for admin, admin already checked in route
-	var param attributeJSON
+	var param tat.ParamJSON
 	ctx.Bind(&param)
 
 	info, err := messageDB.AllTopicsComputeReplies()
