@@ -68,11 +68,13 @@ type GroupsJSON struct {
 	Groups []Group `json:"groups"`
 }
 
+// ParamGroupUserJSON is used for add or remove user on a group
 type ParamGroupUserJSON struct {
 	Groupname string `json:"groupname"`
 	Username  string `json:"username"`
 }
 
+// GroupJSON contains name and description for a group
 type GroupJSON struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"required"`
@@ -85,6 +87,7 @@ type ParamTopicGroupJSON struct {
 	Recursive bool   `json:"recursive"`
 }
 
+// GroupList returns groups
 func (c *Client) GroupList(skip, limit int) (*GroupsJSON, error) {
 	path := fmt.Sprintf("/groups?skip=%d&limit=%d", skip, limit)
 	out, err := c.reqWant("GET", http.StatusOK, path, nil)
@@ -166,7 +169,7 @@ func (c *Client) GroupAddAdminUsers(groupname string, users []string) error {
 	return c.groupAddRemoveUsers("PUT", "/group/add/adminuser", groupname, users)
 }
 
-// GroupDeleteAdminUser removes admin users from a group
+// GroupDeleteAdminUsers removes admin users from a group
 func (c *Client) GroupDeleteAdminUsers(groupname string, users []string) error {
 	return c.groupAddRemoveUsers("PUT", "/group/remove/adminuser", groupname, users)
 }

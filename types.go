@@ -6,7 +6,9 @@ package tat
 const Version = "2.0.0"
 
 const (
+	// TatHeaderUsername is Tat_username header
 	TatHeaderUsername = "Tat_username"
+	// TatHeaderPassword is Tat_password header
 	TatHeaderPassword = "Tat_password"
 	// TatHeaderXTatRefererLower contains tat microservice name & version "X-TAT-FROM"
 	TatHeaderXTatRefererLower = "X-Tat-Referer"

@@ -225,7 +225,6 @@ func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
 	v.Set("skip", string(criteria.Skip))
 	v.Set("limit", string(criteria.Limit))
 
-	var n string
 	if criteria.Topic != "" {
 		v.Set("topic", criteria.Topic)
 	}
@@ -254,7 +253,7 @@ func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
 		v.Set("getForTatAdmin", criteria.GetForTatAdmin)
 	}
 
-	path := fmt.Sprintf("/topics?skip=%d&limit=%d%s", criteria.Skip, criteria.Limit, n)
+	path := fmt.Sprintf("/topics?skip=%d&limit=%d%s", criteria.Skip, criteria.Limit, v.Encode())
 
 	body, err := c.reqWant(http.MethodGet, 200, path, nil)
 	if err != nil {

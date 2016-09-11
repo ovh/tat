@@ -22,21 +22,36 @@ const (
 	// TreeViewFullTree is fulltree value for treeView
 	TreeViewFullTree = "fulltree"
 
-	MessageActionUpdate     = "update"
-	MessageActionReply      = "reply"
-	MessageActionLike       = "like"
-	MessageActionUnlike     = "unlike"
-	MessageActionLabel      = "label"
-	MessageActionUnlabel    = "unlabel"
-	MessageActionVoteup     = "voteup"
-	MessageActionVotedown   = "votedown"
-	MessageActionUnvoteup   = "unvoteup"
+	// MessageActionUpdate for update action on a message
+	MessageActionUpdate = "update"
+	// MessageActionReply for "reply action on a message
+	MessageActionReply = "reply"
+	// MessageActionLike for  "like action on a message
+	MessageActionLike = "like"
+	// MessageActionUnlike for unlike action on a message
+	MessageActionUnlike = "unlike"
+	// MessageActionLabel for "label action on a message
+	MessageActionLabel = "label"
+	// MessageActionUnlabel for nlabel action on a message
+	MessageActionUnlabel = "unlabel"
+	// MessageActionVoteup for voteup action on a message
+	MessageActionVoteup = "voteup"
+	// MessageActionVotedown for tedown action on a message
+	MessageActionVotedown = "votedown"
+	// MessageActionUnvoteup for voteup action on a message
+	MessageActionUnvoteup = "unvoteup"
+	// MessageActionUnvotedown for tedown action on a message
 	MessageActionUnvotedown = "unvotedown"
-	MessageActionRelabel    = "relabel"
-	MessageActionConcat     = "concat"
-	MessageActionMove       = "move"
-	MessageActionTask       = "task"
-	MessageActionUntask     = "untask"
+	// MessageActionRelabel for elabel action on a message
+	MessageActionRelabel = "relabel"
+	// MessageActionConcat for concat action on a message
+	MessageActionConcat = "concat"
+	// MessageActionMove for move action on a message
+	MessageActionMove = "move"
+	// MessageActionTask for task action on a message
+	MessageActionTask = "task"
+	// MessageActionUntask for untask action on a message
+	MessageActionUntask = "untask"
 )
 
 // Author struct

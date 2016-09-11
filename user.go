@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strconv"
 )
 
 // Contact User Struct.
@@ -58,6 +60,22 @@ type UserCreateJSON struct {
 	Callback string `json:"callback"`
 }
 
+// UserResetJSON is used for reset a new user
+type UserResetJSON struct {
+	Username string `json:"username"  binding:"required"`
+	Email    string `json:"email"     binding:"required"`
+	// Callback contains command to execute to verify account
+	// this command is displayed in ask for confirmation mail
+	Callback string `json:"callback"`
+}
+
+// UpdateUserJSON is used for update user information
+type UpdateUserJSON struct {
+	Username    string `json:"username" binding:"required"`
+	NewFullname string `json:"newFullname" binding:"required"`
+	NewEmail    string `json:"newEmail" binding:"required"`
+}
+
 // UserCriteria is used to list users with criterias
 type UserCriteria struct {
 	Skip            int
@@ -82,10 +100,82 @@ type UserJSON struct {
 	User User `json:"user"`
 }
 
-func (c *Client) UserList() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UsernameUserJSON contains just a username
+type UsernameUserJSON struct {
+	Username string `json:"username" binding:"required"`
 }
 
+// CheckTopicsUserJSON used to check if user have default topics
+type CheckTopicsUserJSON struct {
+	Username         string `json:"username"  binding:"required"`
+	FixPrivateTopics bool   `json:"fixPrivateTopics"  binding:"required"`
+	FixDefaultGroup  bool   `json:"fixDefaultGroup"  binding:"required"`
+}
+
+// ConvertUserJSON is used to convert a user to a system user
+type ConvertUserJSON struct {
+	Username              string `json:"username" binding:"required"`
+	CanWriteNotifications bool   `json:"canWriteNotifications" binding:"required"`
+	CanListUsersAsAdmin   bool   `json:"canListUsersAsAdmin" binding:"required"`
+}
+
+// RenameUserJSON is used for rename a user
+type RenameUserJSON struct {
+	Username    string `json:"username"  binding:"required"`
+	NewUsername string `json:"newUsername"  binding:"required"`
+}
+
+// VerifyJSON is used for returns password for a user with verify action
+type VerifyJSON struct {
+	Message  string `json:"message,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	URL      string `json:"url,omitempty"`
+}
+
+// UserList returns all users
+func (c *Client) UserList(criteria *UserCriteria) (*UsersJSON, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	if criteria == nil {
+		criteria = &UserCriteria{
+			Skip:  0,
+			Limit: 100,
+		}
+	}
+
+	v := url.Values{}
+	v.Set("skip", string(criteria.Skip))
+	v.Set("limit", string(criteria.Limit))
+
+	v.Set("withGroups", strconv.FormatBool(criteria.WithGroups))
+	v.Set("idUser", criteria.IDUser)
+	v.Set("username", criteria.Username)
+	v.Set("fullname", criteria.Fullname)
+	v.Set("dateMinCreation", criteria.DateMinCreation)
+	v.Set("dateMaxCreation", criteria.DateMaxCreation)
+
+	path := fmt.Sprintf("/users?skip=%d&limit=%d%s", criteria.Skip, criteria.Limit, v.Encode())
+
+	body, err := c.reqWant(http.MethodGet, 200, path, nil)
+	if err != nil {
+		ErrorLogFunc("Error getting users list: %s", err)
+		return nil, err
+	}
+
+	DebugLogFunc("Users List Reponse: %s", string(body))
+	var users = UsersJSON{}
+	if err := json.Unmarshal(body, &users); err != nil {
+		ErrorLogFunc("Error getting user list: %s", err)
+		return nil, err
+	}
+
+	return &users, nil
+}
+
+// UserMe returns current user
 func (c *Client) UserMe() (*UserJSON, error) {
 	b, err := c.reqWant("GET", http.StatusOK, "/user/me", nil)
 
@@ -102,8 +192,9 @@ func (c *Client) UserMe() (*UserJSON, error) {
 	return userJSON, nil
 }
 
-func (c *Client) UserContacts() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserContacts returns contacts presences since n seconds
+func (c *Client) UserContacts(sinceSeconds int) ([]byte, error) {
+	return c.simpleGetAndGetBytes(fmt.Sprintf("/user/me/contacts/%d", sinceSeconds))
 }
 
 // UserAddContact adds a contact
@@ -111,41 +202,49 @@ func (c *Client) UserAddContact(toAdd string) ([]byte, error) {
 	return c.simplePostAndGetBytes("/user/me/contacts/"+toAdd, 201, nil)
 }
 
-func (c *Client) UserRemoveContact() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserRemoveContact removes a contact from a user
+func (c *Client) UserRemoveContact(toRemove string) ([]byte, error) {
+	return c.simpleDeleteAndGetBytes("/user/me/contacts/"+toRemove, 200, nil)
 }
 
 // UserAddFavoriteTopic adds a favorite topic on current user
 func (c *Client) UserAddFavoriteTopic(toAdd string) ([]byte, error) {
-	return c.simplePostAndGetBytes("/user/me/topics/"+toAdd, 201, nil)
+	return c.simplePostAndGetBytes("/user/me/topics"+toAdd, 201, nil)
 }
 
-func (c *Client) UserRemoveFavoriteTopic() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserRemoveFavoriteTopic remove a favorite topic from current user
+func (c *Client) UserRemoveFavoriteTopic(toRemove string) ([]byte, error) {
+	return c.simpleDeleteAndGetBytes("/user/me/topics"+toRemove, 200, nil)
 }
 
-func (c *Client) UserEnableNotificationsTopic() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserEnableNotificationsTopic enables notifications on one topic
+func (c *Client) UserEnableNotificationsTopic(topic string) ([]byte, error) {
+	return c.simplePostAndGetBytes("/user/me/enable/notifications/topics"+topic, 201, nil)
 }
 
-func (c *Client) UserEnableNotificationsAllTopics() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserEnableNotificationsAllTopics enables notification on all topics
+func (c *Client) UserEnableNotificationsAllTopics() ([]byte, error) {
+	return c.simplePostAndGetBytes("/user/me/disable/notifications/alltopics", 201, nil)
 }
 
-func (c *Client) UserDisableNotificationsTopic() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserDisableNotificationsTopic disables notifications on one topic
+func (c *Client) UserDisableNotificationsTopic(topic string) ([]byte, error) {
+	return c.simplePostAndGetBytes("/user/me/disable/notifications/topics"+topic, 201, nil)
 }
 
-func (c *Client) UserDisableNotificationsAllTopics() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserDisableNotificationsAllTopics disable notification on all topics
+func (c *Client) UserDisableNotificationsAllTopics() ([]byte, error) {
+	return c.simplePostAndGetBytes("/user/me/disable/notifications/alltopics", 201, nil)
 }
 
+// UserAddFavoriteTag adds a favorite tag to current user
 func (c *Client) UserAddFavoriteTag(toAdd string) ([]byte, error) {
 	return c.simplePostAndGetBytes("/user/me/tags/"+toAdd, 201, nil)
 }
 
-func (c *Client) UserRemoveFavoriteTag() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserRemoveFavoriteTag removes a favorite tag from current user
+func (c *Client) UserRemoveFavoriteTag(toRemove string) ([]byte, error) {
+	return c.simpleDeleteAndGetBytes("/user/me/tags/"+toRemove, 200, nil)
 }
 
 // UserAdd creates a new user
@@ -164,42 +263,71 @@ func (c *Client) UserAdd(u UserCreateJSON) ([]byte, error) {
 	return c.reqWant("POST", http.StatusCreated, "/user", b)
 }
 
-func (c *Client) UserReset() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserReset is used for reset password for a user
+func (c *Client) UserReset(v UserResetJSON) ([]byte, error) {
+	return c.simplePostAndGetBytes("/user/reset", 201, v)
 }
 
-func (c *Client) UserResetSystem() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserResetSystem is used for reset password for a system user
+func (c *Client) UserResetSystem(v UsernameUserJSON) ([]byte, error) {
+	return c.simplePutAndGetBytes("/user/resetsystem", 201, v)
 }
 
-func (c *Client) UserConvertToSystem() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserConvertToSystem converts a user to a system user
+func (c *Client) UserConvertToSystem(s ConvertUserJSON) ([]byte, error) {
+	return c.simplePutAndGetBytes("/user/convert", http.StatusCreated, s)
 }
 
-func (c *Client) UserUpdateSystem() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserUpdateSystem updates a system user
+func (c *Client) UserUpdateSystem(u ConvertUserJSON) ([]byte, error) {
+	return c.simplePutAndGetBytes("/user/updatesystem", http.StatusCreated, u)
 }
 
-func (c *Client) UserArchive() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserArchive archives a user
+func (c *Client) UserArchive(username string) error {
+	m := UsernameUserJSON{Username: username}
+	jsonStr, err := json.Marshal(m)
+	if err != nil {
+		ErrorLogFunc("UserAdd> Error while marshal username: %s", err)
+		return err
+	}
+
+	_, err = c.reqWant("PUT", http.StatusCreated, "/user/archive", jsonStr)
+	return err
 }
 
-func (c *Client) UserRename() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserRename renames a user
+func (c *Client) UserRename(v RenameUserJSON) ([]byte, error) {
+	return c.simplePutAndGetBytes("/user/rename", 201, v)
 }
 
-func (c *Client) UserUpdate() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserUpdate is used for update current user
+func (c *Client) UserUpdate(v UpdateUserJSON) ([]byte, error) {
+	return c.simplePutAndGetBytes("/user/update", 201, v)
 }
 
-func (c *Client) UserSetAdmin() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserSetAdmin set a user as an admin
+func (c *Client) UserSetAdmin(u UsernameUserJSON) ([]byte, error) {
+	return c.simplePutAndGetBytes("/user/setadmin", http.StatusCreated, u)
 }
 
-func (c *Client) UserVerify() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserVerify is used for verify user and returns password
+func (c *Client) UserVerify(username, tokenVerify string) (*VerifyJSON, error) {
+	path := fmt.Sprintf("/user/verify/%s/%s", username, tokenVerify)
+	out, err := c.simpleGetAndGetBytes(path)
+	if err != nil {
+		ErrorLogFunc("Error while GET /user/verify: %s", err)
+		return nil, err
+	}
+
+	verifyJSON := &VerifyJSON{}
+	if err := json.Unmarshal(out, verifyJSON); err != nil {
+		return nil, err
+	}
+	return verifyJSON, nil
 }
 
-func (c *Client) UserCheck() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserCheck checks if user have default topics
+func (c *Client) UserCheck(check CheckTopicsUserJSON) ([]byte, error) {
+	return c.simplePutAndGetBytes("/user/check", http.StatusCreated, check)
 }

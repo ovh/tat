@@ -318,7 +318,7 @@ func (*UsersController) RemoveContact(ctx *gin.Context) {
 		AbortWithReturnError(ctx, http.StatusInternalServerError, fmt.Errorf("Error while remove contact %s to user:%s", contactIn, user.Username))
 		return
 	}
-	ctx.JSON(http.StatusOK, "")
+	ctx.JSON(http.StatusOK, gin.H{"info": "Contact " + contactIn + " is removed"})
 }
 
 // AddFavoriteTopic add a favorite topic to user
@@ -473,15 +473,9 @@ func (*UsersController) RemoveFavoriteTag(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "")
 }
 
-type convertUserJSON struct {
-	Username              string `json:"username"  binding:"required"`
-	CanWriteNotifications bool   `json:"canWriteNotifications"  binding:"required"`
-	CanListUsersAsAdmin   bool   `json:"canListUsersAsAdmin"  binding:"required"`
-}
-
 // Convert a "normal" user to a "system" user
 func (*UsersController) Convert(ctx *gin.Context) {
-	var convertJSON convertUserJSON
+	var convertJSON tat.ConvertUserJSON
 	ctx.Bind(&convertJSON)
 
 	if !strings.HasPrefix(convertJSON.Username, "tat.system") {
@@ -524,7 +518,7 @@ type resetSystemUserJSON struct {
 
 // UpdateSystemUser updates flags CanWriteNotifications and CanListUsersAsAdmin
 func (*UsersController) UpdateSystemUser(ctx *gin.Context) {
-	var convertJSON convertUserJSON
+	var convertJSON tat.ConvertUserJSON
 	ctx.Bind(&convertJSON)
 
 	if !strings.HasPrefix(convertJSON.Username, "tat.system") {
@@ -597,7 +591,7 @@ func (*UsersController) ResetSystemUser(ctx *gin.Context) {
 
 // SetAdmin a "normal" user to an admin user
 func (*UsersController) SetAdmin(ctx *gin.Context) {
-	var convertJSON convertUserJSON
+	var convertJSON tat.UsernameUserJSON
 	ctx.Bind(&convertJSON)
 
 	var userToGrant = tat.User{}
@@ -623,13 +617,9 @@ func (*UsersController) SetAdmin(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, "")
 }
 
-type usernameUserJSON struct {
-	Username string `json:"username"  binding:"required"`
-}
-
 // Archive a user
 func (*UsersController) Archive(ctx *gin.Context) {
-	var archiveJSON usernameUserJSON
+	var archiveJSON tat.UsernameUserJSON
 	ctx.Bind(&archiveJSON)
 
 	var userToArchive = tat.User{}
@@ -655,14 +645,9 @@ func (*UsersController) Archive(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, "")
 }
 
-type renameUserJSON struct {
-	Username    string `json:"username"  binding:"required"`
-	NewUsername string `json:"newUsername"  binding:"required"`
-}
-
 // Rename a username of one user
 func (*UsersController) Rename(ctx *gin.Context) {
-	var renameJSON renameUserJSON
+	var renameJSON tat.RenameUserJSON
 	ctx.Bind(&renameJSON)
 
 	var userToRename = tat.User{}
@@ -686,18 +671,12 @@ func (*UsersController) Rename(ctx *gin.Context) {
 	}
 	socket.CloseSocketOfUsername(userToRename.Username)
 
-	ctx.JSON(http.StatusCreated, "")
-}
-
-type updateUserJSON struct {
-	Username    string `json:"username"  binding:"required"`
-	NewFullname string `json:"newFullname" binding:"required"`
-	NewEmail    string `json:"newEmail" binding:"required"`
+	ctx.JSON(http.StatusCreated, gin.H{"info": "user is renamed"})
 }
 
 // Update changes fullname and email
 func (*UsersController) Update(ctx *gin.Context) {
-	var updateJSON updateUserJSON
+	var updateJSON tat.UpdateUserJSON
 	ctx.Bind(&updateJSON)
 
 	var userToUpdate = tat.User{}
@@ -721,20 +700,14 @@ func (*UsersController) Update(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, "")
-}
-
-type checkTopicsUserJSON struct {
-	Username         string `json:"username"  binding:"required"`
-	FixPrivateTopics bool   `json:"fixPrivateTopics"  binding:"required"`
-	FixDefaultGroup  bool   `json:"fixDefaultGroup"  binding:"required"`
+	ctx.JSON(http.StatusCreated, gin.H{"info": "user updated"})
 }
 
 // Check if user have his Private topics
 // /Private/username, /Private/username/Tasks
 func (u *UsersController) Check(ctx *gin.Context) {
 
-	var userJSON checkTopicsUserJSON
+	var userJSON tat.CheckTopicsUserJSON
 	ctx.Bind(&userJSON)
 
 	var userToCheck = tat.User{}

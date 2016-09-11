@@ -155,6 +155,10 @@ func (c *Client) simplePostAndGetBytes(url string, want int, v interface{}) ([]b
 	return c.simpleReqAndGetBytes("POST", url, want, v)
 }
 
+func (c *Client) simpleDeleteAndGetBytes(url string, want int, v interface{}) ([]byte, error) {
+	return c.simpleReqAndGetBytes("DELETE", url, want, v)
+}
+
 func (c *Client) simpleReqAndGetBytes(method, url string, want int, v interface{}) ([]byte, error) {
 	var jsonStr []byte
 	var err error
