@@ -53,16 +53,18 @@ func (*StatsController) Count(ctx *gin.Context) {
 	}
 
 	now := time.Now()
-	ctx.JSON(http.StatusOK, gin.H{
-		"date":      now.Unix(),
-		"dateHuman": now,
-		"version":   tat.Version,
-		"groups":    nbGroups,
-		"messages":  nbMessages,
-		"presences": nbPresences,
-		"topics":    nbTopics,
-		"users":     nbUsers,
-	})
+
+	out := tat.StatsCountJSON{
+		Date:      now.Unix(),
+		DateHuman: now,
+		Version:   tat.Version,
+		Groups:    nbGroups,
+		Messages:  nbMessages,
+		Presences: nbPresences,
+		Topics:    nbTopics,
+		Users:     nbUsers,
+	}
+	ctx.JSON(http.StatusOK, out)
 }
 
 // Instance returns information about current engine

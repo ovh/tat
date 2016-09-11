@@ -322,8 +322,8 @@ func (c *Client) MessageUpdate(topic, idMessage string, newText string) (*Messag
 	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
 }
 
-/* MessageConcat is same as:
-```
+// MessageConcat is same as:
+/*```
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -550,87 +550,87 @@ func (c *Client) processForMessageJSONOut(method, path string, want int, message
 }
 
 // GetURL returns URL for messageCriteria
-func (c *MessageCriteria) GetURL() string {
+func (m *MessageCriteria) GetURL() string {
 	v := url.Values{}
-	v.Set("skip", string(c.Skip))
-	v.Set("limit", string(c.Limit))
+	v.Set("skip", string(m.Skip))
+	v.Set("limit", string(m.Limit))
 
-	if c.TreeView != "" {
-		v.Set("treeView", c.TreeView)
+	if m.TreeView != "" {
+		v.Set("treeView", m.TreeView)
 	}
-	if c.IDMessage != "" {
-		v.Set("idMessage", c.IDMessage)
+	if m.IDMessage != "" {
+		v.Set("idMessage", m.IDMessage)
 	}
-	if c.InReplyOfID != "" {
-		v.Set("inReplyOfID", c.InReplyOfID)
+	if m.InReplyOfID != "" {
+		v.Set("inReplyOfID", m.InReplyOfID)
 	}
-	if c.InReplyOfIDRoot != "" {
-		v.Set("inReplyOfIDRoot", c.InReplyOfIDRoot)
+	if m.InReplyOfIDRoot != "" {
+		v.Set("inReplyOfIDRoot", m.InReplyOfIDRoot)
 	}
-	if c.AllIDMessage != "" {
-		v.Set("allIDMessage", c.AllIDMessage)
+	if m.AllIDMessage != "" {
+		v.Set("allIDMessage", m.AllIDMessage)
 	}
-	if c.Text != "" {
-		v.Set("text", c.Text)
+	if m.Text != "" {
+		v.Set("text", m.Text)
 	}
-	if c.Topic != "" {
-		v.Set("topic", c.Topic)
+	if m.Topic != "" {
+		v.Set("topic", m.Topic)
 	}
-	if c.Label != "" {
-		v.Set("label", c.Label)
+	if m.Label != "" {
+		v.Set("label", m.Label)
 	}
-	if c.NotLabel != "" {
-		v.Set("notLabel", c.NotLabel)
+	if m.NotLabel != "" {
+		v.Set("notLabel", m.NotLabel)
 	}
-	if c.AndLabel != "" {
-		v.Set("andLabel", c.AndLabel)
+	if m.AndLabel != "" {
+		v.Set("andLabel", m.AndLabel)
 	}
-	if c.Tag != "" {
-		v.Set("tag", c.Tag)
+	if m.Tag != "" {
+		v.Set("tag", m.Tag)
 	}
-	if c.NotTag != "" {
-		v.Set("notTag", c.NotTag)
+	if m.NotTag != "" {
+		v.Set("notTag", m.NotTag)
 	}
-	if c.AndTag != "" {
-		v.Set("andTag", c.AndTag)
+	if m.AndTag != "" {
+		v.Set("andTag", m.AndTag)
 	}
-	if c.DateMinCreation != "" {
-		v.Set("dateMinCreation", c.DateMinCreation)
+	if m.DateMinCreation != "" {
+		v.Set("dateMinCreation", m.DateMinCreation)
 	}
-	if c.DateMaxCreation != "" {
-		v.Set("dateMaxCreation", c.DateMaxCreation)
+	if m.DateMaxCreation != "" {
+		v.Set("dateMaxCreation", m.DateMaxCreation)
 	}
-	if c.DateMinUpdate != "" {
-		v.Set("dateMinUpdate", c.DateMinUpdate)
+	if m.DateMinUpdate != "" {
+		v.Set("dateMinUpdate", m.DateMinUpdate)
 	}
-	if c.DateMaxUpdate != "" {
-		v.Set("dateMaxUpdate", c.DateMaxUpdate)
+	if m.DateMaxUpdate != "" {
+		v.Set("dateMaxUpdate", m.DateMaxUpdate)
 	}
-	if c.Username != "" {
-		v.Set("username", c.Username)
+	if m.Username != "" {
+		v.Set("username", m.Username)
 	}
-	if c.LimitMinNbReplies != "" {
-		v.Set("limitMinNbReplies", c.LimitMinNbReplies)
+	if m.LimitMinNbReplies != "" {
+		v.Set("limitMinNbReplies", m.LimitMinNbReplies)
 	}
-	if c.LimitMaxNbReplies != "" {
-		v.Set("limitMaxNbReplies", c.LimitMaxNbReplies)
+	if m.LimitMaxNbReplies != "" {
+		v.Set("limitMaxNbReplies", m.LimitMaxNbReplies)
 	}
-	if c.LimitMinNbVotesUP != "" {
-		v.Set("limitMinNbVotesUP", c.LimitMinNbVotesUP)
+	if m.LimitMinNbVotesUP != "" {
+		v.Set("limitMinNbVotesUP", m.LimitMinNbVotesUP)
 	}
-	if c.LimitMaxNbVotesUP != "" {
-		v.Set("limitMaxNbVotesUP", c.LimitMaxNbVotesUP)
+	if m.LimitMaxNbVotesUP != "" {
+		v.Set("limitMaxNbVotesUP", m.LimitMaxNbVotesUP)
 	}
-	if c.LimitMinNbVotesDown != "" {
-		v.Set("limitMinNbVotesDown", c.LimitMinNbVotesDown)
+	if m.LimitMinNbVotesDown != "" {
+		v.Set("limitMinNbVotesDown", m.LimitMinNbVotesDown)
 	}
-	if c.LimitMaxNbVotesDown != "" {
-		v.Set("limitMaxNbVotesDown", c.LimitMaxNbVotesDown)
+	if m.LimitMaxNbVotesDown != "" {
+		v.Set("limitMaxNbVotesDown", m.LimitMaxNbVotesDown)
 	}
-	if c.OnlyMsgRoot == True {
+	if m.OnlyMsgRoot == True {
 		v.Set("onlyMsgRoot", "true")
 	}
-	if c.OnlyCount == True {
+	if m.OnlyCount == True {
 		v.Set("onlyCount", "true")
 	}
 	return v.Encode()

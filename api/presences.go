@@ -149,9 +149,6 @@ func (m *PresencesController) create(ctx *gin.Context) {
 	}
 
 	go socket.WSPresence(&tat.WSPresenceJSON{Action: "create", Presence: presence})
-
-	//out := &presenceJSONOut{Presence: presence}
-	//ctx.JSON(http.StatusCreated, nil)
 }
 
 // CreateAndGet creates a presence and get presences on current topic
