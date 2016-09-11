@@ -118,8 +118,16 @@ func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byt
 	}
 	resp, err := HTTPClient.Do(req)
 
-	defer resp.Body.Close()
+	defer func() {
+		if resp != nil && resp.Body != nil {
+			resp.Body.Close()
+		}
+	}()
 
+	if resp == nil {
+		ErrorLogFunc("Invalid response from Tat. Please Check Tat Engine")
+		return []byte{}, fmt.Errorf("Invalid response from Tat. Please Check Tat Engine")
+	}
 	if resp.StatusCode != wantCode {
 		ErrorLogFunc("Response Status:%s", resp.Status)
 		ErrorLogFunc("Request path:%s", requestPath)
