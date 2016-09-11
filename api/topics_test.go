@@ -70,7 +70,7 @@ func TestTruncateAndDeleteAllTopics(t *testing.T) {
 
 	t.Log("Delete all topics")
 	for _, to := range topics.Topics {
-		err := client.TopicTruncate(tat.TopicNameJSON{Topic: to.Topic})
+		_, err := client.TopicTruncate(tat.TopicNameJSON{Topic: to.Topic})
 		assert.NoError(t, err)
 		_, err = client.TopicDelete(tat.TopicNameJSON{Topic: to.Topic})
 		assert.NoError(t, err)

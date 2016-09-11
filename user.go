@@ -106,16 +106,18 @@ func (c *Client) UserContacts() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
 
-func (c *Client) UserAddContact() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserAddContact adds a contact
+func (c *Client) UserAddContact(toAdd string) ([]byte, error) {
+	return c.simplePostAndGetBytes("/user/me/contacts/"+toAdd, 201, nil)
 }
 
 func (c *Client) UserRemoveContact() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
 
-func (c *Client) UserAddFavoriteTopic() error {
-	return fmt.Errorf("Not Yet Implemented")
+// UserAddFavoriteTopic adds a favorite topic on current user
+func (c *Client) UserAddFavoriteTopic(toAdd string) ([]byte, error) {
+	return c.simplePostAndGetBytes("/user/me/topics/"+toAdd, 201, nil)
 }
 
 func (c *Client) UserRemoveFavoriteTopic() error {
@@ -138,8 +140,8 @@ func (c *Client) UserDisableNotificationsAllTopics() error {
 	return fmt.Errorf("Not Yet Implemented")
 }
 
-func (c *Client) UserAddFavoriteTag() error {
-	return fmt.Errorf("Not Yet Implemented")
+func (c *Client) UserAddFavoriteTag(toAdd string) ([]byte, error) {
+	return c.simplePostAndGetBytes("/user/me/tags/"+toAdd, 201, nil)
 }
 
 func (c *Client) UserRemoveFavoriteTag() error {

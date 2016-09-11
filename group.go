@@ -78,7 +78,8 @@ type GroupJSON struct {
 	Description string `json:"description" binding:"required"`
 }
 
-type ParamGroupJSON struct {
+// ParamTopicGroupJSON is used for manipulate a group on a topic
+type ParamTopicGroupJSON struct {
 	Topic     string `json:"topic"`
 	Groupname string `json:"groupname"`
 	Recursive bool   `json:"recursive"`

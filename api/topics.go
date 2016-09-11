@@ -333,7 +333,7 @@ func (t *TopicsController) preCheckUser(ctx *gin.Context, paramJSON *tat.ParamTo
 }
 
 // preCheckGroup checks if group exists and is admin on topic
-func (t *TopicsController) preCheckGroup(ctx *gin.Context, paramJSON *tat.ParamGroupJSON) (*tat.Topic, error) {
+func (t *TopicsController) preCheckGroup(ctx *gin.Context, paramJSON *tat.ParamTopicGroupJSON) (*tat.Topic, error) {
 	if groupExists := groupDB.IsGroupnameExists(paramJSON.Groupname); !groupExists {
 		return nil, tat.NewError(http.StatusNotFound, "groupname %s does not exist", paramJSON.Groupname)
 	}
@@ -474,7 +474,7 @@ func (t *TopicsController) RemoveAdminUser(ctx *gin.Context) {
 
 // AddRoGroup add a readonly group on selected topic
 func (t *TopicsController) AddRoGroup(ctx *gin.Context) {
-	var paramJSON tat.ParamGroupJSON
+	var paramJSON tat.ParamTopicGroupJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
@@ -491,7 +491,7 @@ func (t *TopicsController) AddRoGroup(ctx *gin.Context) {
 
 // AddRwGroup add a read write group on selected topic
 func (t *TopicsController) AddRwGroup(ctx *gin.Context) {
-	var paramJSON tat.ParamGroupJSON
+	var paramJSON tat.ParamTopicGroupJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
@@ -510,7 +510,7 @@ func (t *TopicsController) AddRwGroup(ctx *gin.Context) {
 
 // AddAdminGroup add an admin group on selected topic
 func (t *TopicsController) AddAdminGroup(ctx *gin.Context) {
-	var paramJSON tat.ParamGroupJSON
+	var paramJSON tat.ParamTopicGroupJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
@@ -570,7 +570,7 @@ func (t *TopicsController) RemoveParameter(ctx *gin.Context) {
 
 // RemoveRoGroup removes a read only group on selected topic
 func (t *TopicsController) RemoveRoGroup(ctx *gin.Context) {
-	var paramJSON tat.ParamGroupJSON
+	var paramJSON tat.ParamTopicGroupJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
@@ -589,7 +589,7 @@ func (t *TopicsController) RemoveRoGroup(ctx *gin.Context) {
 
 // RemoveRwGroup removes a read write group on selected topic
 func (t *TopicsController) RemoveRwGroup(ctx *gin.Context) {
-	var paramJSON tat.ParamGroupJSON
+	var paramJSON tat.ParamTopicGroupJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {
@@ -608,7 +608,7 @@ func (t *TopicsController) RemoveRwGroup(ctx *gin.Context) {
 
 // RemoveAdminGroup removes an admin group on selected topic
 func (t *TopicsController) RemoveAdminGroup(ctx *gin.Context) {
-	var paramJSON tat.ParamGroupJSON
+	var paramJSON tat.ParamTopicGroupJSON
 	ctx.Bind(&paramJSON)
 	topic, e := t.preCheckGroup(ctx, &paramJSON)
 	if e != nil {

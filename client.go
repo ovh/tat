@@ -139,12 +139,51 @@ func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byt
 	return body, nil
 }
 
+func (c *Client) simpleGetAndGetBytes(url string) ([]byte, error) {
+	out, err := c.reqWant("GET", 200, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *Client) simplePutAndGetBytes(url string, want int, v interface{}) ([]byte, error) {
+	return c.simpleReqAndGetBytes("PUT", url, want, v)
+}
+
+func (c *Client) simplePostAndGetBytes(url string, want int, v interface{}) ([]byte, error) {
+	return c.simpleReqAndGetBytes("POST", url, want, v)
+}
+
+func (c *Client) simpleReqAndGetBytes(method, url string, want int, v interface{}) ([]byte, error) {
+	var jsonStr []byte
+	var err error
+	if v != nil {
+		jsonStr, err = json.Marshal(v)
+		if err != nil {
+			ErrorLogFunc("Error while convert json:%s", err)
+			return nil, err
+		}
+	}
+
+	out, err := c.reqWant(method, want, url, jsonStr)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Print display on stdout the value in json
 func Print(v interface{}) {
+	fmt.Print(Sprint(v))
+}
+
+// Sprint return the value in json as a string
+func Sprint(v interface{}) (string, error) {
 	jsonStr, err := json.Marshal(v)
 	if err != nil {
 		ErrorLogFunc("Error while convert response from tat:%s", err)
-		return
+		return "", err
 	}
-	fmt.Print(string(jsonStr))
+	return fmt.Sprint(string(jsonStr)), nil
 }

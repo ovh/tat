@@ -70,11 +70,3 @@ func (c *Client) StatsDBSlowestQueries() ([]byte, error) {
 func (c *Client) StatsInstance() ([]byte, error) {
 	return c.simpleGetAndGetBytes("/stats/instance")
 }
-
-func (c *Client) simpleGetAndGetBytes(url string) ([]byte, error) {
-	out, err := c.reqWant("GET", 200, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}

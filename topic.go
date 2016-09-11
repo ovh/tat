@@ -124,6 +124,7 @@ type TopicCreateJSON struct {
 	Description string `json:"description" binding:"required"`
 }
 
+// TopicParameterJSON is used to manipulate a parameter on a topic
 type TopicParameterJSON struct {
 	Topic     string `json:"topic"`
 	Key       string `json:"key"`
@@ -207,7 +208,7 @@ func (c *Client) TopicCreate(t TopicCreateJSON) (*Topic, error) {
 	return newTopic, nil
 }
 
-//TopicList list all topics according to criterias. Default behavior (criteria is Nil) will limit 10 topics.
+// TopicList list all topics according to criterias. Default behavior (criteria is Nil) will limit 10 topics.
 func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
 	if c == nil {
 		return nil, ErrClientNotInitiliazed
@@ -271,7 +272,7 @@ func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
 	return &topics, nil
 }
 
-//TopicDelete delete a topics
+// TopicDelete delete a topics
 func (c *Client) TopicDelete(t TopicNameJSON) ([]byte, error) {
 	out, err := c.reqWant(http.MethodDelete, 200, "/topic"+t.Topic, nil)
 	if err != nil {
@@ -281,63 +282,47 @@ func (c *Client) TopicDelete(t TopicNameJSON) ([]byte, error) {
 	return out, nil
 }
 
-//TopicTruncate deletes all messages in a topic
-func (c *Client) TopicTruncate(t TopicNameJSON) error {
-	b, err := json.Marshal(t)
-	if err != nil {
-		ErrorLogFunc("Error truncating topic: %s", err)
-		return err
-	}
-	_, err = c.reqWant(http.MethodPut, http.StatusCreated, "/topic/truncate", b)
-	if err != nil {
-		ErrorLogFunc("Error truncating topic: %s", err)
-		return err
-	}
-	return nil
+// TopicTruncate deletes all messages in a topic
+func (c *Client) TopicTruncate(t TopicNameJSON) ([]byte, error) {
+	return c.simplePutAndGetBytes("/topic/truncate", 201, t)
 }
 
-func (c *Client) TopicAddRoUser() error {
-	return fmt.Errorf("Not Yet Implemented")
-}
-
+// TopicComputeLabels computes labels on a topic
 func (c *Client) TopicComputeLabels(t TopicNameJSON) ([]byte, error) {
-	jsonStr, err := json.Marshal(t)
-	if err != nil {
-		return nil, err
-	}
-
-	return c.reqWant("PUT", http.StatusCreated, "/topic/compute/labels", jsonStr)
+	return c.simplePutAndGetBytes("/topic/compute/labels", 201, t)
 }
 
-func (c *Client) TopicTruncateLabels() error {
-	return fmt.Errorf("Not Yet Implemented")
+// TopicTruncateLabels removes all labels computed on topic
+func (c *Client) TopicTruncateLabels(t TopicNameJSON) ([]byte, error) {
+	return c.simplePutAndGetBytes("/topic/truncate/labels", 200, t)
 }
 
+// TopicComputeTags computes tags on a topic
 func (c *Client) TopicComputeTags(t TopicNameJSON) ([]byte, error) {
-	jsonStr, err := json.Marshal(t)
-	if err != nil {
-		return nil, err
-	}
-
-	return c.reqWant("PUT", http.StatusCreated, "/topic/compute/tags", jsonStr)
+	return c.simplePutAndGetBytes("/topic/compute/tags", 201, t)
 }
 
-func (c *Client) TopicTruncateTags() error {
-	return fmt.Errorf("Not Yet Implemented")
+// TopicTruncateTags removes all tags computed on topic
+func (c *Client) TopicTruncateTags(t TopicNameJSON) ([]byte, error) {
+	return c.simplePutAndGetBytes("/topic/truncate/tags", 200, t)
 }
 
-func (c *Client) TopicAllComputeLabels() error {
-	return fmt.Errorf("Not Yet Implemented")
+// TopicAllComputeLabels computes labels on all topics
+func (c *Client) TopicAllComputeLabels() ([]byte, error) {
+	return c.simplePutAndGetBytes("/topics/compute/labels", 201, nil)
 }
 
-func (c *Client) TopicAllComputeTags() error {
-	return fmt.Errorf("Not Yet Implemented")
+// TopicAllComputeTags computes tags on all topics
+func (c *Client) TopicAllComputeTags() ([]byte, error) {
+	return c.simplePutAndGetBytes("/topics/compute/tags", 201, nil)
 }
 
-func (c *Client) TopicAllComputeReplies() error {
-	return fmt.Errorf("Not Yet Implemented")
+// TopicAllComputeReplies computes replies on all topics
+func (c *Client) TopicAllComputeReplies() ([]byte, error) {
+	return c.simplePutAndGetBytes("/topics/compute/replies", 200, nil)
 }
 
+// TopicAllSetParam sets a param on all topics
 func (c *Client) TopicAllSetParam(p ParamJSON) ([]byte, error) {
 	jsonStr, err := json.Marshal(p)
 	if err != nil {
@@ -347,155 +332,146 @@ func (c *Client) TopicAllSetParam(p ParamJSON) ([]byte, error) {
 	return c.reqWant("PUT", http.StatusOK, "/topics/param", jsonStr)
 }
 
-func (c *Client) TopicAddRwUser() error {
-	return fmt.Errorf("Not Yet Implemented")
+// TopicAddRoUsers adds a read-only user on a topic
+func (c *Client) TopicAddRoUsers(topic string, users []string, recursive bool) error {
+	return c.topicActionOnUsers("/topic/add/rouser", 201, topic, users, recursive)
 }
 
-func (c *Client) TopicAddAdminUser() error {
-	return fmt.Errorf("Not Yet Implemented")
+// TopicAddRwUsers adds a read-write user on a topic
+func (c *Client) TopicAddRwUsers(topic string, users []string, recursive bool) error {
+	return c.topicActionOnUsers("/topic/add/rwuser", 201, topic, users, recursive)
 }
 
-func (c *Client) TopicDeleteRoUser() error {
-	return fmt.Errorf("Not Yet Implemented")
+// TopicAddAdminUsers adds admin users on a topic
+func (c *Client) TopicAddAdminUsers(topic string, users []string, recursive bool) error {
+	return c.topicActionOnUsers("/topic/add/adminuser", 201, topic, users, recursive)
 }
 
-func (c *Client) TopicDeleteRwUser() error {
-	return fmt.Errorf("Not Yet Implemented")
+// TopicDeleteRoUsers deletes a read-only user on a topic
+func (c *Client) TopicDeleteRoUsers(topic string, users []string, recursive bool) error {
+	return c.topicActionOnUsers("/topic/remove/rouser", 200, topic, users, recursive)
 }
 
-func (c *Client) TopicDeleteAdminUser() error {
-	return fmt.Errorf("Not Yet Implemented")
+// TopicDeleteRwUsers deletes some read-write users on a topic
+func (c *Client) TopicDeleteRwUsers(topic string, users []string, recursive bool) error {
+	return c.topicActionOnUsers("/topic/remove/rwuser", 200, topic, users, recursive)
 }
 
-//TopicAddRoGroup adds a read-only group on a topic
-func (c *Client) TopicAddRoGroup(topic, groupname string, recursive bool) error {
-	t := map[string]interface{}{
-		"topic":     topic,
-		"groupname": groupname,
-		"recursive": recursive,
-	}
-	b, err := json.Marshal(t)
-	if err != nil {
-		ErrorLogFunc("Error marshalling %v: %s", t, err)
-		return err
-	}
+// TopicDeleteAdminUsers deletes some admin users on a topic
+func (c *Client) TopicDeleteAdminUsers(topic string, users []string, recursive bool) error {
+	return c.topicActionOnUsers("/topic/remove/adminuser", 200, topic, users, recursive)
+}
 
-	if _, err = c.reqWant(http.MethodPut, http.StatusCreated, "/topic/add/rogroup", b); err != nil {
-		ErrorLogFunc("Error adding RO Group: %s", err)
-		return err
+func (c *Client) topicActionOnUsers(url string, want int, topic string, users []string, recursive bool) error {
+	for _, username := range users {
+		if _, err := c.topicActionOnUser(url, want, topic, username, recursive); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-//TopicAddRwGroup adds a read-write group on a topic
-func (c *Client) TopicAddRwGroup(topic, groupname string, recursive bool) error {
-	t := map[string]interface{}{
-		"topic":     topic,
-		"groupname": groupname,
-		"recursive": recursive,
+func (c *Client) topicActionOnUser(url string, want int, topic, username string, recursive bool) ([]byte, error) {
+	t := ParamTopicUserJSON{
+		Topic:     topic,
+		Username:  username,
+		Recursive: recursive,
 	}
-	b, err := json.Marshal(t)
+	out, err := c.simplePutAndGetBytes(url, want, t)
 	if err != nil {
-		ErrorLogFunc("Error marshalling %v: %s", t, err)
-		return err
+		ErrorLogFunc("Error removing on url: %s", url, err)
+		return nil, err
 	}
+	return out, nil
+}
 
-	if _, err = c.reqWant(http.MethodPut, http.StatusCreated, "/topic/add/rwgroup", b); err != nil {
-		ErrorLogFunc("Error adding RW Group: %s", err)
-		return err
+// TopicAddRoGroups adds a read-only group on a topic
+func (c *Client) TopicAddRoGroups(topic string, groups []string, recursive bool) error {
+	return c.topicActionOnGroups("/topic/add/rogroup", 201, topic, groups, recursive)
+}
+
+// TopicAddRwGroups adds a read-write group on a topic
+func (c *Client) TopicAddRwGroups(topic string, groups []string, recursive bool) error {
+	return c.topicActionOnGroups("/topic/add/rwgroup", 201, topic, groups, recursive)
+}
+
+// TopicAddAdminGroups adds admin groups on a topic
+func (c *Client) TopicAddAdminGroups(topic string, groups []string, recursive bool) error {
+	return c.topicActionOnGroups("/topic/add/admingroup", 201, topic, groups, recursive)
+}
+
+// TopicDeleteRoGroups deletes a read-only group on a topic
+func (c *Client) TopicDeleteRoGroups(topic string, groups []string, recursive bool) error {
+	return c.topicActionOnGroups("/topic/remove/rogroup", 200, topic, groups, recursive)
+}
+
+// TopicDeleteRwGroups deletes some read-write groups on a topic
+func (c *Client) TopicDeleteRwGroups(topic string, groups []string, recursive bool) error {
+	return c.topicActionOnGroups("/topic/remove/rwgroup", 200, topic, groups, recursive)
+}
+
+// TopicDeleteAdminGroups deletes some admin groups on a topic
+func (c *Client) TopicDeleteAdminGroups(topic string, groups []string, recursive bool) error {
+	return c.topicActionOnGroups("/topic/remove/admingroup", 200, topic, groups, recursive)
+}
+
+func (c *Client) topicActionOnGroups(url string, want int, topic string, groups []string, recursive bool) error {
+	for _, groupname := range groups {
+		if _, err := c.topicActionOnGroup(url, want, topic, groupname, recursive); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-//TopicAddAdminGroup adds an admin group on a topic
-func (c *Client) TopicAddAdminGroup(topic, groupname string, recursive bool) error {
-	t := map[string]interface{}{
-		"topic":     topic,
-		"groupname": groupname,
-		"recursive": recursive,
+func (c *Client) topicActionOnGroup(url string, want int, topic, groupname string, recursive bool) ([]byte, error) {
+	t := ParamTopicGroupJSON{
+		Topic:     topic,
+		Groupname: groupname,
+		Recursive: recursive,
 	}
-	b, err := json.Marshal(t)
+	out, err := c.simplePutAndGetBytes(url, want, t)
 	if err != nil {
-		ErrorLogFunc("Error marshalling %v: %s", t, err)
-		return err
+		ErrorLogFunc("Error removing on url: %s", url, err)
+		return nil, err
 	}
+	return out, nil
+}
 
-	if _, err = c.reqWant(http.MethodPut, http.StatusCreated, "/topic/add/admingroup", b); err != nil {
-		ErrorLogFunc("Error adding Admin Group: %s", err)
-		return err
+// TopicAddParameter adds a parameter on a topic
+func (c *Client) TopicAddParameter(topic, key, value string, recursive bool) ([]byte, error) {
+	t := TopicParameterJSON{
+		Topic:     topic,
+		Key:       key,
+		Value:     value,
+		Recursive: recursive,
+	}
+	out, err := c.simplePutAndGetBytes("/topic/add/parameter", 201, t)
+	if err != nil {
+		ErrorLogFunc("Error removing a parameter: %s", err)
+		return nil, err
+	}
+	return out, nil
+}
+
+// TopicDeleteParameters removes a parameter on a topic
+func (c *Client) TopicDeleteParameters(topic string, params []string, recursive bool) error {
+	for _, key := range params {
+		t := TopicParameterJSON{
+			Topic:     topic,
+			Key:       key,
+			Recursive: recursive,
+		}
+		_, err := c.simplePutAndGetBytes("/topic/remove/parameter", 201, t)
+		if err != nil {
+			ErrorLogFunc("Error removing a parameter: %s", err)
+			return err
+		}
 	}
 	return nil
 }
 
-//TopicDeleteRoGroup deletes a read-only group on a topic
-func (c *Client) TopicDeleteRoGroup(topic, groupname string, recursive bool) error {
-	t := map[string]interface{}{
-		"topic":     topic,
-		"groupname": groupname,
-		"recursive": recursive,
-	}
-	b, err := json.Marshal(t)
-	if err != nil {
-		ErrorLogFunc("Error marshalling %v: %s", t, err)
-		return err
-	}
-
-	if _, err = c.reqWant(http.MethodPut, 200, "/topic/remove/rogroup", b); err != nil {
-		ErrorLogFunc("Error deleting RO Group: %s", err)
-		return err
-	}
-	return nil
-}
-
-//TopicDeleteRwGroup deletes a read-write group on a topic
-func (c *Client) TopicDeleteRwGroup(topic, groupname string, recursive bool) error {
-	t := map[string]interface{}{
-		"topic":     topic,
-		"groupname": groupname,
-		"recursive": recursive,
-	}
-	b, err := json.Marshal(t)
-	if err != nil {
-		ErrorLogFunc("Error marshalling %v: %s", t, err)
-		return err
-	}
-
-	if _, err = c.reqWant(http.MethodPut, 200, "/topic/remove/rwgroup", b); err != nil {
-		ErrorLogFunc("Error deleting RW Group: %s", err)
-		return err
-	}
-	return nil
-}
-
-//TopicDeleteAdminGroup deletes an admin group on a topic
-func (c *Client) TopicDeleteAdminGroup(topic, groupname string, recursive bool) error {
-	t := map[string]interface{}{
-		"topic":     topic,
-		"groupname": groupname,
-		"recursive": recursive,
-	}
-	b, err := json.Marshal(t)
-	if err != nil {
-		ErrorLogFunc("Error marshalling %v: %s", t, err)
-		return err
-	}
-
-	if _, err = c.reqWant(http.MethodPut, 200, "/topic/remove/admingroup", b); err != nil {
-		ErrorLogFunc("Error deleting Admin Group: %s", err)
-		return err
-	}
-	return nil
-}
-
-func (c *Client) TopicAddParameter() error {
-	return fmt.Errorf("Not Yet Implemented")
-}
-
-func (c *Client) TopicDeleteParameter() error {
-	return fmt.Errorf("Not Yet Implemented")
-}
-
-//TopicParameters updates param on one topic
+// TopicParameters updates param on one topic
 type TopicParameters struct {
 	Topic                string `json:"topic"`
 	MaxLength            int    `json:"maxlength"`
@@ -511,7 +487,7 @@ type TopicParameters struct {
 	Recursive            bool   `json:"recursive"`
 }
 
-//TopicParameter updates param on one topic
+// TopicParameter updates param on one topic
 func (c *Client) TopicParameter(params TopicParameters) ([]byte, error) {
 	b, err := json.Marshal(params)
 	if err != nil {
