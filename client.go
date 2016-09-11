@@ -177,17 +177,12 @@ func (c *Client) simpleReqAndGetBytes(method, url string, want int, v interface{
 	return out, nil
 }
 
-// Print display on stdout the value in json
-func Print(v interface{}) {
-	fmt.Print(Sprint(v))
-}
-
 // Sprint return the value in json as a string
-func Sprint(v interface{}) (string, error) {
+func Sprint(v interface{}) ([]byte, error) {
 	jsonStr, err := json.Marshal(v)
 	if err != nil {
 		ErrorLogFunc("Error while convert response from tat:%s", err)
-		return "", err
+		return []byte("Error while convert json struct from tat api"), err
 	}
-	return fmt.Sprint(string(jsonStr)), nil
+	return jsonStr, nil
 }
