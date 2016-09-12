@@ -147,8 +147,8 @@ func (c *Client) UserList(criteria *UserCriteria) (*UsersJSON, error) {
 	}
 
 	v := url.Values{}
-	v.Set("skip", string(criteria.Skip))
-	v.Set("limit", string(criteria.Limit))
+	v.Set("skip", strconv.Itoa(criteria.Skip))
+	v.Set("limit", strconv.Itoa(criteria.Limit))
 
 	v.Set("withGroups", strconv.FormatBool(criteria.WithGroups))
 	v.Set("idUser", criteria.IDUser)

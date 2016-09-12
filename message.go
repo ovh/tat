@@ -567,8 +567,8 @@ func (c *Client) processForMessageJSONOut(method, path string, want int, message
 // GetURL returns URL for messageCriteria
 func (m *MessageCriteria) GetURL() string {
 	v := url.Values{}
-	v.Set("skip", string(m.Skip))
-	v.Set("limit", string(m.Limit))
+	v.Set("skip", strconv.Itoa(m.Skip))
+	v.Set("limit", strconv.Itoa(m.Limit))
 
 	if m.TreeView != "" {
 		v.Set("treeView", m.TreeView)

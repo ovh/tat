@@ -222,8 +222,8 @@ func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
 	}
 
 	v := url.Values{}
-	v.Set("skip", string(criteria.Skip))
-	v.Set("limit", string(criteria.Limit))
+	v.Set("skip", strconv.Itoa(criteria.Skip))
+	v.Set("limit", strconv.Itoa(criteria.Limit))
 
 	if criteria.Topic != "" {
 		v.Set("topic", criteria.Topic)
