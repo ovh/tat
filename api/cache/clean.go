@@ -6,6 +6,11 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
+/*
+func FlusAll() {
+
+}*/
+
 // cleanAllByType cleans all keys
 func cleanAllByType(key string) {
 	keys, _ := Client().SMembers(key).Result()
@@ -16,21 +21,10 @@ func cleanAllByType(key string) {
 	}
 }
 
-// CleanForUsernames cleans all keys for a username and topics
-// tat:users:<username>:topics
-// tat:users:<username>:topics:*
-func cleanTopicsListsForUsernames(key, ktype string, usernames ...string) {
-	for _, username := range usernames {
-		log.Debugf("Cache CleanTopics for %s", username)
-		k := Key("tat", "users", username, ktype)
-		keys, _ := Client().SMembers(k).Result()
-		if len(keys) > 0 {
-			log.Debugf("Clean cache on %d keys %s", len(keys), keys)
-			Client().Del(keys...)
-			removeSomeMembers(key, append(keys, k)...)
-			removeSomeMembers(k, keys...)
-		}
-	}
+// CleanTopicByName cleans cache for a topic
+func CleanTopicByName(topicName string) {
+	// TODO To improve to remove only key with topic in arg
+	cleanAllByType(Key(TatTopicsKeys()...))
 }
 
 // CleanAllTopicsLists cleans all keys
@@ -39,29 +33,15 @@ func cleanTopicsListsForUsernames(key, ktype string, usernames ...string) {
 func CleanAllTopicsLists() {
 	log.Debugf("Cache CleanAllTopicsLists")
 	cleanAllByType(Key(TatTopicsKeys()...))
-	cleanAllByType(Key(TatMessagesKeys()...))
+	//cleanAllByType(Key(TatMessagesKeys()...))
 }
 
 // CleanAllGroups cleans all keys
 // tat:users:*:groups
 // tat:users:*:groups:*
 func CleanAllGroups() {
-	log.Debugf("Cache CleanAllTopics")
+	log.Debugf("Cache CleanAllGroups")
 	cleanAllByType(Key(TatGroupsKeys()...))
-}
-
-// CleanTopicsList cleans all keys for a username and topics
-// tat:users:<username>:topics
-// tat:users:<username>:topics:*
-func CleanTopicsList(usernames ...string) {
-	cleanTopicsListsForUsernames(Key(TatTopicsKeys()...), "topics", usernames...)
-}
-
-// CleanGroups cleans all keys for a username and groups
-// tat:users:<username>:groups
-// tat:users:<username>:groups:*
-func CleanGroups(usernames ...string) {
-	cleanTopicsListsForUsernames(Key(TatGroupsKeys()...), "groups", usernames...)
 }
 
 // CleanUsernames cleans tat:users:<username>

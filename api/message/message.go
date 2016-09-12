@@ -937,7 +937,7 @@ func AddLabel(message *tat.Message, topic tat.Topic, label string, color string)
 func RemoveLabel(message *tat.Message, label string, topic tat.Topic) error {
 	idxLabel, l, err := message.GetLabel(label)
 	if err != nil {
-		log.Infof("Remove Label is not possible, %s is not a label of this message", label)
+		log.Debugf("Remove Label is not possible, %s is not a label of this message", label)
 		return nil
 	}
 
@@ -1116,23 +1116,10 @@ func addOrRemoveFromTasks(message *tat.Message, action string, user tat.User, to
 	text := "Take this thread into my tasks"
 	if action == "pull" {
 		text = "Remove this thread from my tasks"
-
-		nDoing := 0
-		for _, cur := range message.Labels {
-			if strings.HasPrefix(cur.Text, "doing:") {
-				nDoing++
-			}
-			if cur.Text == "doing:"+user.Username {
-				RemoveLabel(message, "doing:"+user.Username, topic)
-			} else if cur.Text == "done:"+user.Username {
-				RemoveLabel(message, "done:"+user.Username, topic)
-			} else if cur.Text == "done" {
-				RemoveLabel(message, "done", topic)
-			}
-		}
-		if nDoing >= 1 {
-			RemoveLabel(message, "doing", topic)
-		}
+		RemoveLabel(message, "doing:"+user.Username, topic)
+		RemoveLabel(message, "done:"+user.Username, topic)
+		RemoveLabel(message, "done", topic)
+		RemoveLabel(message, "doing", topic)
 	} else { // push
 		if !message.ContainsLabel("doing") {
 			AddLabel(message, topic, "doing", "#5484ed")
@@ -1140,12 +1127,9 @@ func addOrRemoveFromTasks(message *tat.Message, action string, user tat.User, to
 		if !message.ContainsLabel("doing:" + user.Username) {
 			AddLabel(message, topic, "doing:"+user.Username, "#5484ed")
 		}
-		if message.ContainsLabel("open") {
-			RemoveLabel(message, "open", topic)
-		}
-		if message.ContainsLabel("done") {
-			RemoveLabel(message, "done", topic)
-		}
+		RemoveLabel(message, "open", topic)
+		RemoveLabel(message, "done", topic)
+		RemoveLabel(message, "done:"+user.Username, topic)
 	}
 
 	return Insert(msgReply, user, topic, text, idRoot, -1, nil, nil, false, nil)

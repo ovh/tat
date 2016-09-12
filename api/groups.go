@@ -223,6 +223,7 @@ func (g *GroupsController) AddUser(ctx *gin.Context) {
 	}
 
 	if err := groupDB.AddUser(&group, getCtxUsername(ctx), paramJSON.Username); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error while add user to group: %s", err)})
 		return
 	}
 	ctx.JSON(http.StatusCreated, "")
