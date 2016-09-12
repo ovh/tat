@@ -39,6 +39,9 @@ func (c *LocalCache) Expire(key string, expiration time.Duration) *redis.BoolCmd
 func (c *LocalCache) ExpireAt(key string, tm time.Time) *redis.BoolCmd {
 	return redis.NewBoolResult(false, nil)
 }
+func (c *LocalCache) FlushDb() *redis.StatusCmd {
+	return redis.NewStatusResult("OK", nil)
+}
 func (c *LocalCache) Get(key string) *redis.StringCmd {
 	return redis.NewStringResult([]byte{}, nil)
 }

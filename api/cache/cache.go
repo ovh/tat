@@ -40,6 +40,8 @@ func Client() Cache {
 			Password: redisPassword,
 		}
 		instance = redis.NewClusterClient(opts)
+		log.Infof("FlushDB on Redis")
+		instance.FlushDb()
 		goto testInstance
 	}
 
@@ -51,6 +53,8 @@ func Client() Cache {
 			Password: redisPassword,
 		}
 		instance = redis.NewClient(opts)
+		log.Infof("FlushDB on Redis")
+		instance.FlushDb()
 		goto testInstance
 	}
 
@@ -63,6 +67,8 @@ func Client() Cache {
 			SentinelAddrs: redisSentinelsArray,
 		}
 		instance = redis.NewFailoverClient(opts)
+		log.Infof("FlushDB on Redis")
+		instance.FlushDb()
 		goto testInstance
 	}
 

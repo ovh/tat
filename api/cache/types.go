@@ -18,6 +18,7 @@ type Cache interface {
 	Exists(key string) *redis.BoolCmd
 	Expire(key string, expiration time.Duration) *redis.BoolCmd
 	ExpireAt(key string, tm time.Time) *redis.BoolCmd
+	FlushDb() *redis.StatusCmd
 	Get(key string) *redis.StringCmd
 	GetBit(key string, offset int64) *redis.IntCmd
 	GetRange(key string, start, end int64) *redis.StringCmd
