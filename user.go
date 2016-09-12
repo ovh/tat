@@ -157,7 +157,7 @@ func (c *Client) UserList(criteria *UserCriteria) (*UsersJSON, error) {
 	v.Set("dateMinCreation", criteria.DateMinCreation)
 	v.Set("dateMaxCreation", criteria.DateMaxCreation)
 
-	path := fmt.Sprintf("/users?skip=%d&limit=%d%s", criteria.Skip, criteria.Limit, v.Encode())
+	path := fmt.Sprintf("/users?%s", v.Encode())
 
 	body, err := c.reqWant(http.MethodGet, 200, path, nil)
 	if err != nil {
