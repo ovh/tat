@@ -651,8 +651,41 @@ func (m *MessageCriteria) GetURL() string {
 	return v.Encode()
 }
 
+//MessageCount count messages on a topic according to criterias
+func (c *Client) MessageCount(topic string, criteria *MessageCriteria) (*MessagesCountJSON, error) {
+
+	criteria.OnlyCount = "true"
+	body, err := c.messagesList(topic, criteria)
+	if err != nil {
+		return nil, err
+	}
+
+	var messages = MessagesCountJSON{}
+	if err := json.Unmarshal(body, &messages); err != nil {
+		ErrorLogFunc("Error getting messages list: %s", err)
+		return nil, err
+	}
+
+	return &messages, nil
+}
+
 //MessageList lists messages on a topic according to criterias
 func (c *Client) MessageList(topic string, criteria *MessageCriteria) (*MessagesJSON, error) {
+
+	body, err := c.messagesList(topic, criteria)
+	if err != nil {
+		return nil, err
+	}
+	var messages = MessagesJSON{}
+	if err := json.Unmarshal(body, &messages); err != nil {
+		ErrorLogFunc("Error getting messages list: %s", err)
+		return nil, err
+	}
+
+	return &messages, nil
+}
+
+func (c *Client) messagesList(topic string, criteria *MessageCriteria) ([]byte, error) {
 	if criteria == nil {
 		criteria = &MessageCriteria{
 			Skip:  0,
@@ -671,13 +704,7 @@ func (c *Client) MessageList(topic string, criteria *MessageCriteria) (*Messages
 	}
 
 	DebugLogFunc("MessageList>>> Messages List Reponse: %s", string(body))
-	var messages = MessagesJSON{}
-	if err := json.Unmarshal(body, &messages); err != nil {
-		ErrorLogFunc("Error getting messages list: %s", err)
-		return nil, err
-	}
-
-	return &messages, nil
+	return body, err
 }
 
 // GetLabel returns label, and position if message contains label

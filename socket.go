@@ -1,6 +1,7 @@
 package tat
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -54,4 +55,29 @@ type Socket struct {
 	Username   string
 	Instance   string
 	MutexWrite *sync.Mutex
+}
+
+// SocketDump returns current sockets
+func (c *Client) SocketDump() ([]byte, error) {
+	return c.simpleGetAndGetBytes("/sockets/dump")
+}
+
+// SocketMessages TODO
+func (c *Client) SocketMessages() error {
+	return fmt.Errorf("NOT YET IMPLEMENTED IN SDK")
+}
+
+// SocketMessagesNew TODO
+func (c *Client) SocketMessagesNew() error {
+	return fmt.Errorf("NOT YET IMPLEMENTED IN SDK")
+}
+
+// SocketInteractive TODO
+func (c *Client) SocketInteractive() error {
+	return fmt.Errorf("NOT YET IMPLEMENTED IN SDK")
+}
+
+// SocketUsers TODO
+func (c *Client) SocketUsers() error {
+	return fmt.Errorf("NOT YET IMPLEMENTED IN SDK")
 }
