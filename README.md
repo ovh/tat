@@ -1381,11 +1381,17 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/stats/db/slowestQueries
 ```
 
+## System
 ### Capabilities
 
 Return `websocket-enabled` and `username-from-email` parameters. See Tat Flags below.
 ```
 curl -XGET https://<tatHostname>:<tatPort>/capabilities
+```
+
+### Flush Cache
+```
+curl -XGET https://<tatHostname>:<tatPort>/system/cache/clean
 ```
 
 # RUN

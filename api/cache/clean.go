@@ -6,10 +6,24 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-/*
-func FlusAll() {
-
-}*/
+// FlushDB flush cache
+func FlushDB() (string, error) {
+	r := instance.FlushDb()
+	if r != nil && r.Err() != nil {
+		log.Warnf("Error while flushing Cache: %s", r.Err().Error())
+		return "", r.Err()
+	}
+	re, err := r.Result()
+	out := ""
+	if err != nil {
+		log.Warnf("Error while flushing Cache, result: %s", err)
+	} else {
+		log.Infof("Cache Redis Cleaned: %s", re)
+		needToFlush = false
+		out = re
+	}
+	return out, err
+}
 
 // cleanAllByType cleans all keys
 func cleanAllByType(key string) {
@@ -33,7 +47,6 @@ func CleanTopicByName(topicName string) {
 func CleanAllTopicsLists() {
 	log.Debugf("Cache CleanAllTopicsLists")
 	cleanAllByType(Key(TatTopicsKeys()...))
-	//cleanAllByType(Key(TatMessagesKeys()...))
 }
 
 // CleanAllGroups cleans all keys

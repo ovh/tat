@@ -220,23 +220,19 @@ func IsGroupnameExists(groupname string) bool {
 }
 
 func actionOnSet(group *tat.Group, operand, set, groupname, admin, history string) error {
-	log.Warnf("======> INIT")
 	err := store.Tat().CGroups.Update(
 		bson.M{"_id": group.ID},
 		bson.M{operand: bson.M{set: groupname}},
 	)
 	if err != nil {
-		log.Warnf("======> ERR")
 		return err
 	}
-	log.Warnf("======> CLEAN")
 	cache.CleanAllGroups()
 	return addToHistory(group, admin, history+" "+groupname)
 }
 
 // AddUser add a user to given group
 func AddUser(group *tat.Group, admin string, username string) error {
-	log.Warnf("======> AddUser")
 	return actionOnSet(group, "$addToSet", "users", username, admin, "add")
 }
 

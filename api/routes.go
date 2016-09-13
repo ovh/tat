@@ -128,8 +128,12 @@ func initRoutesStats(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 func initRoutesSystem(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	systemCtrl := &SystemController{}
 	router.GET("/version", systemCtrl.GetVersion)
-
 	router.GET("/capabilities", systemCtrl.GetCapabilites)
+	admin := router.Group("/system")
+	admin.Use(checkPassword, CheckAdmin())
+	{
+		admin.GET("/cache/clean", systemCtrl.CleanCache)
+	}
 }
 
 // initRoutesTopics initialized routes for Topics Controller
