@@ -41,7 +41,7 @@ type httpClient interface {
 var HTTPClient httpClient
 
 // DebugLogFunc is a function that logs the provided message with optional fmt.Sprintf-style arguments. By default, logs to the default log.Logger.
-var DebugLogFunc func(string, ...interface{})
+var DebugLogFunc = log.Printf //func(string, ...interface{})
 
 // ErrorLogFunc is a function that logs the provided message with optional fmt.Sprintf-style arguments. By default, logs to the default log.Logger.
 var ErrorLogFunc = log.Printf
