@@ -6,22 +6,29 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
+// Info returns informations on cache
+func Info() (string, error) {
+	out, err := instance.Info().Result()
+	if err != nil {
+		log.Warnf("Error while flushing Cache: %s", err)
+		return "", err
+	}
+
+	log.Infof("Cache Redis Cleaned: %s", out)
+	needToFlush = false
+	return out, err
+}
+
 // FlushDB flush cache
 func FlushDB() (string, error) {
-	r := instance.FlushDb()
-	if r != nil && r.Err() != nil {
-		log.Warnf("Error while flushing Cache: %s", r.Err().Error())
-		return "", r.Err()
-	}
-	re, err := r.Result()
-	out := ""
+	out, err := instance.FlushDb().Result()
 	if err != nil {
-		log.Warnf("Error while flushing Cache, result: %s", err)
-	} else {
-		log.Infof("Cache Redis Cleaned: %s", re)
-		needToFlush = false
-		out = re
+		log.Warnf("Error while flushing Cache: %s", err)
+		return "", err
 	}
+
+	log.Infof("Cache Redis Cleaned: %s", out)
+	needToFlush = false
 	return out, err
 }
 

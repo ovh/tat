@@ -25,8 +25,18 @@ func (*SystemController) GetCapabilites(ctx *gin.Context) {
 	})
 }
 
+// CleanCache cleans cache...
 func (*SystemController) CleanCache(ctx *gin.Context) {
 	out, err := cache.FlushDB()
+	ctx.JSON(http.StatusOK, gin.H{
+		"output": out,
+		"error":  err,
+	})
+}
+
+// CleanInfo returns INFO cmd on redis
+func (*SystemController) CleanInfo(ctx *gin.Context) {
+	out, err := cache.Info()
 	ctx.JSON(http.StatusOK, gin.H{
 		"output": out,
 		"error":  err,

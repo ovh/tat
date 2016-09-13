@@ -1394,6 +1394,11 @@ curl -XGET https://<tatHostname>:<tatPort>/capabilities
 curl -XGET https://<tatHostname>:<tatPort>/system/cache/clean
 ```
 
+### Cache Info
+```
+curl -XGET https://<tatHostname>:<tatPort>/system/cache/info
+```
+
 # RUN
 
 ## Tat Flags Options

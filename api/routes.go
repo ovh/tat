@@ -133,6 +133,7 @@ func initRoutesSystem(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	admin.Use(checkPassword, CheckAdmin())
 	{
 		admin.GET("/cache/clean", systemCtrl.CleanCache)
+		admin.GET("/cache/info", systemCtrl.CleanInfo)
 	}
 }
 
