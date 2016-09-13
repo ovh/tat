@@ -316,13 +316,23 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 		return []tat.Message{}, errc
 	}
 
-	messages, isInCache, err := messageListFromCache(criteria, &topic)
-	if err != nil {
-		log.Errorf("Error while Find All Messages %s from cache", err)
-	}
+	var messages []tat.Message
+	var err error
+	var tocache bool
+	if criteria.TreeView == tat.TreeViewOneTree || criteria.TreeView == tat.TreeViewFullTree {
+		// skip cache
+		tocache = false
+	} else {
+		var isInCache bool
+		tocache = true
+		messages, isInCache, err = messageListFromCache(criteria, &topic)
+		if err != nil {
+			log.Errorf("Error while Find All Messages %s from cache", err)
+		}
 
-	if isInCache {
-		return messages, err
+		if isInCache {
+			return messages, err
+		}
 	}
 
 	err = store.GetCMessages(topic.Collection).Find(c).
@@ -337,7 +347,9 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 
 	if len(messages) == 0 {
 		// cache no msg for this request
-		cacheMessageList(criteria, &topic, messages)
+		if tocache {
+			cacheMessageList(criteria, &topic, messages)
+		}
 		return messages, nil
 	}
 
@@ -361,7 +373,9 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 		return filterNbReplies(messages, criteria)
 	}
 
-	cacheMessageList(criteria, &topic, messages)
+	if tocache {
+		cacheMessageList(criteria, &topic, messages)
+	}
 	return messages, err
 }
 
