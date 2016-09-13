@@ -893,9 +893,13 @@ func Delete(message *tat.Message, cascade bool, topic tat.Topic) error {
 
 	if cascade {
 		_, err := store.GetCMessages(topic.Collection).RemoveAll(bson.M{"$or": []bson.M{{"_id": message.ID}, {"inReplyOfIDRoot": message.ID}}})
+		//Clean the cache for this topic
+		cache.CleanMessagesLists(topic.Topic)
 		return err
 	}
 	if err := store.GetCMessages(topic.Collection).Remove(bson.M{"_id": message.ID}); err != nil {
+		//Clean the cache for this topic
+		cache.CleanMessagesLists(topic.Topic)
 		return err
 	}
 	//Clean the cache for this topic
