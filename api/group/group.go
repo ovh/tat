@@ -149,14 +149,17 @@ func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int,
 	if criteria.Name == "" {
 		selectedFields = bson.M{"name": 1, "description": 1}
 	}
-	err = cursor.Select(selectedFields).
-		Sort("name").
-		Skip(criteria.Skip).
-		Limit(criteria.Limit).
-		All(&groups)
 
-	if err != nil {
-		log.Errorf("Error while Find All Groups %s", err)
+	q := cursor.Select(selectedFields).
+		Sort("name").
+		Skip(criteria.Skip)
+
+	if criteria.Limit > 0 {
+		q.Limit(criteria.Limit)
+	}
+
+	if errq := q.All(&groups); errq != nil {
+		log.Errorf("Error while Find All Groups %s", errq)
 	}
 
 	cache.Client().Set(kcount, count, time.Hour)
@@ -345,7 +348,6 @@ func GetGroups(username string) ([]tat.Group, error) {
 	c := &tat.GroupCriteria{
 		UserUsername: username,
 		Skip:         0,
-		Limit:        1,
 	}
 	_, groups, err := ListGroups(c, nil, true)
 	if err != nil {
