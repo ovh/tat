@@ -84,7 +84,7 @@ curl -XPOST \
 
 You can add labels from the creation
 
-```
+```bash
 curl -XPOST \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -95,7 +95,7 @@ curl -XPOST \
 
 You can add replies from the creation
 
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: username" \
@@ -118,7 +118,7 @@ curl -XPOST \
 Return HTTP 201 if OK
 
 ### Reply to a message
-```
+```bash
 curl -XPOST \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -128,7 +128,7 @@ curl -XPOST \
 ```
 
 ### Like a message
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -138,7 +138,7 @@ curl -XPUT \
 ```
 
 ### Unlike a message
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -150,7 +150,7 @@ curl -XPUT \
 ### Add a label to a message
 *option* is the background color of the label.
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -161,7 +161,7 @@ curl -XPUT \
 
 ### Remove a label from a message
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -172,7 +172,7 @@ curl -XPUT \
 
 ### Remove all labels and add new ones
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -185,7 +185,7 @@ Return HTTP 201 if OK
 
 ### Remove some labels and add new ones
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -196,7 +196,7 @@ curl -XPUT \
 
 ### Update a message
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -207,7 +207,7 @@ curl -XPUT \
 
 ### Concat a message : adding additional text to one message
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -218,7 +218,7 @@ curl -XPUT \
 
 ### Move a message to another topic
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -228,7 +228,7 @@ curl -XPUT \
 ```
 
 ### Delete a message
-```
+```bash
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
@@ -236,7 +236,7 @@ curl -XDELETE \
 ```
 
 ### Delete a message and its replies
-```
+```bash
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
@@ -244,7 +244,7 @@ curl -XDELETE \
 ```
 
 ### Delete a message and its replies, even if it's in Tasks Topic of one user
-```
+```bash
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
@@ -252,7 +252,7 @@ curl -XDELETE \
 ```
 
 ### Delete a list of messages
-```
+```bash
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
@@ -262,7 +262,7 @@ curl -XDELETE \
 see https://github.com/ovh/tat#parameters for all parameters
 
 ### Delete a list of messages and its replies
-```
+```bash
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
@@ -272,7 +272,7 @@ curl -XDELETE \
 see https://github.com/ovh/tat#parameters for all parameters
 
 ### Delete a list of messages and its replies, even if it's a reply or it's in Tasks Topic of one user
-```
+```bash
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
@@ -284,7 +284,7 @@ see https://github.com/ovh/tat#parameters for all parameters
 ### Create a task from a message
 Add a message to topic: `/Private/username/Tasks`.
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -296,7 +296,7 @@ curl -XPUT \
 ### Remove a message from tasks
 Remove a message from the topic: /Private/username/Tasks
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -307,7 +307,7 @@ curl -XPUT \
 
 ### Vote UP a message
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -318,7 +318,7 @@ curl -XPUT \
 
 ### Remove a Vote UP from a message
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -329,7 +329,7 @@ curl -XPUT \
 
 ### Vote Down a message
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -340,7 +340,7 @@ curl -XPUT \
 
 ### Remove Vote Down from a message
 
-```
+```bash
 curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -394,7 +394,7 @@ curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit
 * `onlyCount`: only count messages, without retrieve msg. limit, skip and treeview criterias are ignored
 
 #### Examples
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/messages/topicA?skip=0&limit=100 | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/messages/topicA/subTopic?skip=0&limit=100&dateMinCreation=1405544146&dateMaxCreation=1405544146 | python -m json.tool
 ```
@@ -410,7 +410,7 @@ Flag `canWriteNotifications` allows (or not if false) the `system user` to write
 
 Flag `canListUsersAsAdmin` allows this `system user` to view all user's fields (email, etc...)
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
@@ -422,7 +422,7 @@ curl -XPUT \
 ### Update flags on system user
 Only for Tat Admin.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
@@ -436,7 +436,7 @@ Only for Tat Admin.
 A `system user` must have a username starting with `tat.system`.
 This action returns a new password for this user.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
@@ -449,7 +449,7 @@ curl -XPUT \
 ### Grant a user to an admin user
 Only for Tat Admin: convert a `normal user` to an `admin user`.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
@@ -461,7 +461,7 @@ curl -XPUT \
 ### Rename a username
 Only for Tat Admin: rename the username of a user. This action updates all Private topics of the user.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
@@ -473,7 +473,7 @@ curl -XPUT \
 ### Update fullname or email
 Only for Tat Admin: update fullname and email of a user.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
@@ -485,7 +485,7 @@ curl -XPUT \
 ### Archive a user
 Only for Tat Admin
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
@@ -497,7 +497,7 @@ curl -XPUT \
 ### Check Private Topics and Default Group on one user
 Only for Tat Admin
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
@@ -510,7 +510,7 @@ curl -XPUT \
 ### Add presence
 Status could be: `online`, `offline`, `busy`.
 
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: username" \
@@ -520,7 +520,7 @@ curl -XPOST \
 ```
 
 ### Getting Presences
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
@@ -537,7 +537,7 @@ curl -XGET https://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<
 
 
 #### Examples
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/presences/topicA?skip=0&limit=100 | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/presences/topicA/subTopic?skip=0&limit=100&dateMinPresence=1405544146&dateMaxPresence=1405544146 | python -m json.tool
 ```
@@ -546,7 +546,7 @@ curl -XGET https://<tatHostname>:<tatPort>/presences/topicA/subTopic?skip=0&limi
 Admin can delete presences a another user on one topic.
 Users can delete their own presence.
 
-```
+```bash
 curl -XDELETE \
     -H "Content-Type: application/json" \
     -H "Tat_username: username" \
@@ -565,7 +565,7 @@ First user created is an administrator.
 ### Create a User
 Return a mail to user, with instruction to validate his account.
 
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -d '{"username": "userA", "fullname": "User AA", "email": "usera@foo.net", "callback": " Click on:scheme://:host:port/user/verify/:token to validate your account"}' \
@@ -585,7 +585,7 @@ Available fields (automatically filled by Tat ):
 
 
 ### Verify a User
-```
+```bash
 curl -XGET \
     https://<tatHostname>:<tatPort>/user/verify/yourUsername/tokenVerifyReceivedByMail
 ```
@@ -594,7 +594,7 @@ This url can be called only once per password and expired 30 minutes after query
 ### Ask for reset a password
 Returns: tokenVerify by email
 
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -d '{"username": "userA", "email": "usera@foo.net"}' \
@@ -602,7 +602,7 @@ curl -XPOST \
 ```
 
 ### Get information about current User
-```
+```bash
 curl -XGET \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
@@ -617,7 +617,7 @@ Retrieves contacts presences since n seconds
 
 Example since 15 seconds :
 
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
@@ -626,7 +626,7 @@ curl -XPOST \
 ```
 
 ### Add a contact
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
@@ -635,7 +635,7 @@ curl -XPOST \
 ```
 
 ### Remove a contact
-```
+```bash
 curl -XDELETE \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
@@ -645,7 +645,7 @@ curl -XDELETE \
 
 
 ### Add a favorite topic
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA \
@@ -654,7 +654,7 @@ curl -XPOST \
 ```
 
 ### Remove a favorite topic
-```
+```bash
 curl -XDELETE \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
@@ -663,7 +663,7 @@ curl -XDELETE \
 ```
 
 ### Enable notifications on one topic
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA \
@@ -672,7 +672,7 @@ curl -XPOST \
 ```
 
 ### Disable notifications on one topic
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
@@ -681,7 +681,7 @@ curl -XPOST \
 ```
 
 ### Enable notifications on all topics
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA \
@@ -690,7 +690,7 @@ curl -XPOST \
 ```
 
 ### Disable notifications on all topics, except /Private/*
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
@@ -699,7 +699,7 @@ curl -XPOST \
 ```
 
 ### Add a favorite tag
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
@@ -708,7 +708,7 @@ curl -XPOST \
 ```
 
 ### Remove a favorite tag
-```
+```bash
 curl -XDELETE \
     -H "Content-Type: application/json" \
     -H "Tat_username: userA" \
@@ -738,7 +738,7 @@ curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&withG
 
 
 #### Example
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/users?skip=0&limit=100 | python -m json.tool
 ```
 
@@ -747,7 +747,7 @@ curl -XGET https://<tatHostname>:<tatPort>/users?skip=0&limit=100 | python -m js
 
 Only for Tat Admin
 
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -760,7 +760,7 @@ curl -XPOST \
 
 Only for Tat Admin
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -771,7 +771,7 @@ curl -XPUT \
 
 ### Getting groups List
 
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/groups?skip=<skip>&limit=<limit> | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/groups?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
@@ -790,7 +790,7 @@ curl -XGET https://<tatHostname>:<tatPort>/groups?skip=<skip>&limit=<limit>&argN
 
 Only for Tat Admin
 
-```
+```bash
 curl -XDELETE \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -799,7 +799,7 @@ curl -XDELETE \
 ```
 
 ### Add a user to a group
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -809,7 +809,7 @@ curl -XPUT \
 ```
 
 ### Delete a user from a group
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -820,7 +820,7 @@ curl -XPUT \
 
 
 ### Add an admin user to a group
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -830,7 +830,7 @@ curl -XPUT \
 ```
 
 ### Delete an admin user from a group
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -850,7 +850,7 @@ Rules:
 * User can create topics if he is an admin on the Parent Topic or belong to an admin group on the Parent topic.
 Example:  Create /AAA/BBB: Parent Topic is /AAA
 
-```
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -860,7 +860,7 @@ curl -XPOST \
 ```
 
 ### Delete a topic
-```
+```bash
 curl -XDELETE \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -872,7 +872,7 @@ curl -XDELETE \
 
 Only for Tat Admin and administrators on topic.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -891,7 +891,7 @@ One entry in "tags" attribute per text of tag.
 Topic's tags are showed with :
 GET https://<tatHostname>:<tatPort>/topic/topicName
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -912,7 +912,7 @@ One entry in "labels" attribute per text & color of label.
 Topic's labels are showed with :
 GET https://<tatHostname>:<tatPort>/topic/topicName
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -927,7 +927,7 @@ Example of usage of labels attribute: label autocompletion on UI when adding new
 
 Only for Tat Admin.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -939,7 +939,7 @@ curl -XPUT \
 
 Only for Tat Admin.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -951,7 +951,7 @@ curl -XPUT \
 
 Only for Tat Admin and for attributes isAutoComputeTags and isAutoComputeLabels.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -967,7 +967,7 @@ Only for Tat Admin and administrators on topic.
 
 Truncate "tags" attribute on topic.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -982,7 +982,7 @@ Only for Tat Admin and administrators on topic.
 
 Truncate "labels" attribute on topic.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -992,7 +992,7 @@ curl -XPUT \
 ```
 
 ### Getting one Topic
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/topic/topicName | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/topic/topicName/subTopic | python -m json.tool
 ```
@@ -1018,7 +1018,7 @@ curl -XGET https://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit>&argN
 
 
 #### Example
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/topics?skip=0&limit=100 | python -m json.tool
 ```
 
@@ -1026,7 +1026,7 @@ curl -XGET https://<tatHostname>:<tatPort>/topics?skip=0&limit=100 | python -m j
 
 For admin of topic or on `/Private/username/*`
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1036,7 +1036,7 @@ curl -XPUT \
 ```
 
 ### Remove a parameter to a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1046,7 +1046,7 @@ curl -XPUT \
 ```
 
 ### Add a read only user to a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1056,7 +1056,7 @@ curl -XPUT \
 ```
 
 ### Add a read write user to a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1066,7 +1066,7 @@ curl -XPUT \
 ```
 
 ### Add an admin user to a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1076,7 +1076,7 @@ curl -XPUT \
 ```
 
 ### Delete a read only user from a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1086,7 +1086,7 @@ curl -XPUT \
 ```
 
 ### Delete a read write user from a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1096,7 +1096,7 @@ curl -XPUT \
 ```
 
 ### Delete an admin user from a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1106,7 +1106,7 @@ curl -XPUT \
 ```
 
 ### Add a read only group to a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1116,7 +1116,7 @@ curl -XPUT \
 ```
 
 ### Add a read write group to a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1126,7 +1126,7 @@ curl -XPUT \
 ```
 
 ### Add an admin group to a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1137,7 +1137,7 @@ curl -XPUT \
 
 
 ### Delete a read only group from a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1147,7 +1147,7 @@ curl -XPUT \
 ```
 
 ### Delete a read write group from a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1157,7 +1157,7 @@ curl -XPUT \
 ```
 
 ### Delete an admin group from a topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1168,7 +1168,7 @@ curl -XPUT \
 
 
 ### Update param on one topic: admin or admin on topic
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1181,7 +1181,7 @@ Parameters key is optional.
 
 Example with key parameters :
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1267,7 +1267,7 @@ c.send(JSON.stringify({"action": "unsubscribeUsers"}))
 
 ### Dump current websocket variables (activeUsers, activeTopic, etc). Admin only.
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1278,7 +1278,7 @@ curl -XPUT \
 ## System
 ### Version
 
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/version
 ```
 
@@ -1289,7 +1289,7 @@ For Tat admin only.
 
 ### Count
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1301,7 +1301,7 @@ curl -XPUT \
 
 Info about current instance of engine
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1311,7 +1311,7 @@ curl -XPUT \
 
 ### Distribution
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1321,7 +1321,7 @@ curl -XPUT \
 
 ### DB Stats
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1331,7 +1331,7 @@ curl -XPUT \
 
 ### DB ServerStatus
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1341,7 +1341,7 @@ curl -XPUT \
 
 ### DB Replica Set Status
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1351,7 +1351,7 @@ curl -XPUT \
 
 ### DB Replica Set Config
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1363,7 +1363,7 @@ curl -XPUT \
 
 ### DB Stats of each collections
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1373,7 +1373,7 @@ curl -XPUT \
 
 ### DB Stats slowest Queries
 
-```
+```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: admin" \
@@ -1385,17 +1385,17 @@ curl -XPUT \
 ### Capabilities
 
 Return `websocket-enabled` and `username-from-email` parameters. See Tat Flags below.
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/capabilities
 ```
 
 ### Flush Cache
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/system/cache/clean
 ```
 
 ### Cache Info
-```
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/system/cache/info
 ```
 
@@ -1439,7 +1439,7 @@ Flags:
 ```
 
 ## Run with Docker
-```
+```bash
 git clone https://github.com/ovh/tat.git && cd tat
 docker run --name tat-mongo -d -v /home/yourhome/data:/data/db mongo
 docker build -t tat .
@@ -1458,13 +1458,13 @@ docker run -it --rm --name tat-instance1 --link tat-mongo:mongodb \
 
 ## Dev RUN
 
-```
+```bash
 cd cd $GOPATH/src/github.com/ovh/tat/api && go build && ./api --no-smtp=true --help
 ```
 
 If you want to create a user with tatcli:
 
-```
+```bash
 tatcli --url="https://localhost:8080" user add yourUsername firstname.lastname@ovh.net Firstname Lastname
 ```
 
@@ -1477,11 +1477,11 @@ tatcli --url="https://localhost:8080" user add yourUsername firstname.lastname@o
 * TAT_DB_PASSWORD
 
 Example:
-```
+```bash
 export TAT_LISTEN_PORT=8181 && ./tat
 ```
 is same than
-```
+```bash
 ./tat --listen-port="8181"
 ```
 
@@ -1494,7 +1494,7 @@ See https://godoc.org/github.com/ovh/tat#Client
 
 ## Example - Minimal
 
-```
+```go
 package main
 
 import (
@@ -1559,7 +1559,7 @@ func main() {
 
 ## Example - Full, with viper, cobra and tatcli config file
 
-```
+```go
 package main
 
 /*
