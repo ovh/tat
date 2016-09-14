@@ -489,7 +489,7 @@ func (c *Client) MessageUnVoteDown(topic, idMessage string) (*MessageJSONOut, er
 }
 
 // MessageLabel add a label to a message
-func (c *Client) MessageLabel(topic, idMessage string, labels []Label) (*MessageJSONOut, error) {
+func (c *Client) MessageLabel(topic, idMessage string, label Label) (*MessageJSONOut, error) {
 	if c == nil {
 		return nil, ErrClientNotInitiliazed
 	}
@@ -497,7 +497,8 @@ func (c *Client) MessageLabel(topic, idMessage string, labels []Label) (*Message
 	message := MessageJSON{
 		Topic:       topic,
 		IDReference: idMessage,
-		Labels:      labels,
+		Text:        label.Text,
+		Option:      label.Color,
 		Action:      MessageActionLabel,
 	}
 	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
