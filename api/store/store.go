@@ -73,6 +73,9 @@ func NewStore() error {
 
 	session.Refresh()
 	session.SetMode(mgo.SecondaryPreferred, true)
+	if viper.GetInt("db_ensure_safe_db_write") > 0 {
+		session.EnsureSafe(&mgo.Safe{W: viper.GetInt("db_ensure_safe_db_write"), FSync: true})
+	}
 
 	if replicaSetHostnamesTags != "" && hostname != "" {
 		log.Warnf("SelectServers try selectServer for %s with values %s", hostname, replicaSetHostnamesTags)

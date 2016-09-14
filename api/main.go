@@ -221,6 +221,9 @@ func init() {
 
 	flags.String("redis-password", "", "Optional - Used for Cache - Redis password")
 	viper.BindPFlag("redis_password", flags.Lookup("redis-password"))
+
+	flags.Int("db-ensure-safe-db-write", -1, "Min # of servers to ack before write success")
+	viper.BindPFlag("db_ensure_safe_db_write", flags.Lookup("db-ensure-safe-db-write"))
 }
 
 func main() {
