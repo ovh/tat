@@ -582,8 +582,6 @@ func getTree(messagesIn map[string][]tat.Message, criteria *tat.MessageCriteria,
 
 // Insert a new message on one topic
 func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyOfID string, dateCreation float64, labels []tat.Label, replies []string, isNotificationFromMention bool, messageRoot *tat.Message) error {
-	//Clean the cache for this topic
-	cache.CleanMessagesLists(topic.Topic)
 
 	if !isNotificationFromMention {
 		notificationsTopic := fmt.Sprintf("/Private/%s/Notifications", user.Username)
@@ -707,6 +705,8 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 			Insert(&reply, user, topic, textReply, message.ID, -1, nil, nil, isNotificationFromMention, message)
 		}
 	}
+	//Clean the cache for this topic
+	cache.CleanMessagesLists(topic.Topic)
 	return nil
 }
 
@@ -1201,13 +1201,12 @@ func changeAuthorUsernameOnMessages(oldUsername, newUsername string) error {
 	}
 
 	for _, topic := range topics {
-		//Clean the cache for this topic
-		cache.CleanMessagesLists(topic.Topic)
-
 		_, err := store.GetCMessages(topic.Collection).UpdateAll(
 			bson.M{"author.username": oldUsername},
 			bson.M{"$set": bson.M{"author.username": newUsername}})
 
+		//Clean the cache for this topic
+		cache.CleanMessagesLists(topic.Topic)
 		if err != nil {
 			log.Errorf("Error while update username from %s to %s on Messages err:%s", oldUsername, newUsername, err.Error())
 			return err
@@ -1249,6 +1248,8 @@ func ChangeUsernameOnMessagesTopics(oldUsername, newUsername string) error {
 				Update(bson.M{"_id": msg.ID}, bson.M{"$set": bson.M{"topic": msg.Topic}}); errUpdate != nil {
 				log.Errorf("Error while update topic on message %s name from username %s to username %s on collection %s, err:%s", msg.ID, oldUsername, newUsername, collection, errUpdate)
 			}
+			//Clean the cache for this topic
+			cache.CleanMessagesLists(msg.Topic)
 		}
 	}
 
