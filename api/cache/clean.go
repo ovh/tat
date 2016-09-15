@@ -37,8 +37,19 @@ func cleanAllByType(key string) {
 	keys, _ := Client().SMembers(key).Result()
 	if len(keys) > 0 {
 		log.Debugf("Clean cache on %d keys %s", len(keys), keys)
-		Client().Del(keys...)
-		removeSomeMembers(key, keys...)
+		pipeline := Client().Pipeline()
+		if pipeline == nil {
+			return
+		}
+		defer pipeline.Close()
+
+		pipeline.Del(keys...)
+		removeSomeMembers(pipeline, key, keys...)
+		if _, err := pipeline.Exec(); err != nil {
+			log.Warnf("CleanMessagesLists >> Error executing pipeline: %s", err)
+			FlushDB()
+		}
+
 	}
 }
 
@@ -75,7 +86,7 @@ func CleanUsernames(usernames ...string) {
 
 // CleanMessagesLists cleans tat:messages:<topic>
 func CleanMessagesLists(topic string) {
-	key := Key(TatMessagesKeys()...)
+	key := Key(TatMessagesKeys()...)           // tat:messages:keys
 	keys, _ := Client().SMembers(key).Result() // SMEMBERS tat:messages:keys
 	members := []string{}
 	if len(keys) > 0 {
@@ -85,7 +96,20 @@ func CleanMessagesLists(topic string) {
 				members = append(members, k)
 			}
 		}
-		Client().Del(members...)
-		removeSomeMembers(key, members...)
+
+		pipeline := Client().Pipeline()
+		if pipeline == nil {
+			return
+		}
+		defer pipeline.Close()
+
+		pipeline.Del(members...).Result() // if err -> flushAll
+		removeSomeMembers(pipeline, key, members...)
+
+		if _, err := pipeline.Exec(); err != nil {
+			log.Warnf("CleanMessagesLists >> Error executing pipeline: %s", err)
+			FlushDB()
+		}
+
 	}
 }

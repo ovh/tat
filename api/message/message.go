@@ -240,6 +240,9 @@ func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]ta
 		return []tat.Message{}, false, nil
 	}
 
+	// TODO Check if keylist in is tat:messages:keys
+	// SCard
+
 	msgIDs, err := c.ZRevRange(keyList, 0, -1).Result()
 	if err != nil {
 		log.Warnf("listMessagesFromCache>>> Unable to load msg ID: %s", err)
@@ -280,10 +283,11 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 
 	defer pipeline.Close()
 
-	keyList := cache.CriteriaKey(criteria, "tat", "messages", topic.Topic, "list_messages")
+	keyList := cache.CriteriaKey(criteria, "tat", "messages", topic.Topic, "list_messages") //tat:messages:<topic>:list_messages:<criteria>
 	log.Debugf("cacheMessageList>>> Push %s in cache", keyList)
 	keyListList := cache.Key(cache.TatMessagesKeys()...) // tat:messages:keys
 	log.Debugf("cacheMessageList>>> Saving key %s in %s", keyList, keyListList)
+	// todo check si keyList n'est ps déjà present dans tat:messages:keys
 	pipeline.SAdd(keyListList, keyList)
 
 	for _, m := range messages {
