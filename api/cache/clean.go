@@ -76,18 +76,16 @@ func CleanUsernames(usernames ...string) {
 // CleanMessagesLists cleans tat:messages:<topic>
 func CleanMessagesLists(topic string) {
 	key := Key(TatMessagesKeys()...)
-	keys, _ := Client().SMembers(key).Result()
-	keysMembers := []string{}
+	keys, _ := Client().SMembers(key).Result() // SMEMBERS tat:messages:keys
 	members := []string{}
 	if len(keys) > 0 {
 		for _, k := range keys {
 			if strings.HasPrefix(k, "tat:messages:"+topic) {
 				log.Debugf("Clean cache on %s", k)
-				keysMembers = append(keysMembers, k)
 				members = append(members, k)
 			}
 		}
-		Client().Del(keysMembers...)
+		Client().Del(members...)
 		removeSomeMembers(key, members...)
 	}
 }

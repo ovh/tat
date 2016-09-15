@@ -282,7 +282,7 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 
 	keyList := cache.CriteriaKey(criteria, "tat", "messages", topic.Topic, "list_messages")
 	log.Debugf("cacheMessageList>>> Push %s in cache", keyList)
-	keyListList := cache.Key(cache.TatMessagesKeys()...)
+	keyListList := cache.Key(cache.TatMessagesKeys()...) // tat:messages:keys
 	log.Debugf("cacheMessageList>>> Saving key %s in %s", keyList, keyListList)
 	pipeline.SAdd(keyListList, keyList)
 
@@ -335,13 +335,17 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 		}
 	}
 
+	if criteria.Limit > 400 {
+		log.Warnf("ListMessages >> criteriaLimitWarn >> criteria with limit more than 400, username:%s topic:%s criteria:%s", username, topic.Topic, criteria.GetURL())
+	}
+
 	err = store.GetCMessages(topic.Collection).Find(c).
 		Sort("-dateCreation").
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
 		All(&messages)
 	if err != nil {
-		log.Errorf("Error while Find All Messages %s", err)
+		log.Errorf("Error while Find All Messages by username:%s with criterias:%s on topic:%s, err:%s", username, criteria.GetURL(), topic.Topic, err)
 		return messages, err
 	}
 
@@ -356,7 +360,7 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 	if criteria.TreeView == tat.TreeViewOneTree || criteria.TreeView == tat.TreeViewFullTree {
 		messages, err = initTree(messages, criteria, username, topic)
 		if err != nil {
-			log.Errorf("Error while Find All Messages (getTree) %s", err)
+			log.Errorf("Error while Find All Messages (getTree) by username:%s with criterias:%s on topic:%s, err:%s", username, criteria.GetURL(), topic.Topic, err)
 		}
 	}
 	if criteria.TreeView == tat.TreeViewOneTree {
@@ -440,7 +444,7 @@ func initTree(messages []tat.Message, criteria *tat.MessageCriteria, username st
 	}
 	err := store.GetCMessages(topic.Collection).Find(cr).Sort("-dateCreation").All(&msgs)
 	if err != nil {
-		log.Errorf("Error while Find Messages in getTree %s", err)
+		log.Errorf("initTree>> Error while Find Messages in getTree by username:%s with criterias:%s on topic:%s, err:%s", username, criteria.GetURL(), topic.Topic, err)
 		return messages, err
 	}
 	return msgs, nil
@@ -450,7 +454,7 @@ func initTree(messages []tat.Message, criteria *tat.MessageCriteria, username st
 func OneTreeMessages(messages []tat.Message, nloop int, criteria *tat.MessageCriteria, username string, topic tat.Topic) ([]tat.Message, error) {
 	var tree []tat.Message
 	if nloop > 25 {
-		e := "Infinite loop detected in OneTreeMessages"
+		e := fmt.Sprintf("Infinite loop detected in OneTreeMessages by username %s and criterias:%s on topic %s", username, criteria.GetURL(), topic.Topic)
 		for i := 0; i <= len(messages)-1; i++ {
 			e += " id:" + messages[i].ID
 		}
@@ -556,7 +560,7 @@ func getTree(messagesIn map[string][]tat.Message, criteria *tat.MessageCriteria,
 		}
 		err := store.GetCMessages(topic.Collection).Find(cr).Sort("-dateCreation").All(&msgs)
 		if err != nil {
-			log.Errorf("Error while Find Messages in getTree %s", err)
+			log.Errorf("getTree >> Error while Find Messages in getTree by username %s and criterias:%s on topic %s, err:%s", username, criteria.GetURL(), topic.Topic, err)
 			return messages, err
 		}
 
