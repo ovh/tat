@@ -46,6 +46,9 @@ var DebugLogFunc = log.Printf //func(string, ...interface{})
 // ErrorLogFunc is a function that logs the provided message with optional fmt.Sprintf-style arguments. By default, logs to the default log.Logger.
 var ErrorLogFunc = log.Printf
 
+// IsDebug display request / response in ErrorLogFunc if true
+var IsDebug = false
+
 //ErrClientNotInitiliazed is a predifined Error
 var ErrClientNotInitiliazed = fmt.Errorf("Client is not initialized")
 
@@ -128,14 +131,16 @@ func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byt
 		ErrorLogFunc("Invalid response from Tat. Please Check Tat Engine")
 		return []byte{}, fmt.Errorf("Invalid response from Tat. Please Check Tat Engine")
 	}
-	if resp.StatusCode != wantCode {
+	if resp.StatusCode != wantCode || IsDebug {
+		ErrorLogFunc("Request Path:%s", requestPath)
+		ErrorLogFunc("Request Body:%s", string(jsonStr))
 		ErrorLogFunc("Response Status:%s", resp.Status)
-		ErrorLogFunc("Request path:%s", requestPath)
-		ErrorLogFunc("Request:%s", string(jsonStr))
 		ErrorLogFunc("Response Headers:%s", resp.Header)
 		body, _ := ioutil.ReadAll(resp.Body)
 		ErrorLogFunc("Response Body:%s", string(body))
-		return []byte{}, fmt.Errorf("Response code %d with Body:%s", resp.StatusCode, string(body))
+		if resp.StatusCode != wantCode {
+			return []byte{}, fmt.Errorf("Response code:%d (want:%d) with Body:%s", resp.StatusCode, wantCode, string(body))
+		}
 	}
 	DebugLogFunc("%s %s", method, requestPath)
 
