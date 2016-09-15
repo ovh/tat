@@ -700,7 +700,7 @@ func (c *Client) messagesList(topic string, criteria *MessageCriteria) ([]byte, 
 
 	body, err := c.reqWant(http.MethodGet, 200, path, nil)
 	if err != nil {
-		ErrorLogFunc("Error getting messages list: %s", err)
+		ErrorLogFunc("messagesList >> Error getting messages list: %s", err)
 		return nil, err
 	}
 

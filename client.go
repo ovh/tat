@@ -132,13 +132,17 @@ func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byt
 		return []byte{}, fmt.Errorf("Invalid response from Tat. Please Check Tat Engine")
 	}
 	if resp.StatusCode != wantCode || IsDebug {
-		ErrorLogFunc("Request Path:%s", requestPath)
+		ErrorLogFunc("Request Username:%s Referer:%s Path:%s", c.username, c.referer, requestPath)
 		ErrorLogFunc("Request Body:%s", string(jsonStr))
 		ErrorLogFunc("Response Status:%s", resp.Status)
 		ErrorLogFunc("Response Headers:%s", resp.Header)
-		body, _ := ioutil.ReadAll(resp.Body)
-		ErrorLogFunc("Response Body:%s", string(body))
 		if resp.StatusCode != wantCode {
+			body, errc := ioutil.ReadAll(resp.Body)
+			if errc != nil {
+				ErrorLogFunc("Error with ioutil.ReadAll (with statusCode %d != wantCode %d) %s", resp.StatusCode, wantCode, errc)
+				return []byte{}, fmt.Errorf("Response code:%d (want:%d) err on readAll Body:%s", resp.StatusCode, wantCode, errc)
+			}
+			ErrorLogFunc("Response Body:%s", string(body))
 			return []byte{}, fmt.Errorf("Response code:%d (want:%d) with Body:%s", resp.StatusCode, wantCode, string(body))
 		}
 	}
@@ -148,6 +152,9 @@ func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byt
 	if err != nil {
 		ErrorLogFunc("Error with ioutil.ReadAll %s", err)
 		return nil, fmt.Errorf("Error with ioutil.ReadAll %s", err.Error())
+	}
+	if IsDebug {
+		ErrorLogFunc("Debug Response Body:%s", string(body))
 	}
 	return body, nil
 }
