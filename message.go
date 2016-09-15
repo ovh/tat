@@ -663,7 +663,7 @@ func (c *Client) MessageCount(topic string, criteria *MessageCriteria) (*Message
 
 	var messages = MessagesCountJSON{}
 	if err := json.Unmarshal(body, &messages); err != nil {
-		ErrorLogFunc("Error getting messages list: %s", err)
+		ErrorLogFunc("Error getting messages list (count): %s", err)
 		return nil, err
 	}
 
