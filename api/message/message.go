@@ -240,8 +240,23 @@ func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]ta
 		return []tat.Message{}, false, nil
 	}
 
-	// TODO Check if keylist in is tat:messages:keys
-	// SCard
+	keyListList := cache.Key(cache.TatMessagesKeys()...)
+	isMember, err := c.SIsMember(keyListList, keyList).Result()
+	if err != nil {
+		log.Debugf("messageListFromCache>>> error with sismember on %s with key:%s, err:%s", keyListList, keyList, err)
+		return []tat.Message{}, false, nil
+	}
+
+	if !isMember {
+		// key tat:messages:<topic>:<criteria> exists, but not in tat:message:keys
+		// so del tat:messages:<topic>:<criteria>
+		log.Warnf("messageListFromCache>>> key %s exists, but not in %s, so we delete this key ", keyList, keyListList)
+		if _, errdel := c.Del(keyList).Result(); errdel != nil {
+			log.Warnf("messageListFromCache>>> error while delete key %s, so flushDb...", keyList)
+			c.FlushDb()
+		}
+		return []tat.Message{}, false, nil
+	}
 
 	msgIDs, err := c.ZRevRange(keyList, 0, -1).Result()
 	if err != nil {
@@ -287,7 +302,6 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 	log.Debugf("cacheMessageList>>> Push %s in cache", keyList)
 	keyListList := cache.Key(cache.TatMessagesKeys()...) // tat:messages:keys
 	log.Debugf("cacheMessageList>>> Saving key %s in %s", keyList, keyListList)
-	// todo check si keyList n'est ps déjà present dans tat:messages:keys
 	pipeline.SAdd(keyListList, keyList)
 
 	for _, m := range messages {

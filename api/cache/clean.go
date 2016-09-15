@@ -103,7 +103,7 @@ func CleanMessagesLists(topic string) {
 		}
 		defer pipeline.Close()
 
-		pipeline.Del(members...).Result() // if err -> flushAll
+		pipeline.Del(members...).Result() // if err -> flushAll, done in pipeline.Exec
 		removeSomeMembers(pipeline, key, members...)
 
 		if _, err := pipeline.Exec(); err != nil {
