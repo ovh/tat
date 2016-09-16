@@ -97,6 +97,10 @@ func CleanMessagesLists(topic string) {
 			}
 		}
 
+		if len(members) <= 0 {
+			return
+		}
+
 		pipeline := Client().Pipeline()
 		if pipeline == nil {
 			return
