@@ -245,8 +245,12 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 	if errc != nil {
 		return -1, nil, fmt.Errorf("Error while count Topics %s", errc)
 	}
+	oneTopic := false
+	if criteria.Topic != "" {
+		oneTopic = true
+	}
 
-	err := cursor.Select(GetTopicSelectedFields(isAdmin, false, false, false)).
+	err := cursor.Select(GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic)).
 		Sort("topic").
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
