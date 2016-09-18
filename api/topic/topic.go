@@ -184,6 +184,8 @@ func GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 			"canDeleteAllMsg":      1,
 			"adminCanUpdateAllMsg": 1,
 			"adminCanDeleteAllMsg": 1,
+			"isAutoComputeTags":    1,
+			"isAutoComputeLabels":  1,
 			"maxlength":            1,
 			"dateLastMessage":      1,
 			"parameters":           1,
@@ -221,7 +223,7 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 	if u != nil {
 		username = u.Username
 	}
-	k := cache.CriteriaKey(criteria, "tat", "users", username, "topics", "list_topics")
+	k := cache.CriteriaKey(criteria, "tat", "users", username, "topics", "list_topics", "isAdmin", strconv.FormatBool(isAdmin), "withTags", strconv.FormatBool(withTags), "withLabels", strconv.FormatBool(withLabels))
 	kcount := cache.CriteriaKey(criteria, "tat", "users", username, "topics", "count_topics")
 
 	bytes, _ := cache.Client().Get(k).Bytes()
@@ -799,9 +801,12 @@ func SetParam(topic *tat.Topic, username string, recursive bool, maxLength int,
 		log.Errorf("Error while updateAll parameters : %s", err.Error())
 		return err
 	}
-	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, adminCanDeleteAllMsg:%t isAutoComputeTags:%t, isAutoComputeLabels:%t", maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanDeleteAllMsg, isAutoComputeTags, isAutoComputeLabels)
+	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, adminCanDeleteAllMsg:%t isAutoComputeTags:%t, isAutoComputeLabels:%t",
+		maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanDeleteAllMsg, isAutoComputeTags, isAutoComputeLabels)
+
+	err = addToHistory(topic, selector, username, h)
 	cache.CleanTopicByName(topic.Topic)
-	return addToHistory(topic, selector, username, h)
+	return err
 }
 
 func actionOnSetParameter(topic *tat.Topic, operand, set, admin string, newParam tat.TopicParameter, recursive bool, history string) error {

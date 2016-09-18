@@ -56,7 +56,8 @@ func cleanAllByType(key string) {
 // CleanTopicByName cleans cache for a topic
 func CleanTopicByName(topicName string) {
 	// TODO To improve to remove only key with topic in arg
-	cleanAllByType(Key(TatTopicsKeys()...))
+	//cleanAllByType(Key(TatTopicsKeys()...))
+	CleanAllTopicsLists()
 }
 
 // CleanAllTopicsLists cleans all keys
