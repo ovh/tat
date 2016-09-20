@@ -149,7 +149,7 @@ func Upsert(presence *tat.Presence, user tat.User, topic tat.Topic, status strin
 	//selector = append(selector, bson.M{"topic": topic.Topic})
 	selector := bson.M{"topic": topic.Topic, "userPresence.username": userPresence.Username}
 	if _, err := store.Tat().CPresences.Upsert(selector, presence); err != nil {
-		log.Errorf("Error while inserting new presence %s", err)
+		log.Errorf("Error while inserting new presence for %s err:%s", userPresence.Username, err)
 	}
 	return nil
 }

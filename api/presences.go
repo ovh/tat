@@ -14,6 +14,7 @@ import (
 	socket "github.com/ovh/tat/api/socket"
 	topicDB "github.com/ovh/tat/api/topic"
 	userDB "github.com/ovh/tat/api/user"
+	"github.com/spf13/viper"
 )
 
 // PresencesController contains all methods about presences manipulation
@@ -148,7 +149,9 @@ func (m *PresencesController) create(ctx *gin.Context) {
 		return
 	}
 
-	go socket.WSPresence(&tat.WSPresenceJSON{Action: "create", Presence: presence})
+	if viper.GetBool("websocket_enabled") {
+		go socket.WSPresence(&tat.WSPresenceJSON{Action: "create", Presence: presence})
+	}
 }
 
 // CreateAndGet creates a presence and get presences on current topic
@@ -199,7 +202,9 @@ func (m *PresencesController) Delete(ctx *gin.Context) {
 		return
 	}
 	presence := tat.Presence{Topic: topic.Topic, UserPresence: tat.UserPresence{Username: userToDelete.Username, Fullname: userToDelete.Fullname}}
-	go socket.WSPresence(&tat.WSPresenceJSON{Action: "delete", Presence: presence})
+	if viper.GetBool("websocket_enabled") {
+		go socket.WSPresence(&tat.WSPresenceJSON{Action: "delete", Presence: presence})
+	}
 	ctx.JSON(http.StatusOK, nil)
 }
 

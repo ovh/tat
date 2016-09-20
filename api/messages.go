@@ -16,6 +16,7 @@ import (
 	stocketDB "github.com/ovh/tat/api/socket"
 	topicDB "github.com/ovh/tat/api/topic"
 	userDB "github.com/ovh/tat/api/user"
+	"github.com/spf13/viper"
 )
 
 // MessagesController contains all methods about messages manipulation
@@ -89,7 +90,9 @@ func (m *MessagesController) List(ctx *gin.Context) {
 			if e := presenceDB.Upsert(&presence, user, topic, presenceArg); e != nil {
 				log.Errorf("Error while InsertPresence %s", e)
 			}
-			go stocketDB.WSPresence(&tat.WSPresenceJSON{Action: "create", Presence: presence})
+			if viper.GetBool("websocket_enabled") {
+				go stocketDB.WSPresence(&tat.WSPresenceJSON{Action: "create", Presence: presence})
+			}
 		}()
 	}
 
@@ -254,11 +257,15 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	go socketDB.WSMessageNew(&tat.WSMessageNewJSON{Topic: topic.Topic})
+	if viper.GetBool("websocket_enabled") {
+		go socketDB.WSMessageNew(&tat.WSMessageNewJSON{Topic: topic.Topic})
+	}
 	info := fmt.Sprintf("Message created in %s", topic.Topic)
 
 	out := &tat.MessageJSONOut{Message: message, Info: info}
-	go socketDB.WSMessage(&tat.WSMessageJSON{Action: "create", Username: user.Username, Message: message}, topic)
+	if viper.GetBool("websocket_enabled") {
+		go socketDB.WSMessage(&tat.WSMessageJSON{Action: "create", Username: user.Username, Message: message}, topic)
+	}
 	ctx.JSON(http.StatusCreated, out)
 }
 
@@ -393,7 +400,9 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 		return
 	}
 
-	go socketDB.WSMessage(&tat.WSMessageJSON{Action: "delete", Username: user.Username, Message: message}, *topic)
+	if viper.GetBool("websocket_enabled") {
+		go socketDB.WSMessage(&tat.WSMessageJSON{Action: "delete", Username: user.Username, Message: message}, *topic)
+	}
 	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("Message deleted from %s", topic.Topic)})
 }
 
@@ -463,7 +472,9 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid action: " + action)})
 		return
 	}
-	go socketDB.WSMessage(&tat.WSMessageJSON{Action: action, Username: user.Username, Message: message}, topic)
+	if viper.GetBool("websocket_enabled") {
+		go socketDB.WSMessage(&tat.WSMessageJSON{Action: action, Username: user.Username, Message: message}, topic)
+	}
 	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
@@ -511,7 +522,9 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *tat.M
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action: "+messageIn.Action))
 		return
 	}
-	go socketDB.WSMessage(&tat.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
+	if viper.GetBool("websocket_enabled") {
+		go socketDB.WSMessage(&tat.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
+	}
 	ctx.JSON(http.StatusCreated, info)
 }
 
@@ -551,7 +564,9 @@ func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *tat.Messag
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching message after voting"})
 		return
 	}
-	go socketDB.WSMessage(&tat.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
+	if viper.GetBool("websocket_enabled") {
+		go socketDB.WSMessage(&tat.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
+	}
 	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
@@ -580,7 +595,9 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *tat.Me
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
-	go socketDB.WSMessage(&tat.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
+	if viper.GetBool("websocket_enabled") {
+		go socketDB.WSMessage(&tat.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
+	}
 	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
 }
 
@@ -609,7 +626,9 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *tat.Mess
 	}
 	info = fmt.Sprintf("Message updated in %s", topic.Topic)
 
-	go socketDB.WSMessage(&tat.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
+	if viper.GetBool("websocket_enabled") {
+		go socketDB.WSMessage(&tat.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, topic)
+	}
 	out := &tat.MessageJSONOut{Message: message, Info: info}
 	ctx.JSON(http.StatusOK, out)
 }
@@ -654,7 +673,9 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *tat.Messag
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
-	go socketDB.WSMessage(&tat.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, *toTopic)
+	if viper.GetBool("websocket_enabled") {
+		go socketDB.WSMessage(&tat.WSMessageJSON{Action: messageIn.Action, Username: user.Username, Message: message}, *toTopic)
+	}
 	ctx.JSON(http.StatusCreated, gin.H{"info": info})
 }
 
@@ -819,7 +840,9 @@ func (m *MessagesController) messagesDeleteBulk(ctx *gin.Context, cascade, force
 			return
 		}
 		nbDelete++
-		go socketDB.WSMessage(&tat.WSMessageJSON{Action: "delete", Username: user.Username, Message: msg}, topic)
+		if viper.GetBool("websocket_enabled") {
+			go socketDB.WSMessage(&tat.WSMessageJSON{Action: "delete", Username: user.Username, Message: msg}, topic)
+		}
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("%d messages (cascade:%t) deleted from %s, limit criteria to %d messages root",
