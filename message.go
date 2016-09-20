@@ -17,6 +17,8 @@ const (
 	True = "true"
 	// False in url http way -> string
 	False = "false"
+	// TreeViewNoTree is default value
+	TreeViewNoTree = "notree"
 	// TreeViewOneTree is onetree value for treeView
 	TreeViewOneTree = "onetree"
 	// TreeViewFullTree is fulltree value for treeView

@@ -305,7 +305,7 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 	pipeline.SAdd(keyListList, keyList)
 
 	for _, m := range messages {
-		keyMessage := cache.Key("tat", "messages", m.ID)
+		keyMessage := cache.Key("tat", "messages", m.ID, criteria.TreeView)
 		bytes, err := json.Marshal(m)
 		if err != nil {
 			log.Warnf("cacheListMessages: Unable to jsonify message: %s", err)
@@ -336,21 +336,21 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 
 	var messages []tat.Message
 	var err error
-	var tocache bool
-	if criteria.TreeView == tat.TreeViewOneTree || criteria.TreeView == tat.TreeViewFullTree {
-		// skip cache
-		tocache = false
-	} else {
-		var isInCache bool
-		tocache = true
-		messages, isInCache, err = messageListFromCache(criteria, &topic)
-		if err != nil {
-			log.Errorf("Error while Find All Messages %s from cache", err)
-		}
 
-		if isInCache {
-			return messages, err
-		}
+	//set Default criteria.TreeView  as notree
+	if criteria.TreeView == "" {
+		criteria.TreeView = tat.TreeViewNoTree
+	}
+
+	var isInCache bool
+
+	messages, isInCache, err = messageListFromCache(criteria, &topic)
+	if err != nil {
+		log.Errorf("Error while Find All Messages %s from cache", err)
+	}
+
+	if isInCache {
+		return messages, err
 	}
 
 	if criteria.Limit > 400 {
@@ -368,10 +368,7 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 	}
 
 	if len(messages) == 0 {
-		// cache no msg for this request
-		if tocache {
-			cacheMessageList(criteria, &topic, messages)
-		}
+		cacheMessageList(criteria, &topic, messages)
 		return messages, nil
 	}
 
@@ -395,9 +392,8 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 		return filterNbReplies(messages, criteria)
 	}
 
-	if tocache {
-		cacheMessageList(criteria, &topic, messages)
-	}
+	cacheMessageList(criteria, &topic, messages)
+
 	return messages, err
 }
 
