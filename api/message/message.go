@@ -353,8 +353,8 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 		return messages, err
 	}
 
-	if criteria.Limit > 400 {
-		log.Warnf("ListMessages >> criteriaLimitWarn >> criteria with limit more than 400, username:%s topic:%s criteria:%s", username, topic.Topic, criteria.GetURL())
+	if criteria.Limit > 500 {
+		log.Warnf("ListMessages >> criteriaLimitWarn >> criteria with limit more than 500, username:%s topic:%s criteria:%s", username, topic.Topic, criteria.GetURL())
 	}
 
 	err = store.GetCMessages(topic.Collection).Find(c).
