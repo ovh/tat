@@ -147,7 +147,7 @@ func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int,
 
 	selectedFields := bson.M{}
 	if criteria.Name == "" {
-		selectedFields = bson.M{"name": 1, "description": 1}
+		selectedFields = bson.M{"name": 1, "description": 1, "users": 1, "adminUsers": 1, "dateCreation": 1}
 	}
 
 	q := cursor.Select(selectedFields).
