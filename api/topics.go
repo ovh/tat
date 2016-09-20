@@ -219,7 +219,7 @@ func (t *TopicsController) Delete(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, "")
+	ctx.JSON(http.StatusOK, gin.H{"info": fmt.Sprintf("Topic %s is deleted", topic.Topic)})
 }
 
 // Truncate deletes all messages in a topic only if user is Tat admin, or admin on topic
