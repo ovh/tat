@@ -104,6 +104,17 @@ curl -XPOST \
   https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
+You can add replies, with labels, from the creation
+
+```bash
+curl -XPOST \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+  -d '{ "text": "text msg root", "messages": [{ "text": "text reply", "labels": [{"text": "labelA", "color": "#eeeeee"}] }] }' \
+  https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
 If you use a `system user`, you can force message's date
 
 ```  

@@ -245,12 +245,13 @@ type MessageJSON struct {
 	Text         string `json:"text"`
 	Option       string `json:"option"`
 	Topic        string
-	IDReference  string   `json:"idReference"`
-	Action       string   `json:"action"`
-	DateCreation float64  `json:"dateCreation"`
-	Labels       []Label  `json:"labels"`
-	Options      []string `json:"options"`
-	Replies      []string `json:"replies"`
+	IDReference  string        `json:"idReference"`
+	Action       string        `json:"action"`
+	DateCreation float64       `json:"dateCreation"`
+	Labels       []Label       `json:"labels"`
+	Options      []string      `json:"options"`
+	Replies      []string      `json:"replies"`
+	Messages     []MessageJSON `json:"messages"` // same as replies, but with Labels...
 }
 
 // MessageAdd post a tat message

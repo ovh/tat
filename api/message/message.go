@@ -599,7 +599,7 @@ func getTree(messagesIn map[string][]tat.Message, criteria *tat.MessageCriteria,
 }
 
 // Insert a new message on one topic
-func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyOfID string, dateCreation float64, labels []tat.Label, replies []string, isNotificationFromMention bool, messageRoot *tat.Message) error {
+func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyOfID string, dateCreation float64, labels []tat.Label, replies []string, repliesJSON []tat.MessageJSON, isNotificationFromMention bool, messageRoot *tat.Message) error {
 
 	if !isNotificationFromMention {
 		notificationsTopic := fmt.Sprintf("/Private/%s/Notifications", user.Username)
@@ -720,7 +720,13 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 	if len(replies) > 0 {
 		for _, textReply := range replies {
 			reply := tat.Message{}
-			Insert(&reply, user, topic, textReply, message.ID, -1, nil, nil, isNotificationFromMention, message)
+			Insert(&reply, user, topic, textReply, message.ID, -1, nil, nil, nil, isNotificationFromMention, message)
+		}
+	}
+	if len(repliesJSON) > 0 {
+		for _, r := range repliesJSON {
+			reply := tat.Message{}
+			Insert(&reply, user, topic, r.Text, message.ID, -1, r.Labels, nil, r.Messages, isNotificationFromMention, message)
 		}
 	}
 	//Clean the cache for this topic
@@ -778,7 +784,7 @@ func insertNotification(message *tat.Message, author tat.User, usernameMention s
 		return
 	}
 
-	if err := Insert(&notif, author, *topic, text, "", -1, labels, nil, true, nil); err != nil {
+	if err := Insert(&notif, author, *topic, text, "", -1, labels, nil, nil, true, nil); err != nil {
 		// not throw err here, just log
 		log.Errorf("Error while inserting notification message for %s, error: %s", usernameMention, err.Error())
 	}
@@ -1168,7 +1174,7 @@ func addOrRemoveFromTasks(message *tat.Message, action string, user tat.User, to
 		RemoveLabel(message, "done:"+user.Username, topic)
 	}
 
-	return Insert(msgReply, user, topic, text, idRoot, -1, nil, nil, false, nil)
+	return Insert(msgReply, user, topic, text, idRoot, -1, nil, nil, nil, false, nil)
 }
 
 // AddToTasks add a message to user's tasks tat.Topic
