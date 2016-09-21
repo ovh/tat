@@ -266,7 +266,7 @@ see https://github.com/ovh/tat#parameters for all parameters
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	https://<tatHostname>:<tatPort>/messages/cascade?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
+	https://<tatHostname>:<tatPort>/messages/cascade/topic/subTopic?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
 ```
 
 see https://github.com/ovh/tat#parameters for all parameters
@@ -276,7 +276,7 @@ see https://github.com/ovh/tat#parameters for all parameters
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	https://<tatHostname>:<tatPort>/messages/cascadeforce?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
+	https://<tatHostname>:<tatPort>/messages/cascadeforce/topic/subTopic?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
 ```
 
 see https://github.com/ovh/tat#parameters for all parameters
