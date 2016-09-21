@@ -256,7 +256,7 @@ curl -XDELETE \
 curl -XDELETE \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	https://<tatHostname>:<tatPort>/messages/nocascade?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
+	https://<tatHostname>:<tatPort>/messages/nocascade/topic/subTopic?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
 ```
 
 see https://github.com/ovh/tat#parameters for all parameters
