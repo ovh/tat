@@ -128,8 +128,8 @@ func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byt
 	}()
 
 	if resp == nil {
-		ErrorLogFunc("Invalid response from Tat. Please Check Tat Engine")
-		return []byte{}, fmt.Errorf("Invalid response from Tat. Please Check Tat Engine")
+		ErrorLogFunc("Invalid response from Tat. Please Check Tat Engine, err:%s", err)
+		return []byte{}, fmt.Errorf("Invalid response from Tat. Please Check Tat Engine, err:%s", err)
 	}
 	if resp.StatusCode != wantCode || IsDebug {
 		ErrorLogFunc("Request Username:%s Referer:%s Path:%s", c.username, c.referer, requestPath)
