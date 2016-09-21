@@ -307,14 +307,14 @@ func (c *Client) MessagesDeleteBulk(topic string, cascade bool, cascadeForce boo
 	var err error
 	var out []byte
 
-	path := fmt.Sprintf("%s%s", criteria.Topic, criteria.GetURL())
+	path := fmt.Sprintf("%s?%s", topic, criteria.GetURL())
 
 	if cascade {
-		out, err = c.reqWant(http.MethodDelete, 200, "/messages/cascade/"+path, nil)
+		out, err = c.reqWant(http.MethodDelete, 200, "/messages/cascade"+path, nil)
 	} else if cascadeForce {
-		out, err = c.reqWant(http.MethodDelete, 200, "/messages/cascadeforce/"+path, nil)
+		out, err = c.reqWant(http.MethodDelete, 200, "/messages/cascadeforce"+path, nil)
 	} else {
-		out, err = c.reqWant(http.MethodDelete, 200, "/messages/nocascade/"+path, nil)
+		out, err = c.reqWant(http.MethodDelete, 200, "/messages/nocascade"+path, nil)
 	}
 
 	if err != nil {
