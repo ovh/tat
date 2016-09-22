@@ -337,7 +337,7 @@ func (c *Client) MessageUpdate(topic, idMessage string, newText string) (*Messag
 		IDReference: idMessage,
 		Text:        newText,
 	}
-	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
+	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 200, message)
 }
 
 // MessageConcat is same as:
@@ -707,7 +707,7 @@ func (c *Client) messagesList(topic string, criteria *MessageCriteria) ([]byte, 
 		return nil, err
 	}
 
-	DebugLogFunc("MessageList>>> Messages List Reponse: %s", string(body))
+	DebugLogFunc("MessageList>>> Messages List Reponse, len body %d", len(body))
 	return body, err
 }
 
