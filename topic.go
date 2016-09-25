@@ -216,7 +216,7 @@ func (c *Client) TopicOne(topic string) (*TopicJSON, error) {
 		return nil, ErrClientNotInitiliazed
 	}
 
-	path := fmt.Sprintf("/topic?%s", topic)
+	path := fmt.Sprintf("/topic%s", topic)
 
 	body, err := c.reqWant(http.MethodGet, 200, path, nil)
 	if err != nil {
