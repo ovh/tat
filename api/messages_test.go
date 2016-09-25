@@ -69,14 +69,25 @@ func TestMessagesList(t *testing.T) {
 	assert.Equal(t, 1, len(messages.Messages))
 
 	message, err = client.MessageAdd(tat.MessageJSON{
-		Text:  "#test2 #test2",
-		Topic: topic.Topic,
+		Text:   "#test2 #test2",
+		Topic:  topic.Topic,
+		Labels: []tat.Label{{Text: "labelA", Color: "#eeeeee"}, {Text: "labelB", Color: "#eeeeee"}},
 	})
 	assert.NotNil(t, message)
 	assert.NoError(t, err)
 	if topic != nil {
 		t.Log(message.Message)
 	}
+
+	message, err = client.MessageRelabel(topic.Topic, message.Message.ID, []tat.Label{{Text: "labelA", Color: "#eeeeee"}, {Text: "labelD", Color: "#eeeeee"}}, []string{"labelA"})
+	assert.NotNil(t, message)
+	assert.NoError(t, err)
+	assert.Equal(t, 3, len(message.Message.Labels), "this message should have 3 labels")
+
+	message, err = client.MessageRelabel(topic.Topic, message.Message.ID, []tat.Label{{Text: "labelF", Color: "#eeeeee"}}, nil)
+	assert.NotNil(t, message)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(message.Message.Labels), "this message should have 1 label")
 
 	messages, err = client.MessageList(topic.Topic, nil)
 	assert.NotNil(t, topic)

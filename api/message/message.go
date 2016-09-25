@@ -702,7 +702,7 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 	}
 
 	if labels != nil {
-		message.Labels = checkLabels(labels, nil)
+		message.Labels = checkLabels(labels, nil, nil)
 	}
 
 	if err := store.GetCMessages(topic.Collection).Insert(message); err != nil {
@@ -790,9 +790,11 @@ func insertNotification(message *tat.Message, author tat.User, usernameMention s
 	}
 }
 
-func checkLabels(labels []tat.Label, labelsToRemove []string) []tat.Label {
+func checkLabels(labels []tat.Label, labelsToAdd []tat.Label, labelsToRemove []string) []tat.Label {
 	var labelsChecked []tat.Label
 	var labelsTextChecked []string
+
+	// Message Label
 	for _, l := range labels {
 		if len(l.Text) < 1 {
 			continue
@@ -800,11 +802,25 @@ func checkLabels(labels []tat.Label, labelsToRemove []string) []tat.Label {
 		if len(l.Text) > lengthLabel {
 			l.Text = l.Text[0:lengthLabel]
 		}
-		if !tat.ArrayContains(labelsToRemove, l.Text) && !tat.ArrayContains(labelsTextChecked, l.Text) {
-			labelsChecked = append(labelsChecked, l)
+		if !tat.ArrayContains(labelsToRemove, l.Text) {
 			labelsTextChecked = append(labelsTextChecked, l.Text)
+			labelsChecked = append(labelsChecked, l)
 		}
 	}
+
+	// Add labels on a message
+	for _, l := range labelsToAdd {
+		if len(l.Text) < 1 {
+			continue
+		}
+		if len(l.Text) > lengthLabel {
+			l.Text = l.Text[0:lengthLabel]
+		}
+		if !tat.ArrayContains(labelsTextChecked, l.Text) {
+			labelsChecked = append(labelsChecked, l)
+		}
+	}
+
 	return labelsChecked
 }
 
@@ -1001,7 +1017,7 @@ func RemoveLabel(message *tat.Message, label string, topic tat.Topic) error {
 
 // RemoveAllAndAddNewLabel removes all labels and add new label on message
 func RemoveAllAndAddNewLabel(message *tat.Message, labels []tat.Label, topic tat.Topic) error {
-	message.Labels = checkLabels(labels, nil)
+	message.Labels = checkLabels(labels, nil, nil)
 	err := store.GetCMessages(topic.Collection).Update(
 		bson.M{"_id": message.ID},
 		bson.M{"$set": bson.M{
@@ -1017,9 +1033,9 @@ func RemoveAllAndAddNewLabel(message *tat.Message, labels []tat.Label, topic tat
 }
 
 // RemoveSomeAndAddNewLabel removes some labels and add new label on message
-func RemoveSomeAndAddNewLabel(message *tat.Message, labels []tat.Label, labelsToRemove []string, topic tat.Topic) error {
-	message.Labels = append(message.Labels, labels...)
-	return RemoveAllAndAddNewLabel(message, checkLabels(message.Labels, labelsToRemove), topic)
+func RemoveSomeAndAddNewLabel(message *tat.Message, labelsToAdd []tat.Label, labelsToRemove []string, topic tat.Topic) error {
+	//message.Labels = append(message.Labels, labels...)
+	return RemoveAllAndAddNewLabel(message, checkLabels(message.Labels, labelsToAdd, labelsToRemove), topic)
 }
 
 // Like add a like to a message
