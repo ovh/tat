@@ -134,6 +134,7 @@ func (t *TopicsController) OneTopic(ctx *gin.Context) {
 	}
 
 	out := &tat.TopicJSON{Topic: topic}
+	out.IsTopicRw, out.IsTopicAdmin = topicDB.GetUserRights(topic, &user)
 	ctx.JSON(http.StatusOK, out)
 }
 

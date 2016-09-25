@@ -142,7 +142,9 @@ type TopicsJSON struct {
 
 // TopicJSON represents struct used by Engine while returns one topic
 type TopicJSON struct {
-	Topic *Topic `json:"topic"`
+	Topic        *Topic `json:"topic"`
+	IsTopicRw    bool   `json:"isTopicRw"`
+	IsTopicAdmin bool   `json:"isTopicAdmin"`
 }
 
 // TopicNameJSON represents struct, only topic name
@@ -208,6 +210,30 @@ func (c *Client) TopicCreate(t TopicCreateJSON) (*Topic, error) {
 	return newTopic, nil
 }
 
+// TopicOne returns one topic, and flags isUserRW / isUserAdmin on topic
+func (c *Client) TopicOne(topic string) (*TopicJSON, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	path := fmt.Sprintf("/topic?%s", topic)
+
+	body, err := c.reqWant(http.MethodGet, 200, path, nil)
+	if err != nil {
+		ErrorLogFunc("Error getting one topic: %s", err)
+		return nil, err
+	}
+
+	DebugLogFunc("One Topic Response: %s", string(body))
+	var out = TopicJSON{}
+	if err := json.Unmarshal(body, &out); err != nil {
+		ErrorLogFunc("Error getting one topic: %s", err)
+		return nil, err
+	}
+
+	return &out, nil
+}
+
 // TopicList list all topics according to criterias. Default behavior (criteria is Nil) will limit 10 topics.
 func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
 	if c == nil {
@@ -261,7 +287,7 @@ func (c *Client) TopicList(criteria *TopicCriteria) (*TopicsJSON, error) {
 		return nil, err
 	}
 
-	DebugLogFunc("Topic List Reponse: %s", string(body))
+	DebugLogFunc("Topic List Response: %s", string(body))
 	var topics = TopicsJSON{}
 	if err := json.Unmarshal(body, &topics); err != nil {
 		ErrorLogFunc("Error getting topic list: %s", err)
