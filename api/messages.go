@@ -159,19 +159,17 @@ func (m *MessagesController) innerList(ctx *gin.Context) (*tat.MessagesJSON, tat
 	return out, user, *topic, criteria, -1, nil
 }
 
-func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, tat.Message, tat.Topic, *tat.User, error) {
+func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.MessageJSON) (tat.Message, tat.Topic, *tat.User, error) {
 	var message = tat.Message{}
-	var messageIn tat.MessageJSON
-	ctx.Bind(&messageIn)
 
 	user, e := PreCheckUser(ctx)
 	if e != nil {
-		return messageIn, message, tat.Topic{}, nil, e
+		return message, tat.Topic{}, nil, e
 	}
 
 	topicIn, err := GetParam(ctx, "topic")
 	if err != nil {
-		return messageIn, message, tat.Topic{}, nil, err
+		return message, tat.Topic{}, nil, err
 	}
 	messageIn.Topic = topicIn
 
@@ -179,7 +177,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, t
 		if efind := messageDB.FindByIDDefaultCollection(&message, messageIn.IDReference); efind != nil {
 			e := errors.New("Invalid request, no topic and message " + messageIn.IDReference + " not found in default collection:" + efind.Error())
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-			return messageIn, message, tat.Topic{}, nil, e
+			return message, tat.Topic{}, nil, e
 		}
 		messageIn.Topic = message.Topic
 	}
@@ -190,7 +188,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, t
 		if edm != nil {
 			e := errors.New("Topic " + messageIn.Topic + " does not exist or you have no read access on it")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-			return messageIn, message, tat.Topic{}, nil, e
+			return message, tat.Topic{}, nil, e
 		}
 		topic = topica
 	}
@@ -201,7 +199,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, t
 		if efind := messageDB.FindByID(&message, messageIn.IDReference, *topic); efind != nil {
 			e := errors.New("Message " + messageIn.IDReference + " does not exist or you have no read access on it")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-			return messageIn, message, tat.Topic{}, nil, e
+			return message, tat.Topic{}, nil, e
 		}
 
 		topicName := ""
@@ -221,32 +219,59 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context) (tat.MessageJSON, t
 		} else {
 			e := errors.New("Invalid Call. IDReference not empty with unknown action")
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
-			return messageIn, message, tat.Topic{}, nil, e
+			return message, tat.Topic{}, nil, e
 		}
 		topic, err = topicDB.FindByTopic(topicName, true, true, true, &user)
 		if err != nil {
 			e := errors.New("Topic " + topicName + " does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-			return messageIn, message, tat.Topic{}, nil, e
+			return message, tat.Topic{}, nil, e
 		}
 	} else {
 		e := errors.New("Topic and IDReference are null. Wrong request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
-		return messageIn, message, tat.Topic{}, nil, e
+		return message, tat.Topic{}, nil, e
 	}
-	return messageIn, message, *topic, &user, nil
+	return message, *topic, &user, nil
+}
+
+// Create messages on one topic
+func (m *MessagesController) CreateBulk(ctx *gin.Context) {
+	messagesIn := &tat.MessagesJSONIn{}
+	ctx.Bind(messagesIn)
+	var msgs []*tat.MessageJSONOut
+	for _, messageIn := range messagesIn.Messages {
+		m, code, err := m.createSingle(ctx, messageIn)
+		if err != nil {
+			ctx.JSON(code, gin.H{"error": err.Error()})
+			return
+		}
+		msgs = append(msgs, m)
+	}
+	ctx.JSON(http.StatusCreated, msgs)
 }
 
 // Create a new message on one topic
 func (m *MessagesController) Create(ctx *gin.Context) {
-	messageIn, _, topic, user, e := m.preCheckTopic(ctx)
-	if e != nil {
+	messageIn := &tat.MessageJSON{}
+	ctx.Bind(messageIn)
+	out, code, err := m.createSingle(ctx, messageIn)
+	if err != nil {
+		ctx.JSON(code, gin.H{"error": err})
 		return
+	}
+	ctx.JSON(code, out)
+}
+
+func (m *MessagesController) createSingle(ctx *gin.Context, messageIn *tat.MessageJSON) (*tat.MessageJSONOut, int, error) {
+
+	_, topic, user, e := m.preCheckTopic(ctx, messageIn)
+	if e != nil {
+		return nil, http.StatusInternalServerError, fmt.Errorf("No RW Access to topic %s", messageIn.Topic)
 	}
 
 	if isRw, _ := topicDB.GetUserRights(&topic, user); !isRw {
-		ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("No RW Access to topic " + messageIn.Topic)})
-		return
+		return nil, http.StatusForbidden, fmt.Errorf("No RW Access to topic %s", messageIn.Topic)
 	}
 
 	var message = tat.Message{}
@@ -254,8 +279,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 	err := messageDB.Insert(&message, *user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, messageIn.Messages, false, nil)
 	if err != nil {
 		log.Errorf("%s", err.Error())
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return nil, http.StatusInternalServerError, err
 	}
 	if viper.GetBool("websocket_enabled") {
 		go socketDB.WSMessageNew(&tat.WSMessageNewJSON{Topic: topic.Topic})
@@ -266,12 +290,14 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 	if viper.GetBool("websocket_enabled") {
 		go socketDB.WSMessage(&tat.WSMessageJSON{Action: "create", Username: user.Username, Message: message}, topic)
 	}
-	ctx.JSON(http.StatusCreated, out)
+	return out, http.StatusCreated, nil
 }
 
 // Update a message : like, unlike, add label, etc...
 func (m *MessagesController) Update(ctx *gin.Context) {
-	messageIn, messageReference, topic, user, e := m.preCheckTopic(ctx)
+	messageIn := &tat.MessageJSON{}
+	ctx.Bind(messageIn)
+	messageReference, topic, user, e := m.preCheckTopic(ctx, messageIn)
 	if e != nil {
 		return
 	}
@@ -288,29 +314,29 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 	}
 
 	if messageIn.Action == tat.MessageActionLabel || messageIn.Action == tat.MessageActionUnlabel || messageIn.Action == tat.MessageActionRelabel {
-		m.addOrRemoveLabel(ctx, &messageIn, messageReference, *user, topic)
+		m.addOrRemoveLabel(ctx, messageIn, messageReference, *user, topic)
 		return
 	}
 
 	if messageIn.Action == tat.MessageActionVoteup || messageIn.Action == tat.MessageActionVotedown ||
 		messageIn.Action == tat.MessageActionUnvoteup || messageIn.Action == tat.MessageActionUnvotedown {
-		m.voteMessage(ctx, &messageIn, messageReference, *user, topic)
+		m.voteMessage(ctx, messageIn, messageReference, *user, topic)
 		return
 	}
 
 	if messageIn.Action == tat.MessageActionTask || messageIn.Action == tat.MessageActionUntask {
-		m.addOrRemoveTask(ctx, &messageIn, messageReference, *user, topic)
+		m.addOrRemoveTask(ctx, messageIn, messageReference, *user, topic)
 		return
 	}
 
 	if messageIn.Action == tat.MessageActionUpdate || messageIn.Action == tat.MessageActionConcat {
-		m.updateMessage(ctx, &messageIn, messageReference, *user, topic, isAdminOnTopic)
+		m.updateMessage(ctx, messageIn, messageReference, *user, topic, isAdminOnTopic)
 		return
 	}
 
 	if messageIn.Action == tat.MessageActionMove {
 		// topic here is fromTopic
-		m.moveMessage(ctx, &messageIn, messageReference, *user, topic)
+		m.moveMessage(ctx, messageIn, messageReference, *user, topic)
 		return
 	}
 

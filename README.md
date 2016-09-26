@@ -73,7 +73,7 @@ to upload file and store URL on Tat. This workflow should be done by UI.
 # Usage of Tat Engine API
 ## Message
 ### Store new message
-```  
+```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
     -H "Tat_username: username" \
@@ -117,7 +117,7 @@ curl -XPOST \
 
 If you use a `system user`, you can force message's date
 
-```  
+```bash
 curl -XPOST \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
@@ -127,6 +127,16 @@ curl -XPOST \
 ```
 
 Return HTTP 201 if OK
+
+### Store some messages
+```bash
+curl -XPOST \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '[{ "text": "text message A" },{ "text": "text message B", "labels": [{"text": "labelA", "color": "#eeeeee"}] }]' \
+	https://<tatHostname>:<tatPort>/messages/topic/sub-topic
+```
 
 ### Reply to a message
 ```bash
@@ -361,14 +371,14 @@ curl -XPUT \
 ```
 
 ### Getting Messages List
-```  
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
 
 Getting messages on one Public Topic (Read Only):
 
-```  
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
@@ -728,13 +738,13 @@ curl -XDELETE \
 ```
 
 ### Getting Users List
-```  
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit> | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
 
 Users list with groups (admin only)
-```  
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&withGroups=true
 ```
 
@@ -1009,7 +1019,7 @@ curl -XGET https://<tatHostname>:<tatPort>/topic/topicName/subTopic | python -m 
 ```
 
 ### Getting Topics List
-```  
+```bash
 curl -XGET https://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit> | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```

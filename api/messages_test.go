@@ -101,7 +101,6 @@ func TestMessagesList(t *testing.T) {
 
 	messagesSearch, err := client.MessageList(topic.Topic, &tat.MessageCriteria{Text: "#test2"})
 	assert.NoError(t, err)
-
 	assert.Equal(t, 1, len(messagesSearch.Messages))
 
 	if messages.Messages[0].DateCreation < messages.Messages[1].DateCreation {
@@ -117,5 +116,14 @@ func TestMessagesList(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, 1, len(messages.Messages))
+
+	msgs := []tat.MessageJSON{{Text: "MessageA #createBulk", Topic: topic.Topic}, {Text: "MessageB #createBulk", Topic: topic.Topic}}
+	messagesJson, err := client.MessageAddBulk(msgs)
+	assert.NotNil(t, messagesJson)
+	assert.NoError(t, err)
+
+	messagesSearchBulk, err := client.MessageList(topic.Topic, &tat.MessageCriteria{Text: "#createBulk"})
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(messagesSearchBulk.Messages))
 
 }

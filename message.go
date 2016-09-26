@@ -239,6 +239,10 @@ type MessageJSONOut struct {
 	Info    string  `json:"info"`
 }
 
+type MessagesJSONIn struct {
+	Messages []*MessageJSON `json:"messages"`
+}
+
 // MessageJSON represents a message with action on it
 type MessageJSON struct {
 	ID           string `json:"_id"`
@@ -265,6 +269,27 @@ func (c *Client) MessageAdd(message MessageJSON) (*MessageJSONOut, error) {
 	}
 
 	return c.processForMessageJSONOut("POST", "/message"+message.Topic, 201, message)
+}
+
+// MessageAddBulk post many tat message (root msg or replies)
+func (c *Client) MessageAddBulk(messages []MessageJSON) ([]MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	msgs := []MessageJSONOut{}
+	for _, message := range messages {
+		if message.Topic == "" {
+			return nil, fmt.Errorf("A message must have a Topic")
+		}
+
+		m, err := c.processForMessageJSONOut("POST", "/message"+message.Topic, 201, message)
+		if err != nil {
+			return msgs, err
+		}
+		msgs = append(msgs, *m)
+	}
+	return msgs, nil
 }
 
 // MessageReply post a reply to a message
