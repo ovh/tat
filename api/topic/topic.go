@@ -433,21 +433,28 @@ func Truncate(topic *tat.Topic) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+	cache.CleanMessagesLists(topic.Topic)
 	return changeInfo.Removed, err
 }
 
 // TruncateTags clears "cached" tags in topic
 func TruncateTags(topic *tat.Topic) error {
-	return store.Tat().CTopics.Update(
+	err := store.Tat().CTopics.Update(
 		bson.M{"_id": topic.ID},
 		bson.M{"$unset": bson.M{"tags": ""}})
+
+	cache.CleanTopicByName(topic.Topic)
+	return err
 }
 
 // TruncateLabels clears "cached" labels on a topic
 func TruncateLabels(topic *tat.Topic) error {
-	return store.Tat().CTopics.Update(
+	err := store.Tat().CTopics.Update(
 		bson.M{"_id": topic.ID},
 		bson.M{"$unset": bson.M{"labels": ""}})
+
+	cache.CleanTopicByName(topic.Topic)
+	return err
 }
 
 var topicsLastMsgUpdate map[string]int64
@@ -577,6 +584,7 @@ func ComputeTags(topic *tat.Topic) (int, error) {
 		bson.M{"_id": topic.ID},
 		bson.M{"$set": bson.M{"tags": tags}})
 
+	cache.CleanTopicByName(topic.Topic)
 	return len(tags), err
 }
 
@@ -604,6 +612,7 @@ func ComputeLabels(topic *tat.Topic) (int, error) {
 		bson.M{"_id": topic.ID},
 		bson.M{"$set": bson.M{"labels": labels}})
 
+	cache.CleanTopicByName(topic.Topic)
 	return len(labels), err
 }
 
@@ -728,6 +737,7 @@ func setABoolParam(topic *tat.Topic, key string, value bool) error {
 	if err != nil {
 		log.Errorf("Error while update topic %s, param %s with new value %t", topic.Topic, key, value)
 	}
+	cache.CleanTopicByName(topic.Topic)
 	return nil
 }
 
