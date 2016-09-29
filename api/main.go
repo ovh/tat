@@ -85,7 +85,6 @@ var mainCmd = &cobra.Command{
 		initRoutesUsers(routerRoot, CheckPassword())
 		initRoutesStats(routerRoot, CheckPassword())
 		initRoutesSystem(routerRoot, CheckPassword())
-		initRoutesSockets(routerRoot, CheckPassword())
 
 		s := &http.Server{
 			Addr:           ":" + viper.GetString("listen_port"),
@@ -188,9 +187,6 @@ func init() {
 
 	flags.Bool("username-from-email", false, "Username are extracted from first part of email. first.lastame@domainA.org -> username: first.lastname")
 	viper.BindPFlag("username_from_email", flags.Lookup("username-from-email"))
-
-	flags.Bool("websocket-enabled", false, "Enable or not websockets on this instance")
-	viper.BindPFlag("websocket_enabled", flags.Lookup("websocket-enabled"))
 
 	flags.String("header-trust-username", "", "Header Trust Username: for example, if X-Remote-User and X-Remote-User received in header -> auto accept user without testing tat_password. Use it with precaution")
 	viper.BindPFlag("header_trust_username", flags.Lookup("header-trust-username"))

@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 )
 
 // initRoutesGroups initialized routes for Groups Controller
@@ -87,21 +86,6 @@ func initRoutesPresences(router *gin.RouterGroup, checkPassword gin.HandlerFunc)
 	admin.Use(checkPassword, CheckAdmin())
 	{
 		admin.GET("/checkall", presencesCtrl.CheckAllPresences)
-	}
-}
-
-// initRoutesSockets initialized routes for Sockets Controller
-func initRoutesSockets(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
-	socketsCtrl := &SocketsController{}
-
-	if viper.GetBool("websocket_enabled") {
-		router.GET("/socket/ws", socketsCtrl.WS)
-
-		admin := router.Group("/sockets")
-		admin.Use(checkPassword, CheckAdmin())
-		{
-			admin.GET("/dump", socketsCtrl.Dump)
-		}
 	}
 }
 

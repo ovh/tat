@@ -22,7 +22,6 @@ func TestTopicCreateListAndDelete(t *testing.T) {
 	initRoutesUsers(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesStats(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesSystem(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
-	initRoutesSockets(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 
 	topic, err := client.TopicCreate(tat.TopicCreateJSON{
 		Topic:       "/" + tests.RandomString(t, 10),
@@ -62,7 +61,6 @@ func TestTruncateAndDeleteAllTopics(t *testing.T) {
 	initRoutesUsers(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesStats(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesSystem(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
-	initRoutesSockets(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 
 	topics, err := client.TopicList(nil)
 	assert.NotNil(t, topics)
@@ -89,7 +87,6 @@ func TestListTopicsFromCache(t *testing.T) {
 	initRoutesUsers(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesStats(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesSystem(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
-	initRoutesSockets(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 
 	topic, err := client.TopicCreate(tat.TopicCreateJSON{
 		Topic:       "/" + tests.RandomString(t, 10),

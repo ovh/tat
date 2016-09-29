@@ -14,7 +14,6 @@ import (
 	groupDB "github.com/ovh/tat/api/group"
 	messageDB "github.com/ovh/tat/api/message"
 	presenceDB "github.com/ovh/tat/api/presence"
-	"github.com/ovh/tat/api/socket"
 	topicDB "github.com/ovh/tat/api/topic"
 	userDB "github.com/ovh/tat/api/user"
 	"github.com/spf13/viper"
@@ -117,7 +116,6 @@ func (u *UsersController) Create(ctx *gin.Context) {
 	}
 
 	go userDB.SendVerifyEmail(userIn.Username, userIn.Email, tokenVerify, callback)
-	go socket.WSUser(&tat.WSUserJSON{Action: "create", Username: userIn.Username})
 
 	info := ""
 	if viper.GetBool("username_from_email") {
@@ -163,7 +161,7 @@ func (u *UsersController) Verify(ctx *gin.Context) {
 		return
 	}
 	if username != "" && tokenVerify != "" {
-		isNewUser, password, err := userDB.Verify(user, username, tokenVerify)
+		_, password, err := userDB.Verify(user, username, tokenVerify)
 		if err != nil {
 			e := fmt.Sprintf("Error on verify token for username %s", username)
 			log.Errorf("%s %s", e, err.Error())
@@ -175,10 +173,6 @@ func (u *UsersController) Verify(ctx *gin.Context) {
 				"password": password,
 				"url":      fmt.Sprintf("%s://%s:%s%s", viper.GetString("exposed_scheme"), viper.GetString("exposed_host"), viper.GetString("exposed_port"), viper.GetString("exposed_path")),
 			})
-
-			if isNewUser {
-				go socket.WSUser(&tat.WSUserJSON{Action: "verify", Username: username})
-			}
 		}
 	} else {
 		ctx.JSON(http.StatusBadRequest, gin.H{"info": fmt.Sprintf("username %s or token empty", username)})
@@ -669,8 +663,6 @@ func (*UsersController) Rename(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Errorf("Rename %s user to %s failed", renameJSON.Username, renameJSON.NewUsername)})
 		return
 	}
-	socket.CloseSocketOfUsername(userToRename.Username)
-
 	ctx.JSON(http.StatusCreated, gin.H{"info": "user is renamed"})
 }
 

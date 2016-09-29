@@ -25,7 +25,6 @@ func TestUserMe(t *testing.T) {
 	initRoutesUsers(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesStats(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesSystem(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
-	initRoutesSockets(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 
 	client := tests.TATClient(t, "")
 	u, err := client.UserMe()
@@ -46,7 +45,6 @@ func TestCreateUser(t *testing.T) {
 	initRoutesUsers(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesStats(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesSystem(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
-	initRoutesSockets(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 
 	client := tests.TATClient(t, "")
 

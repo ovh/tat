@@ -22,7 +22,6 @@ func TestAddAndDeleteGroup(t *testing.T) {
 	initRoutesUsers(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesStats(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 	initRoutesSystem(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
-	initRoutesSockets(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
 
 	group, err := client.GroupCreate(tat.GroupJSON{
 		Description: "Group admin for tests",

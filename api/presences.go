@@ -11,10 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
 	presenceDB "github.com/ovh/tat/api/presence"
-	socket "github.com/ovh/tat/api/socket"
 	topicDB "github.com/ovh/tat/api/topic"
 	userDB "github.com/ovh/tat/api/user"
-	"github.com/spf13/viper"
 )
 
 // PresencesController contains all methods about presences manipulation
@@ -148,10 +146,6 @@ func (m *PresencesController) create(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	if viper.GetBool("websocket_enabled") {
-		go socket.WSPresence(&tat.WSPresenceJSON{Action: "create", Presence: presence})
-	}
 }
 
 // CreateAndGet creates a presence and get presences on current topic
@@ -200,10 +194,6 @@ func (m *PresencesController) Delete(ctx *gin.Context) {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
-	}
-	presence := tat.Presence{Topic: topic.Topic, UserPresence: tat.UserPresence{Username: userToDelete.Username, Fullname: userToDelete.Fullname}}
-	if viper.GetBool("websocket_enabled") {
-		go socket.WSPresence(&tat.WSPresenceJSON{Action: "delete", Presence: presence})
 	}
 	ctx.JSON(http.StatusOK, nil)
 }
