@@ -12,6 +12,7 @@ import (
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/group"
+	"github.com/ovh/tat/api/hook"
 	"github.com/ovh/tat/api/message"
 	"github.com/ovh/tat/api/store"
 	"github.com/ovh/tat/api/topic"
@@ -85,6 +86,8 @@ var mainCmd = &cobra.Command{
 		initRoutesUsers(routerRoot, CheckPassword())
 		initRoutesStats(routerRoot, CheckPassword())
 		initRoutesSystem(routerRoot, CheckPassword())
+		hook.InitHooks()
+		defer hook.CloseKafka()
 
 		s := &http.Server{
 			Addr:           ":" + viper.GetString("listen_port"),
