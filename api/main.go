@@ -224,6 +224,16 @@ func init() {
 
 	flags.Int("db-ensure-safe-db-write", -1, "Min # of servers to ack before write success")
 	viper.BindPFlag("db_ensure_safe_db_write", flags.Lookup("db-ensure-safe-db-write"))
+
+	flags.String("allowed-path-webhooks", "", "Empty: no-restriction. Ex: --allowed-path-webhooks=https://urlA/,https://urlB/")
+	viper.BindPFlag("allowed_path_webhooks", flags.Lookup("allowed-path-webhooks"))
+
+	flags.String("kafka-broker-addresses", "", "Ex: --kafka-broker-addresses=host:port,host2:port2")
+	viper.BindPFlag("kafka_broker_addresses", flags.Lookup("kafka-broker-addresses"))
+
+	flags.String("kafka-client-id", "", "Ex: --kafka-client-id=xxxx-yyyy")
+	viper.BindPFlag("kafka_client_id", flags.Lookup("kafka-client-id"))
+
 }
 
 func main() {
