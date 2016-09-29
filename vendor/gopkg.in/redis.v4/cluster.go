@@ -39,6 +39,8 @@ type ClusterClient struct {
 	reloading uint32
 }
 
+var _ Cmdable = (*ClusterClient)(nil)
+
 // NewClusterClient returns a Redis Cluster client as described in
 // http://redis.io/topics/cluster-spec.
 func NewClusterClient(opt *ClusterOptions) *ClusterClient {
@@ -160,17 +162,18 @@ func (c *ClusterClient) newNode(addr string) *clusterNode {
 	}
 }
 
-func (c *ClusterClient) slotNodes(slot int) []*clusterNode {
+func (c *ClusterClient) slotNodes(slot int) (nodes []*clusterNode) {
 	c.mu.RLock()
-	nodes := c.slots[slot]
+	if slot < len(c.slots) {
+		nodes = c.slots[slot]
+	}
 	c.mu.RUnlock()
 	return nodes
 }
 
 // randomNode returns random live node.
 func (c *ClusterClient) randomNode() (*clusterNode, error) {
-	var node *clusterNode
-	var err error
+	var nodeErr error
 	for i := 0; i < 10; i++ {
 		c.mu.RLock()
 		closed := c.closed
@@ -182,16 +185,18 @@ func (c *ClusterClient) randomNode() (*clusterNode, error) {
 		}
 
 		n := rand.Intn(len(addrs))
-		node, err = c.nodeByAddr(addrs[n])
+
+		node, err := c.nodeByAddr(addrs[n])
 		if err != nil {
 			return nil, err
 		}
 
-		if node.Client.ClusterInfo().Err() == nil {
-			break
+		nodeErr = node.Client.ClusterInfo().Err()
+		if nodeErr == nil {
+			return node, nil
 		}
 	}
-	return node, nil
+	return nil, nodeErr
 }
 
 func (c *ClusterClient) slotMasterNode(slot int) (*clusterNode, error) {
@@ -511,7 +516,7 @@ func (c *ClusterClient) pipelineExec(cmds []Cmder) error {
 				}
 			}
 
-			cn, err := node.Client.conn()
+			cn, _, err := node.Client.conn()
 			if err != nil {
 				setCmdsErr(cmds, err)
 				setRetErr(err)
@@ -627,6 +632,8 @@ func (opt *ClusterOptions) init() {
 }
 
 func (opt *ClusterOptions) clientOptions() *Options {
+	const disableIdleCheck = -1
+
 	return &Options{
 		Password: opt.Password,
 		ReadOnly: opt.ReadOnly,
@@ -640,5 +647,6 @@ func (opt *ClusterOptions) clientOptions() *Options {
 		IdleTimeout: opt.IdleTimeout,
 
 		// IdleCheckFrequency is not copied to disable reaper
+		IdleCheckFrequency: disableIdleCheck,
 	}
 }

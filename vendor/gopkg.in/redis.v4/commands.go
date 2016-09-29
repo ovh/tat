@@ -41,6 +41,9 @@ func formatSec(dur time.Duration) string {
 }
 
 type Cmdable interface {
+	Pipeline() *Pipeline
+	Pipelined(fn func(*Pipeline) error) ([]Cmder, error)
+
 	Echo(message interface{}) *StringCmd
 	Ping() *StatusCmd
 	Quit() *StatusCmd
@@ -74,7 +77,6 @@ type Cmdable interface {
 	ZScan(key string, cursor uint64, match string, count int64) Scanner
 	Append(key, value string) *IntCmd
 	BitCount(key string, bitCount *BitCount) *IntCmd
-	bitOp(op, destKey string, keys ...string) *IntCmd
 	BitOpAnd(destKey string, keys ...string) *IntCmd
 	BitOpOr(destKey string, keys ...string) *IntCmd
 	BitOpXor(destKey string, keys ...string) *IntCmd
@@ -146,14 +148,12 @@ type Cmdable interface {
 	SRem(key string, members ...interface{}) *IntCmd
 	SUnion(keys ...string) *StringSliceCmd
 	SUnionStore(destination string, keys ...string) *IntCmd
-	zAdd(a []interface{}, n int, members ...Z) *IntCmd
 	ZAdd(key string, members ...Z) *IntCmd
 	ZAddNX(key string, members ...Z) *IntCmd
 	ZAddXX(key string, members ...Z) *IntCmd
 	ZAddCh(key string, members ...Z) *IntCmd
 	ZAddNXCh(key string, members ...Z) *IntCmd
 	ZAddXXCh(key string, members ...Z) *IntCmd
-	zIncr(a []interface{}, n int, members ...Z) *FloatCmd
 	ZIncr(key string, member Z) *FloatCmd
 	ZIncrNX(key string, member Z) *FloatCmd
 	ZIncrXX(key string, member Z) *FloatCmd
@@ -161,10 +161,8 @@ type Cmdable interface {
 	ZCount(key, min, max string) *IntCmd
 	ZIncrBy(key string, increment float64, member string) *FloatCmd
 	ZInterStore(destination string, store ZStore, keys ...string) *IntCmd
-	zRange(key string, start, stop int64, withScores bool) *StringSliceCmd
 	ZRange(key string, start, stop int64) *StringSliceCmd
 	ZRangeWithScores(key string, start, stop int64) *ZSliceCmd
-	zRangeBy(zcmd, key string, opt ZRangeBy, withScores bool) *StringSliceCmd
 	ZRangeByScore(key string, opt ZRangeBy) *StringSliceCmd
 	ZRangeByLex(key string, opt ZRangeBy) *StringSliceCmd
 	ZRangeByScoreWithScores(key string, opt ZRangeBy) *ZSliceCmd
@@ -174,7 +172,6 @@ type Cmdable interface {
 	ZRemRangeByScore(key, min, max string) *IntCmd
 	ZRevRange(key string, start, stop int64) *StringSliceCmd
 	ZRevRangeWithScores(key string, start, stop int64) *ZSliceCmd
-	zRevRangeBy(zcmd, key string, opt ZRangeBy) *StringSliceCmd
 	ZRevRangeByScore(key string, opt ZRangeBy) *StringSliceCmd
 	ZRevRangeByLex(key string, opt ZRangeBy) *StringSliceCmd
 	ZRevRangeByScoreWithScores(key string, opt ZRangeBy) *ZSliceCmd
@@ -199,7 +196,6 @@ type Cmdable interface {
 	Info(section ...string) *StringCmd
 	LastSave() *IntCmd
 	Save() *StatusCmd
-	shutdown(modifier string) *StatusCmd
 	Shutdown() *StatusCmd
 	ShutdownSave() *StatusCmd
 	ShutdownNoSave() *StatusCmd
@@ -253,8 +249,6 @@ type cmdable struct {
 func (c *cmdable) WrapProcess(createWrapper func(oldProcess func(cmd Cmder) error) func(cmd Cmder) error) {
 	c.process = createWrapper(c.process)
 }
-
-var _ Cmdable = (*cmdable)(nil)
 
 type statefulCmdable struct {
 	process func(cmd Cmder) error

@@ -133,6 +133,8 @@ type Ring struct {
 	closed bool
 }
 
+var _ Cmdable = (*Ring)(nil)
+
 func NewRing(opt *RingOptions) *Ring {
 	const nreplicas = 100
 	opt.init()
@@ -316,7 +318,7 @@ func (c *Ring) pipelineExec(cmds []Cmder) error {
 
 		for name, cmds := range cmdsMap {
 			client := c.shards[name].Client
-			cn, err := client.conn()
+			cn, _, err := client.conn()
 			if err != nil {
 				setCmdsErr(cmds, err)
 				if retErr == nil {
