@@ -1,6 +1,8 @@
 package hook
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -13,7 +15,13 @@ import (
 )
 
 func sendWebHook(hook tat.Hook, path string) error {
-	req, _ := http.NewRequest("GET", path, nil)
+
+	data, err := json.Marshal(hook)
+	if err != nil {
+		return err
+	}
+
+	req, _ := http.NewRequest("POST", path, bytes.NewReader(data))
 
 	c := &http.Client{
 		Transport: &httpcontrol.Transport{
