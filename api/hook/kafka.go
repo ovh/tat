@@ -12,9 +12,13 @@ import (
 )
 
 var producer sarama.SyncProducer
-var kafkaOK bool
+var hookKafkaEnabled bool
 
 func initKafka() {
+	if viper.GetString("kafka_client_id") == "" || viper.GetString("kafka_broker_addresses") == "" {
+		log.Infof("No Kafka configured")
+		return
+	}
 	c := sarama.NewConfig()
 	c.ClientID = viper.GetString("kafka_client_id")
 
@@ -23,13 +27,13 @@ func initKafka() {
 	if err != nil {
 		log.Errorf("Error with init sarama:%s (newSyncProducer)", err.Error())
 	} else {
-		kafkaOK = true
+		hookKafkaEnabled = true
 	}
-
+	log.Infof("Kafka used at %s", viper.GetString("kafka_broker_addresses"))
 }
 
-// CloseKafka closes producer
-func CloseKafka() {
+// closeKafka closes producer
+func closeKafka() {
 	if producer != nil {
 		if err := producer.Close(); err != nil {
 			log.Errorf("Error with init sarama:%s (close)", err.Error())
@@ -38,9 +42,10 @@ func CloseKafka() {
 }
 
 // sendOnKafkaTopic send a hook on a topic kafka
-func sendOnKafkaTopic(hook tat.Hook, topicKafka string) error {
+func sendOnKafkaTopic(hook *tat.HookJSON, topicKafka string, topic tat.Topic) error {
+	log.Debugf("sendOnKafkaTopic enter for post on kafkaf topic %s setted on tat topic %s", topicKafka, topic.Topic)
 
-	if !kafkaOK {
+	if !hookKafkaEnabled {
 		return fmt.Errorf("sendOnKafkaTopic >> Kafka not initialized")
 	}
 

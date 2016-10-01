@@ -40,6 +40,13 @@ type Topic struct {
 	Labels               []Label          `bson:"labels" json:"labels,omitempty"`
 }
 
+type Filter struct {
+	Username string `bson:"username" json:"username"`
+	Title    string `bson:"title" json:"title"`
+	Filter   string `bson:"filter" json:"filter"`
+	Hooks    []Hook `bson:"hooks" json:"hooks"`
+}
+
 // TopicParameter struct, parameter on topics
 type TopicParameter struct {
 	Key   string `bson:"key"   json:"key"`

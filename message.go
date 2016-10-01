@@ -24,6 +24,8 @@ const (
 	// TreeViewFullTree is fulltree value for treeView
 	TreeViewFullTree = "fulltree"
 
+	// MessageActionCreate for create a message
+	MessageActionCreate = "create"
 	// MessageActionUpdate for update action on a message
 	MessageActionUpdate = "update"
 	// MessageActionReply for "reply action on a message

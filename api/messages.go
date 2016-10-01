@@ -10,6 +10,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
+	hook "github.com/ovh/tat/api/hook"
 	messageDB "github.com/ovh/tat/api/message"
 	presenceDB "github.com/ovh/tat/api/presence"
 	topicDB "github.com/ovh/tat/api/topic"
@@ -277,6 +278,7 @@ func (m *MessagesController) createSingle(ctx *gin.Context, messageIn *tat.Messa
 	}
 	info := fmt.Sprintf("Message created in %s", topic.Topic)
 	out := &tat.MessageJSONOut{Message: message, Info: info}
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: tat.MessageActionCreate, Username: user.Username}}, topic)
 	return out, http.StatusCreated, nil
 }
 
@@ -464,14 +466,14 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message tat.Mes
 func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, message tat.Message, topic tat.Topic, user tat.User) {
 
 	info := ""
-	if action == "like" {
+	if action == tat.MessageActionLike {
 		if err := messageDB.Like(&message, user, topic); err != nil {
 			log.Errorf("Error while like a message %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		info = "like added"
-	} else if action == "unlike" {
+	} else if action == tat.MessageActionUnlike {
 		if err := messageDB.Unlike(&message, user, topic); err != nil {
 			log.Errorf("Error while unlike a message %s", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -482,7 +484,9 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid action: " + action)})
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
+	out := &tat.MessageJSONOut{Info: info, Message: message}
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: action, Username: user.Username}}, topic)
+	ctx.JSON(http.StatusCreated, out)
 }
 
 func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *tat.MessageJSON, message tat.Message, user tat.User, topic tat.Topic) {
@@ -490,8 +494,8 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *tat.M
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid Text for label"))
 		return
 	}
-	info := gin.H{}
-	if messageIn.Action == "label" {
+	out := &tat.MessageJSONOut{}
+	if messageIn.Action == tat.MessageActionLabel {
 		addedLabel, err := messageDB.AddLabel(&message, topic, messageIn.Text, messageIn.Option)
 		if err != nil {
 			errInfo := fmt.Sprintf("Error while adding a label to a message %s", err.Error())
@@ -499,7 +503,7 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *tat.M
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
 			return
 		}
-		info = gin.H{"info": fmt.Sprintf("label %s added to message", addedLabel.Text), "label": addedLabel, "message": message}
+		out = &tat.MessageJSONOut{Info: fmt.Sprintf("label %s added to message", addedLabel.Text), Message: message}
 	} else if messageIn.Action == tat.MessageActionUnlabel {
 		if err := messageDB.RemoveLabel(&message, messageIn.Text, topic); err != nil {
 			errInfo := fmt.Sprintf("Error while removing a label from a message %s", err.Error())
@@ -507,7 +511,7 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *tat.M
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
 			return
 		}
-		info = gin.H{"info": fmt.Sprintf("label %s removed from message", messageIn.Text), "message": message}
+		out = &tat.MessageJSONOut{Info: fmt.Sprintf("label %s removed from message", messageIn.Text), Message: message}
 	} else if messageIn.Action == tat.MessageActionRelabel && len(messageIn.Options) == 0 {
 		if err := messageDB.RemoveAllAndAddNewLabel(&message, messageIn.Labels, topic); err != nil {
 			errInfo := fmt.Sprintf("Error while removing all labels and add new ones for a message %s", err.Error())
@@ -515,7 +519,7 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *tat.M
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
 			return
 		}
-		info = gin.H{"info": fmt.Sprintf("all labels removed and new labels %s added to message", messageIn.Text), "message": message}
+		out = &tat.MessageJSONOut{Info: fmt.Sprintf("all labels removed and new labels %s added to message", messageIn.Text), Message: message}
 	} else if messageIn.Action == tat.MessageActionRelabel && len(messageIn.Options) > 0 {
 		if err := messageDB.RemoveSomeAndAddNewLabel(&message, messageIn.Labels, messageIn.Options, topic); err != nil {
 			errInfo := fmt.Sprintf("Error while removing some labels and add new ones for a message %s", err.Error())
@@ -523,19 +527,20 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *tat.M
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
 			return
 		}
-		info = gin.H{"info": fmt.Sprintf("Some labels removed and new labels %s added to message", messageIn.Text), "message": message}
+		out = &tat.MessageJSONOut{Info: fmt.Sprintf("Some labels removed and new labels %s added to message", messageIn.Text), Message: message}
 
 	} else {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action: "+messageIn.Action))
 		return
 	}
-	ctx.JSON(http.StatusCreated, info)
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action, Username: user.Username}}, topic)
+	ctx.JSON(http.StatusCreated, out)
 }
 
 func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *tat.MessageJSON, message tat.Message, user tat.User, topic tat.Topic) {
 	info := ""
 	errInfo := ""
-	if messageIn.Action == "voteup" {
+	if messageIn.Action == tat.MessageActionVoteup {
 		if err := messageDB.VoteUP(&message, user, topic); err != nil {
 			errInfo = fmt.Sprintf("Error while vote up a message %s", err.Error())
 		}
@@ -568,7 +573,10 @@ func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *tat.Messag
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching message after voting"})
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
+
+	out := &tat.MessageJSONOut{Info: info, Message: message}
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action, Username: user.Username}}, topic)
+	ctx.JSON(http.StatusCreated, out)
 }
 
 func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *tat.MessageJSON, message tat.Message, user tat.User, topic tat.Topic) {
@@ -596,7 +604,9 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *tat.Me
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"info": info, "message": message})
+	out := &tat.MessageJSONOut{Info: info, Message: message}
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action, Username: user.Username}}, topic)
+	ctx.JSON(http.StatusCreated, out)
 }
 
 func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *tat.MessageJSON, message tat.Message, user tat.User, topic tat.Topic, isAdminOnTopic bool) {
@@ -623,7 +633,8 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *tat.Mess
 		return
 	}
 	info = fmt.Sprintf("Message updated in %s", topic.Topic)
-	out := &tat.MessageJSONOut{Message: message, Info: info}
+	out := &tat.MessageJSONOut{Info: info, Message: message}
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action, Username: user.Username}}, topic)
 	ctx.JSON(http.StatusOK, out)
 }
 
@@ -655,7 +666,7 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *tat.Messag
 	}
 
 	info := ""
-	if messageIn.Action == "move" {
+	if messageIn.Action == tat.MessageActionMove {
 		err := messageDB.Move(&message, user, fromTopic, *toTopic)
 		if err != nil {
 			log.Errorf("Error while move a message to topic: %s err: %s", toTopic.Topic, err)
@@ -667,7 +678,9 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *tat.Messag
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action: " + messageIn.Action})
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"info": info})
+	out := &tat.MessageJSONOut{Info: info, Message: message}
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action, Username: user.Username}}, *toTopic)
+	ctx.JSON(http.StatusCreated, out)
 }
 
 func (m *MessagesController) getTopicNameFromAction(username, action string) string {

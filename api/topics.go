@@ -678,6 +678,8 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 		paramsBind.IsAutoComputeLabels,
 		paramsBind.Parameters)
 
+	// TODO add tat2xmpp_default_username RW on this topic
+
 	if err != nil {
 		log.Errorf("Error while setting parameters: %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

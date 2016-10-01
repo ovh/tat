@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/cache"
+	"github.com/ovh/tat/api/hook"
 	"github.com/spf13/viper"
 )
 
@@ -19,9 +20,9 @@ func (*SystemController) GetVersion(ctx *gin.Context) {
 
 //GetCapabilites returns version of tat
 func (*SystemController) GetCapabilites(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{
-		"websocket_enabled":   viper.GetBool("websocket_enabled"),
-		"username_from_email": viper.GetBool("username_from_email"),
+	ctx.JSON(http.StatusOK, tat.Capabilities{
+		UsernameFromEmail: viper.GetBool("username_from_email"),
+		Hooks:             hook.GetCapabilities(),
 	})
 }
 

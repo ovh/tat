@@ -87,7 +87,7 @@ var mainCmd = &cobra.Command{
 		initRoutesStats(routerRoot, CheckPassword())
 		initRoutesSystem(routerRoot, CheckPassword())
 		hook.InitHooks()
-		defer hook.CloseKafka()
+		defer hook.CloseHooks()
 
 		s := &http.Server{
 			Addr:           ":" + viper.GetString("listen_port"),
@@ -224,8 +224,20 @@ func init() {
 	flags.Int("db-ensure-safe-db-write", -1, "Min # of servers to ack before write success")
 	viper.BindPFlag("db_ensure_safe_db_write", flags.Lookup("db-ensure-safe-db-write"))
 
-	flags.String("allowed-path-webhooks", "", "Empty: no-restriction. Ex: --allowed-path-webhooks=https://urlA/,https://urlB/")
-	viper.BindPFlag("allowed_path_webhooks", flags.Lookup("allowed-path-webhooks"))
+	flags.String("webhooks-allowed-path", "", "Empty: no-restriction. Ex: --webhooks-allowed-path=https://urlA/,https://urlB/")
+	viper.BindPFlag("webhooks_allowed_path", flags.Lookup("webhooks-allowed-path"))
+
+	flags.Bool("webhooks-enabled", true, "True for enabling webhook")
+	viper.BindPFlag("webhooks_enabled", flags.Lookup("webhooks-enabled"))
+
+	flags.String("tat2xmpp-url", "", "Empty: no-restriction. Ex: --tat2xmpp-url=https://urlA/,https://urlB/")
+	viper.BindPFlag("tat2xmpp_url", flags.Lookup("tat2xmpp-url"))
+
+	flags.String("tat2xmpp-key", "", "Ex: --tat2xmpp-key=KeyTat2XMPP")
+	viper.BindPFlag("tat2xmpp_key", flags.Lookup("tat2xmpp-key"))
+
+	flags.String("tat2xmpp-username", "tat.system.xmpp", "Empty: no-restriction. Ex: --tat2xmpp-username=tat.system.xmpp")
+	viper.BindPFlag("tat2xmpp_username", flags.Lookup("tat2xmpp-username"))
 
 	flags.String("kafka-broker-addresses", "", "Ex: --kafka-broker-addresses=host:port,host2:port2")
 	viper.BindPFlag("kafka_broker_addresses", flags.Lookup("kafka-broker-addresses"))
