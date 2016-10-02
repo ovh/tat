@@ -105,13 +105,13 @@ type MessageCriteria struct {
 	AllIDMessage        string // search in IDMessage OR InReplyOfID OR InReplyOfIDRoot
 	Text                string
 	Topic               string
-	Label               string
-	NotLabel            string
-	AndLabel            string
-	Tag                 string
-	NotTag              string
-	AndTag              string
-	Username            string
+	Label               string `bson:"label" json:"label,omitempty"`
+	NotLabel            string `bson:"notLabel" json:"notLabel,omitempty"`
+	AndLabel            string `bson:"andLabel" json:"andLabel,omitempty"`
+	Tag                 string `bson:"tag" json:"tag,omitempty"`
+	NotTag              string `bson:"notTag" json:"notTag,omitempty"`
+	AndTag              string `bson:"andTag" json:"andTag,omitempty"`
+	Username            string `bson:"username" json:"username,omitempty"`
 	DateMinCreation     string
 	DateMaxCreation     string
 	DateMinUpdate       string
@@ -122,7 +122,7 @@ type MessageCriteria struct {
 	LimitMinNbVotesDown string
 	LimitMaxNbVotesUP   string
 	LimitMaxNbVotesDown string
-	OnlyMsgRoot         string
+	OnlyMsgRoot         string `bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty"`
 	OnlyCount           string
 }
 

@@ -26,21 +26,21 @@ type Auth struct {
 
 // User struct
 type User struct {
-	ID                     string    `bson:"_id"               json:"_id"`
-	Username               string    `bson:"username"          json:"username"`
-	Fullname               string    `bson:"fullname"          json:"fullname"`
-	Email                  string    `bson:"email"             json:"email,omitempty"`
-	Groups                 []string  `bson:"-"                 json:"groups,omitempty"`
-	IsAdmin                bool      `bson:"isAdmin"           json:"isAdmin,omitempty"`
-	IsSystem               bool      `bson:"isSystem"          json:"isSystem,omitempty"`
-	IsArchived             bool      `bson:"isArchived"        json:"isArchived,omitempty"`
+	ID                     string    `bson:"_id" json:"_id"`
+	Username               string    `bson:"username" json:"username"`
+	Fullname               string    `bson:"fullname" json:"fullname"`
+	Email                  string    `bson:"email" json:"email,omitempty"`
+	Groups                 []string  `bson:"-" json:"groups,omitempty"`
+	IsAdmin                bool      `bson:"isAdmin" json:"isAdmin,omitempty"`
+	IsSystem               bool      `bson:"isSystem" json:"isSystem,omitempty"`
+	IsArchived             bool      `bson:"isArchived" json:"isArchived,omitempty"`
 	CanWriteNotifications  bool      `bson:"canWriteNotifications" json:"canWriteNotifications,omitempty"`
 	CanListUsersAsAdmin    bool      `bson:"canListUsersAsAdmin" json:"canListUsersAsAdmin,omitempty"`
-	FavoritesTopics        []string  `bson:"favoritesTopics"   json:"favoritesTopics,omitempty"`
+	FavoritesTopics        []string  `bson:"favoritesTopics" json:"favoritesTopics,omitempty"`
 	OffNotificationsTopics []string  `bson:"offNotificationsTopics" json:"offNotificationsTopics,omitempty"`
-	FavoritesTags          []string  `bson:"favoritesTags"     json:"favoritesTags,omitempty"`
-	DateCreation           int64     `bson:"dateCreation"      json:"dateCreation,omitempty"`
-	Contacts               []Contact `bson:"contacts"          json:"contacts,omitempty"`
+	FavoritesTags          []string  `bson:"favoritesTags" json:"favoritesTags,omitempty"`
+	DateCreation           int64     `bson:"dateCreation" json:"dateCreation,omitempty"`
+	Contacts               []Contact `bson:"contacts" json:"contacts,omitempty"`
 	Auth                   Auth      `bson:"auth" json:"-"`
 }
 

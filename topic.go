@@ -11,18 +11,18 @@ import (
 
 // Topic struct
 type Topic struct {
-	ID                   string           `bson:"_id"          json:"_id,omitempty"`
-	Collection           string           `bson:"collection"   json:"collection"`
-	Topic                string           `bson:"topic"        json:"topic"`
-	Description          string           `bson:"description"  json:"description"`
-	ROGroups             []string         `bson:"roGroups"     json:"roGroups,omitempty"`
-	RWGroups             []string         `bson:"rwGroups"     json:"rwGroups,omitempty"`
-	ROUsers              []string         `bson:"roUsers"      json:"roUsers,omitempty"`
-	RWUsers              []string         `bson:"rwUsers"      json:"rwUsers,omitempty"`
-	AdminUsers           []string         `bson:"adminUsers"   json:"adminUsers,omitempty"`
-	AdminGroups          []string         `bson:"adminGroups"  json:"adminGroups,omitempty"`
-	History              []string         `bson:"history"      json:"history"`
-	MaxLength            int              `bson:"maxlength"    json:"maxlength"`
+	ID                   string           `bson:"_id" json:"_id,omitempty"`
+	Collection           string           `bson:"collection" json:"collection"`
+	Topic                string           `bson:"topic" json:"topic"`
+	Description          string           `bson:"description" json:"description"`
+	ROGroups             []string         `bson:"roGroups" json:"roGroups,omitempty"`
+	RWGroups             []string         `bson:"rwGroups" json:"rwGroups,omitempty"`
+	ROUsers              []string         `bson:"roUsers" json:"roUsers,omitempty"`
+	RWUsers              []string         `bson:"rwUsers" json:"rwUsers,omitempty"`
+	AdminUsers           []string         `bson:"adminUsers" json:"adminUsers,omitempty"`
+	AdminGroups          []string         `bson:"adminGroups" json:"adminGroups,omitempty"`
+	History              []string         `bson:"history" json:"history"`
+	MaxLength            int              `bson:"maxlength" json:"maxlength"`
 	CanForceDate         bool             `bson:"canForceDate" json:"canForceDate"`
 	CanUpdateMsg         bool             `bson:"canUpdateMsg" json:"canUpdateMsg"`
 	CanDeleteMsg         bool             `bson:"canDeleteMsg" json:"canDeleteMsg"`
@@ -38,13 +38,15 @@ type Topic struct {
 	Parameters           []TopicParameter `bson:"parameters" json:"parameters,omitempty"`
 	Tags                 []string         `bson:"tags" json:"tags,omitempty"`
 	Labels               []Label          `bson:"labels" json:"labels,omitempty"`
+	Filters              []Filter         `bson:"filters" json:"filters,omitempty"`
 }
 
 type Filter struct {
-	Username string `bson:"username" json:"username"`
-	Title    string `bson:"title" json:"title"`
-	Filter   string `bson:"filter" json:"filter"`
-	Hooks    []Hook `bson:"hooks" json:"hooks"`
+	ID       string          `bson:"_id" json:"_id"`
+	UserID   string          `bson:"userID" json:"userID"`
+	Title    string          `bson:"title" json:"title"`
+	Criteria MessageCriteria `bson:"criteria" json:"criteria"`
+	Hooks    []Hook          `bson:"hooks" json:"hooks"`
 }
 
 // TopicParameter struct, parameter on topics

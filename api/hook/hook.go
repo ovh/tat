@@ -35,6 +35,11 @@ func GetCapabilities() []tat.CapabilitieHook {
 }
 
 func innerSendHook(hook *tat.HookJSON, topic tat.Topic) {
+	innerSendHookTopicParameters(hook, topic)
+	innerSendHookTopicFilters(hook, topic)
+}
+
+func innerSendHookTopicParameters(hook *tat.HookJSON, topic tat.Topic) {
 	for _, p := range topic.Parameters {
 		h := &tat.HookJSON{
 			HookMessage: hook.HookMessage,
@@ -43,18 +48,125 @@ func innerSendHook(hook *tat.HookJSON, topic tat.Topic) {
 				Destination: p.Value,
 			},
 		}
-		if strings.HasPrefix(p.Key, tat.HookTypeWebHook) {
-			if err := sendWebHook(h, p.Value, topic, "", ""); err != nil {
-				log.Errorf("sendHook webhook err:%s", err)
+		runHook(h, topic)
+	}
+}
+
+func runHook(h *tat.HookJSON, topic tat.Topic) {
+	if strings.HasPrefix(h.Hook.Type, tat.HookTypeWebHook) {
+		if err := sendWebHook(h, h.Hook.Destination, topic, "", ""); err != nil {
+			log.Errorf("sendHook webhook err:%s", err)
+		}
+	} else if strings.HasPrefix(h.Hook.Type, tat.HookTypeKafka) {
+		if err := sendOnKafkaTopic(h, h.Hook.Destination, topic); err != nil {
+			log.Errorf("sendHook kafka err:%s", err)
+		}
+	} else if h.Hook.Type == tat.HookTypeXMPP || h.Hook.Type == tat.HookTypeXMPPOut {
+		if err := sendXMPP(h, h.Hook.Destination, topic); err != nil {
+			log.Errorf("sendHook XMPP err:%s", err)
+		}
+	}
+}
+
+func innerSendHookTopicFilters(h *tat.HookJSON, topic tat.Topic) {
+	for _, f := range topic.Filters {
+		if matchCriteria(h.HookMessage.MessageJSONOut.Message, f.Criteria) {
+			runHook(h, topic)
+		}
+	}
+}
+
+func matchCriteria(m tat.Message, c tat.MessageCriteria) bool {
+	/*
+		bson:"label" json:"label,omitempty
+		bson:"notLabel" json:"notLabel,omitempty
+		bson:"andLabel" json:"andLabel,omitempty
+		bson:"tag" json:"tag,omitempty
+		bson:"notTag" json:"notTag,omitempty
+		bson:"andTag" json:"andTag,omitempty
+		bson:"username" json:"username,omitempty
+		bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty
+	*/
+
+	if c.OnlyMsgRoot == tat.True && m.InReplyOfID != "" {
+		return false
+	}
+
+	if c.Label != "" {
+		labels := strings.Split(c.Label, ",")
+		ok := false
+		for _, l := range labels {
+			if m.ContainsLabel(l) {
+				ok = true
+				break
 			}
-		} else if strings.HasPrefix(p.Key, tat.HookTypeKafka) {
-			if err := sendOnKafkaTopic(h, p.Value, topic); err != nil {
-				log.Errorf("sendHook kafka err:%s", err)
-			}
-		} else if p.Key == tat.HookTypeXMPP || p.Key == tat.HookTypeXMPPOut {
-			if err := sendXMPP(h, p.Value, topic); err != nil {
-				log.Errorf("sendHook XMPP err:%s", err)
+		}
+		if !ok {
+			return false
+		}
+	}
+
+	if c.NotLabel != "" {
+		notLabels := strings.Split(c.NotLabel, ",")
+		for _, l := range notLabels {
+			if m.ContainsLabel(l) {
+				return false
 			}
 		}
 	}
+
+	if c.AndLabel != "" {
+		andLabels := strings.Split(c.AndLabel, ",")
+		ok := 0
+		for _, l := range andLabels {
+			if m.ContainsLabel(l) {
+				ok++
+			}
+		}
+		if ok != len(andLabels) {
+			return false
+		}
+	}
+
+	if c.Tag != "" {
+		tags := strings.Split(c.Tag, ",")
+		ok := false
+		for _, l := range tags {
+			if m.ContainsTag(l) {
+				ok = true
+				break
+			}
+		}
+		if !ok {
+			return false
+		}
+	}
+
+	if c.NotTag != "" {
+		notTags := strings.Split(c.NotTag, ",")
+		for _, l := range notTags {
+			if m.ContainsTag(l) {
+				return false
+			}
+		}
+	}
+
+	if c.AndTag != "" {
+		andTags := strings.Split(c.AndTag, ",")
+		ok := 0
+		for _, l := range andTags {
+			if m.ContainsTag(l) {
+				ok++
+			}
+		}
+		if ok != len(andTags) {
+			return false
+		}
+	}
+
+	if c.Username != "" && c.Username != m.Author.Username {
+		return false
+	}
+
+	return true
 }
