@@ -191,6 +191,9 @@ func GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 			"parameters":           1,
 		}
 	}
+	if oneTopic {
+		b["filters"] = 1
+	}
 	if withTags {
 		b["tags"] = 1
 	}
@@ -961,6 +964,44 @@ func RemoveRoGroup(topic *tat.Topic, admin string, groupname string, recursive b
 // RemoveRwGroup removes a read write group from topic
 func RemoveRwGroup(topic *tat.Topic, admin string, groupname string, recursive bool) error {
 	err := actionOnSet(topic, "$pull", "rwGroups", groupname, admin, recursive, "remove from rw")
+	cache.CleanTopicByName(topic.Topic)
+	return err
+}
+
+// AddFilter add a user filter to the topic
+func AddFilter(topic *tat.Topic, user *tat.User, filter *tat.Filter) error {
+
+	filter.ID = bson.NewObjectId().Hex()
+	filter.UserID = user.ID
+
+	for _, h := range filter.Hooks {
+		h.ID = bson.NewObjectId().Hex()
+	}
+
+	err := store.Tat().CTopics.Update(
+		bson.M{"_id": topic.ID},
+		bson.M{"$addToSet": bson.M{"filters": filter}},
+	)
+	cache.CleanTopicByName(topic.Topic)
+	return err
+}
+
+// RemoveFilter add a user filter to the topic
+func RemoveFilter(topic *tat.Topic, filter *tat.Filter) error {
+	err := store.Tat().CTopics.Update(
+		bson.M{"_id": topic.ID},
+		bson.M{"$pull": bson.M{"filters": bson.M{"_id": filter.ID}}},
+	)
+	cache.CleanTopicByName(topic.Topic)
+	return err
+}
+
+// UpdateFilter add a user filter to the topic
+func UpdateFilter(topic *tat.Topic, filter *tat.Filter) error {
+	err := store.Tat().CTopics.Update(
+		bson.M{"_id": topic.ID, "filters._id": filter.ID},
+		bson.M{"$set": bson.M{"filters.$": filter}},
+	)
 	cache.CleanTopicByName(topic.Topic)
 	return err
 }

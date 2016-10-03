@@ -15,6 +15,7 @@ import (
 	presenceDB "github.com/ovh/tat/api/presence"
 	topicDB "github.com/ovh/tat/api/topic"
 	userDB "github.com/ovh/tat/api/user"
+	"github.com/spf13/viper"
 )
 
 // TopicsController contains all methods about topics manipulation
@@ -112,30 +113,43 @@ func (t *TopicsController) List(ctx *gin.Context) {
 func (t *TopicsController) OneTopic(ctx *gin.Context) {
 	topicRequest, err := GetParam(ctx, "topic")
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while getting topic in param"})
+		ctx.JSON(http.StatusInternalServerError, fmt.Errorf("Error while getting topic in param"))
 		return
 	}
+	out, _, code, err := t.innerOneTopic(ctx, topicRequest)
+	if err != nil {
+		ctx.JSON(code, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(code, out)
+}
+
+func (t *TopicsController) innerOneTopic(ctx *gin.Context, topicRequest string) (*tat.TopicJSON, *tat.User, int, error) {
 	var user = tat.User{}
 	found, err := userDB.FindByUsername(&user, getCtxUsername(ctx))
 	if !found {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "User unknown"})
-		return
+		return nil, nil, http.StatusInternalServerError, fmt.Errorf("User unknown")
 	} else if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error while fetching user."})
-		return
+		return nil, nil, http.StatusInternalServerError, fmt.Errorf("Error while fetching user.")
 	}
 	topic, errfind := topicDB.FindByTopic(topicRequest, user.IsAdmin, true, true, &user)
 	if errfind != nil {
 		topic, _, err = checkDMTopic(ctx, topicRequest)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "topic " + topicRequest + " does not exist or you have no access on it"})
-			return
+			return nil, nil, http.StatusBadRequest, fmt.Errorf("topic " + topicRequest + " does not exist or you have no access on it")
 		}
 	}
 
+	filters := []tat.Filter{}
+	for _, f := range topic.Filters {
+		if f.UserID == user.ID {
+			filters = append(filters, f)
+		}
+	}
+	topic.Filters = filters
 	out := &tat.TopicJSON{Topic: topic}
 	out.IsTopicRw, out.IsTopicAdmin = topicDB.GetUserRights(topic, &user)
-	ctx.JSON(http.StatusOK, out)
+	return out, &user, http.StatusOK, nil
 }
 
 // Create creates a new topic
@@ -170,6 +184,7 @@ func (*TopicsController) Create(ctx *gin.Context) {
 func (t *TopicsController) Delete(ctx *gin.Context) {
 	topicRequest, err := GetParam(ctx, "topic")
 	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid Topic"})
 		return
 	}
 
@@ -569,6 +584,125 @@ func (t *TopicsController) RemoveParameter(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, "")
 }
 
+// AddFilter add a filter on selected topic
+func (t *TopicsController) AddFilter(ctx *gin.Context) {
+	var topicFilterBind tat.Filter
+	if err := ctx.Bind(&topicFilterBind); err != nil {
+		log.Errorf("AddFilter err:%s", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Post"})
+		return
+	}
+
+	if c, e := checkFilter(topicFilterBind); e != nil {
+		ctx.JSON(c, gin.H{"error": e.Error()})
+		return
+	}
+
+	out, user, code, err := t.innerOneTopic(ctx, topicFilterBind.Topic)
+	if err != nil {
+		ctx.JSON(code, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := topicDB.AddFilter(out.Topic, user, &topicFilterBind); err != nil {
+		log.Errorf("Error while adding filter: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"info": "filter added on topic", "filter": topicFilterBind})
+}
+
+func checkFilter(f tat.Filter) (int, error) {
+	if f.Title == "" {
+		return http.StatusBadRequest, fmt.Errorf("Filter: Title is mandatory")
+	}
+	if f.Criteria.FilterCriteriaIsEmpty() {
+		return http.StatusBadRequest, fmt.Errorf("Filter: A criteria is mandatory")
+	}
+	for _, h := range f.Hooks {
+		if h.Destination == "" || h.Type == "" {
+			return http.StatusBadRequest, fmt.Errorf("Filter: Invalid hook, destination and type are mandatory")
+		}
+	}
+	return -1, nil
+}
+
+// RemoveFilter add a filter on selected topic
+func (t *TopicsController) RemoveFilter(ctx *gin.Context) {
+	var topicFilterBind tat.Filter
+	if err := ctx.Bind(&topicFilterBind); err != nil {
+		log.Errorf("RemoveFilter err:%s", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Post"})
+		return
+	}
+
+	out, user, code, err := t.innerOneTopic(ctx, topicFilterBind.Topic)
+	if err != nil {
+		ctx.JSON(code, gin.H{"error": err.Error()})
+		return
+	}
+
+	if topicFilterBind.ID == "" {
+		ctx.JSON(code, gin.H{"error": "invalid filter id"})
+		return
+	}
+
+	for _, f := range out.Topic.Filters {
+		if f.ID == topicFilterBind.ID && f.UserID != user.ID {
+			ctx.JSON(http.StatusForbidden, gin.H{"error": "You can not remove a filter which not belong to you"})
+			return
+		}
+	}
+
+	if err := topicDB.RemoveFilter(out.Topic, &topicFilterBind); err != nil {
+		log.Errorf("Error while removing filter: %s", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"info": "filter removed from topic", "filter": topicFilterBind})
+}
+
+// UpdateFilter add a filter on selected topic
+func (t *TopicsController) UpdateFilter(ctx *gin.Context) {
+	var topicFilterBind tat.Filter
+	if err := ctx.Bind(&topicFilterBind); err != nil {
+		log.Errorf("UpdateFilter err:%s", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Post"})
+		return
+	}
+
+	log.Warnf("topicFilterBind: %+v", topicFilterBind)
+	if c, e := checkFilter(topicFilterBind); e != nil {
+		ctx.JSON(c, gin.H{"error": e.Error()})
+		return
+	}
+
+	out, user, code, err := t.innerOneTopic(ctx, topicFilterBind.Topic)
+	if err != nil {
+		ctx.JSON(code, gin.H{"error": err.Error()})
+		return
+	}
+
+	for _, f := range out.Topic.Filters {
+		if f.ID == topicFilterBind.ID && f.UserID != user.ID {
+			ctx.JSON(http.StatusForbidden, gin.H{"error": "You can not update a filter which not belong to you"})
+			return
+		}
+	}
+
+	topicFilterBind.UserID = user.ID // userID is not sent by UI
+
+	if err := topicDB.UpdateFilter(out.Topic, &topicFilterBind); err != nil {
+		log.Errorf("Error while updating filter on topic %s err: %s", out.Topic.Topic, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"info": "filter updated on topic", "filter": topicFilterBind})
+}
+
 // RemoveRoGroup removes a read only group on selected topic
 func (t *TopicsController) RemoveRoGroup(ctx *gin.Context) {
 	var paramJSON tat.ParamTopicGroupJSON
@@ -678,7 +812,43 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 		paramsBind.IsAutoComputeLabels,
 		paramsBind.Parameters)
 
-	// TODO add tat2xmpp_default_username RW on this topic
+	// add tat2xmpp_username RO or RW on this topic if a key is xmpp
+	for _, p := range paramsBind.Parameters {
+		if strings.HasPrefix(p.Key, tat.HookTypeXMPPOut) {
+			found := false
+			for _, u := range topic.ROUsers {
+				if u == viper.GetString("tat2xmpp_username") {
+					found = true
+				}
+			}
+			for _, u := range topic.RWUsers {
+				if u == viper.GetString("tat2xmpp_username") {
+					found = true
+				}
+			}
+			if !found {
+				if errf := topicDB.AddRoUser(topic, getCtxUsername(ctx), viper.GetString("tat2xmpp_username"), false); errf != nil {
+					log.Errorf("Error while adding read only user tat2xmpp_username: %s", errf)
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
+			}
+		} else if strings.HasPrefix(p.Key, tat.HookTypeXMPP) {
+			found := false
+			for _, u := range topic.RWUsers {
+				if u == viper.GetString("tat2xmpp_username") {
+					found = true
+				}
+			}
+			if !found {
+				if errf := topicDB.AddRwUser(topic, getCtxUsername(ctx), viper.GetString("tat2xmpp_username"), false); errf != nil {
+					log.Errorf("Error while adding read write user tat2xmpp_username: %s", errf)
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
+			}
+		}
+	}
 
 	if err != nil {
 		log.Errorf("Error while setting parameters: %s", err)

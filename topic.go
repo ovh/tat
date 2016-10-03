@@ -38,15 +38,43 @@ type Topic struct {
 	Parameters           []TopicParameter `bson:"parameters" json:"parameters,omitempty"`
 	Tags                 []string         `bson:"tags" json:"tags,omitempty"`
 	Labels               []Label          `bson:"labels" json:"labels,omitempty"`
-	Filters              []Filter         `bson:"filters" json:"filters,omitempty"`
+	Filters              []Filter         `bson:"filters" json:"filters"`
 }
 
 type Filter struct {
-	ID       string          `bson:"_id" json:"_id"`
-	UserID   string          `bson:"userID" json:"userID"`
-	Title    string          `bson:"title" json:"title"`
-	Criteria MessageCriteria `bson:"criteria" json:"criteria"`
-	Hooks    []Hook          `bson:"hooks" json:"hooks"`
+	Topic    string         `bson:"-" json:"topic"`
+	ID       string         `bson:"_id" json:"_id"`
+	UserID   string         `bson:"userID" json:"userID"`
+	Title    string         `bson:"title" json:"title"`
+	Criteria FilterCriteria `bson:"criteria" json:"criteria"`
+	Hooks    []Hook         `bson:"hooks" json:"hooks"`
+}
+
+// FilterCriteria are used to list messages
+type FilterCriteria struct {
+	Label       string `bson:"label" json:"label,omitempty"`
+	NotLabel    string `bson:"notLabel" json:"notLabel,omitempty"`
+	AndLabel    string `bson:"andLabel" json:"andLabel,omitempty"`
+	Tag         string `bson:"tag" json:"tag,omitempty"`
+	NotTag      string `bson:"notTag" json:"notTag,omitempty"`
+	AndTag      string `bson:"andTag" json:"andTag,omitempty"`
+	Username    string `bson:"username" json:"username,omitempty"`
+	OnlyMsgRoot string `bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty"`
+}
+
+func (c FilterCriteria) FilterCriteriaIsEmpty() bool {
+
+	if c.Label != "" ||
+		c.NotLabel != "" ||
+		c.AndLabel != "" ||
+		c.Tag != "" ||
+		c.NotTag != "" ||
+		c.AndTag != "" ||
+		c.Username != "" ||
+		c.OnlyMsgRoot != "" {
+		return false
+	}
+	return true
 }
 
 // TopicParameter struct, parameter on topics
@@ -532,6 +560,36 @@ func (c *Client) TopicParameter(params TopicParameters) ([]byte, error) {
 	out, err := c.reqWant(http.MethodPut, 201, "/topic/param", b)
 	if err != nil {
 		ErrorLogFunc("Error updating params: %s", err)
+		return nil, err
+	}
+	return out, nil
+}
+
+// TopicAddFilter adds a filter on a topic
+func (c *Client) TopicAddFilter(filter Filter) ([]byte, error) {
+	out, err := c.simplePutAndGetBytes(fmt.Sprintf("/topic/add/filter"), 201, filter)
+	if err != nil {
+		ErrorLogFunc("Error removing a filter on topic %s: %s", filter.Topic, err)
+		return nil, err
+	}
+	return out, nil
+}
+
+// TopicDeleteFilters removes a filter on a topic
+func (c *Client) TopicRemoveFilter(filter Filter) ([]byte, error) {
+	out, err := c.simplePutAndGetBytes(fmt.Sprintf("/topic/remove/filter"), 201, filter)
+	if err != nil {
+		ErrorLogFunc("Error removing a filter on topic %s: %s", filter.Topic, err)
+		return nil, err
+	}
+	return out, nil
+}
+
+// TopicUpdateFilters removes a filter on a topic
+func (c *Client) TopicUpdateFilter(filter Filter) ([]byte, error) {
+	out, err := c.simplePutAndGetBytes(fmt.Sprintf("/topic/update/filter"), 201, filter)
+	if err != nil {
+		ErrorLogFunc("Error updating a filter on topic %s: %s", filter.Topic, err)
 		return nil, err
 	}
 	return out, nil

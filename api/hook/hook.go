@@ -5,6 +5,8 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
+	topicDB "github.com/ovh/tat/api/topic"
+	"github.com/spf13/viper"
 )
 
 // InitHooks initializes hooks
@@ -48,11 +50,27 @@ func innerSendHookTopicParameters(hook *tat.HookJSON, topic tat.Topic) {
 				Destination: p.Value,
 			},
 		}
-		runHook(h, topic)
+		runHook(h, nil, topic)
 	}
 }
 
-func runHook(h *tat.HookJSON, topic tat.Topic) {
+func runHook(h *tat.HookJSON, f *tat.Filter, topic tat.Topic) {
+	if !h.Hook.Enabled {
+		log.Debugf("Hook not enabled on topic %s", topic.Topic)
+		return
+	}
+
+	if f != nil {
+		if h.Hook.Errors > viper.GetInt("hooks_max_errors") {
+			log.Warnf("Max errors reached on hook %s for topic %s", h.Hook.ID, topic.Topic)
+			for _, fh := range f.Hooks {
+				fh.Enabled = false
+			}
+			topicDB.UpdateFilter(&topic, f)
+			return
+		}
+	}
+
 	if strings.HasPrefix(h.Hook.Type, tat.HookTypeWebHook) {
 		if err := sendWebHook(h, h.Hook.Destination, topic, "", ""); err != nil {
 			log.Errorf("sendHook webhook err:%s", err)
@@ -71,12 +89,12 @@ func runHook(h *tat.HookJSON, topic tat.Topic) {
 func innerSendHookTopicFilters(h *tat.HookJSON, topic tat.Topic) {
 	for _, f := range topic.Filters {
 		if matchCriteria(h.HookMessage.MessageJSONOut.Message, f.Criteria) {
-			runHook(h, topic)
+			runHook(h, &f, topic)
 		}
 	}
 }
 
-func matchCriteria(m tat.Message, c tat.MessageCriteria) bool {
+func matchCriteria(m tat.Message, c tat.FilterCriteria) bool {
 	/*
 		bson:"label" json:"label,omitempty
 		bson:"notLabel" json:"notLabel,omitempty

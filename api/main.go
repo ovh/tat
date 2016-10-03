@@ -227,6 +227,9 @@ func init() {
 	flags.String("webhooks-allowed-path", "", "Empty: no-restriction. Ex: --webhooks-allowed-path=https://urlA/,https://urlB/")
 	viper.BindPFlag("webhooks_allowed_path", flags.Lookup("webhooks-allowed-path"))
 
+	flags.Int("hooks-max-errors", 10, "Max errors before Tat set a hook as disabled")
+	viper.BindPFlag("hooks_max_errors", flags.Lookup("hooks-max-errors"))
+
 	flags.Bool("webhooks-enabled", true, "True for enabling webhook")
 	viper.BindPFlag("webhooks_enabled", flags.Lookup("webhooks-enabled"))
 

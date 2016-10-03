@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+var HookTat2XMPPHeaderKey = "Tat2xmppkey"
+
 // HookJSON represents a json sent to an external system, for a event about a message
 type HookMessageJSON struct {
 	Action         string          `json:"action"`
@@ -17,7 +19,7 @@ type HookJSON struct {
 	HookMessage *HookMessageJSON `json:"hookMessage"`
 }
 
-var HooksType = []string{HookTypeWebHook, HookTypeKafka, HookTypeXMPP}
+var HooksType = []string{HookTypeWebHook, HookTypeKafka, HookTypeXMPP, HookTypeXMPPOut, HookTypeXMPPIn}
 
 var (
 	HookTypeWebHook = "tathook-webhook"
@@ -28,12 +30,15 @@ var (
 )
 
 type Hook struct {
-	Type        string `json:"type"` // in HooksType
-	Destination string `json:"destination"`
+	ID          string `bson:"_id" json:"_id"`
+	Type        string `bson:"type" json:"type"` // in HooksType
+	Destination string `bson:"destination" json:"destination"`
+	Errors      int    `bson:"errors" json:"errors"`
+	Enabled     bool   `bson:"enabled" json:"enabled"`
 }
 
 func checkHook(h Hook) error {
-	if h.Type != HookTypeKafka && h.Type != HookTypeWebHook {
+	if !ArrayContains(HooksType, h.Type) {
 		return fmt.Errorf("Invalid Hook type: %s", h.Type)
 	}
 	if h.Destination == "" {
@@ -41,5 +46,3 @@ func checkHook(h Hook) error {
 	}
 	return nil
 }
-
-var HookTat2XMPPHeaderKey = "Tat2xmppkey"

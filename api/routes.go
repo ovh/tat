@@ -137,6 +137,10 @@ func initRoutesTopics(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 		g.PUT("/topic/add/parameter", topicsCtrl.AddParameter)
 		g.PUT("/topic/remove/parameter", topicsCtrl.RemoveParameter)
 
+		g.PUT("/topic/add/filter", topicsCtrl.AddFilter)
+		g.PUT("/topic/remove/filter", topicsCtrl.RemoveFilter)
+		g.PUT("/topic/update/filter", topicsCtrl.UpdateFilter)
+
 		g.PUT("/topic/add/rouser", topicsCtrl.AddRoUser)
 		g.PUT("/topic/remove/rouser", topicsCtrl.RemoveRoUser)
 		g.PUT("/topic/add/rwuser", topicsCtrl.AddRwUser)

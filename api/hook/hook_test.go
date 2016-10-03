@@ -11,86 +11,86 @@ func TestMatchCriteria(t *testing.T) {
 
 	assert.Equal(t, false, matchCriteria(
 		tat.Message{Labels: []tat.Label{{Text: "labelA", Color: "#eeeeee"}}},
-		tat.MessageCriteria{Label: "labelB"}),
+		tat.FilterCriteria{Label: "labelB"}),
 		"this message should not match")
 
 	assert.Equal(t, true, matchCriteria(
 		tat.Message{Labels: []tat.Label{{Text: "labelA", Color: "#eeeeee"}}},
-		tat.MessageCriteria{Label: "labelA"}),
+		tat.FilterCriteria{Label: "labelA"}),
 		"this message should match")
 
 	assert.Equal(t, false, matchCriteria(
 		tat.Message{Labels: []tat.Label{{Text: "labelA", Color: "#eeeeee"}}},
-		tat.MessageCriteria{NotLabel: "labelA"}),
+		tat.FilterCriteria{NotLabel: "labelA"}),
 		"this message should not match")
 
 	assert.Equal(t, true, matchCriteria(
 		tat.Message{Labels: []tat.Label{{Text: "labelA", Color: "#eeeeee"}, {Text: "labelB", Color: "#eeeeee"}}},
-		tat.MessageCriteria{AndLabel: "labelA"}),
+		tat.FilterCriteria{AndLabel: "labelA"}),
 		"this message should match")
 
 	assert.Equal(t, true, matchCriteria(
 		tat.Message{Labels: []tat.Label{{Text: "labelA", Color: "#eeeeee"}, {Text: "labelB", Color: "#eeeeee"}}},
-		tat.MessageCriteria{AndLabel: "labelA,labelB"}),
+		tat.FilterCriteria{AndLabel: "labelA,labelB"}),
 		"this message should match")
 
 	assert.Equal(t, false, matchCriteria(
 		tat.Message{Labels: []tat.Label{{Text: "labelA", Color: "#eeeeee"}, {Text: "labelB", Color: "#eeeeee"}}},
-		tat.MessageCriteria{AndLabel: "labelA,labelB,labelC"}),
+		tat.FilterCriteria{AndLabel: "labelA,labelB,labelC"}),
 		"this message should not match")
 
 	assert.Equal(t, false, matchCriteria(
 		tat.Message{Tags: []string{"tagA"}},
-		tat.MessageCriteria{Tag: "tagB"}),
+		tat.FilterCriteria{Tag: "tagB"}),
 		"this message should not match")
 
 	assert.Equal(t, true, matchCriteria(
 		tat.Message{Tags: []string{"tagA"}},
-		tat.MessageCriteria{Tag: "tagA"}),
+		tat.FilterCriteria{Tag: "tagA"}),
 		"this message should match")
 
 	assert.Equal(t, false, matchCriteria(
 		tat.Message{Tags: []string{"tagA"}},
-		tat.MessageCriteria{NotTag: "tagA"}),
+		tat.FilterCriteria{NotTag: "tagA"}),
 		"this message should not match")
 
 	assert.Equal(t, true, matchCriteria(
 		tat.Message{Tags: []string{"tagA", "tagB"}},
-		tat.MessageCriteria{AndTag: "tagA"}),
+		tat.FilterCriteria{AndTag: "tagA"}),
 		"this message should match")
 
 	assert.Equal(t, true, matchCriteria(
 		tat.Message{Tags: []string{"tagA", "tagB"}},
-		tat.MessageCriteria{AndTag: "tagA,tagB"}),
+		tat.FilterCriteria{AndTag: "tagA,tagB"}),
 		"this message should match")
 
 	assert.Equal(t, false, matchCriteria(
 		tat.Message{Tags: []string{"tagA", "tagB"}},
-		tat.MessageCriteria{AndTag: "tagA,tagB,tagC"}),
+		tat.FilterCriteria{AndTag: "tagA,tagB,tagC"}),
 		"this message should not match")
 
 	assert.Equal(t, true, matchCriteria(
 		tat.Message{InReplyOfID: ""},
-		tat.MessageCriteria{OnlyMsgRoot: tat.True}),
+		tat.FilterCriteria{OnlyMsgRoot: tat.True}),
 		"this message should match")
 
 	assert.Equal(t, false, matchCriteria(
 		tat.Message{InReplyOfID: "fff"},
-		tat.MessageCriteria{OnlyMsgRoot: tat.True}),
+		tat.FilterCriteria{OnlyMsgRoot: tat.True}),
 		"this message should not match")
 
 	assert.Equal(t, true, matchCriteria(
 		tat.Message{Author: tat.Author{Username: "foo"}},
-		tat.MessageCriteria{Username: "foo"}),
+		tat.FilterCriteria{Username: "foo"}),
 		"this message should match")
 
 	assert.Equal(t, false, matchCriteria(
 		tat.Message{Author: tat.Author{Username: "foo"}},
-		tat.MessageCriteria{Username: "bar"}),
+		tat.FilterCriteria{Username: "bar"}),
 		"this message should not match")
 
 	assert.Equal(t, true, matchCriteria(
 		tat.Message{Labels: []tat.Label{{Text: "labelA", Color: "#eeeeee"}, {Text: "labelB", Color: "#eeeeee"}}, Tags: []string{"tagA", "tagB", "tagC"}},
-		tat.MessageCriteria{AndTag: "tagA,tagB", AndLabel: "labelA,labelB"}),
+		tat.FilterCriteria{AndTag: "tagA,tagB", AndLabel: "labelA,labelB"}),
 		"this message should match")
 }
