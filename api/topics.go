@@ -593,7 +593,7 @@ func (t *TopicsController) AddFilter(ctx *gin.Context) {
 		return
 	}
 
-	if c, e := checkFilter(topicFilterBind); e != nil {
+	if c, e := checkFilter(&topicFilterBind); e != nil {
 		ctx.JSON(c, gin.H{"error": e.Error()})
 		return
 	}
@@ -613,7 +613,7 @@ func (t *TopicsController) AddFilter(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"info": "filter added on topic", "filter": topicFilterBind})
 }
 
-func checkFilter(f tat.Filter) (int, error) {
+func checkFilter(f *tat.Filter) (int, error) {
 	if f.Title == "" {
 		return http.StatusBadRequest, fmt.Errorf("Filter: Title is mandatory")
 	}
@@ -625,7 +625,10 @@ func checkFilter(f tat.Filter) (int, error) {
 			return http.StatusBadRequest, fmt.Errorf("Filter: Invalid hook, only tathook-webhook and tathook-xmpp-out are valid")
 		}
 		if h.Destination == "" || h.Type == "" {
-			return http.StatusBadRequest, fmt.Errorf("Filter: Invalid hook, destination and type are mandatory")
+			return http.StatusBadRequest, fmt.Errorf("Filter: Invalid hook and destination are mandatory")
+		}
+		if h.Item == "" {
+			h.Item = "message"
 		}
 	}
 	return -1, nil
@@ -677,7 +680,7 @@ func (t *TopicsController) UpdateFilter(ctx *gin.Context) {
 	}
 
 	log.Warnf("topicFilterBind: %+v", topicFilterBind)
-	if c, e := checkFilter(topicFilterBind); e != nil {
+	if c, e := checkFilter(&topicFilterBind); e != nil {
 		ctx.JSON(c, gin.H{"error": e.Error()})
 		return
 	}

@@ -50,6 +50,7 @@ func innerSendHookTopicParameters(hook *tat.HookJSON, topic tat.Topic) {
 			h := &tat.HookJSON{
 				HookMessage: hook.HookMessage,
 				Hook: tat.Hook{
+					Action:      "",
 					Type:        p.Key,
 					Destination: p.Value,
 					Enabled:     true,
@@ -78,6 +79,11 @@ func runHook(h *tat.HookJSON, f *tat.Filter, topic tat.Topic) {
 		}
 	}
 
+	if h.Hook.Action != "" && h.Hook.Action != h.HookMessage.Action {
+		log.Debugf("Skip action:%s", h.Hook.Action, h)
+		return
+	}
+
 	if strings.HasPrefix(h.Hook.Type, tat.HookTypeWebHook) {
 		if err := sendWebHook(h, h.Hook.Destination, topic, "", ""); err != nil {
 			log.Errorf("sendHook webhook err:%s", err)
@@ -102,6 +108,7 @@ func innerSendHookTopicFilters(h *tat.HookJSON, topic tat.Topic) {
 				hbis := &tat.HookJSON{
 					HookMessage: h.HookMessage,
 					Hook: tat.Hook{
+						Action:      hh.Action,
 						Type:        hh.Type,
 						Destination: hh.Destination,
 						Enabled:     hh.Enabled,

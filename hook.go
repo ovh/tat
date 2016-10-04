@@ -35,6 +35,8 @@ type Hook struct {
 	Destination string `bson:"destination" json:"destination"`
 	Errors      int    `bson:"errors" json:"errors"`
 	Enabled     bool   `bson:"enabled" json:"enabled"`
+	Item        string `json:"item"`   // only "message" for now
+	Action      string `json:"action"` // MessageActionVoteup, MessageActionCreate, etc...
 }
 
 func checkHook(h Hook) error {
