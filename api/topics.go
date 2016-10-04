@@ -624,8 +624,8 @@ func checkFilter(f *tat.Filter) (int, error) {
 		if h.Type != tat.HookTypeWebHook && h.Type != tat.HookTypeXMPPOut {
 			return http.StatusBadRequest, fmt.Errorf("Filter: Invalid hook, only tathook-webhook and tathook-xmpp-out are valid")
 		}
-		if h.Destination == "" || h.Type == "" {
-			return http.StatusBadRequest, fmt.Errorf("Filter: Invalid hook and destination are mandatory")
+		if h.Destination == "" || h.Type == "" || h.Action == "" {
+			return http.StatusBadRequest, fmt.Errorf("Filter: Invalid hook, destination and action are mandatory")
 		}
 		if h.Item == "" {
 			h.Item = "message"

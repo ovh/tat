@@ -50,7 +50,7 @@ func innerSendHookTopicParameters(hook *tat.HookJSON, topic tat.Topic) {
 			h := &tat.HookJSON{
 				HookMessage: hook.HookMessage,
 				Hook: tat.Hook{
-					Action:      "",
+					Action:      "all",
 					Type:        p.Key,
 					Destination: p.Value,
 					Enabled:     true,
@@ -79,7 +79,7 @@ func runHook(h *tat.HookJSON, f *tat.Filter, topic tat.Topic) {
 		}
 	}
 
-	if h.Hook.Action != "" && h.Hook.Action != h.HookMessage.Action {
+	if h.Hook.Action != "all" && h.Hook.Action != h.HookMessage.Action {
 		log.Debugf("Skip action:%s", h.Hook.Action, h)
 		return
 	}
