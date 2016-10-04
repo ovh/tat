@@ -61,9 +61,9 @@ func innerSendHookTopicParameters(hook *tat.HookJSON, topic tat.Topic) {
 }
 
 func runHook(h *tat.HookJSON, f *tat.Filter, topic tat.Topic) {
-	log.Debugf("runHook enter")
+	log.Debugf("runHook enter f:%+v", f)
 	if !h.Hook.Enabled {
-		log.Debugf("Hook not enabled on topic %s h:%+v", topic.Topic, h.Hook)
+		log.Debugf("Hook not enabled on topic %s h:%+v", topic.Topic, h)
 		return
 	}
 
@@ -95,9 +95,20 @@ func runHook(h *tat.HookJSON, f *tat.Filter, topic tat.Topic) {
 }
 
 func innerSendHookTopicFilters(h *tat.HookJSON, topic tat.Topic) {
+	log.Debugf("topic.Filters:%+v", topic.Filters)
 	for _, f := range topic.Filters {
 		if matchCriteria(h.HookMessage.MessageJSONOut.Message, f.Criteria) {
-			runHook(h, &f, topic)
+			for _, hh := range f.Hooks {
+				hbis := &tat.HookJSON{
+					HookMessage: h.HookMessage,
+					Hook: tat.Hook{
+						Type:        hh.Type,
+						Destination: hh.Destination,
+						Enabled:     hh.Enabled,
+					},
+				}
+				runHook(hbis, &f, topic)
+			}
 		}
 	}
 }
