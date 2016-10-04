@@ -798,6 +798,13 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 		}
 	}
 
+	for _, p := range paramsBind.Parameters {
+		if strings.HasPrefix(p.Key, tat.HookTypeKafka) && !isTatAdmin(ctx) {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Only Tat Admin can use tathook-kafka"})
+			return
+		}
+	}
+
 	err = topicDB.SetParam(topic, getCtxUsername(ctx),
 		paramsBind.Recursive,
 		paramsBind.MaxLength,

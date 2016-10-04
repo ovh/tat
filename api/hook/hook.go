@@ -43,20 +43,27 @@ func innerSendHook(hook *tat.HookJSON, topic tat.Topic) {
 
 func innerSendHookTopicParameters(hook *tat.HookJSON, topic tat.Topic) {
 	for _, p := range topic.Parameters {
-		h := &tat.HookJSON{
-			HookMessage: hook.HookMessage,
-			Hook: tat.Hook{
-				Type:        p.Key,
-				Destination: p.Value,
-			},
+		for _, ht := range tat.HooksType {
+			if !strings.HasPrefix(p.Key, ht) {
+				continue
+			}
+			h := &tat.HookJSON{
+				HookMessage: hook.HookMessage,
+				Hook: tat.Hook{
+					Type:        p.Key,
+					Destination: p.Value,
+					Enabled:     true,
+				},
+			}
+			runHook(h, nil, topic)
 		}
-		runHook(h, nil, topic)
 	}
 }
 
 func runHook(h *tat.HookJSON, f *tat.Filter, topic tat.Topic) {
+	log.Debugf("runHook enter")
 	if !h.Hook.Enabled {
-		log.Debugf("Hook not enabled on topic %s", topic.Topic)
+		log.Debugf("Hook not enabled on topic %s h:%+v", topic.Topic, h.Hook)
 		return
 	}
 
@@ -76,6 +83,7 @@ func runHook(h *tat.HookJSON, f *tat.Filter, topic tat.Topic) {
 			log.Errorf("sendHook webhook err:%s", err)
 		}
 	} else if strings.HasPrefix(h.Hook.Type, tat.HookTypeKafka) {
+		log.Infof("sendOnKafkaTopic")
 		if err := sendOnKafkaTopic(h, h.Hook.Destination, topic); err != nil {
 			log.Errorf("sendHook kafka err:%s", err)
 		}

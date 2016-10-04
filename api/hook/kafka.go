@@ -43,7 +43,7 @@ func closeKafka() {
 
 // sendOnKafkaTopic send a hook on a topic kafka
 func sendOnKafkaTopic(hook *tat.HookJSON, topicKafka string, topic tat.Topic) error {
-	log.Debugf("sendOnKafkaTopic enter for post on kafkaf topic %s setted on tat topic %s", topicKafka, topic.Topic)
+	log.Debugf("sendOnKafkaTopic enter for post on kafka topic %s setted on tat topic %s", topicKafka, topic.Topic)
 
 	if !hookKafkaEnabled {
 		return fmt.Errorf("sendOnKafkaTopic >> Kafka not initialized")
