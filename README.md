@@ -402,8 +402,8 @@ curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit
 * `limitMinNbVotesDown`: filter result on nbVotesDown
 * `limitMaxNbVotesDown`: filter result on nbVotesDown
 * `label`: Search by label: could be labelA,labelB
-* `andLabel`: Search by label (exclude): could be labelA,labelB
-* `notLabel`: Search by label (and): could be labelA,labelB
+* `andLabel`: Search by label (and): could be labelA,labelB for select messages with labelA AND labelB
+* `notLabel`: Search by label (exclude): could be labelA,labelB for select messages without labelA OR labelB
 * `tag`: tagA,tagB
 * `andTag`: tagA,tagB
 * `notTag`: tagA,tagB
