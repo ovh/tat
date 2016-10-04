@@ -125,7 +125,7 @@ func matchCriteria(m tat.Message, c tat.FilterCriteria) bool {
 		bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty
 	*/
 
-	if c.OnlyMsgRoot == tat.True && m.InReplyOfID != "" {
+	if c.OnlyMsgRoot && m.InReplyOfID != "" {
 		return false
 	}
 

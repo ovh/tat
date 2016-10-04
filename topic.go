@@ -59,7 +59,7 @@ type FilterCriteria struct {
 	NotTag      string `bson:"notTag" json:"notTag,omitempty"`
 	AndTag      string `bson:"andTag" json:"andTag,omitempty"`
 	Username    string `bson:"username" json:"username,omitempty"`
-	OnlyMsgRoot string `bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty"`
+	OnlyMsgRoot bool   `bson:"onlyMsgRoot" json:"onlyMsgRoot"`
 }
 
 func (c FilterCriteria) FilterCriteriaIsEmpty() bool {
@@ -71,7 +71,7 @@ func (c FilterCriteria) FilterCriteriaIsEmpty() bool {
 		c.NotTag != "" ||
 		c.AndTag != "" ||
 		c.Username != "" ||
-		c.OnlyMsgRoot != "" {
+		c.OnlyMsgRoot == true {
 		return false
 	}
 	return true

@@ -71,12 +71,12 @@ func TestMatchCriteria(t *testing.T) {
 
 	assert.Equal(t, true, matchCriteria(
 		tat.Message{InReplyOfID: ""},
-		tat.FilterCriteria{OnlyMsgRoot: tat.True}),
+		tat.FilterCriteria{OnlyMsgRoot: true}),
 		"this message should match")
 
 	assert.Equal(t, false, matchCriteria(
 		tat.Message{InReplyOfID: "fff"},
-		tat.FilterCriteria{OnlyMsgRoot: tat.True}),
+		tat.FilterCriteria{OnlyMsgRoot: true}),
 		"this message should not match")
 
 	assert.Equal(t, true, matchCriteria(
