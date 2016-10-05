@@ -43,21 +43,19 @@ func innerSendHook(hook *tat.HookJSON, topic tat.Topic) {
 
 func innerSendHookTopicParameters(hook *tat.HookJSON, topic tat.Topic) {
 	for _, p := range topic.Parameters {
-		for _, ht := range tat.HooksType {
-			if !tat.ArrayContains(tat.HooksType, ht) {
-				continue
-			}
-			h := &tat.HookJSON{
-				HookMessage: hook.HookMessage,
-				Hook: tat.Hook{
-					Action:      "all",
-					Type:        p.Key,
-					Destination: p.Value,
-					Enabled:     true,
-				},
-			}
-			runHook(h, nil, topic)
+		if !tat.ArrayContains(tat.HooksType, p.Key) {
+			continue
 		}
+		h := &tat.HookJSON{
+			HookMessage: hook.HookMessage,
+			Hook: tat.Hook{
+				Action:      "all",
+				Type:        p.Key,
+				Destination: p.Value,
+				Enabled:     true,
+			},
+		}
+		runHook(h, nil, topic)
 	}
 }
 
