@@ -44,7 +44,7 @@ func innerSendHook(hook *tat.HookJSON, topic tat.Topic) {
 func innerSendHookTopicParameters(hook *tat.HookJSON, topic tat.Topic) {
 	for _, p := range topic.Parameters {
 		for _, ht := range tat.HooksType {
-			if !strings.HasPrefix(p.Key, ht) {
+			if !tat.ArrayContains(tat.HooksType, ht) {
 				continue
 			}
 			h := &tat.HookJSON{

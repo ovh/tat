@@ -156,7 +156,7 @@ func TestTopicsFilterManage(t *testing.T) {
 		Title:    "myTitle",
 		Criteria: tat.FilterCriteria{Label: "fooLabel"},
 		Hooks: []tat.Hook{
-			{Type: tat.HookTypeWebHook, Destination: "fooDestination"},
+			{Type: tat.HookTypeWebHook, Destination: "fooDestination", Action: tat.MessageActionCreate},
 		}})
 	t.Logf("Filter created on %s", topic.Topic)
 
@@ -174,7 +174,7 @@ func TestTopicsFilterManage(t *testing.T) {
 		Title:    "myTitleUpdate",
 		Criteria: tat.FilterCriteria{Tag: "fooTag"},
 		Hooks: []tat.Hook{
-			{Type: tat.HookTypeWebHook, Destination: "fooDestination", Enabled: true},
+			{Type: tat.HookTypeWebHook, Destination: "fooDestination", Enabled: true, Action: tat.MessageActionCreate},
 		}})
 	assert.NoError(t, erru)
 	t.Logf("out after update filter on %s: %s", topic.Topic, string(out))
