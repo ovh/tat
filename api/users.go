@@ -168,7 +168,7 @@ func (u *UsersController) Verify(ctx *gin.Context) {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"info": e})
 		} else {
 			ctx.JSON(http.StatusOK, gin.H{
-				"message":  "Verification successfull",
+				"message":  "Verification successful",
 				"username": username,
 				"password": password,
 				"url":      fmt.Sprintf("%s://%s:%s%s", viper.GetString("exposed_scheme"), viper.GetString("exposed_host"), viper.GetString("exposed_port"), viper.GetString("exposed_path")),
@@ -499,7 +499,7 @@ func (*UsersController) Convert(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"message":  "Verification successfull",
+		"message":  "Verification successful",
 		"username": userToConvert.Username,
 		"password": newPassword,
 		"url":      fmt.Sprintf("%s://%s:%s%s", viper.GetString("exposed_scheme"), viper.GetString("exposed_host"), viper.GetString("exposed_port"), viper.GetString("exposed_path")),
@@ -541,7 +541,7 @@ func (*UsersController) UpdateSystemUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"message": "Update successfull"})
+	ctx.JSON(http.StatusCreated, gin.H{"message": "Update successful"})
 }
 
 // ResetSystemUser reset password for a system user
@@ -576,7 +576,7 @@ func (*UsersController) ResetSystemUser(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"message":  "Reset password successfull",
+		"message":  "Reset password successful",
 		"username": systemUserToReset.Username,
 		"password": newPassword,
 		"url":      fmt.Sprintf("%s://%s:%s%s", viper.GetString("exposed_scheme"), viper.GetString("exposed_host"), viper.GetString("exposed_port"), viper.GetString("exposed_path")),
