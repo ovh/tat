@@ -9,7 +9,6 @@ var HookTat2XMPPHeaderKey = "Tat2xmppkey"
 // HookJSON represents a json sent to an external system, for a event about a message
 type HookMessageJSON struct {
 	Action         string          `json:"action"`
-	Username       string          `json:"username"`
 	MessageJSONOut *MessageJSONOut `json:"message"`
 }
 
@@ -17,6 +16,7 @@ type HookMessageJSON struct {
 type HookJSON struct {
 	Hook        Hook             `json:"hook"`
 	HookMessage *HookMessageJSON `json:"hookMessage"`
+	Username    string           `json:"username"`
 }
 
 var HooksType = []string{HookTypeWebHook, HookTypeKafka, HookTypeXMPP, HookTypeXMPPOut, HookTypeXMPPIn}

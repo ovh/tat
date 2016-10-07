@@ -13,7 +13,7 @@ func initXMPPHook() {
 }
 
 func sendXMPP(hook *tat.HookJSON, path string, topic tat.Topic) error {
-	if hook.HookMessage.Username == viper.GetString("tat2xmpp_username") {
+	if hook.HookMessage.MessageJSONOut.Message.Author.Username == viper.GetString("tat2xmpp_username") {
 		log.Debugf("sendXMPP >> Skip msg from %s on topic %s", viper.GetString("tat2xmpp_username"), topic.Topic)
 		return nil
 	}

@@ -75,6 +75,7 @@ func runHook(h *tat.HookJSON, f *tat.Filter, topic tat.Topic) {
 			topicDB.UpdateFilter(&topic, f)
 			return
 		}
+		h.Username = f.Username
 	}
 
 	if h.Hook.Action != "all" && h.Hook.Action != h.HookMessage.Action {

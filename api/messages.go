@@ -278,7 +278,7 @@ func (m *MessagesController) createSingle(ctx *gin.Context, messageIn *tat.Messa
 	}
 	info := fmt.Sprintf("Message created in %s", topic.Topic)
 	out := &tat.MessageJSONOut{Message: message, Info: info}
-	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: tat.MessageActionCreate, Username: user.Username}}, topic)
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: tat.MessageActionCreate}}, topic)
 	return out, http.StatusCreated, nil
 }
 
@@ -485,7 +485,7 @@ func (m *MessagesController) likeOrUnlike(ctx *gin.Context, action string, messa
 		return
 	}
 	out := &tat.MessageJSONOut{Info: info, Message: message}
-	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: action, Username: user.Username}}, topic)
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: action}}, topic)
 	ctx.JSON(http.StatusCreated, out)
 }
 
@@ -533,7 +533,7 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *tat.M
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid action: "+messageIn.Action))
 		return
 	}
-	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action, Username: user.Username}}, topic)
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action}}, topic)
 	ctx.JSON(http.StatusCreated, out)
 }
 
@@ -575,7 +575,7 @@ func (m *MessagesController) voteMessage(ctx *gin.Context, messageIn *tat.Messag
 	}
 
 	out := &tat.MessageJSONOut{Info: info, Message: message}
-	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action, Username: user.Username}}, topic)
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action}}, topic)
 	ctx.JSON(http.StatusCreated, out)
 }
 
@@ -605,7 +605,7 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *tat.Me
 		return
 	}
 	out := &tat.MessageJSONOut{Info: info, Message: message}
-	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action, Username: user.Username}}, topic)
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action}}, topic)
 	ctx.JSON(http.StatusCreated, out)
 }
 
@@ -634,7 +634,7 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *tat.Mess
 	}
 	info = fmt.Sprintf("Message updated in %s", topic.Topic)
 	out := &tat.MessageJSONOut{Info: info, Message: message}
-	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action, Username: user.Username}}, topic)
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action}}, topic)
 	ctx.JSON(http.StatusOK, out)
 }
 
@@ -679,7 +679,7 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *tat.Messag
 		return
 	}
 	out := &tat.MessageJSONOut{Info: info, Message: message}
-	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action, Username: user.Username}}, *toTopic)
+	hook.SendHook(&tat.HookJSON{HookMessage: &tat.HookMessageJSON{MessageJSONOut: out, Action: messageIn.Action}}, *toTopic)
 	ctx.JSON(http.StatusCreated, out)
 }
 

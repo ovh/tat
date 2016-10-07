@@ -45,6 +45,7 @@ type Filter struct {
 	Topic    string         `bson:"-" json:"topic"`
 	ID       string         `bson:"_id" json:"_id"`
 	UserID   string         `bson:"userID" json:"userID"`
+	Username string         `bson:"username" json:"username"`
 	Title    string         `bson:"title" json:"title"`
 	Criteria FilterCriteria `bson:"criteria" json:"criteria"`
 	Hooks    []Hook         `bson:"hooks" json:"hooks"`

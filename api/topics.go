@@ -699,6 +699,7 @@ func (t *TopicsController) UpdateFilter(ctx *gin.Context) {
 	}
 
 	topicFilterBind.UserID = user.ID // userID is not sent by UI
+	topicFilterBind.Username = user.Username
 
 	if err := topicDB.UpdateFilter(out.Topic, &topicFilterBind); err != nil {
 		log.Errorf("Error while updating filter on topic %s err: %s", out.Topic.Topic, err)

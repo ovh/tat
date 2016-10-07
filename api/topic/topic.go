@@ -973,6 +973,7 @@ func AddFilter(topic *tat.Topic, user *tat.User, filter *tat.Filter) error {
 
 	filter.ID = bson.NewObjectId().Hex()
 	filter.UserID = user.ID
+	filter.Username = user.Username
 
 	for _, h := range filter.Hooks {
 		h.ID = bson.NewObjectId().Hex()
