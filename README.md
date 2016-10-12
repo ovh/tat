@@ -73,6 +73,7 @@ to upload file and store URL on Tat. This workflow should be done by UI.
 # Usage of Tat Engine API
 ## Message
 ### Store new message
+
 ```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
@@ -129,6 +130,7 @@ curl -XPOST \
 Return HTTP 201 if OK
 
 ### Store some messages
+
 ```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
@@ -138,7 +140,28 @@ curl -XPOST \
 	https://<tatHostname>:<tatPort>/messages/topic/sub-topic
 ```
 
+### Action on a existing message
+
+Reply, Like, Unlike, Add Label, Remove Label, etc... use idReference but it's possible to use :
+
+* TagReference
+* StartTagReference
+* LabelReference
+* StartLabelReference
+
+```bash
+curl -XPOST \
+    -H 'Content-Type: application/json' \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "text": "text", "startTagReference": "keyTag:", "action": "reply"}'\
+	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
+If several messages matche to your request, Tat gives you a HTTP Bad Request.
+
 ### Reply to a message
+
 ```bash
 curl -XPOST \
     -H 'Content-Type: application/json' \

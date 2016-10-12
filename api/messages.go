@@ -40,8 +40,10 @@ func (*MessagesController) buildCriteria(ctx *gin.Context) *tat.MessageCriteria 
 	c.AllIDMessage = ctx.Query("allIDMessage")
 	c.Text = ctx.Query("text")
 	c.Label = ctx.Query("label")
+	c.StartLabel = ctx.Query("startLabel")
 	c.NotLabel = ctx.Query("notLabel")
 	c.AndLabel = ctx.Query("andLabel")
+	c.StartTag = ctx.Query("startTag")
 	c.Tag = ctx.Query("tag")
 	c.NotTag = ctx.Query("notTag")
 	c.AndTag = ctx.Query("andTag")
@@ -188,13 +190,41 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 		topic = topica
 	}
 
-	if messageIn.IDReference == "" || messageIn.Action == "" {
+	if (messageIn.IDReference == "" &&
+		messageIn.TagReference == "" &&
+		messageIn.StartTagReference == "" &&
+		messageIn.LabelReference == "" &&
+		messageIn.StartLabelReference == "") || messageIn.Action == "" {
 		// nothing here
-	} else if messageIn.IDReference != "" {
-		if efind := messageDB.FindByID(&message, messageIn.IDReference, *topic); efind != nil {
-			e := errors.New("Message " + messageIn.IDReference + " does not exist or you have no read access on it")
-			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-			return message, tat.Topic{}, nil, e
+	} else if messageIn.IDReference != "" ||
+		messageIn.StartTagReference != "" || messageIn.TagReference != "" ||
+		messageIn.StartLabelReference != "" || messageIn.LabelReference != "" {
+		if messageIn.IDReference != "" {
+			if efind := messageDB.FindByID(&message, messageIn.IDReference, *topic); efind != nil {
+				e := errors.New("Message " + messageIn.IDReference + " does not exist or you have no read access on it")
+				ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
+				return message, tat.Topic{}, nil, e
+			}
+		} else { // TagReference, StartTagReference,LabelReference, StartLabelReference
+			c := &tat.MessageCriteria{
+				Tag:        messageIn.TagReference,
+				StartTag:   messageIn.StartTagReference,
+				Label:      messageIn.LabelReference,
+				StartLabel: messageIn.StartLabelReference,
+			}
+			mlist, efind := messageDB.ListMessages(c, user.Username, *topic)
+			if efind != nil {
+				e := errors.New("Searched Message does not exist or you have no read access on it")
+				ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
+				return message, tat.Topic{}, nil, e
+			}
+			if len(mlist) != 1 {
+				e := errors.New(fmt.Sprintf("Searched Message, expected 1 message and %d message(s) matching on tat", len(mlist)))
+				ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
+				return message, tat.Topic{}, nil, e
+			} else {
+				message = mlist[0]
+			}
 		}
 
 		topicName := ""
@@ -223,7 +253,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 			return message, tat.Topic{}, nil, e
 		}
 	} else {
-		e := errors.New("Topic and IDReference are null. Wrong request")
+		e := errors.New("Topic and Reference (ID, StartTag, Tag, StartLabel, Label) are null. Wrong request")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
 		return message, tat.Topic{}, nil, e
 	}
@@ -260,7 +290,7 @@ func (m *MessagesController) Create(ctx *gin.Context) {
 
 func (m *MessagesController) createSingle(ctx *gin.Context, messageIn *tat.MessageJSON) (*tat.MessageJSONOut, int, error) {
 
-	_, topic, user, e := m.preCheckTopic(ctx, messageIn)
+	msg, topic, user, e := m.preCheckTopic(ctx, messageIn)
 	if e != nil {
 		return nil, http.StatusInternalServerError, fmt.Errorf("No RW Access to topic %s", messageIn.Topic)
 	}
@@ -270,8 +300,14 @@ func (m *MessagesController) createSingle(ctx *gin.Context, messageIn *tat.Messa
 	}
 
 	var message = tat.Message{}
+
+	idRef := ""
+	if msg.ID != "" {
+		idRef = msg.ID
+	}
+
 	// New root message or reply
-	err := messageDB.Insert(&message, *user, topic, messageIn.Text, messageIn.IDReference, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, messageIn.Messages, false, nil)
+	err := messageDB.Insert(&message, *user, topic, messageIn.Text, idRef, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, messageIn.Messages, false, nil)
 	if err != nil {
 		log.Errorf("%s", err.Error())
 		return nil, http.StatusInternalServerError, err

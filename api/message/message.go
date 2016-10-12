@@ -103,6 +103,10 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 		queryLabels := bson.M{"labels": bson.M{"$elemMatch": bson.M{"text": bson.M{"$in": strings.Split(criteria.Label, ",")}}}}
 		query = append(query, queryLabels)
 	}
+	if criteria.StartLabel != "" {
+		queryLabels := bson.M{"labels": bson.M{"$elemMatch": bson.M{"text": bson.RegEx{Pattern: "^" + regexp.QuoteMeta(criteria.StartLabel) + ".*$", Options: "im"}}}}
+		query = append(query, queryLabels)
+	}
 	if criteria.AndLabel != "" {
 		queryLabels := bson.M{"labels.text": bson.M{"$all": strings.Split(criteria.AndLabel, ",")}}
 		query = append(query, queryLabels)
@@ -115,6 +119,14 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 	}
 	if criteria.Tag != "" {
 		queryTags := bson.M{"tags": bson.M{"$in": strings.Split(criteria.Tag, ",")}}
+		query = append(query, queryTags)
+	}
+	if criteria.StartTag != "" {
+		in := []bson.RegEx{}
+		for _, st := range strings.Split(criteria.StartTag, ",") {
+			in = append(in, bson.RegEx{Pattern: "^" + regexp.QuoteMeta(st) + ".*$", Options: "im"})
+		}
+		queryTags := bson.M{"tags": bson.M{"$in": in}}
 		query = append(query, queryTags)
 	}
 	if criteria.AndTag != "" {

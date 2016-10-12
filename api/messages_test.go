@@ -125,4 +125,24 @@ func TestMessagesList(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(messagesSearchBulk.Messages))
 
+	message, err = client.MessageAdd(tat.MessageJSON{
+		Text:   "foo #tag:aaa",
+		Topic:  topic.Topic,
+		Labels: []tat.Label{{Text: "xxx:yyy", Color: "#eeeeee"}},
+	})
+
+	message, err = client.MessageAdd(tat.MessageJSON{
+		Text:   "foo #tag:bbb",
+		Topic:  topic.Topic,
+		Labels: []tat.Label{{Text: "xxx:zzz", Color: "#eeeeee"}},
+	})
+
+	messagesSearchStartLabel, err := client.MessageList(topic.Topic, &tat.MessageCriteria{StartLabel: "xxx"})
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(messagesSearchStartLabel.Messages))
+
+	messagesSearchStartTag, err := client.MessageList(topic.Topic, &tat.MessageCriteria{StartTag: "tag:aa"})
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(messagesSearchStartTag.Messages))
+
 }

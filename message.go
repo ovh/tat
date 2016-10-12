@@ -106,9 +106,11 @@ type MessageCriteria struct {
 	Text                string
 	Topic               string
 	Label               string `bson:"label" json:"label,omitempty"`
+	StartLabel          string `bson:"startLabel" json:"startLabel,omitempty"`
 	NotLabel            string `bson:"notLabel" json:"notLabel,omitempty"`
 	AndLabel            string `bson:"andLabel" json:"andLabel,omitempty"`
 	Tag                 string `bson:"tag" json:"tag,omitempty"`
+	StartTag            string `bson:"startTag" json:"startTag,omitempty"`
 	NotTag              string `bson:"notTag" json:"notTag,omitempty"`
 	AndTag              string `bson:"andTag" json:"andTag,omitempty"`
 	Username            string `bson:"username" json:"username,omitempty"`
@@ -162,6 +164,9 @@ func (m *MessageCriteria) CacheKey() []string {
 	if m.Label != "" {
 		s = append(s, "Label="+m.Label)
 	}
+	if m.StartLabel != "" {
+		s = append(s, "StartLabel="+m.StartLabel)
+	}
 	if m.NotLabel != "" {
 		s = append(s, "NotLabel="+m.NotLabel)
 	}
@@ -170,6 +175,9 @@ func (m *MessageCriteria) CacheKey() []string {
 	}
 	if m.Tag != "" {
 		s = append(s, "Tag="+m.Tag)
+	}
+	if m.StartTag != "" {
+		s = append(s, "StartTag="+m.StartTag)
 	}
 	if m.NotTag != "" {
 		s = append(s, "NotTag="+m.NotTag)
@@ -247,17 +255,21 @@ type MessagesJSONIn struct {
 
 // MessageJSON represents a message with action on it
 type MessageJSON struct {
-	ID           string `json:"_id"`
-	Text         string `json:"text"`
-	Option       string `json:"option"`
-	Topic        string
-	IDReference  string        `json:"idReference"`
-	Action       string        `json:"action"`
-	DateCreation float64       `json:"dateCreation"`
-	Labels       []Label       `json:"labels"`
-	Options      []string      `json:"options"`
-	Replies      []string      `json:"replies"`
-	Messages     []MessageJSON `json:"messages"` // same as replies, but with Labels...
+	ID                  string `json:"_id"`
+	Text                string `json:"text"`
+	Option              string `json:"option"`
+	Topic               string
+	IDReference         string        `json:"idReference"`
+	StartTagReference   string        `json:"startTagReference"`
+	StartLabelReference string        `json:"startLabelReference"`
+	TagReference        string        `json:"tagReference"`
+	LabelReference      string        `json:"labelReference"`
+	Action              string        `json:"action"`
+	DateCreation        float64       `json:"dateCreation"`
+	Labels              []Label       `json:"labels"`
+	Options             []string      `json:"options"`
+	Replies             []string      `json:"replies"`
+	Messages            []MessageJSON `json:"messages"` // same as replies, but with Labels...
 }
 
 // MessageAdd post a tat message
@@ -625,6 +637,9 @@ func (m *MessageCriteria) GetURL() string {
 	if m.Label != "" {
 		v.Set("label", m.Label)
 	}
+	if m.StartLabel != "" {
+		v.Set("startLabel", m.StartLabel)
+	}
 	if m.NotLabel != "" {
 		v.Set("notLabel", m.NotLabel)
 	}
@@ -633,6 +648,9 @@ func (m *MessageCriteria) GetURL() string {
 	}
 	if m.Tag != "" {
 		v.Set("tag", m.Tag)
+	}
+	if m.StartTag != "" {
+		v.Set("startTag", m.StartTag)
 	}
 	if m.NotTag != "" {
 		v.Set("notTag", m.NotTag)
