@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Overview-rsses on TAT - TextAndTag Documentation</title>
+    <link>http://localhost:1313/overview/index.xml</link>
+    <description>Recent content in Overview-rsses on TAT - TextAndTag Documentation</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="http://localhost:1313/overview/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Overview</title>
+      <link>http://localhost:1313/overview/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/overview/</guid>
+      <description>
+
+&lt;h3 id=&#34;chapter-1&#34;&gt;Chapter 1&lt;/h3&gt;
+
+&lt;h1 id=&#34;overview&#34;&gt;Overview&lt;/h1&gt;
+
+&lt;p&gt;Discover what is Tat and the core-concepts behind it.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Introduction</title>
+      <link>http://localhost:1313/overview/introduction/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/overview/introduction/</guid>
+      <description>&lt;p&gt;Tat, aka Text And Tags, is a communication tool - Human &amp;amp; Robot all together.&lt;/p&gt;
+
+&lt;p&gt;Some use cases:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Viewing Pull Requests, Build And Deployment in one place&lt;/li&gt;
+&lt;li&gt;Alerting &amp;amp; Monitoring Overview&lt;/li&gt;
+&lt;li&gt;Agile view as simple as a whiteboard with post-it&lt;/li&gt;
+&lt;li&gt;Team Communication &amp;amp; Reporting facilities
+&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Tat Engine exposes only an HTTP REST API. You can manipulate this API with Tat Command Line Interface, aka tatcli, see &lt;a href=&#34;https://github.com/ovh/tatcli&#34;&gt;https://github.com/ovh/tatcli&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;A WebUI is also available, see &lt;a href=&#34;https://github.com/ovh/tatwebui&#34;&gt;https://github.com/ovh/tatwebui&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Tat Engine:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Uses MongoDB as backend&lt;/li&gt;
+&lt;li&gt;Is fully stateless, scale as you want&lt;/li&gt;
+&lt;li&gt;Is the central Hub of Tat microservices ecosystem&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The initial goal of TAT was to make an overview on Continuous Delivery Pipeline, with some pre-requisites:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Scalable, High Availability, Self-Hosted&lt;/li&gt;
+&lt;li&gt;API, CLI&lt;/li&gt;
+&lt;li&gt;Simple Usage&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tat-cd-overview.png?width=700px&#34; alt=&#34;DevOps LifeCycle&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Concepts</title>
+      <link>http://localhost:1313/overview/concepts/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/overview/concepts/</guid>
+      <description>
+
+&lt;h2 id=&#34;four-concepts-topic-message-tag-label&#34;&gt;Four Concepts: Topic / Message / Tag / Label&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Topic
+
+&lt;ul&gt;
+&lt;li&gt;Contains 0 or n messages&lt;/li&gt;
+&lt;li&gt;Administrator(s) of Topic can create Topic inside it&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Message
+
+&lt;ul&gt;
+&lt;li&gt;Consists of text, tags and labels&lt;/li&gt;
+&lt;li&gt;Can not be deleted or modified (by default)&lt;/li&gt;
+&lt;li&gt;Is limited in characters (topic setting)&lt;/li&gt;
+&lt;li&gt;Is always attached to one topic&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Tag
+
+&lt;ul&gt;
+&lt;li&gt;Within the message content&lt;/li&gt;
+&lt;li&gt;Can not be added after message creation (by default)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Label
+
+&lt;ul&gt;
+&lt;li&gt;Can be added or removed freely&lt;/li&gt;
+&lt;li&gt;Have a color&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;users-groups-and-administrators&#34;&gt;Users, Groups and Administrators&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Group
+
+&lt;ul&gt;
+&lt;li&gt;Managed by an administrator(s): adding or removing users from the group&lt;/li&gt;
+&lt;li&gt;Without prior authorization, a group or user has no access to topics&lt;/li&gt;
+&lt;li&gt;A group or a user can be read-only or read-write on a topic&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Administrator(s)
+
+&lt;ul&gt;
+&lt;li&gt;First user created is an administrator&lt;/li&gt;
+&lt;li&gt;Tat Administrator: all configuration access&lt;/li&gt;
+&lt;li&gt;On Group(s): can add/remove member(s)&lt;/li&gt;
+&lt;li&gt;On Topic(s): can create Topic inside it, update parameters&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;some-rules-and-rules-exception&#34;&gt;Some rules and rules exception&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Deleting a message is possible in the private topics, or can be granted on other topic&lt;/li&gt;
+&lt;li&gt;Modification of a message is possible in private topics, or can be granted on other topic&lt;/li&gt;
+&lt;li&gt;The default length of a message is 140 characters, this limit can be modified by topic&lt;/li&gt;
+&lt;li&gt;A date creation of a message can be explicitly set by a system user&lt;/li&gt;
+&lt;li&gt;message.dateCreation and message.dateUpdate are in timestamp format, ex:
+
+&lt;ul&gt;
+&lt;li&gt;1436912447: 1436912447 seconds&lt;/li&gt;
+&lt;li&gt;1436912447.345678: 1436912447 seconds and 345678 milliseconds&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;faq&#34;&gt;FAQ&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;What about attachment (sound, image, etc&amp;hellip;) ?&lt;/em&gt;
+Tat Engine stores only &lt;em&gt;text&lt;/em&gt;. Use other application, like &lt;a href=&#34;https://github.com/root-gg/plik&#34;&gt;Plik&lt;/a&gt;
+to upload file and store URL on Tat.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>DevOps LifeCycle / Feedback Loop</title>
+      <link>http://localhost:1313/overview/lifecycle/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/overview/lifecycle/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle.png?width=50%&#34; alt=&#34;DevOps LifeCycle&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;feedback-everywhere&#34;&gt;Feedback everywhere&lt;/h2&gt;
+
+&lt;p&gt;We want feedback, not only when applications are in production, but everywhere.
+PullRequest, build, Release, Monitoring, etc&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;Below are some examples on internal uses @ OVH.&lt;/p&gt;
+
+&lt;h2 id=&#34;plan&#34;&gt;Plan&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-plan.png?width=250px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-plan-agile.png?width=750px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-plan-roadmap.png?width=750px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;code&#34;&gt;Code&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-code.png?width=250px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-code-gist.png?width=750px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-code-pull-request.png?width=750px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;build-test&#34;&gt;Build &amp;amp; Test&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-build.png?width=250px&#34; alt=&#34;DevOps LifeCycle Build&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-build-cds.png?width=750px&#34; alt=&#34;DevOps LifeCycle Build&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;release&#34;&gt;Release&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-release.png?width=250px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-release-changelog-1.png?width=750px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-release-changelog-2.png?width=750px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;deploy&#34;&gt;Deploy&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-deploy.png?width=250px&#34; alt=&#34;DevOps LifeCycle Deploy&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-build-cds.png?width=750px&#34; alt=&#34;DevOps LifeCycle Deploy&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;monitor&#34;&gt;Monitor&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-monitor.png?width=250px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-monitor-dashboard.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-monitor-tatcli.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-monitor-multiple.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-monitor-oncall.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;feedback&#34;&gt;Feedback&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-feedback.png?width=250px&#34; alt=&#34;DevOps LifeCycle Feedback&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-feedback-kpi.png?width=750px&#34; alt=&#34;DevOps LifeCycle Feedback&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Architecture</title>
+      <link>http://localhost:1313/overview/architecture/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/overview/architecture/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tat-architecture-overview.png?width=50%&#34; alt=&#34;Architecture&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Main components of a Tat Installation are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Tat, also called Tat API or Tat Engine. Your can running as many Engine as you want.
+You can imagine running many Tat instances on a Mesos / Marathon, or configure yourself behind a HAProxy.&lt;/li&gt;
+&lt;li&gt;Tatwebui: it&amp;rsquo;s a web application, an easier way to call Tat Engine than curl. This application
+is component oriented, your can display messages with different Views. See &lt;a href=&#34;http://localhost:1313/tatwebui&#34;&gt;next chapter&lt;/a&gt; about Tatwebui for
+more information.&lt;/li&gt;
+&lt;li&gt;Tatcli, the TAT Command Line Interface. All Tat features are available on tatcli. You can use it
+for &amp;ldquo;one shot&amp;rdquo; action on Tat API, or for display a UI in command line with &lt;code&gt;tatcli ui&lt;/code&gt;. Tatcli ui
+is popular to keep an eye on alerts or monitoring events without having a browser on it.&lt;/li&gt;
+&lt;li&gt;uServices: Tat API is simple to be used, it&amp;rsquo;s also easy to develop uService above tat to
+make things a little more advanced, like on-call schedule &amp;amp; intervention, reporting, etc&amp;hellip;
+You&amp;rsquo;ll find some opensourced uService in chapter &lt;a href=&#34;http://localhost:1313/ecosystem&#34;&gt;Ecosystem&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

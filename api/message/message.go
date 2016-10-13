@@ -768,10 +768,9 @@ func extractUsersMentions(text string) []string {
 	var usernamesChecked []string
 
 	for _, username := range usernames {
-		var user = tat.User{}
 		found, err := isUsernameExist(username)
 		if found && err == nil {
-			usernamesChecked = append(usernamesChecked, user.Username)
+			usernamesChecked = append(usernamesChecked, username)
 		}
 	}
 	return usernamesChecked
