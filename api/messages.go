@@ -190,11 +190,11 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 		topic = topica
 	}
 
-	if (messageIn.IDReference == "" &&
+	if messageIn.IDReference == "" &&
 		messageIn.TagReference == "" &&
 		messageIn.StartTagReference == "" &&
 		messageIn.LabelReference == "" &&
-		messageIn.StartLabelReference == "") || messageIn.Action == "" {
+		messageIn.StartLabelReference == "" {
 		// nothing here
 	} else if messageIn.IDReference != "" ||
 		messageIn.StartTagReference != "" || messageIn.TagReference != "" ||
@@ -230,7 +230,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 		topicName := ""
 		if messageIn.Action == tat.MessageActionUpdate {
 			topicName = messageIn.Topic
-		} else if messageIn.Action == tat.MessageActionReply ||
+		} else if messageIn.Action == "" || messageIn.Action == tat.MessageActionReply ||
 			messageIn.Action == tat.MessageActionLike || messageIn.Action == tat.MessageActionUnlike ||
 			messageIn.Action == tat.MessageActionLabel || messageIn.Action == tat.MessageActionUnlabel ||
 			messageIn.Action == tat.MessageActionVoteup || messageIn.Action == tat.MessageActionVotedown ||
