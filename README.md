@@ -1343,7 +1343,7 @@ curl -XPUT \
 ## System
 ### Capabilities
 
-Return `websocket-enabled` and `username-from-email` parameters. See Tat Flags below.
+Return `username-from-email` parameters. See Tat Flags below.
 ```bash
 curl -XGET https://<tatHostname>:<tatPort>/capabilities
 ```
@@ -1366,6 +1366,7 @@ curl -XGET https://<tatHostname>:<tatPort>/system/cache/info
 Flags:
       --allowed-domains string                      Users have to use theses emails domains. Empty: no-restriction. Ex: --allowed-domains=domainA.org,domainA.com
       --db-addr string                              Address of the mongodb server (default "127.0.0.1:27017")
+      --db-ensure-safe-db-write int                 Min # of servers to ack before write success (default -1)
       --db-password string                          Password to authenticate with the mongodb server. If "false", db-password is not used
       --db-rs-tags string                           Link hostname with tag on mongodb replica set - Optional: hostnameA:tagName:value,hostnameB:tagName:value. If "false", db-rs-tags is not used
       --db-socket-timeout int                       Session DB Socket Timeout in seconds (default 60)
@@ -1377,12 +1378,17 @@ Flags:
       --exposed-port string                         Tat Engine Port exposed to client (default "8080")
       --exposed-scheme string                       Tat URI Scheme http or https exposed to client (default "http")
       --header-trust-username string                Header Trust Username: for example, if X-Remote-User and X-Remote-User received in header -> auto accept user without testing tat_password. Use it with precaution
+      --hooks-max-errors int                        Max errors before Tat set a hook as disabled (default 10)
+      --kafka-broker-addresses string               Ex: --kafka-broker-addresses=host:port,host2:port2
+      --kafka-client-id string                      Ex: --kafka-client-id=xxxx-yyyy
       --listen-port string                          Tat Engine Listen Port (default "8080")
       --no-smtp                                     No SMTP mode
       --production                                  Production mode
       --read-timeout int                            Read Timeout in seconds (default 50)
       --redis-hosts string                          Optional - Used for Cache - Redis hosts (comma separated for cluster)
+      --redis-master string                         Redis master name
       --redis-password string                       Optional - Used for Cache - Redis password
+      --redis-sentinels string                      Redis sentinels (comma separated)
       --smtp-from string                            SMTP From
       --smtp-host string                            SMTP Host
       --smtp-password string                        SMTP Password
@@ -1390,9 +1396,13 @@ Flags:
       --smtp-tls                                    SMTP TLS
       --smtp-user string                            SMTP Username
       --tat-log-level string                        Tat Log Level: debug, info or warn
+      --tat2xmpp-key string                         Ex: --tat2xmpp-key=KeyTat2XMPP
+      --tat2xmpp-url string                         Empty: no-restriction. Ex: --tat2xmpp-url=https://urlA/,https://urlB/
+      --tat2xmpp-username string                    Empty: no-restriction. Ex: --tat2xmpp-username=tat.system.xmpp (default "tat.system.xmpp")
       --trusted-usernames-emails-fullnames string   Tuples trusted username / email / fullname. Example: username:email:Firstname1_Fullname1,username2:email2:Firstname2_Fullname2
       --username-from-email                         Username are extracted from first part of email. first.lastame@domainA.org -> username: first.lastname
-      --websocket-enabled                           Enable or not websockets on this instance
+      --webhooks-allowed-path string                Empty: no-restriction. Ex: --webhooks-allowed-path=https://urlA/,https://urlB/
+      --webhooks-enabled                            True for enabling webhook (default true)
       --write-timeout int                           Write Timeout in seconds (default 50)
 
 ```

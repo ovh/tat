@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="generator" content="Hugo 0.18-DEV" />
+    <meta name="description" content="">
+
+
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/ovh/tat/master/tat.png" type="image/x-icon" />
+
+    
+    <title>API - System</title>
+    <link href="http://localhost:1313/css/nucleus.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/hybrid.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/featherlight.min.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/perfect-scrollbar.min.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/theme.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/hugo-theme.css" rel="stylesheet">
+    <style type="text/css">:root #header + #content > #left > #rlblock_left
+    {display:none !important;}</style>
+    <link href="http://localhost:1313/css/style.css" rel="stylesheet">
+
+  </head>
+  <body class="" data-url="/engine/api-system/">
+    <nav id="sidebar">
+  <div id="header-wrapper">
+    <div id="header">
+      <img src="https://raw.githubusercontent.com/ovh/tat/master/tat.png" width="25%" style="margin-top: -15px;">
+
+      
+    </div>
+</div>
+
+
+  <div class="highlightable">
+    <ul class="topics">
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/overview/">
+        <a href="http://localhost:1313/overview/">
+          <span>
+            
+              <b>1. </b>
+            
+             Overview
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/overview/introduction/">
+              <a href="http://localhost:1313/overview/introduction/">
+                <span>Introduction     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/overview/concepts/">
+              <a href="http://localhost:1313/overview/concepts/">
+                <span>Concepts     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/overview/lifecycle/">
+              <a href="http://localhost:1313/overview/lifecycle/">
+                <span>DevOps LifeCycle / Feedback Loop     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/overview/architecture/">
+              <a href="http://localhost:1313/overview/architecture/">
+                <span>Architecture     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/tatwebui/">
+        <a href="http://localhost:1313/tatwebui/">
+          <span>
+            
+              <b>2. </b>
+            
+             Tat Webui
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/introduction/">
+              <a href="http://localhost:1313/tatwebui/introduction/">
+                <span>Introduction     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/standardview/">
+              <a href="http://localhost:1313/tatwebui/standardview/">
+                <span>Standard View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/notificationsview/">
+              <a href="http://localhost:1313/tatwebui/notificationsview/">
+                <span>Notifications View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/monitoringview/">
+              <a href="http://localhost:1313/tatwebui/monitoringview/">
+                <span>Monitoring View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/pastatview/">
+              <a href="http://localhost:1313/tatwebui/pastatview/">
+                <span>Pastat View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/dashingview/">
+              <a href="http://localhost:1313/tatwebui/dashingview/">
+                <span>Dashing View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/releaseview/">
+              <a href="http://localhost:1313/tatwebui/releaseview/">
+                <span>Release View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/cdsview/">
+              <a href="http://localhost:1313/tatwebui/cdsview/">
+                <span>CDS View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/development/">
+              <a href="http://localhost:1313/tatwebui/development/">
+                <span>Development     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  parent" data-nav-id="/engine/">
+        <a href="http://localhost:1313/engine/">
+          <span>
+            
+              <b>3. </b>
+            
+             Tat Engine Reference
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/general/">
+              <a href="http://localhost:1313/engine/general/">
+                <span>General     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-messages/">
+              <a href="http://localhost:1313/engine/api-messages/">
+                <span>API - Messages     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-topics/">
+              <a href="http://localhost:1313/engine/api-topics/">
+                <span>API - Topics     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-users/">
+              <a href="http://localhost:1313/engine/api-users/">
+                <span>API - Users     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-groups/">
+              <a href="http://localhost:1313/engine/api-groups/">
+                <span>API - Groups     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-presences/">
+              <a href="http://localhost:1313/engine/api-presences/">
+                <span>API - Presences     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item active" data-nav-id="/engine/api-system/">
+              <a href="http://localhost:1313/engine/api-system/">
+                <span>API - System     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/simple-installation/">
+              <a href="http://localhost:1313/engine/simple-installation/">
+                <span>Simple Installation     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/production-installation/">
+              <a href="http://localhost:1313/engine/production-installation/">
+                <span>Installation - Production Way     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/tatcli/">
+        <a href="http://localhost:1313/tatcli/">
+          <span>
+            
+              <b>4. </b>
+            
+             Tat CLI Reference
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/general/">
+              <a href="http://localhost:1313/tatcli/general/">
+                <span>General     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-config/">
+              <a href="http://localhost:1313/tatcli/tatcli-config/">
+                <span>tatcli config -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-group/">
+              <a href="http://localhost:1313/tatcli/tatcli-group/">
+                <span>tatcli group -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-message/">
+              <a href="http://localhost:1313/tatcli/tatcli-message/">
+                <span>tatcli message -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-presence/">
+              <a href="http://localhost:1313/tatcli/tatcli-presence/">
+                <span>tatcli presence -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-stats/">
+              <a href="http://localhost:1313/tatcli/tatcli-stats/">
+                <span>tatcli stats -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-system/">
+              <a href="http://localhost:1313/tatcli/tatcli-system/">
+                <span>tatcli system -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-topic/">
+              <a href="http://localhost:1313/tatcli/tatcli-topic/">
+                <span>tatcli topic -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-ui/">
+              <a href="http://localhost:1313/tatcli/tatcli-ui/">
+                <span>tatcli ui -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-update/">
+              <a href="http://localhost:1313/tatcli/tatcli-update/">
+                <span>tatcli update -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-user/">
+              <a href="http://localhost:1313/tatcli/tatcli-user/">
+                <span>tatcli users -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-version/">
+              <a href="http://localhost:1313/tatcli/tatcli-version/">
+                <span>tatcli version -h     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/sdk/">
+        <a href="http://localhost:1313/sdk/">
+          <span>
+            
+              <b>5. </b>
+            
+             Tat Golang SDK
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/sdk/simple-main/">
+              <a href="http://localhost:1313/sdk/simple-main/">
+                <span>A simple main example     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/sdk/full-example/">
+              <a href="http://localhost:1313/sdk/full-example/">
+                <span>Full Example     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/ecosystem/">
+        <a href="http://localhost:1313/ecosystem/">
+          <span>
+            
+              <b>6. </b>
+            
+             Ecosystem
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/ecosystem/al2tat/">
+              <a href="http://localhost:1313/ecosystem/al2tat/">
+                <span>Al2Tat     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/ecosystem/mail2tat/">
+              <a href="http://localhost:1313/ecosystem/mail2tat/">
+                <span>Mail2Tat     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/ecosystem/tat2xmpp/">
+              <a href="http://localhost:1313/ecosystem/tat2xmpp/">
+                <span>tat2xmpp     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/tatnhack/">
+        <a href="http://localhost:1313/tatnhack/">
+          <span>
+            
+              <b>7. </b>
+            
+             Tat&#39;n Hack
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatnhack/monitoring-process/">
+              <a href="http://localhost:1313/tatnhack/monitoring-process/">
+                <span>Monitoring a process with al2tat     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatnhack/visual-feedback/">
+              <a href="http://localhost:1313/tatnhack/visual-feedback/">
+                <span>Visual Feedback     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+    </ul>
+    <hr>
+     
+    <section id="footer">
+      <p>Built with <a href="http://gohugo.io/">Hugo</a> and <a href="https://github.com/matcornic/hugo-theme-learn">learn theme</i></p>
+    </section>
+  </div>
+</nav>
+
+        <section id="body">
+        <div id="overlay"></div>
+
+        <div class="padding highlightable">
+
+            <div id="top-bar">
+              
+              <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                  <span id="sidebar-toggle-span">
+                      <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                        <i class="fa fa-bars"></i>
+                      </a>
+                  </span>
+                
+                <span id="toc-menu"><i class="fa fa-list-alt"></i></span>
+                
+                
+                
+                
+                  
+                
+                  
+                    
+                    
+                <a href="http://localhost:1313/engine/" itemprop="url"><span itemprop="title">Tat Engine Reference</span></a> <i class="fa fa-angle-right"></i>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                <span itemprop="title"> API - System</span>
+              </div>
+
+                              
+                                  <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#system">System</a>
+<ul>
+<li><a href="#version">Version</a></li>
+</ul></li>
+<li><a href="#stats">Stats</a>
+<ul>
+<li><a href="#count">Count</a></li>
+<li><a href="#instance">Instance</a></li>
+<li><a href="#distribution">Distribution</a></li>
+<li><a href="#db-stats">DB Stats</a></li>
+<li><a href="#db-serverstatus">DB ServerStatus</a></li>
+<li><a href="#db-replica-set-status">DB Replica Set Status</a></li>
+<li><a href="#db-replica-set-config">DB Replica Set Config</a></li>
+<li><a href="#db-stats-of-each-collections">DB Stats of each collections</a></li>
+<li><a href="#db-stats-slowest-queries">DB Stats slowest Queries</a></li>
+</ul></li>
+<li><a href="#system-1">System</a>
+<ul>
+<li><a href="#capabilities">Capabilities</a></li>
+<li><a href="#flush-cache">Flush Cache</a></li>
+<li><a href="#cache-info">Cache Info</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+                              
+            </div>
+            
+    	        <div id="body-inner">
+                
+                <h1>API - System</h1>
+                
+
+
+
+<h2 id="system">System</h2>
+
+<h3 id="version">Version</h3>
+
+<pre><code class="language-bash">curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/version
+</code></pre>
+
+<h2 id="stats">Stats</h2>
+
+<p>For Tat admin only.</p>
+
+<h3 id="count">Count</h3>
+
+<pre><code class="language-bash">curl -XPUT \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Tat_username: admin&quot; \
+    -H &quot;Tat_password: passwordAdmin&quot; \
+    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/stats/count
+</code></pre>
+
+<h3 id="instance">Instance</h3>
+
+<p>Info about current instance of engine</p>
+
+<pre><code class="language-bash">curl -XPUT \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Tat_username: admin&quot; \
+    -H &quot;Tat_password: passwordAdmin&quot; \
+    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/stats/instance
+</code></pre>
+
+<h3 id="distribution">Distribution</h3>
+
+<pre><code class="language-bash">curl -XPUT \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Tat_username: admin&quot; \
+    -H &quot;Tat_password: passwordAdmin&quot; \
+    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/stats/distribution
+</code></pre>
+
+<h3 id="db-stats">DB Stats</h3>
+
+<pre><code class="language-bash">curl -XPUT \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Tat_username: admin&quot; \
+    -H &quot;Tat_password: passwordAdmin&quot; \
+    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/stats/db/stats
+</code></pre>
+
+<h3 id="db-serverstatus">DB ServerStatus</h3>
+
+<pre><code class="language-bash">curl -XPUT \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Tat_username: admin&quot; \
+    -H &quot;Tat_password: passwordAdmin&quot; \
+    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/stats/db/serverStatus
+</code></pre>
+
+<h3 id="db-replica-set-status">DB Replica Set Status</h3>
+
+<pre><code class="language-bash">curl -XPUT \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Tat_username: admin&quot; \
+    -H &quot;Tat_password: passwordAdmin&quot; \
+    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/stats/db/replSetGetStatus
+</code></pre>
+
+<h3 id="db-replica-set-config">DB Replica Set Config</h3>
+
+<pre><code class="language-bash">curl -XPUT \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Tat_username: admin&quot; \
+    -H &quot;Tat_password: passwordAdmin&quot; \
+    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/stats/db/replSetGetConfig
+</code></pre>
+
+<h3 id="db-stats-of-each-collections">DB Stats of each collections</h3>
+
+<pre><code class="language-bash">curl -XPUT \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Tat_username: admin&quot; \
+    -H &quot;Tat_password: passwordAdmin&quot; \
+    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/stats/db/collections
+</code></pre>
+
+<h3 id="db-stats-slowest-queries">DB Stats slowest Queries</h3>
+
+<pre><code class="language-bash">curl -XPUT \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Tat_username: admin&quot; \
+    -H &quot;Tat_password: passwordAdmin&quot; \
+    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/stats/db/slowestQueries
+</code></pre>
+
+<h2 id="system-1">System</h2>
+
+<h3 id="capabilities">Capabilities</h3>
+
+<p>Return <code>websocket-enabled</code> and <code>username-from-email</code> parameters. See Tat Flags below.</p>
+
+<pre><code class="language-bash">curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/capabilities
+</code></pre>
+
+<h3 id="flush-cache">Flush Cache</h3>
+
+<pre><code class="language-bash">curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/system/cache/clean
+</code></pre>
+
+<h3 id="cache-info">Cache Info</h3>
+
+<pre><code class="language-bash">curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/system/cache/info
+</code></pre>
+
+
+      
+      </div>
+    </div>
+
+    <div id="navigation">
+        <a class="nav nav-prev" href="http://localhost:1313/engine/api-presences"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="http://localhost:1313/engine/simple-installation" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+    </div>
+
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="http://localhost:1313/js/jquery-2.x.min.js"></script>
+    <script src="http://localhost:1313/js/clipboard.min.js"></script>
+    <script src="http://localhost:1313/js/perfect-scrollbar.min.js"></script>
+    <script src="http://localhost:1313/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="http://localhost:1313/js/jquery.sticky-kit.min.js"></script>
+    <script src="http://localhost:1313/js/featherlight.min.js"></script>
+    <script src="http://localhost:1313/js/html5shiv-printshiv.min.js"></script>
+    <script src="http://localhost:1313/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="http://localhost:1313/js/modernizr.custom.71422.js"></script>
+    <script src="http://localhost:1313/js/learn.js"></script>
+    <script src="http://localhost:1313/js/hugo-learn.js"></script>
+    
+
+  </body>
+</html>
+

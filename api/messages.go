@@ -481,7 +481,7 @@ func (m *MessagesController) checkBeforeDelete(ctx *gin.Context, message tat.Mes
 		return fmt.Errorf(e)
 	}
 
-	if !topic.CanDeleteAllMsg && message.Author.Username != user.Username {
+	if !topic.CanDeleteAllMsg && message.Author.Username != user.Username && !strings.HasPrefix(message.Topic, "/Private/"+user.Username) {
 		// if it's a reply and force true, allow delete it.
 		if !force || (force && message.InReplyOfIDRoot == "") {
 			e := fmt.Sprintf("Could not delete a message from another user %s than you %s", message.Author.Username, user.Username)
