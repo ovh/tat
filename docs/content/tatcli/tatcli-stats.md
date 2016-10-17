@@ -37,20 +37,3 @@ Flags:
 Global Flags: see tatcli -h
 
 ```
-
-### Command Stats
-
-```
-System commands (admin only): tatcli system [<command>]
-
-Usage:
-  tatcli system [command]
-
-Aliases:
-  system, sys
-
-
-Available Commands:
-  cacheclean  Clean Cache: tatcli system cacheclean
-  cacheinfo   Info on Cache: tatcli system cacheinfo
-```

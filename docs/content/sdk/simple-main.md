@@ -1,14 +1,14 @@
 ---
 weight: 1
 toc: true
-title: "A simple main example"
+title: "Golang - A simple main example"
 prev: "/sdk"
-next: "/sdk/full-example"
+next: "/sdk/golang-full-example"
 
 ---
 
 
-## Example - Minimal
+## Golang Example - Minimal
 
 ### Usage
 ```

@@ -7,12 +7,7 @@ next: "/engine/api-users"
 
 ---
 
-
-
-
-
-## Topic
-### Create a Topic
+## Create a Topic
 
 Rules:
 
@@ -30,7 +25,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/topic
 ```
 
-### Delete a topic
+## Delete a topic
 ```bash
 curl -XDELETE \
     -H "Content-Type: application/json" \
@@ -39,7 +34,7 @@ curl -XDELETE \
     https://<tatHostname>:<tatPort>/topic/subtopic
 ```
 
-### Truncate a topic
+## Truncate a topic
 
 Only for Tat Admin and administrators on topic.
 
@@ -52,7 +47,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/truncate
 ```
 
-### Compute tags on a topic
+## Compute tags on a topic
 
 Only for Tat Admin and administrators on topic.
 
@@ -73,7 +68,7 @@ curl -XPUT \
 
 Example of usage of tags attribute: autocompletion of tag on UI when written new message on a topic
 
-### Compute labels on a topic
+## Compute labels on a topic
 
 Only for Tat Admin and administrators on topic.
 
@@ -94,7 +89,7 @@ curl -XPUT \
 
 Example of usage of labels attribute: label autocompletion on UI when adding new label
 
-### Compute tags on all topics
+## Compute tags on all topics
 
 Only for Tat Admin.
 
@@ -106,7 +101,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topics/compute/tags
 ```
 
-### Compute labels on all topics
+## Compute labels on all topics
 
 Only for Tat Admin.
 
@@ -118,7 +113,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topics/compute/labels
 ```
 
-### Set a param on all topics
+## Set a param on all topics
 
 Only for Tat Admin and for attributes isAutoComputeTags and isAutoComputeLabels.
 
@@ -132,7 +127,7 @@ curl -XPUT \
 ```
 
 
-### Truncate cached tags on a topic
+## Truncate cached tags on a topic
 
 Only for Tat Admin and administrators on topic.
 
@@ -147,7 +142,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/tags/truncate
 ```
 
-### Truncate cached labels on a topic
+## Truncate cached labels on a topic
 
 Only for Tat Admin and administrators on topic.
 
@@ -162,19 +157,19 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/labels/truncate
 ```
 
-### Getting one Topic
+## Getting one Topic
 ```bash
 curl -XGET https://<tatHostname>:<tatPort>/topic/topicName | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/topic/topicName/subTopic | python -m json.tool
 ```
 
-### Getting Topics List
+## Getting Topics List
 ```bash
 curl -XGET https://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit> | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
 
-#### Parameters
+### Parameters
 * skip: Skip skips over the n initial documents from the query results
 * limit: Limit restricts the maximum number of documents retrieved
 * topic: Topic name, example: /topicA
@@ -188,12 +183,12 @@ curl -XGET https://<tatHostname>:<tatPort>/topics?skip=<skip>&limit=<limit>&argN
 * getForTatAdmin: if true, and requester is a Tat Admin, returns all topics (except /Private/*) without checking user access
 
 
-#### Example
+### Example
 ```bash
 curl -XGET https://<tatHostname>:<tatPort>/topics?skip=0&limit=100 | python -m json.tool
 ```
 
-### Add a parameter to a topic
+## Add a parameter to a topic
 
 For admin of topic or on `/Private/username/*`
 
@@ -206,7 +201,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/add/parameter
 ```
 
-### Remove a parameter to a topic
+## Remove a parameter to a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -216,7 +211,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/remove/parameter
 ```
 
-### Add a read only user to a topic
+## Add a read only user to a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -226,7 +221,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/add/rouser
 ```
 
-### Add a read write user to a topic
+## Add a read write user to a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -236,7 +231,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/add/rwuser
 ```
 
-### Add an admin user to a topic
+## Add an admin user to a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -246,7 +241,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/add/adminuser
 ```
 
-### Delete a read only user from a topic
+## Delete a read only user from a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -256,7 +251,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/remove/rouser
 ```
 
-### Delete a read write user from a topic
+## Delete a read write user from a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -266,7 +261,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/remove/wuser
 ```
 
-### Delete an admin user from a topic
+## Delete an admin user from a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -276,7 +271,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/remove/adminuser
 ```
 
-### Add a read only group to a topic
+## Add a read only group to a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -286,7 +281,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/add/rogroup
 ```
 
-### Add a read write group to a topic
+## Add a read write group to a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -296,7 +291,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/add/rwgroup
 ```
 
-### Add an admin group to a topic
+## Add an admin group to a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -307,7 +302,7 @@ curl -XPUT \
 ```
 
 
-### Delete a read only group from a topic
+## Delete a read only group from a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -317,7 +312,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/remove/rogroup
 ```
 
-### Delete a read write group from a topic
+## Delete a read write group from a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -327,7 +322,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/topic/remove/rwgroup
 ```
 
-### Delete an admin group from a topic
+## Delete an admin group from a topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \
@@ -338,7 +333,7 @@ curl -XPUT \
 ```
 
 
-### Update param on one topic: admin or admin on topic
+## Update param on one topic: admin or admin on topic
 ```bash
 curl -XPUT \
     -H "Content-Type: application/json" \

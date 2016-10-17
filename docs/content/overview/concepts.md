@@ -26,6 +26,8 @@ next: "/overview/lifecycle"
  * Have a color
 
 
+Think about messages as plain information pieces, their meaning are contextualized through microservices using those messages and views you plug on their topics.
+
 ## Users, Groups and Administrators
 
 * Group
@@ -36,7 +38,7 @@ next: "/overview/lifecycle"
  * First user created is an administrator
  * Tat Administrator: all configuration access
  * On Group(s): can add/remove member(s)
- * On Topic(s): can create Topic inside it, update parameters
+ * On Topic(s): can create sub-topics, update rights parameters and default view
 
 ## Some rules and rules exception
 * Deleting a message is possible in the private topics, or can be granted on other topic

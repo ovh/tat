@@ -7,15 +7,14 @@ next: "/engine/api-groups"
 
 ---
 
-## User
-### Tat Password
+## Tat Password
 It's a generated password by Tat, allowing username to communicate with Tat.
 User creates an account, a mail is send to verify account and user has to go on a Tat URL to validate account and get password.
 Password is encrypted in Tat Database (sha512 Sum).
 
 First user created is an administrator.
 
-### Create a User
+## Create a User
 Return a mail to user, with instruction to validate his account.
 
 ```bash
@@ -37,14 +36,14 @@ Available fields (automatically filled by Tat ):
 ```
 
 
-### Verify a User
+## Verify a User
 ```bash
 curl -XGET \
     https://<tatHostname>:<tatPort>/user/verify/yourUsername/tokenVerifyReceivedByMail
 ```
 This url can be called only once per password and expired 30 minutes after querying create user with POST on `/user`
 
-### Ask for reset a password
+## Ask for reset a password
 Returns: tokenVerify by email
 
 ```bash
@@ -54,7 +53,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/reset
 ```
 
-### Get information about current User
+## Get information about current User
 ```bash
 curl -XGET \
     -H "Content-Type: application/json" \
@@ -64,7 +63,7 @@ curl -XGET \
 ```
 
 
-### Get contacts
+## Get contacts
 
 Retrieves contacts presences since n seconds
 
@@ -78,7 +77,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/me/contacts/15
 ```
 
-### Add a contact
+## Add a contact
 ```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
@@ -87,7 +86,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/me/contact/username
 ```
 
-### Remove a contact
+## Remove a contact
 ```bash
 curl -XDELETE \
     -H "Content-Type: application/json" \
@@ -97,7 +96,7 @@ curl -XDELETE \
 ```
 
 
-### Add a favorite topic
+## Add a favorite topic
 ```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
@@ -106,7 +105,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/me/topics/myTopic/sub-topic
 ```
 
-### Remove a favorite topic
+## Remove a favorite topic
 ```bash
 curl -XDELETE \
     -H "Content-Type: application/json" \
@@ -115,7 +114,7 @@ curl -XDELETE \
     https://<tatHostname>:<tatPort>/user/me/topics/myTopic/sub-topic
 ```
 
-### Enable notifications on one topic
+## Enable notifications on one topic
 ```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
@@ -124,7 +123,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/me/enable/notifications/topics/myTopic/sub-topic
 ```
 
-### Disable notifications on one topic
+## Disable notifications on one topic
 ```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
@@ -133,7 +132,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/me/disable/notifications/topics/myTopic/sub-topic
 ```
 
-### Enable notifications on all topics
+## Enable notifications on all topics
 
 ```bash
 curl -XPOST \
@@ -143,7 +142,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/me/enable/notifications/alltopics
 ```
 
-### Disable notifications on all topics, except /Private/*
+## Disable notifications on all topics, except /Private/*
 
 ```bash
 curl -XPOST \
@@ -153,7 +152,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/me/disable/notifications/alltopics
 ```
 
-### Add a favorite tag
+## Add a favorite tag
 
 ```bash
 curl -XPOST \
@@ -163,7 +162,7 @@ curl -XPOST \
     https://<tatHostname>:<tatPort>/user/me/tags/myTag
 ```
 
-### Remove a favorite tag
+## Remove a favorite tag
 ```bash
 curl -XDELETE \
     -H "Content-Type: application/json" \
@@ -172,7 +171,7 @@ curl -XDELETE \
     https://<tatHostname>:<tatPort>/user/me/tags/myTag
 ```
 
-### Getting Users List
+## Getting Users List
 ```bash
 curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit> | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
@@ -183,7 +182,7 @@ Users list with groups (admin only)
 curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&withGroups=true
 ```
 
-#### Parameters
+### Parameters
 
 * skip: Skip skips over the n initial documents from the query results
 * limit: Limit restricts the maximum number of documents retrieved
@@ -193,12 +192,12 @@ curl -XGET https://<tatHostname>:<tatPort>/users?skip=<skip>&limit=<limit>&withG
 * dateMaxCreation: filter result on dateCreation, timestamp Unix Format
 
 
-#### Example
+### Example
 ```bash
 curl -XGET https://<tatHostname>:<tatPort>/users?skip=0&limit=100 | python -m json.tool
 ```
 
-### Convert a user to a system user
+## Convert a user to a system user
 Only for Tat Admin: convert a `normal user` to a `system user`.
 A system user must have a username starting with `tat.system`.
 Remove email and set user attribute IsSystem to true.
@@ -218,7 +217,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/user/convert
 ```
 
-### Update flags on system user
+## Update flags on system user
 Only for Tat Admin.
 
 ```bash
@@ -230,7 +229,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/user/updatesystem
 ```
 
-### Reset a password for system user
+## Reset a password for system user
 Only for Tat Admin.
 A `system user` must have a username starting with `tat.system`.
 This action returns a new password for this user.
@@ -245,7 +244,7 @@ curl -XPUT \
 ```
 
 
-### Grant a user to an admin user
+## Grant a user to an admin user
 Only for Tat Admin: convert a `normal user` to an `admin user`.
 
 ```bash
@@ -257,7 +256,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/user/setadmin
 ```
 
-### Rename a username
+## Rename a username
 Only for Tat Admin: rename the username of a user. This action updates all Private topics of the user.
 
 ```bash
@@ -269,7 +268,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/user/rename
 ```
 
-### Update fullname or email
+## Update fullname or email
 Only for Tat Admin: update fullname and email of a user.
 
 ```bash
@@ -281,7 +280,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/user/update
 ```
 
-### Archive a user
+## Archive a user
 Only for Tat Admin
 
 ```bash
@@ -293,7 +292,7 @@ curl -XPUT \
     https://<tatHostname>:<tatPort>/user/archive
 ```
 
-### Check Private Topics and Default Group on one user
+## Check Private Topics and Default Group on one user
 Only for Tat Admin
 
 ```bash

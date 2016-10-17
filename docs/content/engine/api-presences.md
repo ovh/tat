@@ -7,8 +7,7 @@ next: "/engine/api-system"
 
 ---
 
-## Presence
-### Add presence
+## Add presence
 Status could be: `online`, `offline`, `busy`.
 
 ```bash
@@ -20,13 +19,13 @@ curl -XPOST \
 	https://<tatHostname>:<tatPort>/presenceget/topic/sub-topic
 ```
 
-### Getting Presences
+## Getting Presences
 ```bash
 curl -XGET https://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
 ```
 
-### Parameters
+## Parameters
 
 * `topic:` /yourTopic/subTopic
 * `skip`: Skip skips over the n initial presences from the query results
@@ -37,13 +36,13 @@ curl -XGET https://<tatHostname>:<tatPort>/presences/<topic>?skip=<skip>&limit=<
 * `username`: username to search
 
 
-#### Examples
+### Examples
 ```bash
 curl -XGET https://<tatHostname>:<tatPort>/presences/topicA?skip=0&limit=100 | python -m json.tool
 curl -XGET https://<tatHostname>:<tatPort>/presences/topicA/subTopic?skip=0&limit=100&dateMinPresence=1405544146&dateMaxPresence=1405544146 | python -m json.tool
 ```
 
-### Delete presence
+## Delete presence
 Admin can delete presences a another user on one topic.
 Users can delete their own presence.
 

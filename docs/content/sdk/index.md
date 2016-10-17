@@ -1,6 +1,6 @@
 ---
 weight: 0
-title: "Tat Golang SDK"
+title: "Tat SDK"
 chapter: true
 icon: "<b>5. </b>"
 next: "/sdk/simple-main"
@@ -10,7 +10,7 @@ next: "/sdk/simple-main"
 
 # Overview
 
-TAT Golang SDK
+TAT SDK
 
 You will find Godoc at  https://godoc.org/github.com/ovh/tat#Client
 

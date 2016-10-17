@@ -8,4 +8,4 @@ icon: "<b>6. </b>"
 
 ### Chapter 6
 
-# Tat'n Hack
+# Ecosystem

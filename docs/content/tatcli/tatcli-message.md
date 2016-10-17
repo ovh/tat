@@ -182,10 +182,3 @@ tatcli message move /MyOldTopic/SubTopic idOfMessage /MyNewTopic/SubTopic
 tatcli message list /topic
 tatcli message list /topic 0 10
 ```
-
-### Getting message on one public topic (access read only)
-
-```bash
-tatcli message read /topic
-tatcli message read /topic 0 10
-```

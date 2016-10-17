@@ -6,6 +6,13 @@ prev: "/engine/simple-installation"
 
 ---
 
+Don't worry, this installation describes below is used @ OVH to handle at least:
+
+* 800.000 GET / 2 hours
+* 50.000 POST / 2 hours
+* 30.000 DELETE / 2 hours
+* 45.000 PUT / 2 hours
+
 ![Installation Production Way](/imgs/tat-installation-production.png?width=75%)
 
 # Prerequisites

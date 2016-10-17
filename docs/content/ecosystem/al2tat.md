@@ -159,20 +159,6 @@ docker build -t al2tat .
 docker run -it --rm --name al2tat-instance1 <hostname>>:<port> al2tat
 ```
 
-## Run with Sailabove
-
-### AL2Tat Service
-```
-docker build -t al2tat .
-docker tag -f al2tat sailabove.io/<yourSailaboveUsername>/al2tat
-docker push sailabove.io/<yourSailaboveUsername>/al2tat
-
-sail services add <yourSailaboveUsername>/al2tat \
-  --network predictor \
-  --network private \
-  -e TAT_PRODUCTION=true -p 80:80 al2tat
-```
-
 ## Dev RUN
 
 ```

@@ -47,5 +47,3 @@ Try it
 $ curl localhost:8080/version
 {"version":"2.0.0"}
 ```
-
-# Run in Production Mode

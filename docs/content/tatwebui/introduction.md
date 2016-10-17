@@ -8,7 +8,7 @@ next: "/tatwebui/standardview"
 ---
 
 
-Tatwebui is only a web application, no backend except a HTTP Server for serving js/html/css files.
+Tatwebui is a web application, with a nodejs HTTP Server for serving js/html/css files.
 This application requests Tat Engine for all actions:
 
 * Rights Controls, Users & Groups

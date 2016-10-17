@@ -1,13 +1,13 @@
 ---
 weight: 2
 toc: true
-title: "Full Example"
-prev: "/sdk/simple-main"
+title: "Golang - Full Example"
+prev: "/sdk/golang-simple-main"
 
 ---
 
 
-## Example - Full, with viper, cobra and tatcli config file
+## Golang Example - Full, with viper, cobra and tatcli config file
 
 ### Usage
 ```
