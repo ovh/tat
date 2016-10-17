@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="generator" content="Hugo 0.18-DEV" />
+    <meta name="description" content="">
+
+
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/ovh/tat/master/tat.png" type="image/x-icon" />
+
+    
+    <title>Dashing View</title>
+    <link href="http://localhost:1313/css/nucleus.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/hybrid.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/featherlight.min.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/perfect-scrollbar.min.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/theme.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/hugo-theme.css" rel="stylesheet">
+    <style type="text/css">:root #header + #content > #left > #rlblock_left
+    {display:none !important;}</style>
+    <link href="http://localhost:1313/css/style.css" rel="stylesheet">
+
+  </head>
+  <body class="" data-url="/tatwebui/dashingview/">
+    <nav id="sidebar">
+  <div id="header-wrapper">
+    <div id="header">
+      <span href="#" id="sidebar-toggle" data-sidebar-toggle="">
+      <img src="https://raw.githubusercontent.com/ovh/tat/master/tat.png" width="25%" style="margin-top: -15px;">
+
+      </span>
+      
+    </div>
+</div>
+
+
+  <div class="highlightable">
+    <ul class="topics">
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/overview/">
+        <a href="http://localhost:1313/overview/">
+          <span>
+            
+              <b>1. </b>
+            
+             Overview
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/overview/introduction/">
+              <a href="http://localhost:1313/overview/introduction/">
+                <span>Introduction     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/overview/concepts/">
+              <a href="http://localhost:1313/overview/concepts/">
+                <span>Concepts     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/overview/lifecycle/">
+              <a href="http://localhost:1313/overview/lifecycle/">
+                <span>DevOps LifeCycle / Feedback Loop     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/overview/architecture/">
+              <a href="http://localhost:1313/overview/architecture/">
+                <span>Architecture     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  parent" data-nav-id="/tatwebui/">
+        <a href="http://localhost:1313/tatwebui/">
+          <span>
+            
+              <b>2. </b>
+            
+             Tat Webui
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/introduction/">
+              <a href="http://localhost:1313/tatwebui/introduction/">
+                <span>Introduction     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/standardview/">
+              <a href="http://localhost:1313/tatwebui/standardview/">
+                <span>Standard View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/notificationsview/">
+              <a href="http://localhost:1313/tatwebui/notificationsview/">
+                <span>Notifications View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/monitoringview/">
+              <a href="http://localhost:1313/tatwebui/monitoringview/">
+                <span>Monitoring View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/pastatview/">
+              <a href="http://localhost:1313/tatwebui/pastatview/">
+                <span>Pastat View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item active" data-nav-id="/tatwebui/dashingview/">
+              <a href="http://localhost:1313/tatwebui/dashingview/">
+                <span>Dashing View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/releaseview/">
+              <a href="http://localhost:1313/tatwebui/releaseview/">
+                <span>Release View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/cdsview/">
+              <a href="http://localhost:1313/tatwebui/cdsview/">
+                <span>CDS View     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatwebui/development/">
+              <a href="http://localhost:1313/tatwebui/development/">
+                <span>Development     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/engine/">
+        <a href="http://localhost:1313/engine/">
+          <span>
+            
+              <b>3. </b>
+            
+             Tat Engine Reference
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/general/">
+              <a href="http://localhost:1313/engine/general/">
+                <span>General     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-messages/">
+              <a href="http://localhost:1313/engine/api-messages/">
+                <span>API - Messages     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-topics/">
+              <a href="http://localhost:1313/engine/api-topics/">
+                <span>API - Topics     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-users/">
+              <a href="http://localhost:1313/engine/api-users/">
+                <span>API - Users     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-groups/">
+              <a href="http://localhost:1313/engine/api-groups/">
+                <span>API - Groups     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-presences/">
+              <a href="http://localhost:1313/engine/api-presences/">
+                <span>API - Presences     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/api-system/">
+              <a href="http://localhost:1313/engine/api-system/">
+                <span>API - System     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/simple-installation/">
+              <a href="http://localhost:1313/engine/simple-installation/">
+                <span>Simple Installation     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/engine/production-installation/">
+              <a href="http://localhost:1313/engine/production-installation/">
+                <span>Installation - Production Way     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/tatcli/">
+        <a href="http://localhost:1313/tatcli/">
+          <span>
+            
+              <b>4. </b>
+            
+             Tat CLI Reference
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/general/">
+              <a href="http://localhost:1313/tatcli/general/">
+                <span>General     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-config/">
+              <a href="http://localhost:1313/tatcli/tatcli-config/">
+                <span>tatcli config -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-group/">
+              <a href="http://localhost:1313/tatcli/tatcli-group/">
+                <span>tatcli group -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-message/">
+              <a href="http://localhost:1313/tatcli/tatcli-message/">
+                <span>tatcli message -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-presence/">
+              <a href="http://localhost:1313/tatcli/tatcli-presence/">
+                <span>tatcli presence -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-stats/">
+              <a href="http://localhost:1313/tatcli/tatcli-stats/">
+                <span>tatcli stats -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-system/">
+              <a href="http://localhost:1313/tatcli/tatcli-system/">
+                <span>tatcli system -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-topic/">
+              <a href="http://localhost:1313/tatcli/tatcli-topic/">
+                <span>tatcli topic -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-ui/">
+              <a href="http://localhost:1313/tatcli/tatcli-ui/">
+                <span>tatcli ui -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-update/">
+              <a href="http://localhost:1313/tatcli/tatcli-update/">
+                <span>tatcli update -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-user/">
+              <a href="http://localhost:1313/tatcli/tatcli-user/">
+                <span>tatcli users -h     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-version/">
+              <a href="http://localhost:1313/tatcli/tatcli-version/">
+                <span>tatcli version -h     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/sdk/">
+        <a href="http://localhost:1313/sdk/">
+          <span>
+            
+              <b>5. </b>
+            
+             Tat SDK
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/sdk/simple-main/">
+              <a href="http://localhost:1313/sdk/simple-main/">
+                <span>Golang - A simple main example     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/sdk/full-example/">
+              <a href="http://localhost:1313/sdk/full-example/">
+                <span>Golang - Full Example     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/ecosystem/">
+        <a href="http://localhost:1313/ecosystem/">
+          <span>
+            
+              <b>6. </b>
+            
+             Ecosystem
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/ecosystem/al2tat/">
+              <a href="http://localhost:1313/ecosystem/al2tat/">
+                <span>Al2Tat     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/ecosystem/mail2tat/">
+              <a href="http://localhost:1313/ecosystem/mail2tat/">
+                <span>Mail2Tat     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/ecosystem/tat2xmpp/">
+              <a href="http://localhost:1313/ecosystem/tat2xmpp/">
+                <span>tat2xmpp     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+      
+
+      <li class="dd-item  " data-nav-id="/tatnhack/">
+        <a href="http://localhost:1313/tatnhack/">
+          <span>
+            
+              <b>7. </b>
+            
+             Tat&#39;n Hack
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatnhack/monitoring-process/">
+              <a href="http://localhost:1313/tatnhack/monitoring-process/">
+                <span>Monitoring a process with al2tat     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/tatnhack/visual-feedback/">
+              <a href="http://localhost:1313/tatnhack/visual-feedback/">
+                <span>Visual Feedback     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+    </ul>
+    <hr>
+     
+    <section id="footer">
+      <p>Built with <a href="http://gohugo.io/">Hugo</a> and <a href="https://github.com/matcornic/hugo-theme-learn">learn theme</i></p>
+    </section>
+  </div>
+</nav>
+
+        <section id="body">
+        <div id="overlay"></div>
+
+        <div class="padding highlightable">
+
+            <div id="top-bar">
+              
+              <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                
+                
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    
+                    
+                <a href="http://localhost:1313/tatwebui/" itemprop="url"><span itemprop="title">Tat Webui</span></a> <i class="fa fa-angle-right"></i>
+                    
+                  
+                
+                <span itemprop="title"> Dashing View</span>
+              </div>
+            </div>
+            
+    	        <div id="body-inner">
+                
+                <h1>Dashing View</h1>
+                
+
+                
+                  <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#configuration">Configuration</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+                
+
+
+
+<h2 id="usage">Usage</h2>
+
+<p>This screenshot</p>
+
+<p><img src="http://localhost:1313/imgs/tatwebui-dashing-view.png?width=80%" alt="Dashing View" /></p>
+
+<p>can be done by sending info with tatcli :</p>
+
+<pre><code class="language-bash">tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring&quot; \
+  --label=&quot;#eeeee;border-width:0px&quot; \
+  --label=&quot;#eeeee;height:110px&quot; \
+  --label=&quot;#eeeee;hide-bottom&quot; \
+  --label=&quot;#eeeee;order:1&quot; \
+  --label=&quot;#eeeee;value:MyDashing&quot; \
+  --label=&quot;#eeeee;width:96%&quot; \
+  --label=&quot;#ffffff;color&quot; \
+  --label=&quot;#161d23;bg-color&quot;
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring&quot; \
+  --label=&quot;#93c47d;bg-color&quot; \
+  --label=&quot;#eeeee;border-width:0px&quot; \
+  --label=&quot;#eeeee;height:5px&quot; \
+  --label=&quot;#eeeee;hide-bottom&quot; \
+  --label=&quot;#eeeee;order:2&quot; \
+  --label=&quot;#eeeee;value&quot; \
+  --label=&quot;#eeeee;value&quot; \
+  --label=&quot;#eeeee;value&quot; \
+  --label=&quot;#eeeee;color&quot; \
+  --label=&quot;#eeeee;width:96.3%&quot;
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring&quot; \
+  --label=&quot;#161d23;bg-color&quot; \
+  --label=&quot;#eeeee;border-width:0px&quot; \
+  --label=&quot;#eeeee;color&quot; \
+  --label=&quot;#eeeee;height:20px&quot; \
+  --label=&quot;#eeeee;hide-bottom&quot; \
+  --label=&quot;#eeeee;order:3&quot; \
+  --label=&quot;#eeeee;width:96%&quot;
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #YourTeam #item:OCO_Critical&quot; \
+  --label=&quot;#e8f1f4;bg-color&quot; \
+  --label=&quot;#ce352c;color&quot; \
+  --label=&quot;#eeeee;order:11&quot; \
+  --label=&quot;#eeeee;value:79&quot;
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #YourTeam #item:OCO_Warn&quot; \
+  --label=&quot;#e8f1f4;bg-color&quot; \
+  --label=&quot;#fa6800;color&quot; \
+  --label=&quot;#eeeee;order:12&quot; \
+  --label=&quot;#eeeee;value:2312&quot;
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #YourTeam #item:OCO_Info&quot; \
+  --label=&quot;#e8f1f4;bg-color&quot; \
+  --label=&quot;#60a917;color&quot; \
+  --label=&quot;#eeeee;order:13&quot; \
+  --label=&quot;#eeeee;value:2714&quot;
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #YourTeam #item:StatusCake_Tests&quot; \
+  --label=&quot;#e8f1f4;bg-color&quot; \
+  --label=&quot;#63305a;color&quot; \
+  --label=&quot;#eeeee;order:15&quot; \
+  --label=&quot;#eeeee;value:15/15&quot;
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #YourTeam #item:checkFilerz A&quot; \
+  --label=&quot;#eeeee;order:18&quot; \
+  --label=&quot;#e8f1f4;bg-color&quot; \
+  --label='#eeeeee;widget:progressbar' \
+  --label='#eeeeee;percentRunning:70' \
+  --label='#1ba1e2;color' \
+  --label='#eeeeee;widget-class:success' \
+  --label='#eeeeee;widget-mode:vertical'
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #YourTeam #item:checkFilerz B&quot; \
+  --label=&quot;#eeeee;order:19&quot; \
+  --label=&quot;#e8f1f4;bg-color&quot; \
+  --label='#eeeeee;widget:progressbar' \
+  --label='#eeeeee;percentRunning:30' \
+  --label='#1ba1e2;color' \
+  --label='#eeeeee;widget-class:success' \
+  --label='#eeeeee;widget-mode:horizontal'
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #YourTeam #item:checkFilerz C&quot; \
+  --label=&quot;#eeeee;order:20&quot; \
+  --label=&quot;#e8f1f4;bg-color&quot; \
+  --label='#eeeeee;widget:progressbar' \
+  --label='#eeeeee;percentRunning:25' \
+  --label='#eeeeee;widget-class:warning' \
+  --label='#eeeeee;widget-mode:horizontal'
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #YourTeam #item:StatusUP&quot; \
+  --label=&quot;#eeeee;order:21&quot; \
+  --label=&quot;#60a917;bg-color&quot; \
+  --label=&quot;#ffffff;color&quot; \
+  --label=&quot;#eeeeee;value:79&quot;
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #YourTeam #item:Status&quot; \
+  --label=&quot;#eeeee;order:22&quot; \
+  --label=&quot;#60a917;bg-color&quot; \
+  --label=&quot;#ffffff;color&quot; \
+  --label=&quot;#eeeeee;value::)&quot;
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #YourTeam #item:Status&quot; \
+  --label=&quot;#eeeee;order:22&quot; \
+  --label=&quot;#60a917;bg-color&quot; \
+  --label=&quot;#ffffff;color&quot; \
+  --label=&quot;#eeeeee;value:↑&quot;
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #item:Pie&quot; \
+  --label=&quot;#eeeee;order:23&quot; \
+  --label=&quot;#e8f1f4;bg-color&quot;  \
+  --label=&quot;#eeeeee;width:20%&quot; \
+  --label='#eeeee;widget-data-serie:20 30 40' \
+  --label='#eeeee;widget-options:donut:true donutWidth:60 startAngle:270 total:200 showLabel:false' \
+  --label='#eeeee;widget:Pie'
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #item:Line&quot; \
+  --label=&quot;#eeeee;order:24&quot; \
+  --label=&quot;#e8f1f4;bg-color&quot; \
+  --label=&quot;#eeeeee;width:76%&quot; \
+  --label='#eeeeee;widget-data-labels:Mon Tue Wed Thu Fri Sat' \
+  --label='#eeeeee;widget-data-options:low:0 showArea:true showPoint:false fullWidth:true' \
+  --label='#eeeeee;widget-data-series:1 5 2 5 4 3' \
+  --label='#eeeeee;widget-data-series:2 3 4 8 1 2' \
+  --label='#eeeeee;widget-data-series:5 4 3 2 1 0.5' \
+  --label='#eeeeee;widget:Line'
+
+tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #item:Bar&quot;  \
+  --label=&quot;#eeeee;order:25&quot; \
+  --label=&quot;#e8f1f4;bg-color&quot; \
+  --label=&quot;#eeeeee;height:200px&quot; \
+  --label=&quot;#eeeeee;width:95%&quot; \
+  --label=&quot;#eeeeee;widget:Bar&quot; \
+  --label=&quot;#eeeeee;widget-data-labels:AA BB CC DD EE FF GG&quot; \
+  --label=&quot;#eeeeee;widget-data-series:5 4 3 7 5 10 3&quot; \
+  --label=&quot;#eeeeee;widget-data-series:3 2 9 5 4 6 4&quot; \
+  --label=&quot;#eeeeee;widget-options:seriesBarDistance:10 reverseData:true horizontalBars:true&quot;
+</code></pre>
+
+<p>In standard View, theses messages look like:</p>
+
+<p><img src="http://localhost:1313/imgs/tatwebui-dashing-view-standardview1.png?width=80%" alt="Dashing View in Standard View" />
+<img src="http://localhost:1313/imgs/tatwebui-dashing-view-standardview2.png?width=80%" alt="Dashing View in Standard View" /></p>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>In plugin.tpl.json file, add this line :</p>
+
+<pre><code>&quot;tatwebui-plugin-dashingview&quot;: &quot;git+https://github.com/ovh/tatwebui-plugin-dashingview.git&quot;
+</code></pre>
+
+
+      
+      </div>
+    </div>
+
+    <div id="navigation">
+        <a class="nav nav-prev" href="http://localhost:1313/tatwebui/pastatview"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="http://localhost:1313/tatwebui/releaseview" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+    </div>
+
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="http://localhost:1313/js/jquery-2.x.min.js"></script>
+    <script src="http://localhost:1313/js/clipboard.min.js"></script>
+    <script src="http://localhost:1313/js/perfect-scrollbar.min.js"></script>
+    <script src="http://localhost:1313/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="http://localhost:1313/js/jquery.sticky-kit.min.js"></script>
+    <script src="http://localhost:1313/js/featherlight.min.js"></script>
+    <script src="http://localhost:1313/js/html5shiv-printshiv.min.js"></script>
+    <script src="http://localhost:1313/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="http://localhost:1313/js/modernizr.custom.71422.js"></script>
+    <script src="http://localhost:1313/js/learn.js"></script>
+    <script src="http://localhost:1313/js/hugo-learn.js"></script>
+    
+
+  </body>
+</html>
+
