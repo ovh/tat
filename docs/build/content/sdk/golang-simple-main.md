@@ -77,4 +77,4 @@ func main() {
 
 ### Notice
 This is just a simple example. Please do not use tat password in argument of your binary.
-Please check next chapter <a href="../full-example">"Full Example"</a> for a real example.
+Please check next chapter <a href="../golang-full-example">"Full Example"</a> for a real example.

@@ -28,10 +28,10 @@
     
     <item>
       <title>Golang - A simple main example</title>
-      <link>https://ovh.github.io/tat/sdk/simple-main/</link>
+      <link>https://ovh.github.io/tat/sdk/golang-simple-main/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://ovh.github.io/tat/sdk/simple-main/</guid>
+      <guid>https://ovh.github.io/tat/sdk/golang-simple-main/</guid>
       <description>
 
 &lt;h2 id=&#34;golang-example-minimal&#34;&gt;Golang Example - Minimal&lt;/h2&gt;
@@ -104,16 +104,16 @@ func main() {
 &lt;h3 id=&#34;notice&#34;&gt;Notice&lt;/h3&gt;
 
 &lt;p&gt;This is just a simple example. Please do not use tat password in argument of your binary.
-Please check next chapter &lt;a href=&#34;../full-example&#34;&gt;&amp;ldquo;Full Example&amp;rdquo;&lt;/a&gt; for a real example.&lt;/p&gt;
+Please check next chapter &lt;a href=&#34;../golang-full-example&#34;&gt;&amp;ldquo;Full Example&amp;rdquo;&lt;/a&gt; for a real example.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Golang - Full Example</title>
-      <link>https://ovh.github.io/tat/sdk/full-example/</link>
+      <link>https://ovh.github.io/tat/sdk/golang-full-example/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://ovh.github.io/tat/sdk/full-example/</guid>
+      <guid>https://ovh.github.io/tat/sdk/golang-full-example/</guid>
       <description>
 
 &lt;h2 id=&#34;golang-example-full-with-viper-cobra-and-tatcli-config-file&#34;&gt;Golang Example - Full, with viper, cobra and tatcli config file&lt;/h2&gt;

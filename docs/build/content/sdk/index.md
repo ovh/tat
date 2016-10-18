@@ -3,7 +3,7 @@ weight: 0
 title: "Tat SDK"
 chapter: true
 icon: "<b>5. </b>"
-next: "/sdk/simple-main"
+next: "/sdk/golang-simple-main"
 ---
 
 ### Chapter 5
