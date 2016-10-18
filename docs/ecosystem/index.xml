@@ -30,8 +30,6 @@
       <guid>https://ovh.github.io/tat/ecosystem/al2tat/</guid>
       <description>
 
-&lt;h1 id=&#34;al2tat-alert-to-tat&#34;&gt;AL2Tat - Alert To Tat&lt;/h1&gt;
-
 &lt;p&gt;&lt;img align=&#34;right&#34; src=&#34;https://raw.githubusercontent.com/ovh/tat/master/tat.png&#34;&gt;&lt;/p&gt;
 
 &lt;p&gt;This microservice can be used :&lt;/p&gt;
@@ -63,7 +61,7 @@ Best Tat view for theses: StandardView (&lt;a href=&#34;https://github.com/ovh/t
 
 &lt;p&gt;An event monitoring is attached to one item (host, soft, person&amp;hellip; whatever), all events are held three days, and only 30 events are retained after 3d. Best Tat view for theses: Monitoring View (&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-monitoringview&#34;&gt;https://github.com/ovh/tatwebui-plugin-monitoringview&lt;/a&gt;)&lt;/p&gt;
 
-&lt;h1 id=&#34;usage-of-al2tat&#34;&gt;Usage of AL2Tat&lt;/h1&gt;
+&lt;h1 id=&#34;usage&#34;&gt;Usage&lt;/h1&gt;
 
 &lt;h2 id=&#34;alert&#34;&gt;Alert&lt;/h2&gt;
 
@@ -344,8 +342,6 @@ Flags:
       
       <guid>https://ovh.github.io/tat/ecosystem/tat2xmpp/</guid>
       <description>
-
-&lt;h1 id=&#34;running&#34;&gt;Running&lt;/h1&gt;
 
 &lt;h2 id=&#34;tat-configuration&#34;&gt;TAT configuration&lt;/h2&gt;
 

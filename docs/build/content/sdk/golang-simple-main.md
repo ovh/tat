@@ -8,16 +8,14 @@ next: "/sdk/golang-full-example"
 ---
 
 
-## Golang Example - Minimal
-
-### Usage
+## Usage
 ```
  cd <directory-containing-main.go>/
  go get -u github.com/ovh/tat
  build && ./mycli-minimal -url=http://url-tat-engine -username=<tatUsername> -password=<tatPassword> /Internal/your/topic your message
 ```
 
-### File main.go
+## File main.go
 ```go
 package main
 
@@ -75,6 +73,6 @@ func main() {
 
 ```
 
-### Notice
+## Notice
 This is just a simple example. Please do not use tat password in argument of your binary.
 Please check next chapter <a href="../golang-full-example">"Full Example"</a> for a real example.

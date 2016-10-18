@@ -92,6 +92,14 @@
             </li>
           
           
+          
+            <li class="dd-item " data-nav-id="/overview/contribute/">
+              <a href="https://ovh.github.io/tat/overview/contribute/">
+                <span>Contribute     </i></span>
+              </a>
+            </li>
+          
+          
         </ul>
         
       </li>
@@ -548,6 +556,8 @@
      
     <section id="footer">
       <p>Built with <a href="http://gohugo.io/">Hugo</a> and <a href="https://github.com/matcornic/hugo-theme-learn">learn theme</a></i></p>
+      <p>Tat is an <a href="https://github.com/ovh">OVH OSS</a></p>
+      <p><a href="https://ovh.com"><img src="https://ovh.github.io/tat/imgs/ovh-logo.png"></a></p>
     </section>
   </div>
 </nav>
@@ -598,12 +608,9 @@
 <ul>
 <li>
 <ul>
-<li><a href="#golang-example-full-with-viper-cobra-and-tatcli-config-file">Golang Example - Full, with viper, cobra and tatcli config file</a>
-<ul>
 <li><a href="#usage">Usage</a></li>
 <li><a href="#file-main-go">File main.go</a></li>
 <li><a href="#notice">Notice</a></li>
-</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -614,9 +621,9 @@
 
 
 
-<h2 id="golang-example-full-with-viper-cobra-and-tatcli-config-file">Golang Example - Full, with viper, cobra and tatcli config file</h2>
+<h2 id="usage">Usage</h2>
 
-<h3 id="usage">Usage</h3>
+<p>This example uses <a href="https://github.com/spf13/viper">viper</a>, <a href="https://github.com/spf13/cobra">cobra</a> and <a href="https://ovh.github.io/tat/tatcli/general/">tatcli</a> config file.</p>
 
 <pre><code>Usage:
  go build &amp;&amp; ./mycli-full demo /YouTopic/subTopic your message
@@ -626,7 +633,7 @@ with a config file:
 
 </code></pre>
 
-<h3 id="file-main-go">File main.go</h3>
+<h2 id="file-main-go">File main.go</h2>
 
 <pre><code class="language-go">package main
 
@@ -728,7 +735,7 @@ func readConfig() {
 
 </code></pre>
 
-<h3 id="notice">Notice</h3>
+<h2 id="notice">Notice</h2>
 
 <p>You should split this file into many files.</p>
 

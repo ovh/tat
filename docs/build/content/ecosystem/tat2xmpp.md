@@ -6,7 +6,6 @@ prev: "/ecosystem/mail2tat"
 
 ---
 
-# Running
 ## TAT configuration
 
 ```bash

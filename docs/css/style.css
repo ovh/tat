@@ -7,6 +7,9 @@
     transform: translateY(50%);
 }
 
+#footer {
+  text-align: center;
+}
 #header {
     background: #202f3c;
     /*border-color: #545454;*/

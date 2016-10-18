@@ -162,3 +162,6 @@ In plugin.tpl.json file, add this line :
 ```
 "tatwebui-plugin-cdsview": "git+https://github.com/ovh/tatwebui-plugin-cdsview.git"
 ```
+
+## Source
+[https://github.com/ovh/tatwebui-plugin-cdsview](https://github.com/ovh/tatwebui-plugin-cdsview)

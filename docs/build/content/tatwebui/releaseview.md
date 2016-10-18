@@ -101,3 +101,6 @@ Set keyword to your issue tracker.
 Example : if you write a
 message like "feat: a big feature #RELEASE_KEYWORD:AAA-1", an url will be generated on tatwebui :
 $RELEASE_TRACKER/AAA-1
+
+## Source
+[https://github.com/ovh/tatwebui-plugin-releaseview](https://github.com/ovh/tatwebui-plugin-releaseview)

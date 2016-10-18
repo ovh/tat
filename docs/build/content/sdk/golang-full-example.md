@@ -6,10 +6,10 @@ prev: "/sdk/golang-simple-main"
 
 ---
 
+## Usage
 
-## Golang Example - Full, with viper, cobra and tatcli config file
+This example uses [viper](https://github.com/spf13/viper), [cobra](https://github.com/spf13/cobra) and [tatcli](https://ovh.github.io/tat/tatcli/general/) config file.
 
-### Usage
 ```
 Usage:
  go build && ./mycli-full demo /YouTopic/subTopic your message
@@ -19,7 +19,7 @@ with a config file:
 
 ```
 
-### File main.go
+## File main.go
 
 ```go
 package main
@@ -122,7 +122,7 @@ func readConfig() {
 
 ```
 
-### Notice
+## Notice
 You should split this file into many files.
 
 See https://github.com/ovh/tatcli for CLI with many subcommands.

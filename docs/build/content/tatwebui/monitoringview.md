@@ -45,3 +45,6 @@ In plugin.tpl.json file, add this line :
 ```
 "tatwebui-plugin-monitoringview": "git+https://github.com/ovh/tatwebui-plugin-monitoringview.git"
 ```
+
+## Source
+[https://github.com/ovh/tatwebui-plugin-monitoringview](https://github.com/ovh/tatwebui-plugin-monitoringview)

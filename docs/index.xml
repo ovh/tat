@@ -32,7 +32,7 @@
 
 &lt;h3 id=&#34;chapter-1&#34;&gt;Chapter 1&lt;/h3&gt;
 
-&lt;h1 id=&#34;overview&#34;&gt;Overview&lt;/h1&gt;
+&lt;h1 id=&#34;tat-overview&#34;&gt;TAT Overview&lt;/h1&gt;
 
 &lt;p&gt;Discover what is Tat and the core-concepts behind it.&lt;/p&gt;
 </description>
@@ -48,9 +48,9 @@
 
 &lt;h3 id=&#34;chapter-4&#34;&gt;Chapter 4&lt;/h3&gt;
 
-&lt;h1 id=&#34;overview&#34;&gt;Overview&lt;/h1&gt;
+&lt;h1 id=&#34;tatcli&#34;&gt;TATCLI&lt;/h1&gt;
 
-&lt;p&gt;Tatcli Reference&lt;/p&gt;
+&lt;p&gt;Reference&lt;/p&gt;
 </description>
     </item>
     
@@ -64,9 +64,9 @@
 
 &lt;h3 id=&#34;chapter-3&#34;&gt;Chapter 3&lt;/h3&gt;
 
-&lt;h1 id=&#34;overview&#34;&gt;Overview&lt;/h1&gt;
+&lt;h1 id=&#34;tat-engine&#34;&gt;Tat Engine&lt;/h1&gt;
 
-&lt;p&gt;TAT Engine Reference&lt;/p&gt;
+&lt;p&gt;Reference&lt;/p&gt;
 </description>
     </item>
     
@@ -110,8 +110,6 @@
       <guid>https://ovh.github.io/tat/ecosystem/al2tat/</guid>
       <description>
 
-&lt;h1 id=&#34;al2tat-alert-to-tat&#34;&gt;AL2Tat - Alert To Tat&lt;/h1&gt;
-
 &lt;p&gt;&lt;img align=&#34;right&#34; src=&#34;https://raw.githubusercontent.com/ovh/tat/master/tat.png&#34;&gt;&lt;/p&gt;
 
 &lt;p&gt;This microservice can be used :&lt;/p&gt;
@@ -143,7 +141,7 @@ Best Tat view for theses: StandardView (&lt;a href=&#34;https://github.com/ovh/t
 
 &lt;p&gt;An event monitoring is attached to one item (host, soft, person&amp;hellip; whatever), all events are held three days, and only 30 events are retained after 3d. Best Tat view for theses: Monitoring View (&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-monitoringview&#34;&gt;https://github.com/ovh/tatwebui-plugin-monitoringview&lt;/a&gt;)&lt;/p&gt;
 
-&lt;h1 id=&#34;usage-of-al2tat&#34;&gt;Usage of AL2Tat&lt;/h1&gt;
+&lt;h1 id=&#34;usage&#34;&gt;Usage&lt;/h1&gt;
 
 &lt;h2 id=&#34;alert&#34;&gt;Alert&lt;/h2&gt;
 
@@ -606,16 +604,14 @@ After each command, the exit code can be found in the &lt;code&gt;$?&lt;/code&gt
       <guid>https://ovh.github.io/tat/sdk/golang-simple-main/</guid>
       <description>
 
-&lt;h2 id=&#34;golang-example-minimal&#34;&gt;Golang Example - Minimal&lt;/h2&gt;
-
-&lt;h3 id=&#34;usage&#34;&gt;Usage&lt;/h3&gt;
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code&gt; cd &amp;lt;directory-containing-main.go&amp;gt;/
  go get -u github.com/ovh/tat
  build &amp;amp;&amp;amp; ./mycli-minimal -url=http://url-tat-engine -username=&amp;lt;tatUsername&amp;gt; -password=&amp;lt;tatPassword&amp;gt; /Internal/your/topic your message
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;file-main-go&#34;&gt;File main.go&lt;/h3&gt;
+&lt;h2 id=&#34;file-main-go&#34;&gt;File main.go&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;package main
 
@@ -673,7 +669,7 @@ func main() {
 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;notice&#34;&gt;Notice&lt;/h3&gt;
+&lt;h2 id=&#34;notice&#34;&gt;Notice&lt;/h2&gt;
 
 &lt;p&gt;This is just a simple example. Please do not use tat password in argument of your binary.
 Please check next chapter &lt;a href=&#34;../golang-full-example&#34;&gt;&amp;ldquo;Full Example&amp;rdquo;&lt;/a&gt; for a real example.&lt;/p&gt;
@@ -1211,9 +1207,9 @@ to upload file and store URL on Tat.&lt;/p&gt;
       <guid>https://ovh.github.io/tat/sdk/golang-full-example/</guid>
       <description>
 
-&lt;h2 id=&#34;golang-example-full-with-viper-cobra-and-tatcli-config-file&#34;&gt;Golang Example - Full, with viper, cobra and tatcli config file&lt;/h2&gt;
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
 
-&lt;h3 id=&#34;usage&#34;&gt;Usage&lt;/h3&gt;
+&lt;p&gt;This example uses &lt;a href=&#34;https://github.com/spf13/viper&#34;&gt;viper&lt;/a&gt;, &lt;a href=&#34;https://github.com/spf13/cobra&#34;&gt;cobra&lt;/a&gt; and &lt;a href=&#34;https://ovh.github.io/tat/tatcli/general/&#34;&gt;tatcli&lt;/a&gt; config file.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;Usage:
  go build &amp;amp;&amp;amp; ./mycli-full demo /YouTopic/subTopic your message
@@ -1223,7 +1219,7 @@ with a config file:
 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;file-main-go&#34;&gt;File main.go&lt;/h3&gt;
+&lt;h2 id=&#34;file-main-go&#34;&gt;File main.go&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;package main
 
@@ -1325,7 +1321,7 @@ func readConfig() {
 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;notice&#34;&gt;Notice&lt;/h3&gt;
+&lt;h2 id=&#34;notice&#34;&gt;Notice&lt;/h2&gt;
 
 &lt;p&gt;You should split this file into many files.&lt;/p&gt;
 

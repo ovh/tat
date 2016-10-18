@@ -24,3 +24,6 @@ In plugin.tpl.json file, add this line :
 ```
 "tatwebui-plugin-standardview": "git+https://github.com/ovh/tatwebui-plugin-standardview.git"
 ```
+
+## Source
+[https://github.com/ovh/tatwebui-plugin-standardview](https://github.com/ovh/tatwebui-plugin-standardview)

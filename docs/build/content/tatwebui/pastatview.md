@@ -25,3 +25,6 @@ In plugin.tpl.json file, add this line :
 ```
 "tatwebui-plugin-dashingview": "git+https://github.com/ovh/tatwebui-plugin-dashingview.git"
 ```
+
+## Source
+[https://github.com/ovh/tatwebui-plugin-pastatview](https://github.com/ovh/tatwebui-plugin-pastatview)

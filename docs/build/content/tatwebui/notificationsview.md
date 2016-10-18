@@ -27,3 +27,6 @@ In plugin.tpl.json file, add this line :
 ```
 "tatwebui-plugin-notificationsview": "git+https://github.com/ovh/tatwebui-plugin-notificationsview.git"
 ```
+
+## Source
+[https://github.com/ovh/tatwebui-plugin-notificationsview](https://github.com/ovh/tatwebui-plugin-notificationsview)

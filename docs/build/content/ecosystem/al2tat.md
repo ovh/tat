@@ -7,8 +7,6 @@ next: "/ecosystem/mail2tat"
 
 ---
 
-# AL2Tat - Alert To Tat
-
 <img align="right" src="https://raw.githubusercontent.com/ovh/tat/master/tat.png">
 
 This microservice can be used :
@@ -34,7 +32,7 @@ Best Tat view for theses: StandardView (https://github.com/ovh/tatwebui-plugin-s
 An event monitoring is attached to one item (host, soft, person... whatever), all events are held three days, and only 30 events are retained after 3d. Best Tat view for theses: Monitoring View (https://github.com/ovh/tatwebui-plugin-monitoringview)
 
 
-# Usage of AL2Tat
+# Usage
 ## Alert
 ### Store new alert
 

@@ -92,6 +92,14 @@
             </li>
           
           
+          
+            <li class="dd-item " data-nav-id="/overview/contribute/">
+              <a href="https://ovh.github.io/tat/overview/contribute/">
+                <span>Contribute     </i></span>
+              </a>
+            </li>
+          
+          
         </ul>
         
       </li>
@@ -548,6 +556,8 @@
      
     <section id="footer">
       <p>Built with <a href="http://gohugo.io/">Hugo</a> and <a href="https://github.com/matcornic/hugo-theme-learn">learn theme</a></i></p>
+      <p>Tat is an <a href="https://github.com/ovh">OVH OSS</a></p>
+      <p><a href="https://ovh.com"><img src="https://ovh.github.io/tat/imgs/ovh-logo.png"></a></p>
     </section>
   </div>
 </nav>
@@ -598,12 +608,9 @@
 <ul>
 <li>
 <ul>
-<li><a href="#golang-example-minimal">Golang Example - Minimal</a>
-<ul>
 <li><a href="#usage">Usage</a></li>
 <li><a href="#file-main-go">File main.go</a></li>
 <li><a href="#notice">Notice</a></li>
-</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -614,16 +621,14 @@
 
 
 
-<h2 id="golang-example-minimal">Golang Example - Minimal</h2>
-
-<h3 id="usage">Usage</h3>
+<h2 id="usage">Usage</h2>
 
 <pre><code> cd &lt;directory-containing-main.go&gt;/
  go get -u github.com/ovh/tat
  build &amp;&amp; ./mycli-minimal -url=http://url-tat-engine -username=&lt;tatUsername&gt; -password=&lt;tatPassword&gt; /Internal/your/topic your message
 </code></pre>
 
-<h3 id="file-main-go">File main.go</h3>
+<h2 id="file-main-go">File main.go</h2>
 
 <pre><code class="language-go">package main
 
@@ -681,7 +686,7 @@ func main() {
 
 </code></pre>
 
-<h3 id="notice">Notice</h3>
+<h2 id="notice">Notice</h2>
 
 <p>This is just a simple example. Please do not use tat password in argument of your binary.
 Please check next chapter <a href="../golang-full-example">&ldquo;Full Example&rdquo;</a> for a real example.</p>

@@ -77,6 +77,10 @@ Some OVH views are opensourced like:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;&amp;quot;tatwebui-plugin-standardview&amp;quot;: &amp;quot;git+https://github.com/ovh/tatwebui-plugin-standardview.git&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;source&#34;&gt;Source&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-standardview&#34;&gt;https://github.com/ovh/tatwebui-plugin-standardview&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
@@ -110,6 +114,10 @@ Some OVH views are opensourced like:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;&amp;quot;tatwebui-plugin-notificationsview&amp;quot;: &amp;quot;git+https://github.com/ovh/tatwebui-plugin-notificationsview.git&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;source&#34;&gt;Source&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-notificationsview&#34;&gt;https://github.com/ovh/tatwebui-plugin-notificationsview&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
@@ -155,6 +163,10 @@ See &lt;a href=&#34;https://github.com/ovh/al2tat&#34;&gt;https://github.com/ovh
 
 &lt;pre&gt;&lt;code&gt;&amp;quot;tatwebui-plugin-monitoringview&amp;quot;: &amp;quot;git+https://github.com/ovh/tatwebui-plugin-monitoringview.git&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;source&#34;&gt;Source&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-monitoringview&#34;&gt;https://github.com/ovh/tatwebui-plugin-monitoringview&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
@@ -182,6 +194,10 @@ See &lt;a href=&#34;https://github.com/ovh/al2tat&#34;&gt;https://github.com/ovh
 
 &lt;pre&gt;&lt;code&gt;&amp;quot;tatwebui-plugin-dashingview&amp;quot;: &amp;quot;git+https://github.com/ovh/tatwebui-plugin-dashingview.git&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;source&#34;&gt;Source&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-pastatview&#34;&gt;https://github.com/ovh/tatwebui-plugin-pastatview&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
@@ -342,6 +358,10 @@ tatcli msg add /Internal/YourTopic/Dashing &amp;quot;#monitoring #item:Bar&amp;q
 
 &lt;pre&gt;&lt;code&gt;&amp;quot;tatwebui-plugin-dashingview&amp;quot;: &amp;quot;git+https://github.com/ovh/tatwebui-plugin-dashingview.git&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;source&#34;&gt;Source&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-dashingview&#34;&gt;https://github.com/ovh/tatwebui-plugin-dashingview&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
@@ -439,6 +459,10 @@ tatcli msg reply /Private/yesnault/Release $ID_MSG &amp;quot;#Refactor task: add
 &lt;p&gt;Example : if you write a
 message like &amp;ldquo;feat: a big feature #RELEASE_KEYWORD:AAA-1&amp;rdquo;, an url will be generated on tatwebui :
 $RELEASE_TRACKER/AAA-1&lt;/p&gt;
+
+&lt;h2 id=&#34;source&#34;&gt;Source&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-releaseview&#34;&gt;https://github.com/ovh/tatwebui-plugin-releaseview&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
@@ -604,6 +628,10 @@ $RELEASE_TRACKER/AAA-1&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;&amp;quot;tatwebui-plugin-cdsview&amp;quot;: &amp;quot;git+https://github.com/ovh/tatwebui-plugin-cdsview.git&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;source&#34;&gt;Source&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-cdsview&#34;&gt;https://github.com/ovh/tatwebui-plugin-cdsview&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
