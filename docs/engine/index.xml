@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Engine-rsses on TAT - TextAndTag Documentation</title>
-    <link>http://localhost:1313/engine/index.xml</link>
+    <link>https://ovh.github.io/tat/engine/index.xml</link>
     <description>Recent content in Engine-rsses on TAT - TextAndTag Documentation</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:1313/engine/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ovh.github.io/tat/engine/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Tat Engine Reference</title>
-      <link>http://localhost:1313/engine/</link>
+      <link>https://ovh.github.io/tat/engine/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/engine/</guid>
+      <guid>https://ovh.github.io/tat/engine/</guid>
       <description>
 
 &lt;h3 id=&#34;chapter-3&#34;&gt;Chapter 3&lt;/h3&gt;
@@ -26,10 +26,10 @@
     
     <item>
       <title>General</title>
-      <link>http://localhost:1313/engine/general/</link>
+      <link>https://ovh.github.io/tat/engine/general/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/engine/general/</guid>
+      <guid>https://ovh.github.io/tat/engine/general/</guid>
       <description>
 
 &lt;h2 id=&#34;general-specifications&#34;&gt;General Specifications&lt;/h2&gt;
@@ -103,132 +103,132 @@
 &lt;li&gt;Topic
 
 &lt;ul&gt;
-&lt;li&gt;addAdminGroup     &lt;a href=&#34;http://localhost:1313/engine/api-topics/#add-an-admin-group-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#add-an-admin-group-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddAdminGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;addAdminUser      &lt;a href=&#34;http://localhost:1313/engine/api-topics/#add-an-admin-user-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#add-an-admin-user-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddAdminUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
-&lt;li&gt;addParameter      &lt;a href=&#34;http://localhost:1313/engine/api-topics/#add-a-parameter-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddParameter&#34;&gt;Go-SDK&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
-&lt;li&gt;addRoGroup        &lt;a href=&#34;http://localhost:1313/engine/api-topics/#add-a-read-only-group-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#add-a-read-only-group-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddRoGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;addRoUser         &lt;a href=&#34;http://localhost:1313/engine/api-topics/#add-a-read-only-user-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#add-a-read-only-user-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddRoUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;addRwGroup        &lt;a href=&#34;http://localhost:1313/engine/api-topics/#add-a-read-write-group-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#add-a-read-write-group-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddRwGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;addRwUser         &lt;a href=&#34;http://localhost:1313/engine/api-topics/#add-a-read-write-user-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#add-a-read-write-user-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddRwUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;allcomputelabels  &lt;a href=&#34;http://localhost:1313/engine/api-topics/#compute-labels-on-all-topics&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAllComputeLabels&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;allcomputereplies [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAllComputeReplies&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;allcomputetags    &lt;a href=&#34;http://localhost:1313/engine/api-topics/#compute-tags-on-all-topics&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAllComputeTags&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;allsetparam       &lt;a href=&#34;http://localhost:1313/engine/api-topics/#set-a-param-on-all-topics&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAllSetParam&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;computelabels     &lt;a href=&#34;http://localhost:1313/engine/api-topics/#compute-labels-on-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicComputeLabels&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;computetags       &lt;a href=&#34;http://localhost:1313/engine/api-topics/#compute-tags-on-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicComputeTags&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;create            &lt;a href=&#34;http://localhost:1313/engine/api-topics/#create-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#create-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicCreate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;delete            &lt;a href=&#34;http://localhost:1313/engine/api-topics/#delete-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#delete-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDelete&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;deleteAdminGroup  &lt;a href=&#34;http://localhost:1313/engine/api-topics/#delete-an-admin-group-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#delete-an-admin-group-from-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteAdminGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;deleteAdminUser   &lt;a href=&#34;http://localhost:1313/engine/api-topics/#delete-an-admin-user-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#delete-an-admin-user-from-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteAdminUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;deleteParameter   &lt;a href=&#34;http://localhost:1313/engine/api-topics/#remove-a-parameter-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteParameters&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;deleteRoGroup     &lt;a href=&#34;http://localhost:1313/engine/api-topics/#delete-a-read-only-group-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#delete-a-read-only-group-from-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteRoGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;deleteRoUser      &lt;a href=&#34;http://localhost:1313/engine/api-topics/#delete-a-read-only-user-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#add-a-read-only-user-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteRoUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;deleteRwGroup     &lt;a href=&#34;http://localhost:1313/engine/api-topics/#delete-a-read-write-group-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#delete-a-read-write-group-from-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteRwGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;deleteRwUser      &lt;a href=&#34;http://localhost:1313/engine/api-topics/#delete-a-read-write-user-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#delete-a-read-write-user-from-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteRwUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;list              &lt;a href=&#34;http://localhost:1313/engine/api-topics/#getting-topics-list&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#getting-topics-list&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicList&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;oneTopic          &lt;a href=&#34;http://localhost:1313/engine/api-topics/#getting-one-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicOne&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;parameter         &lt;a href=&#34;http://localhost:1313/engine/api-topics/#update-param-on-one-topic-admin-or-admin-on-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicParameter&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addAdminGroup     &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#add-an-admin-group-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#add-an-admin-group-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddAdminGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addAdminUser      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#add-an-admin-user-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#add-an-admin-user-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddAdminUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;addParameter      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#add-a-parameter-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddParameter&#34;&gt;Go-SDK&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;addRoGroup        &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#add-a-read-only-group-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#add-a-read-only-group-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddRoGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addRoUser         &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#add-a-read-only-user-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#add-a-read-only-user-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddRoUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addRwGroup        &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#add-a-read-write-group-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#add-a-read-write-group-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddRwGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addRwUser         &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#add-a-read-write-user-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#add-a-read-write-user-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAddRwUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;allcomputelabels  &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#compute-labels-on-all-topics&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAllComputeLabels&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;allcomputereplies [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAllComputeReplies&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;allcomputetags    &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#compute-tags-on-all-topics&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAllComputeTags&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;allsetparam       &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#set-a-param-on-all-topics&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicAllSetParam&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;computelabels     &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#compute-labels-on-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicComputeLabels&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;computetags       &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#compute-tags-on-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicComputeTags&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;create            &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#create-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#create-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicCreate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;delete            &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#delete-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#delete-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDelete&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;deleteAdminGroup  &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#delete-an-admin-group-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#delete-an-admin-group-from-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteAdminGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;deleteAdminUser   &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#delete-an-admin-user-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#delete-an-admin-user-from-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteAdminUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;deleteParameter   &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#remove-a-parameter-to-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteParameters&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;deleteRoGroup     &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#delete-a-read-only-group-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#delete-a-read-only-group-from-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteRoGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;deleteRoUser      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#delete-a-read-only-user-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#add-a-read-only-user-to-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteRoUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;deleteRwGroup     &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#delete-a-read-write-group-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#delete-a-read-write-group-from-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteRwGroups&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;deleteRwUser      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#delete-a-read-write-user-from-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#delete-a-read-write-user-from-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicDeleteRwUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;list              &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#getting-topics-list&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#getting-topics-list&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicList&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;oneTopic          &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#getting-one-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicOne&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;parameter         &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#update-param-on-one-topic-admin-or-admin-on-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicParameter&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;removeFilter      [Engine]() &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicRemoveFilter&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;truncate          &lt;a href=&#34;http://localhost:1313/engine/api-topics/#truncate-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#truncate-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicTruncate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;truncatelabels    &lt;a href=&#34;http://localhost:1313/engine/api-topics/#truncate-cached-labels-on-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicTruncateLabels&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;truncatetags      &lt;a href=&#34;http://localhost:1313/engine/api-topics/#truncate-cached-tags-on-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicTruncateTags&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;updateFilter      [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicUpdateFilter&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;truncate          &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#truncate-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#truncate-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicTruncate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;truncatelabels    &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#truncate-cached-labels-on-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicTruncateLabels&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;truncatetags      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-topics/#truncate-cached-tags-on-a-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicTruncateTags&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;updateFilter      [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-topic/#tatcli-topic-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.TopicUpdateFilter&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Message
 
 &lt;ul&gt;
-&lt;li&gt;add         &lt;a href=&#34;http://localhost:1313/engine/api-messages/#store-a-new-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#create-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageAdd&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;addbulk     &lt;a href=&#34;http://localhost:1313/engine/api-messages/#store-some-messages&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#tatcli-message-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageAddBulk&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;concat      &lt;a href=&#34;http://localhost:1313/engine/api-messages/#concat-a-message-adding-additional-text-to-one-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#update-a-message-by-adding-additional-text-at-the-end-of-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageConcat&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;count       &lt;a href=&#34;http://localhost:1313/engine/api-messages/#parameters&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#tatcli-message-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageCount&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;delete      &lt;a href=&#34;http://localhost:1313/engine/api-messages/#delete-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#tatcli-message-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageDelete&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;deletebulk  &lt;a href=&#34;http://localhost:1313/engine/api-messages/#delete-a-list-of-messages&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#tatcli-message-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessagesDeleteBulk&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;label       &lt;a href=&#34;http://localhost:1313/engine/api-messages/#add-a-label-to-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#add-a-label-to-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageLabel&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;like        &lt;a href=&#34;http://localhost:1313/engine/api-messages/#like-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#like-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageLike&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;list        &lt;a href=&#34;http://localhost:1313/engine/api-messages/#getting-messages-list&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#getting-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageList&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;move        &lt;a href=&#34;http://localhost:1313/engine/api-messages/#move-a-message-to-another-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#move-a-message-to-another-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageMove&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;relabel     &lt;a href=&#34;http://localhost:1313/engine/api-messages/#remove-all-labels-and-add-new-ones&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#remove-all-labels-and-add-new-ones-to-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageRelabel&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;reply       &lt;a href=&#34;http://localhost:1313/engine/api-messages/#reply-to-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#reply-to-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageReply&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;task        &lt;a href=&#34;http://localhost:1313/engine/api-messages/#create-a-task-from-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#create-a-task-from-one-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageTask&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;unlabel     &lt;a href=&#34;http://localhost:1313/engine/api-messages/#remove-a-label-from-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#remove-a-label-from-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUnlabel&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;unlike      &lt;a href=&#34;http://localhost:1313/engine/api-messages/#unlike-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#unlike-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUnlike&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;untask      &lt;a href=&#34;http://localhost:1313/engine/api-messages/#remove-a-message-from-tasks&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#remove-a-message-from-tasks&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUntask&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;unvotedown  &lt;a href=&#34;http://localhost:1313/engine/api-messages/#remove-vote-down-from-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#remove-a-vote-down-from-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUnVoteDown&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;unvoteup    &lt;a href=&#34;http://localhost:1313/engine/api-messages/#remove-a-vote-up-from-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#remove-a-vote-up-from-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUnVoteUP&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;update      &lt;a href=&#34;http://localhost:1313/engine/api-messages/#update-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#tatcli-message-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUpdate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;votedown    &lt;a href=&#34;http://localhost:1313/engine/api-messages/#vote-down-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#vote-down-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageVoteDown&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;voteup      &lt;a href=&#34;http://localhost:1313/engine/api-messages/#vote-up-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-message/#vote-up-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageVoteUP&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;add         &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#store-a-new-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#create-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageAdd&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addbulk     &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#store-some-messages&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#tatcli-message-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageAddBulk&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;concat      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#concat-a-message-adding-additional-text-to-one-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#update-a-message-by-adding-additional-text-at-the-end-of-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageConcat&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;count       &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#parameters&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#tatcli-message-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageCount&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;delete      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#delete-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#tatcli-message-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageDelete&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;deletebulk  &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#delete-a-list-of-messages&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#tatcli-message-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessagesDeleteBulk&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;label       &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#add-a-label-to-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#add-a-label-to-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageLabel&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;like        &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#like-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#like-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageLike&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;list        &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#getting-messages-list&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#getting-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageList&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;move        &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#move-a-message-to-another-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#move-a-message-to-another-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageMove&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;relabel     &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#remove-all-labels-and-add-new-ones&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#remove-all-labels-and-add-new-ones-to-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageRelabel&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;reply       &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#reply-to-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#reply-to-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageReply&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;task        &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#create-a-task-from-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#create-a-task-from-one-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageTask&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;unlabel     &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#remove-a-label-from-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#remove-a-label-from-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUnlabel&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;unlike      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#unlike-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#unlike-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUnlike&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;untask      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#remove-a-message-from-tasks&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#remove-a-message-from-tasks&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUntask&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;unvotedown  &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#remove-vote-down-from-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#remove-a-vote-down-from-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUnVoteDown&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;unvoteup    &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#remove-a-vote-up-from-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#remove-a-vote-up-from-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUnVoteUP&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;update      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#update-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#tatcli-message-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageUpdate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;votedown    &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#vote-down-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#vote-down-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageVoteDown&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;voteup      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-messages/#vote-up-a-message&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-message/#vote-up-a-message&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.MessageVoteUP&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Group
 
 &lt;ul&gt;
-&lt;li&gt;addAdminUser     &lt;a href=&#34;http://localhost:1313/engine/api-groups/#delete-an-admin-user-from-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-group/#tatcli-group-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupAddAdminUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;addUser          &lt;a href=&#34;http://localhost:1313/engine/api-groups/#add-a-user-to-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-group/#add-user-to-a-group&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupAddUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;create           &lt;a href=&#34;http://localhost:1313/engine/api-groups/#create-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-group/#create-a-group-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupCreate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;delete           &lt;a href=&#34;http://localhost:1313/engine/api-groups/#delete-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-group/#delete-a-group-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupDelete&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;deleteAdminUser  &lt;a href=&#34;http://localhost:1313/engine/api-groups/#add-an-admin-user-to-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-group/#tatcli-group-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupDeleteAdminUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;deleteUser       &lt;a href=&#34;http://localhost:1313/engine/api-groups/#delete-a-user-from-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-group/#delete-a-user-from-a-group&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupDeleteUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;list             &lt;a href=&#34;http://localhost:1313/engine/api-groups/#getting-groups-list&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-group/#tatcli-group-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupList&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;update           &lt;a href=&#34;http://localhost:1313/engine/api-groups/#update-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-group/#update-a-group-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupUpdate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addAdminUser     &lt;a href=&#34;https://ovh.github.io/tat/engine/api-groups/#delete-an-admin-user-from-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-group/#tatcli-group-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupAddAdminUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addUser          &lt;a href=&#34;https://ovh.github.io/tat/engine/api-groups/#add-a-user-to-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-group/#add-user-to-a-group&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupAddUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;create           &lt;a href=&#34;https://ovh.github.io/tat/engine/api-groups/#create-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-group/#create-a-group-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupCreate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;delete           &lt;a href=&#34;https://ovh.github.io/tat/engine/api-groups/#delete-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-group/#delete-a-group-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupDelete&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;deleteAdminUser  &lt;a href=&#34;https://ovh.github.io/tat/engine/api-groups/#add-an-admin-user-to-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-group/#tatcli-group-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupDeleteAdminUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;deleteUser       &lt;a href=&#34;https://ovh.github.io/tat/engine/api-groups/#delete-a-user-from-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-group/#delete-a-user-from-a-group&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupDeleteUsers&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;list             &lt;a href=&#34;https://ovh.github.io/tat/engine/api-groups/#getting-groups-list&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-group/#tatcli-group-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupList&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;update           &lt;a href=&#34;https://ovh.github.io/tat/engine/api-groups/#update-a-group&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-group/#update-a-group-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.GroupUpdate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;User
 
 &lt;ul&gt;
-&lt;li&gt;add                           &lt;a href=&#34;http://localhost:1313/engine/api-users/#create-a-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#create-a-user&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserAdd&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;addContact                    &lt;a href=&#34;http://localhost:1313/engine/api-users/#add-a-contact&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#tatcli-user-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserAddContact&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;addFavoriteTag                &lt;a href=&#34;http://localhost:1313/engine/api-users/#add-a-favorite-tag&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#add-a-favorite-tag&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserAddFavoriteTag&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;addFavoriteTopic              &lt;a href=&#34;http://localhost:1313/engine/api-users/#add-a-favorite-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#add-a-favorite-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserAddFavoriteTopic&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;archive                       &lt;a href=&#34;http://localhost:1313/engine/api-users/#archive-a-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#archive-a-user-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserArchive&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;check                         &lt;a href=&#34;http://localhost:1313/engine/api-users/#check-private-topics-and-default-group-on-one-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#check-a-user-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserCheck&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;contacts                      &lt;a href=&#34;http://localhost:1313/engine/api-users/#get-contacts&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#get-contacts-presences-since-n-seconds-tatcli-user-contacts-seconds&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserContacts&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;convert                       &lt;a href=&#34;http://localhost:1313/engine/api-users/#convert-a-user-to-a-system-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#convert-to-a-system-user-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserConvertToSystem&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;disableNotificationsAllTopics &lt;a href=&#34;http://localhost:1313/engine/api-users/#disable-notifications-on-all-topics-except-private&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#disable-notifications-on-all-topics&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserDisableNotificationsAllTopics&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;disableNotificationsTopic     &lt;a href=&#34;http://localhost:1313/engine/api-users/#disable-notifications-on-one-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#disable-notifications-on-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserDisableNotificationsTopic&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;enableNotificationsAllTopics  &lt;a href=&#34;http://localhost:1313/engine/api-users/#enable-notifications-on-all-topics&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#enable-notifications-on-all-topics&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserEnableNotificationsAllTopics&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;enableNotificationsTopic      &lt;a href=&#34;http://localhost:1313/engine/api-users/#enable-notifications-on-one-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#enable-notifications-on-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserEnableNotificationsTopic&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;list                          &lt;a href=&#34;http://localhost:1313/engine/api-users/#getting-users-list&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#list-users&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserList&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;me                            &lt;a href=&#34;http://localhost:1313/engine/api-users/#get-information-about-current-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#get-information-about-me&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserMe&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;removeContact                 &lt;a href=&#34;http://localhost:1313/engine/api-users/#remove-a-contact&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#tatcli-user-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserRemoveContact&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;removeFavoriteTag             &lt;a href=&#34;http://localhost:1313/engine/api-users/#remove-a-favorite-tag&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#remove-a-favorite-tag&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserRemoveFavoriteTag&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;removeFavoriteTopic           &lt;a href=&#34;http://localhost:1313/engine/api-users/#remove-a-favorite-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#remove-a-favorite-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserRemoveFavoriteTopic&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;rename                        &lt;a href=&#34;http://localhost:1313/engine/api-users/#rename-a-username&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#rename-a-username-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserRename&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;reset                         &lt;a href=&#34;http://localhost:1313/engine/api-users/#ask-for-reset-a-password&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#ask-for-reset-password&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserReset&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;resetSystemUser               &lt;a href=&#34;http://localhost:1313/engine/api-users/#reset-a-password-for-system-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#tatcli-user-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserResetSystem&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;setAdmin                      &lt;a href=&#34;http://localhost:1313/engine/api-users/#grant-a-user-to-an-admin-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#grant-a-user-to-tat-admin-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserSetAdmin&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;update                        &lt;a href=&#34;http://localhost:1313/engine/api-users/#update-fullname-or-email&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#update-fullname-and-email-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserUpdate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;updateSystemUser              &lt;a href=&#34;http://localhost:1313/engine/api-users/#update-flags-on-system-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#update-a-system-user-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserUpdateSystem&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;verify                        &lt;a href=&#34;http://localhost:1313/engine/api-users/#verify-a-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-user/#verify-account&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserVerify&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;add                           &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#create-a-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#create-a-user&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserAdd&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addContact                    &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#add-a-contact&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#tatcli-user-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserAddContact&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addFavoriteTag                &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#add-a-favorite-tag&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#add-a-favorite-tag&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserAddFavoriteTag&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;addFavoriteTopic              &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#add-a-favorite-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#add-a-favorite-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserAddFavoriteTopic&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;archive                       &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#archive-a-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#archive-a-user-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserArchive&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;check                         &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#check-private-topics-and-default-group-on-one-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#check-a-user-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserCheck&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;contacts                      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#get-contacts&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#get-contacts-presences-since-n-seconds-tatcli-user-contacts-seconds&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserContacts&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;convert                       &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#convert-a-user-to-a-system-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#convert-to-a-system-user-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserConvertToSystem&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;disableNotificationsAllTopics &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#disable-notifications-on-all-topics-except-private&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#disable-notifications-on-all-topics&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserDisableNotificationsAllTopics&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;disableNotificationsTopic     &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#disable-notifications-on-one-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#disable-notifications-on-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserDisableNotificationsTopic&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;enableNotificationsAllTopics  &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#enable-notifications-on-all-topics&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#enable-notifications-on-all-topics&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserEnableNotificationsAllTopics&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;enableNotificationsTopic      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#enable-notifications-on-one-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#enable-notifications-on-a-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserEnableNotificationsTopic&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;list                          &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#getting-users-list&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#list-users&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserList&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;me                            &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#get-information-about-current-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#get-information-about-me&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserMe&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;removeContact                 &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#remove-a-contact&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#tatcli-user-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserRemoveContact&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;removeFavoriteTag             &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#remove-a-favorite-tag&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#remove-a-favorite-tag&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserRemoveFavoriteTag&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;removeFavoriteTopic           &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#remove-a-favorite-topic&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#remove-a-favorite-topic&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserRemoveFavoriteTopic&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;rename                        &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#rename-a-username&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#rename-a-username-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserRename&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;reset                         &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#ask-for-reset-a-password&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#ask-for-reset-password&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserReset&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;resetSystemUser               &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#reset-a-password-for-system-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#tatcli-user-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserResetSystem&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;setAdmin                      &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#grant-a-user-to-an-admin-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#grant-a-user-to-tat-admin-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserSetAdmin&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;update                        &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#update-fullname-or-email&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#update-fullname-and-email-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserUpdate&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;updateSystemUser              &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#update-flags-on-system-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#update-a-system-user-admin-only&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserUpdateSystem&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;verify                        &lt;a href=&#34;https://ovh.github.io/tat/engine/api-users/#verify-a-user&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-user/#verify-account&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.UserVerify&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Presence
 
 &lt;ul&gt;
-&lt;li&gt;add                           &lt;a href=&#34;http://localhost:1313/engine/api-presences/#add-presence&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-presence/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.PresenceAddAndGet&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;delete                        &lt;a href=&#34;http://localhost:1313/engine/api-presences/#delete-presence&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-presence/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.PresenceDelete&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;list                          &lt;a href=&#34;http://localhost:1313/engine/api-presences/#getting-presences&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-presence/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.PresenceList&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;add                           &lt;a href=&#34;https://ovh.github.io/tat/engine/api-presences/#add-presence&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-presence/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.PresenceAddAndGet&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;delete                        &lt;a href=&#34;https://ovh.github.io/tat/engine/api-presences/#delete-presence&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-presence/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.PresenceDelete&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;list                          &lt;a href=&#34;https://ovh.github.io/tat/engine/api-presences/#getting-presences&#34;&gt;Engine&lt;/a&gt; &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-presence/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.PresenceList&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Stats
 
 &lt;ul&gt;
-&lt;li&gt;count              [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsCount&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;dbCollections      [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBCollections&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;dbReplSetGetConfig [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBReplSetGetConfig&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;dbReplSetGetStatus [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBReplSetGetStatus&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;dbServerStatus     [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBServerStatus&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;dbSlowestQueries   [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBSlowestQueries&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;dbstats            [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBStats&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;distribution       [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDistribution&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;instance           [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsInstance&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;count              [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsCount&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;dbCollections      [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBCollections&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;dbReplSetGetConfig [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBReplSetGetConfig&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;dbReplSetGetStatus [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBReplSetGetStatus&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;dbServerStatus     [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBServerStatus&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;dbSlowestQueries   [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBSlowestQueries&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;dbstats            [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDBStats&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;distribution       [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsDistribution&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;instance           [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-stats/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.StatsInstance&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;System
 
 &lt;ul&gt;
-&lt;li&gt;cacheclean   [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-system/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.SystemCacheClean&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;cacheinfo    [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-system/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.SystemCacheInfo&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;cacheclean   [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-system/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.SystemCacheClean&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;cacheinfo    [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-system/&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.SystemCacheInfo&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Version
 
 &lt;ul&gt;
-&lt;li&gt;version [Engine]() &lt;a href=&#34;http://localhost:1313/tatcli/tatcli-version/#tatcli-version-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.Version&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;version [Engine]() &lt;a href=&#34;https://ovh.github.io/tat/tatcli/tatcli-version/#tatcli-version-h&#34;&gt;Tatcli&lt;/a&gt; &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client.Version&#34;&gt;Go-SDK&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -245,10 +245,10 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     
     <item>
       <title>API - Messages</title>
-      <link>http://localhost:1313/engine/api-messages/</link>
+      <link>https://ovh.github.io/tat/engine/api-messages/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/engine/api-messages/</guid>
+      <guid>https://ovh.github.io/tat/engine/api-messages/</guid>
       <description>
 
 &lt;h2 id=&#34;store-a-new-message&#34;&gt;Store a new message&lt;/h2&gt;
@@ -611,10 +611,10 @@ curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/
     
     <item>
       <title>API - Topics</title>
-      <link>http://localhost:1313/engine/api-topics/</link>
+      <link>https://ovh.github.io/tat/engine/api-topics/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/engine/api-topics/</guid>
+      <guid>https://ovh.github.io/tat/engine/api-topics/</guid>
       <description>
 
 &lt;h2 id=&#34;create-a-topic&#34;&gt;Create a Topic&lt;/h2&gt;
@@ -960,10 +960,10 @@ curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topics?sk
     
     <item>
       <title>API - Users</title>
-      <link>http://localhost:1313/engine/api-users/</link>
+      <link>https://ovh.github.io/tat/engine/api-users/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/engine/api-users/</guid>
+      <guid>https://ovh.github.io/tat/engine/api-users/</guid>
       <description>
 
 &lt;h2 id=&#34;tat-password&#34;&gt;Tat Password&lt;/h2&gt;
@@ -1261,10 +1261,10 @@ This action returns a new password for this user.&lt;/p&gt;
     
     <item>
       <title>API - Groups</title>
-      <link>http://localhost:1313/engine/api-groups/</link>
+      <link>https://ovh.github.io/tat/engine/api-groups/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/engine/api-groups/</guid>
+      <guid>https://ovh.github.io/tat/engine/api-groups/</guid>
       <description>
 
 &lt;h2 id=&#34;create-a-group&#34;&gt;Create a group&lt;/h2&gt;
@@ -1364,10 +1364,10 @@ curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/groups?sk
     
     <item>
       <title>API - Presences</title>
-      <link>http://localhost:1313/engine/api-presences/</link>
+      <link>https://ovh.github.io/tat/engine/api-presences/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/engine/api-presences/</guid>
+      <guid>https://ovh.github.io/tat/engine/api-presences/</guid>
       <description>
 
 &lt;h2 id=&#34;add-presence&#34;&gt;Add presence&lt;/h2&gt;
@@ -1422,10 +1422,10 @@ Users can delete their own presence.&lt;/p&gt;
     
     <item>
       <title>API - System</title>
-      <link>http://localhost:1313/engine/api-system/</link>
+      <link>https://ovh.github.io/tat/engine/api-system/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/engine/api-system/</guid>
+      <guid>https://ovh.github.io/tat/engine/api-system/</guid>
       <description>
 
 &lt;h2 id=&#34;system&#34;&gt;System&lt;/h2&gt;
@@ -1545,13 +1545,13 @@ Users can delete their own presence.&lt;/p&gt;
     
     <item>
       <title>Simple Installation</title>
-      <link>http://localhost:1313/engine/simple-installation/</link>
+      <link>https://ovh.github.io/tat/engine/simple-installation/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/engine/simple-installation/</guid>
+      <guid>https://ovh.github.io/tat/engine/simple-installation/</guid>
       <description>
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tat-installation-simple.png?width=50%&#34; alt=&#34;Installation Simple Way&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tat-installation-simple.png?width=50%&#34; alt=&#34;Installation Simple Way&#34; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h1&gt;
 
@@ -1604,10 +1604,10 @@ INFO[0000] TAT is NOT linked to a redis
     
     <item>
       <title>Installation - Production Way</title>
-      <link>http://localhost:1313/engine/production-installation/</link>
+      <link>https://ovh.github.io/tat/engine/production-installation/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/engine/production-installation/</guid>
+      <guid>https://ovh.github.io/tat/engine/production-installation/</guid>
       <description>
 
 &lt;p&gt;Don&amp;rsquo;t worry, this installation describes below is used @ OVH to handle at least:&lt;/p&gt;
@@ -1619,7 +1619,7 @@ INFO[0000] TAT is NOT linked to a redis
 &lt;li&gt;45.000 PUT / 2 hours&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tat-installation-production.png?width=75%&#34; alt=&#34;Installation Production Way&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tat-installation-production.png?width=75%&#34; alt=&#34;Installation Production Way&#34; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h1&gt;
 

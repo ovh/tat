@@ -2,199 +2,199 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://ovh.github.io/tat/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/ecosystem/</loc>
+    <loc>https://ovh.github.io/tat/ecosystem/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/overview/</loc>
+    <loc>https://ovh.github.io/tat/overview/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/engine/</loc>
+    <loc>https://ovh.github.io/tat/engine/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/sdk/</loc>
+    <loc>https://ovh.github.io/tat/sdk/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatwebui/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/ecosystem/al2tat/</loc>
+    <loc>https://ovh.github.io/tat/ecosystem/al2tat/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/engine/general/</loc>
+    <loc>https://ovh.github.io/tat/engine/general/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/general/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/general/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/sdk/simple-main/</loc>
+    <loc>https://ovh.github.io/tat/sdk/simple-main/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/overview/introduction/</loc>
+    <loc>https://ovh.github.io/tat/overview/introduction/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatwebui/introduction/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/introduction/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/engine/api-messages/</loc>
+    <loc>https://ovh.github.io/tat/engine/api-messages/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/overview/concepts/</loc>
+    <loc>https://ovh.github.io/tat/overview/concepts/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/sdk/full-example/</loc>
+    <loc>https://ovh.github.io/tat/sdk/full-example/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/ecosystem/mail2tat/</loc>
+    <loc>https://ovh.github.io/tat/ecosystem/mail2tat/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatwebui/standardview/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/standardview/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/ecosystem/tat2xmpp/</loc>
+    <loc>https://ovh.github.io/tat/ecosystem/tat2xmpp/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-config/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-config/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/engine/api-topics/</loc>
+    <loc>https://ovh.github.io/tat/engine/api-topics/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/overview/lifecycle/</loc>
+    <loc>https://ovh.github.io/tat/overview/lifecycle/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatwebui/notificationsview/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/notificationsview/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-group/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-group/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/engine/api-users/</loc>
+    <loc>https://ovh.github.io/tat/engine/api-users/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/overview/architecture/</loc>
+    <loc>https://ovh.github.io/tat/overview/architecture/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatwebui/monitoringview/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/monitoringview/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-message/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-message/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/engine/api-groups/</loc>
+    <loc>https://ovh.github.io/tat/engine/api-groups/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatwebui/pastatview/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/pastatview/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-presence/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-presence/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/engine/api-presences/</loc>
+    <loc>https://ovh.github.io/tat/engine/api-presences/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/engine/api-system/</loc>
+    <loc>https://ovh.github.io/tat/engine/api-system/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatwebui/dashingview/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/dashingview/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-stats/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-stats/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatwebui/releaseview/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/releaseview/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-system/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-system/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-topic/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-topic/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-ui/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-ui/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-update/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-update/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-user/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-user/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatcli/tatcli-version/</loc>
+    <loc>https://ovh.github.io/tat/tatcli/tatcli-version/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatwebui/cdsview/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/cdsview/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatwebui/development/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/development/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatnhack/</loc>
+    <loc>https://ovh.github.io/tat/tatnhack/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatnhack/monitoring-process/</loc>
+    <loc>https://ovh.github.io/tat/tatnhack/monitoring-process/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/tatnhack/visual-feedback/</loc>
+    <loc>https://ovh.github.io/tat/tatnhack/visual-feedback/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/engine/simple-installation/</loc>
+    <loc>https://ovh.github.io/tat/engine/simple-installation/</loc>
   </url>
   
   <url>
-    <loc>http://localhost:1313/engine/production-installation/</loc>
+    <loc>https://ovh.github.io/tat/engine/production-installation/</loc>
   </url>
   
 </urlset>

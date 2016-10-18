@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Overview-rsses on TAT - TextAndTag Documentation</title>
-    <link>http://localhost:1313/overview/index.xml</link>
+    <link>https://ovh.github.io/tat/overview/index.xml</link>
     <description>Recent content in Overview-rsses on TAT - TextAndTag Documentation</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:1313/overview/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ovh.github.io/tat/overview/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Overview</title>
-      <link>http://localhost:1313/overview/</link>
+      <link>https://ovh.github.io/tat/overview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/overview/</guid>
+      <guid>https://ovh.github.io/tat/overview/</guid>
       <description>
 
 &lt;h3 id=&#34;chapter-1&#34;&gt;Chapter 1&lt;/h3&gt;
@@ -26,10 +26,10 @@
     
     <item>
       <title>Introduction</title>
-      <link>http://localhost:1313/overview/introduction/</link>
+      <link>https://ovh.github.io/tat/overview/introduction/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/overview/introduction/</guid>
+      <guid>https://ovh.github.io/tat/overview/introduction/</guid>
       <description>&lt;p&gt;Tat, aka Text And Tags, is a communication tool - Human &amp;amp; Robot all together.&lt;/p&gt;
 
 &lt;p&gt;Some use cases:&lt;/p&gt;
@@ -62,16 +62,16 @@
 &lt;li&gt;Simple Usage&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tat-cd-overview.png?width=700px&#34; alt=&#34;DevOps LifeCycle&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tat-cd-overview.png?width=700px&#34; alt=&#34;DevOps LifeCycle&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Concepts</title>
-      <link>http://localhost:1313/overview/concepts/</link>
+      <link>https://ovh.github.io/tat/overview/concepts/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/overview/concepts/</guid>
+      <guid>https://ovh.github.io/tat/overview/concepts/</guid>
       <description>
 
 &lt;h2 id=&#34;four-concepts-topic-message-tag-label&#34;&gt;Four Concepts: Topic / Message / Tag / Label&lt;/h2&gt;
@@ -152,13 +152,13 @@ to upload file and store URL on Tat.&lt;/p&gt;
     
     <item>
       <title>DevOps LifeCycle / Feedback Loop</title>
-      <link>http://localhost:1313/overview/lifecycle/</link>
+      <link>https://ovh.github.io/tat/overview/lifecycle/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/overview/lifecycle/</guid>
+      <guid>https://ovh.github.io/tat/overview/lifecycle/</guid>
       <description>
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle.png?width=50%&#34; alt=&#34;DevOps LifeCycle&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle.png?width=50%&#34; alt=&#34;DevOps LifeCycle&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;feedback-everywhere&#34;&gt;Feedback everywhere&lt;/h2&gt;
 
@@ -184,62 +184,62 @@ Monitor :
 
 &lt;p&gt;Starting the DevOps lifcycle with an agile view designed to plan your next release/iteration&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-plan.png?width=250px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-plan-agile.png?width=750px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-plan-roadmap.png?width=750px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-plan.png?width=250px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-plan-agile.png?width=750px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-plan-roadmap.png?width=750px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;code&#34;&gt;Code&lt;/h2&gt;
 
 &lt;p&gt;Follow Pull Request, and share pieces of Code&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-code.png?width=250px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-code-gist.png?width=750px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-code-pull-request.png?width=750px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-code.png?width=250px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-code-gist.png?width=750px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-code-pull-request.png?width=750px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;build-test&#34;&gt;Build &amp;amp; Test&lt;/h2&gt;
 
 &lt;p&gt;Follow Continuous Integration, Continuous Delivery Pipelines through a pipeline views. Here shown with CDS (lien vers CDS).&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-build.png?width=250px&#34; alt=&#34;DevOps LifeCycle Build&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-build-cds.png?width=750px&#34; alt=&#34;DevOps LifeCycle Build&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-build.png?width=250px&#34; alt=&#34;DevOps LifeCycle Build&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-build-cds.png?width=750px&#34; alt=&#34;DevOps LifeCycle Build&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;release&#34;&gt;Release&lt;/h2&gt;
 
 &lt;p&gt;End of your cycle commitment: build automatically your release note from your git repository, JIRA &amp;hellip;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-release.png?width=250px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-release-changelog-1.png?width=750px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-release-changelog-2.png?width=750px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-release.png?width=250px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-release-changelog-1.png?width=750px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-release-changelog-2.png?width=750px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;deploy&#34;&gt;Deploy&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-deploy.png?width=250px&#34; alt=&#34;DevOps LifeCycle Deploy&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-build-cds.png?width=750px&#34; alt=&#34;DevOps LifeCycle Deploy&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-deploy.png?width=250px&#34; alt=&#34;DevOps LifeCycle Deploy&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-build-cds.png?width=750px&#34; alt=&#34;DevOps LifeCycle Deploy&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;monitor&#34;&gt;Monitor&lt;/h2&gt;
 
 &lt;p&gt;Build your own dashing view, monitor things with a light Terminal UI, showing resources heatmap of planning your interventions..&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-monitor.png?width=250px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-monitor-dashboard.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-monitor-tatcli.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-monitor-multiple.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-monitor-oncall.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-monitor.png?width=250px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-monitor-dashboard.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-monitor-tatcli.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-monitor-multiple.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-monitor-oncall.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;feedback&#34;&gt;Feedback&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-feedback.png?width=250px&#34; alt=&#34;DevOps LifeCycle Feedback&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-feedback-kpi.png?width=750px&#34; alt=&#34;DevOps LifeCycle Feedback&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-feedback.png?width=250px&#34; alt=&#34;DevOps LifeCycle Feedback&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-feedback-kpi.png?width=750px&#34; alt=&#34;DevOps LifeCycle Feedback&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Architecture</title>
-      <link>http://localhost:1313/overview/architecture/</link>
+      <link>https://ovh.github.io/tat/overview/architecture/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/overview/architecture/</guid>
-      <description>&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tat-architecture-overview.png?width=50%&#34; alt=&#34;Architecture&#34; /&gt;&lt;/p&gt;
+      <guid>https://ovh.github.io/tat/overview/architecture/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tat-architecture-overview.png?width=50%&#34; alt=&#34;Architecture&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Main components of a Tat Installation are:&lt;/p&gt;
 
@@ -247,14 +247,14 @@ Monitor :
 &lt;li&gt;Tat, also called Tat Engine. Your can running as many Engine as you want.
 You can imagine running many Tat&lt;em&gt;-Engine&lt;/em&gt; instances on  Mesos/Marathon, Kubernetes or Swarm, or configure yourself behind a reverse proxy.&lt;/li&gt;
 &lt;li&gt;Tatwebui: it&amp;rsquo;s a web application, an easier way to call Tat Engine than curl. This application
-is component oriented, your can display messages with different Views. See &lt;a href=&#34;http://localhost:1313/tatwebui&#34;&gt;next chapter&lt;/a&gt; about Tatwebui for
+is component oriented, your can display messages with different Views. See &lt;a href=&#34;https://ovh.github.io/tat/tatwebui&#34;&gt;next chapter&lt;/a&gt; about Tatwebui for
 more information.&lt;/li&gt;
 &lt;li&gt;Tatcli, the TAT Command Line Interface. All Tat features are available on tatcli. You can use it
 for &amp;ldquo;one shot&amp;rdquo; action on Tat Engine, or for display a UI in command line with &lt;code&gt;tatcli ui&lt;/code&gt;. Tatcli ui
 is popular to keep an eye on alerts or monitoring events without having a browser on it.&lt;/li&gt;
 &lt;li&gt;uServices: Tat Engine is simple to be used, it&amp;rsquo;s also easy to develop uService above tat to
 make things a little more advanced, like on-call schedule &amp;amp; intervention, reporting, etc&amp;hellip;
-You&amp;rsquo;ll find some opensourced uService in chapter &lt;a href=&#34;http://localhost:1313/ecosystem&#34;&gt;Ecosystem&lt;/a&gt;&lt;/li&gt;
+You&amp;rsquo;ll find some opensourced uService in chapter &lt;a href=&#34;https://ovh.github.io/tat/ecosystem&#34;&gt;Ecosystem&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>

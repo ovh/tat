@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Sdk-rsses on TAT - TextAndTag Documentation</title>
-    <link>http://localhost:1313/sdk/index.xml</link>
+    <link>https://ovh.github.io/tat/sdk/index.xml</link>
     <description>Recent content in Sdk-rsses on TAT - TextAndTag Documentation</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:1313/sdk/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ovh.github.io/tat/sdk/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Tat SDK</title>
-      <link>http://localhost:1313/sdk/</link>
+      <link>https://ovh.github.io/tat/sdk/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/sdk/</guid>
+      <guid>https://ovh.github.io/tat/sdk/</guid>
       <description>
 
 &lt;h3 id=&#34;chapter-5&#34;&gt;Chapter 5&lt;/h3&gt;
@@ -22,18 +22,16 @@
 
 &lt;p&gt;TAT SDK&lt;/p&gt;
 
-&lt;p&gt;You will find Godoc at  &lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client&#34;&gt;https://godoc.org/github.com/ovh/tat#Client&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Notice that tatcli uses fully sdk, see add a message: &lt;a href=&#34;https://github.com/ovh/tatcli/blob/master/message/add.go#L60&#34;&gt;https://github.com/ovh/tatcli/blob/master/message/add.go#L60&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client&#34;&gt;Godoc&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Golang - A simple main example</title>
-      <link>http://localhost:1313/sdk/simple-main/</link>
+      <link>https://ovh.github.io/tat/sdk/simple-main/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/sdk/simple-main/</guid>
+      <guid>https://ovh.github.io/tat/sdk/simple-main/</guid>
       <description>
 
 &lt;h2 id=&#34;golang-example-minimal&#34;&gt;Golang Example - Minimal&lt;/h2&gt;
@@ -112,10 +110,10 @@ Please check next chapter &lt;a href=&#34;../full-example&#34;&gt;&amp;ldquo;Ful
     
     <item>
       <title>Golang - Full Example</title>
-      <link>http://localhost:1313/sdk/full-example/</link>
+      <link>https://ovh.github.io/tat/sdk/full-example/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/sdk/full-example/</guid>
+      <guid>https://ovh.github.io/tat/sdk/full-example/</guid>
       <description>
 
 &lt;h2 id=&#34;golang-example-full-with-viper-cobra-and-tatcli-config-file&#34;&gt;Golang Example - Full, with viper, cobra and tatcli config file&lt;/h2&gt;

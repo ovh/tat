@@ -1,4 +1,12 @@
 /* background behind the logo*/
+#top-github-link, #body #breadcrumbs {
+    -webkit-transform: translateY(50%);
+    -moz-transform: translateY(50%);
+    -o-transform: translateY(50%);
+    -ms-transform: translateY(50%);
+    transform: translateY(50%);
+}
+
 #header {
     background: #202f3c;
     /*border-color: #545454;*/

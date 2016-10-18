@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tatcli-rsses on TAT - TextAndTag Documentation</title>
-    <link>http://localhost:1313/tatcli/index.xml</link>
+    <link>https://ovh.github.io/tat/tatcli/index.xml</link>
     <description>Recent content in Tatcli-rsses on TAT - TextAndTag Documentation</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:1313/tatcli/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ovh.github.io/tat/tatcli/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Tat CLI Reference</title>
-      <link>http://localhost:1313/tatcli/</link>
+      <link>https://ovh.github.io/tat/tatcli/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/</guid>
       <description>
 
 &lt;h3 id=&#34;chapter-4&#34;&gt;Chapter 4&lt;/h3&gt;
@@ -26,10 +26,10 @@
     
     <item>
       <title>General</title>
-      <link>http://localhost:1313/tatcli/general/</link>
+      <link>https://ovh.github.io/tat/tatcli/general/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/general/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/general/</guid>
       <description>
 
 &lt;p&gt;&lt;img align=&#34;right&#34; src=&#34;https://raw.githubusercontent.com/ovh/tat/master/tat.png&#34;&gt;&lt;/p&gt;
@@ -54,10 +54,10 @@ After each command, the exit code can be found in the &lt;code&gt;$?&lt;/code&gt
     
     <item>
       <title>tatcli config -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-config/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-config/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-config/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-config/</guid>
       <description>
 
 &lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;
@@ -109,10 +109,10 @@ You can create it with this command:&lt;/p&gt;
     
     <item>
       <title>tatcli group -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-group/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-group/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-group/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-group/</guid>
       <description>
 
 &lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;
@@ -178,10 +178,10 @@ Use &amp;quot;tatcli group [command] --help&amp;quot; for more information about
     
     <item>
       <title>tatcli message -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-message/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-message/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-message/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-message/</guid>
       <description>
 
 &lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;
@@ -361,10 +361,10 @@ tatcli message list /topic 0 10
     
     <item>
       <title>tatcli presence -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-presence/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-presence/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-presence/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-presence/</guid>
       <description>
 
 &lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;
@@ -396,10 +396,10 @@ Global Flags: see tatcli -h
     
     <item>
       <title>tatcli stats -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-stats/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-stats/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-stats/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-stats/</guid>
       <description>
 
 &lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;
@@ -437,10 +437,10 @@ Global Flags: see tatcli -h
     
     <item>
       <title>tatcli system -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-system/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-system/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-system/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-system/</guid>
       <description>
 
 &lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;
@@ -465,10 +465,10 @@ Available Commands:
     
     <item>
       <title>tatcli topic -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-topic/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-topic/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-topic/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-topic/</guid>
       <description>
 
 &lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;
@@ -622,10 +622,10 @@ tatcli topic deleteAdminGroup /topic groupname1 groupname2
     
     <item>
       <title>tatcli ui -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-ui/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-ui/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-ui/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-ui/</guid>
       <description>
 
 &lt;p&gt;Interactive mode of tatcli :
@@ -792,10 +792,10 @@ $UI_CURRENT_USERNAME
     
     <item>
       <title>tatcli update -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-update/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-update/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-update/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-update/</guid>
       <description>
 
 &lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;
@@ -825,10 +825,10 @@ Global Flags: see tatcli -h
     
     <item>
       <title>tatcli users -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-user/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-user/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-user/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-user/</guid>
       <description>
 
 &lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;
@@ -1017,10 +1017,10 @@ Global Flags: see tatcli -h
     
     <item>
       <title>tatcli version -h</title>
-      <link>http://localhost:1313/tatcli/tatcli-version/</link>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-version/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatcli/tatcli-version/</guid>
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-version/</guid>
       <description>
 
 &lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;

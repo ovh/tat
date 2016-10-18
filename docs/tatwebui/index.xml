@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tatwebui-rsses on TAT - TextAndTag Documentation</title>
-    <link>http://localhost:1313/tatwebui/index.xml</link>
+    <link>https://ovh.github.io/tat/tatwebui/index.xml</link>
     <description>Recent content in Tatwebui-rsses on TAT - TextAndTag Documentation</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:1313/tatwebui/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ovh.github.io/tat/tatwebui/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Tat Webui</title>
-      <link>http://localhost:1313/tatwebui/</link>
+      <link>https://ovh.github.io/tat/tatwebui/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatwebui/</guid>
+      <guid>https://ovh.github.io/tat/tatwebui/</guid>
       <description>
 
 &lt;h3 id=&#34;chapter-2&#34;&gt;Chapter 2&lt;/h3&gt;
@@ -24,10 +24,10 @@
     
     <item>
       <title>Introduction</title>
-      <link>http://localhost:1313/tatwebui/introduction/</link>
+      <link>https://ovh.github.io/tat/tatwebui/introduction/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatwebui/introduction/</guid>
+      <guid>https://ovh.github.io/tat/tatwebui/introduction/</guid>
       <description>&lt;p&gt;Tatwebui is a web application, with a nodejs HTTP Server for serving js/html/css files.
 This application requests Tat Engine for all actions:&lt;/p&gt;
 
@@ -42,34 +42,34 @@ This application requests Tat Engine for all actions:&lt;/p&gt;
 Some OVH views are opensourced like:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://localhost:1313/tatwebui/standardview&#34;&gt;Standard View&lt;/a&gt;: standard view with all features on messages&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://localhost:1313/tatwebui/notificationsview&#34;&gt;Notifications View&lt;/a&gt;: display user notifications in /Private/username/Notifications topic&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://localhost:1313/tatwebui/monitoringview&#34;&gt;Monitoring View&lt;/a&gt;: quick look on many items, UP or Down&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://localhost:1313/tatwebui/releaseview&#34;&gt;Release View&lt;/a&gt;: Plan, Changelog, Release&amp;hellip; communicate with others teams&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://localhost:1313/tatwebui/dashingview&#34;&gt;Dashing View&lt;/a&gt;: widgets, graph&amp;hellip; one way to create dashing about everything&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://localhost:1313/tatwebui/pastatview&#34;&gt;Pastat View&lt;/a&gt;: a Gist like&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://localhost:1313/tatwebui/cdsview&#34;&gt;CDS View&lt;/a&gt;: Display &lt;a href=&#34;https://github.com/ovh/cds&#34;&gt;CDS&lt;/a&gt; Notifications&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ovh.github.io/tat/tatwebui/standardview&#34;&gt;Standard View&lt;/a&gt;: standard view with all features on messages&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ovh.github.io/tat/tatwebui/notificationsview&#34;&gt;Notifications View&lt;/a&gt;: display user notifications in /Private/username/Notifications topic&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ovh.github.io/tat/tatwebui/monitoringview&#34;&gt;Monitoring View&lt;/a&gt;: quick look on many items, UP or Down&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ovh.github.io/tat/tatwebui/releaseview&#34;&gt;Release View&lt;/a&gt;: Plan, Changelog, Release&amp;hellip; communicate with others teams&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ovh.github.io/tat/tatwebui/dashingview&#34;&gt;Dashing View&lt;/a&gt;: widgets, graph&amp;hellip; one way to create dashing about everything&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ovh.github.io/tat/tatwebui/pastatview&#34;&gt;Pastat View&lt;/a&gt;: a Gist like&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ovh.github.io/tat/tatwebui/cdsview&#34;&gt;CDS View&lt;/a&gt;: Display &lt;a href=&#34;https://github.com/ovh/cds&#34;&gt;CDS&lt;/a&gt; Notifications&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
     
     <item>
       <title>Standard View</title>
-      <link>http://localhost:1313/tatwebui/standardview/</link>
+      <link>https://ovh.github.io/tat/tatwebui/standardview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatwebui/standardview/</guid>
+      <guid>https://ovh.github.io/tat/tatwebui/standardview/</guid>
       <description>
 
 &lt;h2 id=&#34;screenshots&#34;&gt;Screenshots&lt;/h2&gt;
 
 &lt;h3 id=&#34;messages-list&#34;&gt;Messages - List&lt;/h3&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tatwebui-standard-view-list.png?width=80%&#34; alt=&#34;Standard View&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-standard-view-list.png?width=80%&#34; alt=&#34;Standard View&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;messages-edit&#34;&gt;Messages - Edit&lt;/h3&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tatwebui-standard-view-details.png?width=80%&#34; alt=&#34;Standard View&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-standard-view-details.png?width=80%&#34; alt=&#34;Standard View&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
 
@@ -82,10 +82,10 @@ Some OVH views are opensourced like:&lt;/p&gt;
     
     <item>
       <title>Notifications View</title>
-      <link>http://localhost:1313/tatwebui/notificationsview/</link>
+      <link>https://ovh.github.io/tat/tatwebui/notificationsview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatwebui/notificationsview/</guid>
+      <guid>https://ovh.github.io/tat/tatwebui/notificationsview/</guid>
       <description>
 
 &lt;p&gt;When a message contains a mention for someone, a other message is created by Tat Engine in topic
@@ -102,7 +102,7 @@ Some OVH views are opensourced like:&lt;/p&gt;
 
 &lt;h2 id=&#34;screenshot&#34;&gt;Screenshot&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tatwebui-notifications-view.png?width=80%&#34; alt=&#34;Notifications View&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-notifications-view.png?width=80%&#34; alt=&#34;Notifications View&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
 
@@ -115,15 +115,15 @@ Some OVH views are opensourced like:&lt;/p&gt;
     
     <item>
       <title>Monitoring View</title>
-      <link>http://localhost:1313/tatwebui/monitoringview/</link>
+      <link>https://ovh.github.io/tat/tatwebui/monitoringview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatwebui/monitoringview/</guid>
+      <guid>https://ovh.github.io/tat/tatwebui/monitoringview/</guid>
       <description>
 
 &lt;h2 id=&#34;screenshot&#34;&gt;Screenshot&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tatwebui-monitoring-view.png?width=80%&#34; alt=&#34;Monitoring View&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-monitoring-view.png?width=80%&#34; alt=&#34;Monitoring View&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;using&#34;&gt;Using&lt;/h2&gt;
 
@@ -160,21 +160,21 @@ See &lt;a href=&#34;https://github.com/ovh/al2tat&#34;&gt;https://github.com/ovh
     
     <item>
       <title>Pastat View</title>
-      <link>http://localhost:1313/tatwebui/pastatview/</link>
+      <link>https://ovh.github.io/tat/tatwebui/pastatview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatwebui/pastatview/</guid>
+      <guid>https://ovh.github.io/tat/tatwebui/pastatview/</guid>
       <description>
 
 &lt;h2 id=&#34;screenshots&#34;&gt;Screenshots&lt;/h2&gt;
 
 &lt;h3 id=&#34;messages-list&#34;&gt;Messages - List&lt;/h3&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tatwebui-pastat-view-list.png?width=80%&#34; alt=&#34;Pastat View&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-pastat-view-list.png?width=80%&#34; alt=&#34;Pastat View&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;messages-edit&#34;&gt;Messages - Edit&lt;/h3&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tatwebui-pastat-view-details.png?width=80%&#34; alt=&#34;Pastat View&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-pastat-view-details.png?width=80%&#34; alt=&#34;Pastat View&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
 
@@ -187,17 +187,17 @@ See &lt;a href=&#34;https://github.com/ovh/al2tat&#34;&gt;https://github.com/ovh
     
     <item>
       <title>Dashing View</title>
-      <link>http://localhost:1313/tatwebui/dashingview/</link>
+      <link>https://ovh.github.io/tat/tatwebui/dashingview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatwebui/dashingview/</guid>
+      <guid>https://ovh.github.io/tat/tatwebui/dashingview/</guid>
       <description>
 
 &lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
 
 &lt;p&gt;This screenshot&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tatwebui-dashing-view.png?width=80%&#34; alt=&#34;Dashing View&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-dashing-view.png?width=80%&#34; alt=&#34;Dashing View&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;can be done by sending info with tatcli :&lt;/p&gt;
 
@@ -333,8 +333,8 @@ tatcli msg add /Internal/YourTopic/Dashing &amp;quot;#monitoring #item:Bar&amp;q
 
 &lt;p&gt;In standard View, theses messages look like:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tatwebui-dashing-view-standardview1.png?width=80%&#34; alt=&#34;Dashing View in Standard View&#34; /&gt;
-&lt;img src=&#34;http://localhost:1313/imgs/tatwebui-dashing-view-standardview2.png?width=80%&#34; alt=&#34;Dashing View in Standard View&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-dashing-view-standardview1.png?width=80%&#34; alt=&#34;Dashing View in Standard View&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-dashing-view-standardview2.png?width=80%&#34; alt=&#34;Dashing View in Standard View&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
 
@@ -347,15 +347,15 @@ tatcli msg add /Internal/YourTopic/Dashing &amp;quot;#monitoring #item:Bar&amp;q
     
     <item>
       <title>Release View</title>
-      <link>http://localhost:1313/tatwebui/releaseview/</link>
+      <link>https://ovh.github.io/tat/tatwebui/releaseview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatwebui/releaseview/</guid>
+      <guid>https://ovh.github.io/tat/tatwebui/releaseview/</guid>
       <description>
 
 &lt;h2 id=&#34;screenshot&#34;&gt;Screenshot&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/tatwebui-release-view.png?width=80%&#34; alt=&#34;Release View&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-release-view.png?width=80%&#34; alt=&#34;Release View&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;using&#34;&gt;Using&lt;/h2&gt;
 
@@ -444,15 +444,15 @@ $RELEASE_TRACKER/AAA-1&lt;/p&gt;
     
     <item>
       <title>CDS View</title>
-      <link>http://localhost:1313/tatwebui/cdsview/</link>
+      <link>https://ovh.github.io/tat/tatwebui/cdsview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatwebui/cdsview/</guid>
+      <guid>https://ovh.github.io/tat/tatwebui/cdsview/</guid>
       <description>
 
 &lt;h2 id=&#34;screenshot&#34;&gt;Screenshot&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/imgs/devops-lifecycle-build-cds.png?width=80%&#34; alt=&#34;CDS View&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-build-cds.png?width=80%&#34; alt=&#34;CDS View&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;details-of-messages-sent-by-cds&#34;&gt;Details of messages sent by CDS&lt;/h2&gt;
 
@@ -609,10 +609,10 @@ $RELEASE_TRACKER/AAA-1&lt;/p&gt;
     
     <item>
       <title>Development</title>
-      <link>http://localhost:1313/tatwebui/development/</link>
+      <link>https://ovh.github.io/tat/tatwebui/development/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatwebui/development/</guid>
+      <guid>https://ovh.github.io/tat/tatwebui/development/</guid>
       <description>
 
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;

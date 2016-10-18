@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tatnhack-rsses on TAT - TextAndTag Documentation</title>
-    <link>http://localhost:1313/tatnhack/index.xml</link>
+    <link>https://ovh.github.io/tat/tatnhack/index.xml</link>
     <description>Recent content in Tatnhack-rsses on TAT - TextAndTag Documentation</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:1313/tatnhack/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ovh.github.io/tat/tatnhack/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Tat&#39;n Hack</title>
-      <link>http://localhost:1313/tatnhack/</link>
+      <link>https://ovh.github.io/tat/tatnhack/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatnhack/</guid>
+      <guid>https://ovh.github.io/tat/tatnhack/</guid>
       <description>
 
 &lt;h3 id=&#34;chapter-7&#34;&gt;Chapter 7&lt;/h3&gt;
@@ -24,10 +24,10 @@
     
     <item>
       <title>Monitoring a process with al2tat</title>
-      <link>http://localhost:1313/tatnhack/monitoring-process/</link>
+      <link>https://ovh.github.io/tat/tatnhack/monitoring-process/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatnhack/monitoring-process/</guid>
+      <guid>https://ovh.github.io/tat/tatnhack/monitoring-process/</guid>
       <description>&lt;p&gt;Here, a script for monitoring process and send alert to al2tat.&lt;/p&gt;
 
 &lt;p&gt;Script checkProcess.sh:&lt;/p&gt;
@@ -68,10 +68,10 @@ fi;
     
     <item>
       <title>Visual Feedback</title>
-      <link>http://localhost:1313/tatnhack/visual-feedback/</link>
+      <link>https://ovh.github.io/tat/tatnhack/visual-feedback/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/tatnhack/visual-feedback/</guid>
+      <guid>https://ovh.github.io/tat/tatnhack/visual-feedback/</guid>
       <description>&lt;p&gt;Visual Feedback is a way to be alerted with lights, LED Strip lights or something else.&lt;/p&gt;
 
 &lt;p&gt;Principles:&lt;/p&gt;
