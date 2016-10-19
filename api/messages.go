@@ -211,6 +211,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 				StartTag:   messageIn.StartTagReference,
 				Label:      messageIn.LabelReference,
 				StartLabel: messageIn.StartLabelReference,
+				Topic:      topic.Topic,
 			}
 			mlist, efind := messageDB.ListMessages(c, user.Username, *topic)
 			if efind != nil {
@@ -423,6 +424,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 	c := &tat.MessageCriteria{
 		InReplyOfID: message.ID,
 		TreeView:    tat.TreeViewOneTree,
+		Topic:       topic.Topic,
 	}
 
 	msgs, err := messageDB.ListMessages(c, "", *topic)
