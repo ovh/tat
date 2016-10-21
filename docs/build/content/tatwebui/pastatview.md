@@ -1,6 +1,6 @@
 ---
-weight: 5
 title: "Pastat View"
+weight: 5
 toc: true
 prev: "/tatwebui/monitoringview"
 next: "/tatwebui/dashingview"

@@ -1,7 +1,7 @@
 ---
+title: "tatcli system -h"
 weight: 7
 toc: true
-title: "tatcli system -h"
 prev: "/tatcli/tatcli-stats"
 next: "/tatcli/tatcli-topic"
 

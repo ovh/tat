@@ -1,6 +1,6 @@
 ---
-weight: 4
 title: "Monitoring View"
+weight: 4
 toc: true
 prev: "/tatwebui/notificationsview"
 next: "/tatwebui/pastatview"

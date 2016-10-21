@@ -4,5 +4,6 @@ languageCode = "en-us"
 theme = "hugo-theme-learn"
 canonifyurls = true
 createFromSiteMenusMain = true
+search = true
 [params]
   menu = [ "overview", "tatwebui", "engine", "tatcli", "sdk", "ecosystem", "tatnhack" ]

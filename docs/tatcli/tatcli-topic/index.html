@@ -16,8 +16,10 @@
     <link href="https://ovh.github.io/tat/css/hybrid.css" rel="stylesheet">
     <link href="https://ovh.github.io/tat/css/featherlight.min.css" rel="stylesheet">
     <link href="https://ovh.github.io/tat/css/perfect-scrollbar.min.css" rel="stylesheet">
+    <link href="https://ovh.github.io/tat/css/horsey.css" rel="stylesheet">
     <link href="https://ovh.github.io/tat/css/theme.css" rel="stylesheet">
     <link href="https://ovh.github.io/tat/css/hugo-theme.css" rel="stylesheet">
+    <script src="https://ovh.github.io/tat/js/jquery-2.x.min.js"></script>
     <style type="text/css">:root #header + #content > #left > #rlblock_left
     {display:none !important;}</style>
     <link href="https://ovh.github.io/tat/css/style.css" rel="stylesheet">
@@ -27,12 +29,20 @@
     <nav id="sidebar">
   <div id="header-wrapper">
     <div id="header">
-      <span href="#" id="sidebar-toggle" data-sidebar-toggle="">
       <img src="https://raw.githubusercontent.com/ovh/tat/master/tat.png" width="25%" style="margin-top: -15px;">
 
-      </span>
-      
     </div>
+    
+      <div class="searchbox">
+    <label for="search-by"><i class="fa fa-search"></i></label>
+    <input id="search-by" type="text" placeholder="Search">
+    <span data-search-clear=""><i class="fa fa-close"></i></span>
+</div>
+<script type="text/javascript" src="https://ovh.github.io/tat/js/lunr.min.js"></script>
+<script type="text/javascript" src="https://ovh.github.io/tat/js/horsey.js"></script>
+<script type="text/javascript" src="https://ovh.github.io/tat/js/search.js"></script>
+
+    
 </div>
 
 
@@ -40,8 +50,44 @@
     <ul class="topics">
       
       
+        
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+      
+      
+      
       
 
+      
+        
+      
       
       
 
@@ -107,6 +153,9 @@
       
       
 
+      
+        
+      
       
       
 
@@ -205,6 +254,9 @@
       
 
       
+        
+      
+      
       
 
       <li class="dd-item  " data-nav-id="/engine/">
@@ -301,6 +353,9 @@
       
       
 
+      
+        
+      
       
       
 
@@ -423,6 +478,9 @@
       
 
       
+        
+      
+      
       
 
       <li class="dd-item  " data-nav-id="/sdk/">
@@ -463,6 +521,9 @@
       
       
 
+      
+        
+      
       
       
 
@@ -512,6 +573,9 @@
       
       
 
+      
+        
+      
       
       
 
@@ -570,6 +634,14 @@
             <div id="top-bar">
               
               <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                  <span id="sidebar-toggle-span">
+                      <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                        <i class="fa fa-bars"></i>
+                      </a>
+                  </span>
+                
+                <span id="toc-menu"><a href=""><i class="fa fa-list-alt"></i></a></span>
+                
                 
                 
                 
@@ -594,14 +666,7 @@
                 
                 <span itemprop="title"> tatcli topic -h</span>
               </div>
-            </div>
-            
-    	        <div id="body-inner">
-                
-                <h1>tatcli topic -h</h1>
-                
-
-                
+              
                   <div class="progress">
     <div class="wrapper">
 <nav id="TableOfContents">
@@ -637,6 +702,13 @@
     </div>
 </div>
 
+              
+
+            </div>
+            
+    	        <div id="body-inner">
+                
+                <h1>tatcli topic -h</h1>
                 
 
 
@@ -802,7 +874,6 @@ tatcli topic deleteAdminGroup /topic groupname1 groupname2
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="https://ovh.github.io/tat/js/jquery-2.x.min.js"></script>
     <script src="https://ovh.github.io/tat/js/clipboard.min.js"></script>
     <script src="https://ovh.github.io/tat/js/perfect-scrollbar.min.js"></script>
     <script src="https://ovh.github.io/tat/js/perfect-scrollbar.jquery.min.js"></script>

@@ -1,9 +1,9 @@
 ---
-weight: 1
 title: "Introduction"
+weight: 1
 prev: "/overview"
 next: "/overview/concepts"
-toc: true
+toc: false
 
 ---
 

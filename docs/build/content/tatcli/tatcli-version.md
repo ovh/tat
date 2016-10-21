@@ -1,7 +1,7 @@
 ---
+title: "tatcli version -h"
 weight: 12
 toc: true
-title: "tatcli version -h"
 prev: "/tatcli/tatcli-user"
 
 ---

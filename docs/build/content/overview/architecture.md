@@ -1,9 +1,9 @@
 ---
-weight: 4
 title: "Architecture"
+weight: 4
 prev: "/overview/lifecycle"
 next: "/overview/contribute"
-toc: true
+toc: false
 ---
 
 ![Architecture](/imgs/tat-architecture-overview.png?width=50%)

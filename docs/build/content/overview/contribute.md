@@ -1,6 +1,6 @@
 ---
-weight: 5
 title: "Contribute"
+weight: 5
 prev: "/overview/architecture"
 toc: true
 ---

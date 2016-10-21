@@ -1,6 +1,6 @@
 ---
-weight: 2
 title: "Standard View"
+weight: 2
 toc: true
 prev: "/tatwebui/introduction"
 next: "/tatwebui/notificationsview"

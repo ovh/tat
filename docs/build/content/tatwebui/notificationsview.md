@@ -1,6 +1,6 @@
 ---
-weight: 3
 title: "Notifications View"
+weight: 3
 toc: true
 prev: "/tatwebui/standardview"
 next: "/tatwebui/monitoringview"

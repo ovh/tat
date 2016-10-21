@@ -1,6 +1,6 @@
 ---
-weight: 3
 title: "DevOps LifeCycle / Feedback Loop"
+weight: 3
 prev: "/overview/concepts"
 next: "/overview/architecture"
 toc: true

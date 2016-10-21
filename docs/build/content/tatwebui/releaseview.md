@@ -1,6 +1,6 @@
 ---
-weight: 7
 title: "Release View"
+weight: 7
 toc: true
 prev: "/tatwebui/dashingview"
 next: "/tatwebui/cdsview"

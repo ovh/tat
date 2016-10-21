@@ -1,7 +1,7 @@
 ---
+title: "tatcli stats -h"
 weight: 6
 toc: true
-title: "tatcli stats -h"
 prev: "/tatcli/tatcli-presence"
 next: "/tatcli/tatcli-system"
 

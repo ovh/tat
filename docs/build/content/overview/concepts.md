@@ -1,7 +1,7 @@
 ---
+title: "Concepts"
 weight: 2
 toc: true
-title: "Concepts"
 prev: "/overview/introduction"
 next: "/overview/lifecycle"
 

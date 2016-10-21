@@ -6,3 +6,4 @@ canonifyurls = true
 createFromSiteMenusMain = true
 [params]
   menu = [ "overview", "tatwebui", "engine", "tatcli", "sdk", "ecosystem", "tatnhack" ]
+  search = true

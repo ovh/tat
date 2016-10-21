@@ -1,7 +1,7 @@
 ---
+title: "tatcli message -h"
 weight: 4
 toc: true
-title: "tatcli message -h"
 prev: "/tatcli/tatcli-group"
 next: "/tatcli/tatcli-presence"
 

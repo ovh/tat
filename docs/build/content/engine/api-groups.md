@@ -1,7 +1,7 @@
 ---
+title: "API - Groups"
 weight: 5
 toc: true
-title: "API - Groups"
 prev: "/engine/api-users"
 next: "/engine/api-presences"
 

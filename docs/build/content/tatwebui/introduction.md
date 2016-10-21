@@ -1,10 +1,9 @@
 ---
-toc: true
-weight: 1
 title: "Introduction"
+weight: 1
 prev: "/tatwebui"
 next: "/tatwebui/standardview"
-
+toc: false
 ---
 
 

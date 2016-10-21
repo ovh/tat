@@ -1,6 +1,6 @@
 ---
-weight: 20
 title: "CDS View"
+weight: 20
 toc: true
 prev: "/tatwebui/releaseview"
 next: "/tatwebui/development"

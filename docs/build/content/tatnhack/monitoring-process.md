@@ -1,6 +1,6 @@
 ---
-weight: 32
 title: "Monitoring a process with al2tat"
+weight: 32
 prev: "/tatnhack"
 next: "/tatnhack/visual-feedback"
 toc: true

@@ -1,7 +1,7 @@
 ---
+title: "Golang - A simple main example"
 weight: 1
 toc: true
-title: "Golang - A simple main example"
 prev: "/sdk"
 next: "/sdk/golang-full-example"
 

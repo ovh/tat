@@ -1,7 +1,7 @@
 ---
+title: "API - Messages"
 weight: 2
 toc: true
-title: "API - Messages"
 prev: "/engine/general"
 next: "/engine/api-topics"
 

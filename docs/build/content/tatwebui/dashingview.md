@@ -1,6 +1,6 @@
 ---
-weight: 6
 title: "Dashing View"
+weight: 6
 toc: true
 prev: "/tatwebui/pastatview"
 next: "/tatwebui/releaseview"

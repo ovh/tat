@@ -1,6 +1,6 @@
 ---
-weight: 41
 title: "Simple Installation"
+weight: 41
 toc: true
 prev: "/engine/api-system"
 next: "/engine/production-installation"

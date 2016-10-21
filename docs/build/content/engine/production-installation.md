@@ -1,6 +1,6 @@
 ---
-weight: 42
 title: "Installation - Production Way"
+weight: 42
 toc: true
 prev: "/engine/simple-installation"
 
