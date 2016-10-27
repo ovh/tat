@@ -207,11 +207,12 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 			}
 		} else { // TagReference, StartTagReference,LabelReference, StartLabelReference
 			c := &tat.MessageCriteria{
-				Tag:        messageIn.TagReference,
-				StartTag:   messageIn.StartTagReference,
-				Label:      messageIn.LabelReference,
-				StartLabel: messageIn.StartLabelReference,
-				Topic:      topic.Topic,
+				AndTag:      messageIn.TagReference,
+				StartTag:    messageIn.StartTagReference,
+				AndLabel:    messageIn.LabelReference,
+				StartLabel:  messageIn.StartLabelReference,
+				OnlyMsgRoot: tat.True,
+				Topic:       topic.Topic,
 			}
 			mlist, efind := messageDB.ListMessages(c, user.Username, *topic)
 			if efind != nil {
@@ -220,9 +221,15 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 				return message, tat.Topic{}, nil, e
 			}
 			if len(mlist) != 1 {
-				e := errors.New(fmt.Sprintf("Searched Message, expected 1 message and %d message(s) matching on tat", len(mlist)))
-				ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
-				return message, tat.Topic{}, nil, e
+				if messageIn.Action != "" {
+					e := errors.New(fmt.Sprintf("Searched Message, expected 1 message and %d message(s) matching on tat", len(mlist)))
+					ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
+					return message, tat.Topic{}, nil, e
+				}
+				// take last root message
+				if len(mlist) > 0 {
+					message = mlist[0]
+				}
 			} else {
 				message = mlist[0]
 			}
@@ -247,6 +254,10 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
 			return message, tat.Topic{}, nil, e
 		}
+		if topicName == "" && messageIn.Action == "" {
+			topicName = messageIn.Topic
+		}
+
 		topic, err = topicDB.FindByTopic(topicName, true, true, true, &user)
 		if err != nil {
 			e := errors.New("Topic " + topicName + " does not exist")
@@ -307,8 +318,13 @@ func (m *MessagesController) createSingle(ctx *gin.Context, messageIn *tat.Messa
 		idRef = msg.ID
 	}
 
+	text := messageIn.Text
+	if idRef != "" && messageIn.Text != "" && (len(messageIn.Replies) > 0 || len(messageIn.Messages) > 0) {
+		text = ""
+	}
+
 	// New root message or reply
-	err := messageDB.Insert(&message, *user, topic, messageIn.Text, idRef, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, messageIn.Messages, false, nil)
+	err := messageDB.Insert(&message, *user, topic, text, idRef, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, messageIn.Messages, false, nil)
 	if err != nil {
 		log.Errorf("%s", err.Error())
 		return nil, http.StatusInternalServerError, err

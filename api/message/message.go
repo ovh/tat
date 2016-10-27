@@ -625,11 +625,16 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 	}
 
 	message.Text = text
-	if err := CheckAndFixText(message, topic); err != nil {
-		return err
+	if message.Text == "" && (len(replies) > 0 || len(repliesJSON) > 0) {
+		// no error here
+	} else {
+		if err := CheckAndFixText(message, topic); err != nil {
+			return err
+		}
 	}
-	message.ID = bson.NewObjectId().Hex()
+
 	message.InReplyOfID = inReplyOfID
+	idToReply := inReplyOfID
 
 	// 1257894123.456789
 	// store ms before comma, 6 after
@@ -653,7 +658,7 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 
 	if inReplyOfID != "" { // reply
 		var messageReference = &tat.Message{}
-		if messageRoot != nil {
+		if messageRoot != nil && messageRoot.ID != "" {
 			messageReference = messageRoot
 		} else {
 			if err := FindByID(messageReference, inReplyOfID, topic); err != nil {
@@ -674,16 +679,17 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 		}
 		messageReference.DateUpdate = dateToStore
 
-		err := store.GetCMessages(topic.Collection).Update(
-			bson.M{"_id": messageReference.ID},
-			bson.M{"$set": bson.M{"dateUpdate": dateToStore},
-				"$inc": bson.M{"nbReplies": 1}})
+		if message.Text != "" {
+			err := store.GetCMessages(topic.Collection).Update(
+				bson.M{"_id": messageReference.ID},
+				bson.M{"$set": bson.M{"dateUpdate": dateToStore},
+					"$inc": bson.M{"nbReplies": 1}})
 
-		if err != nil {
-			log.Errorf("Error while updating root message for reply %s", err.Error())
-			return fmt.Errorf("Error while updating dateUpdate or root message for reply %s", err.Error())
+			if err != nil {
+				log.Errorf("Error while updating root message %s (%s)for reply %s", messageReference.ID, inReplyOfID, err.Error())
+				return fmt.Errorf("Error while updating dateUpdate or root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, err.Error())
+			}
 		}
-
 	} else { // root message
 		message.Topic = topic.Topic
 		topicDM := "/Private/" + user.Username + "/DM/"
@@ -696,49 +702,53 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 		}
 	}
 
-	message.NbLikes = 0
-	var author = tat.Author{}
-	author.Username = user.Username
-	author.Fullname = user.Fullname
-	message.Author = author
+	if message.Text != "" { // if no text, no reply to insert, but try after to add reply with "replies" attr
+		message.ID = bson.NewObjectId().Hex()
+		idToReply = message.ID
+		message.NbLikes = 0
+		var author = tat.Author{}
+		author.Username = user.Username
+		author.Fullname = user.Fullname
+		message.Author = author
 
-	message.DateCreation = dateToStore
-	message.DateUpdate = dateToStore
-	message.Tags = hashtag.ExtractHashtags(message.Text)
-	message.Urls = xurls.Strict.FindAllString(message.Text, -1)
+		message.DateCreation = dateToStore
+		message.DateUpdate = dateToStore
+		message.Tags = hashtag.ExtractHashtags(message.Text)
+		message.Urls = xurls.Strict.FindAllString(message.Text, -1)
 
-	topicPrivate := "/Private/"
-	if !strings.HasPrefix(topic.Topic, topicPrivate) {
-		usernamesMentions := extractUsersMentions(message.Text)
-		message.UserMentions = usernamesMentions
+		topicPrivate := "/Private/"
+		if !strings.HasPrefix(topic.Topic, topicPrivate) {
+			usernamesMentions := extractUsersMentions(message.Text)
+			message.UserMentions = usernamesMentions
+		}
+
+		if labels != nil {
+			message.Labels = checkLabels(labels, nil, nil)
+		}
+
+		if err := store.GetCMessages(topic.Collection).Insert(message); err != nil {
+			log.Errorf("Error while inserting new message %s", err)
+			return err
+		}
+
+		if !strings.HasPrefix(topic.Topic, topicPrivate) {
+			insertNotifications(message, user)
+		}
+		go topicDB.UpdateTopicTags(&topic, message.Tags)
+		go topicDB.UpdateTopicLabels(&topic, message.Labels)
+		go topicDB.UpdateTopicLastMessage(&topic, now)
 	}
-
-	if labels != nil {
-		message.Labels = checkLabels(labels, nil, nil)
-	}
-
-	if err := store.GetCMessages(topic.Collection).Insert(message); err != nil {
-		log.Errorf("Error while inserting new message %s", err)
-		return err
-	}
-
-	if !strings.HasPrefix(topic.Topic, topicPrivate) {
-		insertNotifications(message, user)
-	}
-	go topicDB.UpdateTopicTags(&topic, message.Tags)
-	go topicDB.UpdateTopicLabels(&topic, message.Labels)
-	go topicDB.UpdateTopicLastMessage(&topic, now)
 
 	if len(replies) > 0 {
 		for _, textReply := range replies {
 			reply := tat.Message{}
-			Insert(&reply, user, topic, textReply, message.ID, -1, nil, nil, nil, isNotificationFromMention, message)
+			Insert(&reply, user, topic, textReply, idToReply, -1, nil, nil, nil, isNotificationFromMention, message)
 		}
 	}
 	if len(repliesJSON) > 0 {
 		for _, r := range repliesJSON {
 			reply := tat.Message{}
-			Insert(&reply, user, topic, r.Text, message.ID, -1, r.Labels, nil, r.Messages, isNotificationFromMention, message)
+			Insert(&reply, user, topic, r.Text, idToReply, -1, r.Labels, nil, r.Messages, isNotificationFromMention, message)
 		}
 	}
 	//Clean the cache for this topic

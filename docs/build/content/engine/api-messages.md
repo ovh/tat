@@ -93,7 +93,7 @@ curl -XPOST \
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
-If several messages matche to your request, Tat gives you a HTTP Bad Request.
+If several messages match to your request, Tat gives you a HTTP Bad Request.
 
 ## Reply to a message
 
@@ -104,6 +104,23 @@ curl -XPOST \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text", "idReference": "9797q87KJhqsfO7Usdqd", "action": "reply"}'\
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+```
+
+## Reply to a message, with create root message if necessary
+
+This request will :
+
+* Create the root message with text `the root message #aaa`
+* If a message with a tag `#aaa` already exists, this message will be used to add replies on it
+* Add two replies `reply A` and `reply B`
+
+```bash
+curl -XPOST \
+    -H "Content-Type: application/json" \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+  -d '{ "text": "the root message #aaa", "replies":["reply A", "reply B"], "tagReference": "aaa"}' \
+  https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
 ## Like a message
