@@ -679,6 +679,7 @@
 <li><a href="#store-some-messages">Store some messages</a></li>
 <li><a href="#action-on-a-existing-message">Action on a existing message</a></li>
 <li><a href="#reply-to-a-message">Reply to a message</a></li>
+<li><a href="#reply-to-a-message-with-create-root-message-if-necessary">Reply to a message, with create root message if necessary</a></li>
 <li><a href="#like-a-message">Like a message</a></li>
 <li><a href="#unlike-a-message">Unlike a message</a></li>
 <li><a href="#add-a-label-to-a-message">Add a label to a message</a></li>
@@ -803,7 +804,7 @@
 	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
 </code></pre>
 
-<p>If several messages matche to your request, Tat gives you a HTTP Bad Request.</p>
+<p>If several messages match to your request, Tat gives you a HTTP Bad Request.</p>
 
 <h2 id="reply-to-a-message">Reply to a message</h2>
 
@@ -813,6 +814,24 @@
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;text&quot;: &quot;text&quot;, &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;reply&quot;}'\
 	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+</code></pre>
+
+<h2 id="reply-to-a-message-with-create-root-message-if-necessary">Reply to a message, with create root message if necessary</h2>
+
+<p>This request will :</p>
+
+<ul>
+<li>Create the root message with text <code>the root message #aaa</code></li>
+<li>If a message with a tag <code>#aaa</code> already exists, this message will be used to add replies on it</li>
+<li>Add two replies <code>reply A</code> and <code>reply B</code></li>
+</ul>
+
+<pre><code class="language-bash">curl -XPOST \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Tat_username: username&quot; \
+    -H &quot;Tat_password: passwordOfUser&quot; \
+  -d '{ &quot;text&quot;: &quot;the root message #aaa&quot;, &quot;replies&quot;:[&quot;reply A&quot;, &quot;reply B&quot;], &quot;tagReference&quot;: &quot;aaa&quot;}' \
+  https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
 </code></pre>
 
 <h2 id="like-a-message">Like a message</h2>

@@ -838,7 +838,7 @@ Some OVH views are opensourced like:&lt;/p&gt;
 	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;If several messages matche to your request, Tat gives you a HTTP Bad Request.&lt;/p&gt;
+&lt;p&gt;If several messages match to your request, Tat gives you a HTTP Bad Request.&lt;/p&gt;
 
 &lt;h2 id=&#34;reply-to-a-message&#34;&gt;Reply to a message&lt;/h2&gt;
 
@@ -848,6 +848,24 @@ Some OVH views are opensourced like:&lt;/p&gt;
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;text&amp;quot;: &amp;quot;text&amp;quot;, &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;reply&amp;quot;}&#39;\
 	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;reply-to-a-message-with-create-root-message-if-necessary&#34;&gt;Reply to a message, with create root message if necessary&lt;/h2&gt;
+
+&lt;p&gt;This request will :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Create the root message with text &lt;code&gt;the root message #aaa&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;If a message with a tag &lt;code&gt;#aaa&lt;/code&gt; already exists, this message will be used to add replies on it&lt;/li&gt;
+&lt;li&gt;Add two replies &lt;code&gt;reply A&lt;/code&gt; and &lt;code&gt;reply B&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPOST \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: username&amp;quot; \
+    -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
+  -d &#39;{ &amp;quot;text&amp;quot;: &amp;quot;the root message #aaa&amp;quot;, &amp;quot;replies&amp;quot;:[&amp;quot;reply A&amp;quot;, &amp;quot;reply B&amp;quot;], &amp;quot;tagReference&amp;quot;: &amp;quot;aaa&amp;quot;}&#39; \
+  https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;like-a-message&#34;&gt;Like a message&lt;/h2&gt;
