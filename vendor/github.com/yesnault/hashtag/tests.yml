@@ -318,8 +318,8 @@ hashtags:
     expected: ["İn", "ın"]
 
   - description: "Hashtag before punctuations, except:"
-    text: "#hashtag: #hashtag; #hashtag, #hashtag. #hashtag! #hashtag?"
-    expected: ["hashtag:", "hashtag", "hashtag", "hashtag.", "hashtag", "hashtag"]
+    text: "#hashtag: #hashtag; #hashtag, #hashtag. #hashtag!"
+    expected: ["hashtag:", "hashtag", "hashtag", "hashtag.", "hashtag"]
 
   - description: "Hashtag with dot:"
     text: "#hashtag.dot"
@@ -332,6 +332,22 @@ hashtags:
   - description: "Hashtag with:"
     text: "#From:dev/aa #From:aa/ff"
     expected: ["From:dev/aa", "From:aa/ff"]
+
+  - description: "Hashtag with ?:"
+    text: "#From:dev?aa #From:aa?ff"
+    expected: ["From:dev?aa", "From:aa?ff"]
+
+  - description: "Hashtag with =:"
+    text: "#From:dev=aa #From:aa=ff"
+    expected: ["From:dev=aa", "From:aa=ff"]
+
+  - description: "Hashtag with -:"
+    text: "#From:dev-aa #From:aa-ff"
+    expected: ["From:dev-aa", "From:aa-ff"]
+
+  - description: "Hashtag with ~:"
+    text: "#From:dev~aa #From:aa~ff"
+    expected: ["From:dev~aa", "From:aa~ff"]
 
 #  - description: "Hashtag after punctuations"
 #    text: ":#hashtaga ;#hashtagb ,#hashtagc .#hashtagd ?#hashtagf"
