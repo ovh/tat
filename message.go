@@ -700,6 +700,87 @@ func (m *MessageCriteria) GetURL() string {
 	return v.Encode()
 }
 
+// GetMessageCriteriaFromURLValues returns a MessagesCriteria from a url.Values
+func GetMessageCriteriaFromURLValues(values url.Values) (MessageCriteria, error) {
+	c := MessageCriteria{}
+	for k, v := range values {
+		switch k {
+		case "skip":
+			i, err := strconv.Atoi(v[0])
+			if err != nil {
+				c.Skip = 0
+			} else {
+				c.Skip = i
+			}
+		case "limit":
+			i, err := strconv.Atoi(v[0])
+			if err != nil {
+				c.Limit = 10
+			} else {
+				c.Limit = i
+			}
+		case "treeView":
+			c.TreeView = v[0]
+		case "idMessage":
+			c.IDMessage = v[0]
+		case "inReplyOfID":
+			c.InReplyOfID = v[0]
+		case "inReplyOfIDRoot":
+			c.InReplyOfIDRoot = v[0]
+		case "allIDMessage":
+			c.AllIDMessage = v[0]
+		case "text":
+			c.Text = v[0]
+		case "topic":
+			c.Topic = v[0]
+		case "label":
+			c.Label = v[0]
+		case "startLabel":
+			c.StartLabel = v[0]
+		case "notLabel":
+			c.NotLabel = v[0]
+		case "andLabel":
+			c.AndLabel = v[0]
+		case "tag":
+			c.Tag = v[0]
+		case "startTag":
+			c.StartTag = v[0]
+		case "notTag":
+			c.NotTag = v[0]
+		case "andTag":
+			c.AndTag = v[0]
+		case "dateMinCreation":
+			c.DateMinCreation = v[0]
+		case "dateMaxCreation":
+			c.DateMaxCreation = v[0]
+		case "dateMinUpdate":
+			c.DateMinUpdate = v[0]
+		case "dateMaxUpdate":
+			c.DateMaxUpdate = v[0]
+		case "username":
+			c.Username = v[0]
+		case "limitMinNbReplies":
+			c.LimitMinNbReplies = v[0]
+		case "limitMaxNbReplies":
+			c.LimitMaxNbReplies = v[0]
+		case "limitMinNbVotesUP":
+			c.LimitMinNbVotesUP = v[0]
+		case "limitMaxNbVotesUP":
+			c.LimitMaxNbVotesUP = v[0]
+		case "limitMinNbVotesDown":
+			c.LimitMinNbVotesDown = v[0]
+		case "limitMaxNbVotesDown":
+			c.LimitMaxNbVotesDown = v[0]
+		case "onlyMsgRoot":
+			c.OnlyMsgRoot = v[0]
+		case "onlyCount":
+			c.OnlyCount = v[0]
+		}
+	}
+
+	return c, nil
+}
+
 //MessageCount count messages on a topic according to criterias
 func (c *Client) MessageCount(topic string, criteria *MessageCriteria) (*MessagesCountJSON, error) {
 
@@ -752,7 +833,7 @@ func (c *Client) messagesList(topic string, criteria *MessageCriteria) ([]byte, 
 		return nil, err
 	}
 
-	DebugLogFunc("MessageList>>> Messages List Reponse, len body %d", len(body))
+	DebugLogFunc("MessageList>>> Messages List Response, len body %d", len(body))
 	return body, err
 }
 
