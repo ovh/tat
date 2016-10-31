@@ -360,34 +360,38 @@ curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit
 
 ### Parameters
 
-* `topic`: /yourTopic/subTopic
-* `skip`: Skip skips over the n initial documents from the query results
-* `limit`: Limit restricts the maximum number of documents retrieved
-* `text`: your text
-* `idMessage`: message Id
-* `inReplyOfID`: message Id replied
-* `inReplyOfIDRoot`: message Id root replied
-* `allIDMessage`: message Id OR message Id replied OR message Id root replied
-* `dateMinCreation`: filter result on dateCreation, timestamp Unix format
-* `dateMaxCreation`: filter result on dateCreation, timestamp Unix Format
-* `dateMinUpdate`: filter result on dateUpdate, timestamp Unix format
-* `dateMaxUpdate`: filter result on dateUpdate, timestamp Unix Format
-* `limitMinNbVotesUP`: filter result on nbVotesUP
-* `limitMaxNbVotesUP`: filter result on nbVotesUP
-* `limitMinNbVotesDown`: filter result on nbVotesDown
-* `limitMaxNbVotesDown`: filter result on nbVotesDown
-* `label`: Search by label: could be labelA,labelB
-* `andLabel`: Search by label (and): could be labelA,labelB for select messages with labelA AND labelB
-* `notLabel`: Search by label (exclude): could be labelA,labelB for select messages without labelA OR labelB
-* `tag`: tagA,tagB
-* `andTag`: tagA,tagB
-* `notTag`: tagA,tagB
-* `username`: usernameA,usernameB
-* `treeView`: onetree or fulltree. "onetree": replies are under root message. "fulltree": replies are under their parent. Default: no tree
-* `limitMinNbReplies`: in onetree mode, filter root messages with more or equals minNbReplies
-* `limitMaxNbReplies`: in onetree mode, filter root messages with min or equals maxNbReplies
-* `onlyMsgRoot`: restricts to root message only (inReplyOfIDRoot empty). If treeView is used, limit search criteria to root message, replies are still given, independently of search criteria.
-* `onlyCount`: only count messages, without retrieve msg. limit, skip and treeview criterias are ignored
+* `allIDMessage`          Search in All ID Message (idMessage, idReply, idRoot)
+* `andLabel`              Search by label (and) : could be labelA,labelB
+* `andTag`                Search by tag (and) : could be tagA,tagB
+* `dateMaxCreation`       Search by dateCreation (timestamp), select messages where dateCreation <= dateMaxCreation
+* `dateMaxUpdate`         Search by dateUpdate (timestamp), select messages where dateUpdate <= dateMaxUpdate
+* `dateMinCreation`       Search by dateCreation (timestamp), select messages where dateCreation >= dateMinCreation
+* `dateMinUpdate`         Search by dateUpdate (timestamp), select messages where dateUpdate >= dateMinUpdate
+* `idMessage`             Search by IDMessage
+* `inReplyOfID`           Search by IDMessage InReply
+* `inReplyOfIDRoot`       Search by IDMessage IdRoot
+* `label`                 Search by label: could be labelA,labelB
+* `lastMaxCreation`       Search by dateCreation (duration in second), select messages where dateCreation <= now - lastMaxCreation
+* `lastMaxUpdate`         Search by dateUpdate (duration in second), select messages where dateUpdate <= now - lastMaxCreation
+* `lastMinCreation`       Search by dateCreation (duration in second), select messages where dateCreation >= now - lastMinCreation
+* `lastMinUpdate`         Search by dateUpdate (duration in second), select messages where dateUpdate >= now - lastMinCreation
+* `limitMaxNbReplies`     In onetree mode, filter root messages with min or equals maxNbReplies
+* `limitMaxNbVotesDown`   Search by nbVotesDown
+* `limitMaxNbVotesUP`     Search by nbVotesUP
+* `limitMinNbReplies`     In onetree mode, filter root messages with more or equals minNbReplies
+* `limitMinNbVotesDown`   Search by nbVotesDown
+* `limitMinNbVotesUP`     Search by nbVotesUP
+* `notLabel`              Search by label (exclude): could be labelA,labelB
+* `notTag`                Search by tag (exclude) : could be tagA,tagB
+* `onlyCount`             onlyCount=true: only count messages, without retrieve msg. limit, skip, treeview criterias are ignored.
+onlyMsgRoot string           onlyMsgRoot=true: restricts to root message only (inReplyOfIDRoot empty). If treeView is used, limit search criteria to root * `message` are still given, independently of search criteria.
+* `startLabel`            Search by a label prefix: startLabel='mykey:,myKey2:'
+* `startTag`              Search by a tag prefix: startTag='mykey:,myKey2:'
+* `tag`                   Search by tag : could be tagA,tagB
+* `text`                  Search by text
+* `topic`                 Search by topic
+* `treeView`              Tree View of messages: onetree or fulltree. Default: notree
+* `username`              Search by username : could be usernameA,usernameB
 
 ### Examples
 ```bash
