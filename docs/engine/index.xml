@@ -600,6 +600,11 @@ curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/read/&amp
 &lt;li&gt;&lt;code&gt;inReplyOfID&lt;/code&gt;           Search by IDMessage InReply&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;inReplyOfIDRoot&lt;/code&gt;       Search by IDMessage IdRoot&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;label&lt;/code&gt;                 Search by label: could be labelA,labelB&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;lastHourMaxCreation&lt;/code&gt;   Search by dateCreation, select messages where dateCreation &amp;lt;= Now Beginning Of Hour - (60 * lastHourMaxCreation)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;lastHourMaxUpdate&lt;/code&gt;     Search by dateUpdate, select messages where dateUpdate &amp;lt;= Now Beginning Of Hour - (60 * lastHourMaxCreation)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;lastHourMinCreation&lt;/code&gt;   Search by dateCreation, select messages where dateCreation &amp;gt;= Now Beginning Of Hour - (60 * lastHourMinCreation)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;lastHourMinUpdate&lt;/code&gt;     Search by dateUpdate, select messages where dateUpdate &amp;gt;= Now Beginning Of Hour - (60 * lastHourMinCreation)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;lastMaxCreation&lt;/code&gt;       Search by dateCreation (duration in second), select messages where dateCreation &amp;lt;= now - lastMaxCreation&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;lastMaxCreation&lt;/code&gt;       Search by dateCreation (duration in second), select messages where dateCreation &amp;lt;= now - lastMaxCreation&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;lastMaxUpdate&lt;/code&gt;         Search by dateUpdate (duration in second), select messages where dateUpdate &amp;lt;= now - lastMaxCreation&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;lastMinCreation&lt;/code&gt;       Search by dateCreation (duration in second), select messages where dateCreation &amp;gt;= now - lastMinCreation&lt;/li&gt;
