@@ -68,6 +68,10 @@ Flags:
       --inReplyOfID string           Search by IDMessage InReply
       --inReplyOfIDRoot string       Search by IDMessage IdRoot
       --label string                 Search by label: could be labelA,labelB
+      --lastHourMaxCreation string   Search by dateCreation, select messages where dateCreation <= Now Beginning Of Hour - (60 * lastHourMaxCreation)
+      --lastHourMaxUpdate string     Search by dateUpdate, select messages where dateUpdate <= Now Beginning Of Hour - (60 * lastHourMaxCreation)
+      --lastHourMinCreation string   Search by dateCreation, select messages where dateCreation >= Now Beginning Of Hour - (60 * lastHourMinCreation)
+      --lastHourMinUpdate string     Search by dateUpdate, select messages where dateUpdate >= Now Beginning Of Hour - (60 * lastHourMinCreation)
       --lastMaxCreation string       Search by dateCreation (duration in second), select messages where dateCreation <= now - lastMaxCreation
       --lastMaxUpdate string         Search by dateUpdate (duration in second), select messages where dateUpdate <= now - lastMaxCreation
       --lastMinCreation string       Search by dateCreation (duration in second), select messages where dateCreation >= now - lastMinCreation

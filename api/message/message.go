@@ -10,6 +10,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	nowlib "github.com/jinzhu/now"
 	"github.com/mvdan/xurls"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/cache"
@@ -177,20 +178,20 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 	}
 
 	var bsonDateLast = bson.M{}
-	now := time.Now().Unix()
+	now := time.Now()
 	if criteria.LastMinCreation != "" { // now - LastMinCreation
 		i, err := strconv.ParseFloat(criteria.LastMinCreation, 64)
 		if err != nil {
 			return bson.M{}, fmt.Errorf("Error while parsing lastMinCreation %s", err)
 		}
-		bsonDateLast["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(now) - i))
+		bsonDateLast["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(now.Unix()) - i))
 	}
 	if criteria.LastMaxCreation != "" { // now - LastMaxCreation
 		i, err := strconv.ParseFloat(criteria.LastMaxCreation, 64)
 		if err != nil {
 			return bson.M{}, fmt.Errorf("Error while parsing lastMaxCreation %s", err)
 		}
-		bsonDateLast["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(now) - i))
+		bsonDateLast["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(now.Unix()) - i))
 	}
 	if len(bsonDateLast) > 0 {
 		query = append(query, bson.M{"dateCreation": bsonDateLast})
@@ -202,17 +203,56 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 		if err != nil {
 			return bson.M{}, fmt.Errorf("Error while parsing lastMinUpdate %s", err)
 		}
-		bsonDateUpdateLast["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(now) - i))
+		bsonDateUpdateLast["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(now.Unix()) - i))
 	}
 	if criteria.LastMaxUpdate != "" { // now - LastMaxUpdate
 		i, err := strconv.ParseFloat(criteria.LastMaxUpdate, 64)
 		if err != nil {
 			return bson.M{}, fmt.Errorf("Error while parsing lastMaxUpdate %s", err)
 		}
-		bsonDateUpdateLast["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(now) - i))
+		bsonDateUpdateLast["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(now.Unix()) - i))
 	}
 	if len(bsonDateUpdateLast) > 0 {
 		query = append(query, bson.M{"dateUpdate": bsonDateUpdateLast})
+	}
+
+	var bsonDateLastHour = bson.M{}
+	startHour := nowlib.BeginningOfHour()
+	if criteria.LastHourMinCreation != "" {
+		i, err := strconv.ParseFloat(criteria.LastHourMinCreation, 64)
+		if err != nil {
+			return bson.M{}, fmt.Errorf("Error while parsing lastHourMinCreation %s", err)
+		}
+		bsonDateLastHour["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (60 * i)))
+	}
+	if criteria.LastHourMaxCreation != "" {
+		i, err := strconv.ParseFloat(criteria.LastHourMaxCreation, 64)
+		if err != nil {
+			return bson.M{}, fmt.Errorf("Error while parsing lastHourMaxCreation %s", err)
+		}
+		bsonDateLastHour["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (60 * i)))
+	}
+	if len(bsonDateLastHour) > 0 {
+		query = append(query, bson.M{"dateCreation": bsonDateLastHour})
+	}
+
+	var bsonDateUpdateLastHour = bson.M{}
+	if criteria.LastHourMinUpdate != "" {
+		i, err := strconv.ParseFloat(criteria.LastHourMinUpdate, 64)
+		if err != nil {
+			return bson.M{}, fmt.Errorf("Error while parsing lastHourMinUpdate %s", err)
+		}
+		bsonDateUpdateLastHour["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (60 * i)))
+	}
+	if criteria.LastHourMaxUpdate != "" {
+		i, err := strconv.ParseFloat(criteria.LastHourMaxUpdate, 64)
+		if err != nil {
+			return bson.M{}, fmt.Errorf("Error while parsing lastHourMaxUpdate %s", err)
+		}
+		bsonDateUpdateLastHour["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (60 * i)))
+	}
+	if len(bsonDateUpdateLastHour) > 0 {
+		query = append(query, bson.M{"dateUpdate": bsonDateUpdateLastHour})
 	}
 
 	var bsonNbVotesUP = bson.M{}

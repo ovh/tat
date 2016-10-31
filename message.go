@@ -122,6 +122,10 @@ type MessageCriteria struct {
 	LastMaxCreation     string
 	LastMinUpdate       string
 	LastMaxUpdate       string
+	LastHourMinCreation string
+	LastHourMaxCreation string
+	LastHourMinUpdate   string
+	LastHourMaxUpdate   string
 	LimitMinNbReplies   string
 	LimitMaxNbReplies   string
 	LimitMinNbVotesUP   string
@@ -215,6 +219,18 @@ func (m *MessageCriteria) CacheKey() []string {
 	}
 	if m.LastMaxUpdate != "" {
 		s = append(s, "LastMaxUpdate="+m.LastMaxUpdate)
+	}
+	if m.LastHourMinCreation != "" {
+		s = append(s, "LastHourMinCreation="+m.LastHourMinCreation)
+	}
+	if m.LastHourMaxCreation != "" {
+		s = append(s, "LastHourMaxCreation="+m.LastHourMaxCreation)
+	}
+	if m.LastHourMinUpdate != "" {
+		s = append(s, "LastHourMinUpdate="+m.LastHourMinUpdate)
+	}
+	if m.LastHourMaxUpdate != "" {
+		s = append(s, "LastHourMaxUpdate="+m.LastHourMaxUpdate)
 	}
 	if m.LimitMinNbReplies != "" {
 		s = append(s, "LimitMinNbReplies="+m.LimitMinNbReplies)
@@ -695,6 +711,18 @@ func (m *MessageCriteria) GetURL() string {
 	if m.LastMaxUpdate != "" {
 		v.Set("lastMaxUpdate", m.LastMaxUpdate)
 	}
+	if m.LastHourMinCreation != "" {
+		v.Set("lastHourMinCreation", m.LastHourMinCreation)
+	}
+	if m.LastHourMaxCreation != "" {
+		v.Set("lastHourMaxCreation", m.LastHourMaxCreation)
+	}
+	if m.LastHourMinUpdate != "" {
+		v.Set("lastHourMinUpdate", m.LastHourMinUpdate)
+	}
+	if m.LastHourMaxUpdate != "" {
+		v.Set("lastHourMaxUpdate", m.LastHourMaxUpdate)
+	}
 	if m.Username != "" {
 		v.Set("username", m.Username)
 	}
@@ -790,6 +818,14 @@ func GetMessageCriteriaFromURLValues(values url.Values) (*MessageCriteria, error
 			c.LastMinUpdate = v[0]
 		case "lastMaxUpdate":
 			c.LastMaxUpdate = v[0]
+		case "lastHourMinCreation":
+			c.LastHourMinCreation = v[0]
+		case "lastHourMaxCreation":
+			c.LastHourMaxCreation = v[0]
+		case "lastHourMinUpdate":
+			c.LastHourMinUpdate = v[0]
+		case "lastHourMaxUpdate":
+			c.LastHourMaxUpdate = v[0]
 		case "username":
 			c.Username = v[0]
 		case "limitMinNbReplies":

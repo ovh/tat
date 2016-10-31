@@ -371,6 +371,11 @@ curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit
 * `inReplyOfID`           Search by IDMessage InReply
 * `inReplyOfIDRoot`       Search by IDMessage IdRoot
 * `label`                 Search by label: could be labelA,labelB
+* `lastHourMaxCreation`   Search by dateCreation, select messages where dateCreation <= Now Beginning Of Hour - (60 * lastHourMaxCreation)
+* `lastHourMaxUpdate`     Search by dateUpdate, select messages where dateUpdate <= Now Beginning Of Hour - (60 * lastHourMaxCreation)
+* `lastHourMinCreation`   Search by dateCreation, select messages where dateCreation >= Now Beginning Of Hour - (60 * lastHourMinCreation)
+* `lastHourMinUpdate`     Search by dateUpdate, select messages where dateUpdate >= Now Beginning Of Hour - (60 * lastHourMinCreation)
+* `lastMaxCreation`       Search by dateCreation (duration in second), select messages where dateCreation <= now - lastMaxCreation
 * `lastMaxCreation`       Search by dateCreation (duration in second), select messages where dateCreation <= now - lastMaxCreation
 * `lastMaxUpdate`         Search by dateUpdate (duration in second), select messages where dateUpdate <= now - lastMaxCreation
 * `lastMinCreation`       Search by dateCreation (duration in second), select messages where dateCreation >= now - lastMinCreation
