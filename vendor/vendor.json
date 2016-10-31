@@ -334,6 +334,12 @@
 			"revisionTime": "2016-10-12T12:42:44Z"
 		},
 		{
+			"checksumSHA1": "+4r0PnLwwyhO5/jvU5R/TEJb4kA=",
+			"path": "gopkg.in/bsm/ratelimit.v1",
+			"revision": "db14e161995a5177acef654cb0dd785e8ee8bc22",
+			"revisionTime": "2016-02-20T15:49:07Z"
+		},
+		{
 			"checksumSHA1": "1Kc7sbvcA9MOUV9q+/LLwhX2LYA=",
 			"path": "gopkg.in/go-playground/validator.v8",
 			"revision": "25f1823069d853eccffbde025dca1812fa09c14b",
@@ -368,6 +374,48 @@
 			"path": "gopkg.in/mgo.v2/internal/scram",
 			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
 			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "hyNpm6i99xiOSkIAJn5zPRblWaU=",
+			"path": "gopkg.in/redis.v4",
+			"revision": "8a8d997ad58dc600d2ff0f64914102192f3b51ac",
+			"revisionTime": "2016-10-14T12:43:29Z"
+		},
+		{
+			"checksumSHA1": "u24d3wK+Otp3+nu3wSQOMqhg+N8=",
+			"path": "gopkg.in/redis.v4/internal",
+			"revision": "8a8d997ad58dc600d2ff0f64914102192f3b51ac",
+			"revisionTime": "2016-10-14T12:43:29Z"
+		},
+		{
+			"checksumSHA1": "l+1jiOGUyjHP0u0mB+KiT/UHVcY=",
+			"path": "gopkg.in/redis.v4/internal/consistenthash",
+			"revision": "8a8d997ad58dc600d2ff0f64914102192f3b51ac",
+			"revisionTime": "2016-10-14T12:43:29Z"
+		},
+		{
+			"checksumSHA1": "XxoAGEMN5ZCJJ3FeDMSTVhvscHg=",
+			"path": "gopkg.in/redis.v4/internal/errors",
+			"revision": "8a8d997ad58dc600d2ff0f64914102192f3b51ac",
+			"revisionTime": "2016-10-14T12:43:29Z"
+		},
+		{
+			"checksumSHA1": "6XSNzBg5bzd2TjEfC/q41tPT/Zg=",
+			"path": "gopkg.in/redis.v4/internal/hashtag",
+			"revision": "8a8d997ad58dc600d2ff0f64914102192f3b51ac",
+			"revisionTime": "2016-10-14T12:43:29Z"
+		},
+		{
+			"checksumSHA1": "fYkMv2BMIeHKM1VirUzJ7A/jG7w=",
+			"path": "gopkg.in/redis.v4/internal/pool",
+			"revision": "8a8d997ad58dc600d2ff0f64914102192f3b51ac",
+			"revisionTime": "2016-10-14T12:43:29Z"
+		},
+		{
+			"checksumSHA1": "BGzuM8ZpMCmTKWnb/3CtrV4OwDU=",
+			"path": "gopkg.in/redis.v4/internal/proto",
+			"revision": "8a8d997ad58dc600d2ff0f64914102192f3b51ac",
+			"revisionTime": "2016-10-14T12:43:29Z"
 		},
 		{
 			"checksumSHA1": "12GqsW8PiRPnezDDy0v4brZrndM=",
