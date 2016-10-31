@@ -118,6 +118,10 @@ type MessageCriteria struct {
 	DateMaxCreation     string
 	DateMinUpdate       string
 	DateMaxUpdate       string
+	LastMinCreation     string
+	LastMaxCreation     string
+	LastMinUpdate       string
+	LastMaxUpdate       string
 	LimitMinNbReplies   string
 	LimitMaxNbReplies   string
 	LimitMinNbVotesUP   string
@@ -191,9 +195,6 @@ func (m *MessageCriteria) CacheKey() []string {
 	if m.DateMinCreation != "" {
 		s = append(s, "DateMinCreation="+m.DateMinCreation)
 	}
-	if m.DateMinCreation != "" {
-		s = append(s, "DateMinCreation="+m.DateMinCreation)
-	}
 	if m.DateMaxCreation != "" {
 		s = append(s, "DateMaxCreation="+m.DateMaxCreation)
 	}
@@ -202,6 +203,18 @@ func (m *MessageCriteria) CacheKey() []string {
 	}
 	if m.DateMaxUpdate != "" {
 		s = append(s, "DateMaxUpdate="+m.DateMaxUpdate)
+	}
+	if m.LastMinCreation != "" {
+		s = append(s, "LastMinCreation="+m.LastMinCreation)
+	}
+	if m.LastMaxCreation != "" {
+		s = append(s, "LastMaxCreation="+m.LastMaxCreation)
+	}
+	if m.LastMinUpdate != "" {
+		s = append(s, "LastMinUpdate="+m.LastMinUpdate)
+	}
+	if m.LastMaxUpdate != "" {
+		s = append(s, "LastMaxUpdate="+m.LastMaxUpdate)
 	}
 	if m.LimitMinNbReplies != "" {
 		s = append(s, "LimitMinNbReplies="+m.LimitMinNbReplies)
@@ -670,6 +683,18 @@ func (m *MessageCriteria) GetURL() string {
 	if m.DateMaxUpdate != "" {
 		v.Set("dateMaxUpdate", m.DateMaxUpdate)
 	}
+	if m.LastMinCreation != "" {
+		v.Set("lastMinCreation", m.LastMinCreation)
+	}
+	if m.LastMaxCreation != "" {
+		v.Set("lastMaxCreation", m.LastMaxCreation)
+	}
+	if m.LastMinUpdate != "" {
+		v.Set("lastMinUpdate", m.LastMinUpdate)
+	}
+	if m.LastMaxUpdate != "" {
+		v.Set("lastMaxUpdate", m.LastMaxUpdate)
+	}
 	if m.Username != "" {
 		v.Set("username", m.Username)
 	}
@@ -757,6 +782,14 @@ func GetMessageCriteriaFromURLValues(values url.Values) (MessageCriteria, error)
 			c.DateMinUpdate = v[0]
 		case "dateMaxUpdate":
 			c.DateMaxUpdate = v[0]
+		case "lastMinCreation":
+			c.LastMinCreation = v[0]
+		case "lastMaxCreation":
+			c.LastMaxCreation = v[0]
+		case "lastMinUpdate":
+			c.LastMinUpdate = v[0]
+		case "lastMaxUpdate":
+			c.LastMaxUpdate = v[0]
 		case "username":
 			c.Username = v[0]
 		case "limitMinNbReplies":

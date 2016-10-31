@@ -176,6 +176,45 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 		query = append(query, bson.M{"dateUpdate": bsonDateUpdate})
 	}
 
+	var bsonDateLast = bson.M{}
+	now := time.Now().Unix()
+	if criteria.LastMinCreation != "" { // now - LastMinCreation
+		i, err := strconv.ParseFloat(criteria.LastMinCreation, 64)
+		if err != nil {
+			return bson.M{}, fmt.Errorf("Error while parsing lastMinCreation %s", err)
+		}
+		bsonDateLast["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(now) - i))
+	}
+	if criteria.LastMaxCreation != "" { // now - LastMaxCreation
+		i, err := strconv.ParseFloat(criteria.LastMaxCreation, 64)
+		if err != nil {
+			return bson.M{}, fmt.Errorf("Error while parsing lastMaxCreation %s", err)
+		}
+		bsonDateLast["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(now) - i))
+	}
+	if len(bsonDateLast) > 0 {
+		query = append(query, bson.M{"dateCreation": bsonDateLast})
+	}
+
+	var bsonDateUpdateLast = bson.M{}
+	if criteria.LastMinUpdate != "" { // now - LastMinUpdate
+		i, err := strconv.ParseFloat(criteria.LastMinUpdate, 64)
+		if err != nil {
+			return bson.M{}, fmt.Errorf("Error while parsing lastMinUpdate %s", err)
+		}
+		bsonDateUpdateLast["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(now) - i))
+	}
+	if criteria.LastMaxUpdate != "" { // now - LastMaxUpdate
+		i, err := strconv.ParseFloat(criteria.LastMaxUpdate, 64)
+		if err != nil {
+			return bson.M{}, fmt.Errorf("Error while parsing lastMaxUpdate %s", err)
+		}
+		bsonDateUpdateLast["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(now) - i))
+	}
+	if len(bsonDateUpdateLast) > 0 {
+		query = append(query, bson.M{"dateUpdate": bsonDateUpdateLast})
+	}
+
 	var bsonNbVotesUP = bson.M{}
 	if criteria.LimitMinNbVotesUP != "" {
 		i, err := strconv.ParseFloat(criteria.LimitMinNbVotesUP, 64)
