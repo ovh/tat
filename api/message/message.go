@@ -223,14 +223,14 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 		if err != nil {
 			return bson.M{}, fmt.Errorf("Error while parsing lastHourMinCreation %s", err)
 		}
-		bsonDateLastHour["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (60 * i)))
+		bsonDateLastHour["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (3600 * i)))
 	}
 	if criteria.LastHourMaxCreation != "" {
 		i, err := strconv.ParseFloat(criteria.LastHourMaxCreation, 64)
 		if err != nil {
 			return bson.M{}, fmt.Errorf("Error while parsing lastHourMaxCreation %s", err)
 		}
-		bsonDateLastHour["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (60 * i)))
+		bsonDateLastHour["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (3600 * i)))
 	}
 	if len(bsonDateLastHour) > 0 {
 		query = append(query, bson.M{"dateCreation": bsonDateLastHour})
@@ -242,14 +242,14 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 		if err != nil {
 			return bson.M{}, fmt.Errorf("Error while parsing lastHourMinUpdate %s", err)
 		}
-		bsonDateUpdateLastHour["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (60 * i)))
+		bsonDateUpdateLastHour["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (3600 * i)))
 	}
 	if criteria.LastHourMaxUpdate != "" {
 		i, err := strconv.ParseFloat(criteria.LastHourMaxUpdate, 64)
 		if err != nil {
 			return bson.M{}, fmt.Errorf("Error while parsing lastHourMaxUpdate %s", err)
 		}
-		bsonDateUpdateLastHour["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (60 * i)))
+		bsonDateUpdateLastHour["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(startHour.Unix()) - (3600 * i)))
 	}
 	if len(bsonDateUpdateLastHour) > 0 {
 		query = append(query, bson.M{"dateUpdate": bsonDateUpdateLastHour})
