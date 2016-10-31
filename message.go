@@ -726,8 +726,8 @@ func (m *MessageCriteria) GetURL() string {
 }
 
 // GetMessageCriteriaFromURLValues returns a MessagesCriteria from a url.Values
-func GetMessageCriteriaFromURLValues(values url.Values) (MessageCriteria, error) {
-	c := MessageCriteria{}
+func GetMessageCriteriaFromURLValues(values url.Values) (*MessageCriteria, error) {
+	c := &MessageCriteria{}
 	for k, v := range values {
 		switch k {
 		case "skip":
