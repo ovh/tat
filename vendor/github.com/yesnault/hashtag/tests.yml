@@ -319,7 +319,7 @@ hashtags:
 
   - description: "Hashtag before punctuations, except:"
     text: "#hashtag: #hashtag; #hashtag, #hashtag. #hashtag!"
-    expected: ["hashtag:", "hashtag", "hashtag", "hashtag.", "hashtag"]
+    expected: ["hashtag:", "hashtag", "hashtag,", "hashtag.", "hashtag"]
 
   - description: "Hashtag with dot:"
     text: "#hashtag.dot"
@@ -348,6 +348,10 @@ hashtags:
   - description: "Hashtag with ~:"
     text: "#From:dev~aa #From:aa~ff"
     expected: ["From:dev~aa", "From:aa~ff"]
+
+  - description: "Hashtag with ,:"
+    text: "#From:dev,aa #From:aa,ff"
+    expected: ["From:dev,aa", "From:aa,ff"]
 
 #  - description: "Hashtag after punctuations"
 #    text: ":#hashtaga ;#hashtagb ,#hashtagc .#hashtagd ?#hashtagf"
@@ -468,4 +472,4 @@ hashtags:
 
   - description: "Extract multiple non-latin hashtags"
     text: "Hashtags in #中文, #日本語, #한국말, and #русский! Try it out!"
-    expected: ["中文", "日本語", "한국말", "русский"]
+    expected: ["中文,", "日本語,", "한국말,", "русский"]
