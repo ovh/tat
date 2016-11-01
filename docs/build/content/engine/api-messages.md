@@ -347,15 +347,15 @@ curl -XPUT \
 
 ## Getting Messages List
 ```bash
-curl -XGET https://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
-curl -XGET https://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit>
+curl -XGET https://<tatHostname>:<tatPort>/messages/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
 ```
 
 Getting messages on one Public Topic (Read Only):
 
 ```bash
-curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit> | python -m json.tool
-curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit>
+curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit>&argName=valName&arg2Name=val2Name
 ```
 
 ### Parameters
@@ -363,14 +363,20 @@ curl -XGET https://<tatHostname>:<tatPort>/read/<topic>?skip=<skip>&limit=<limit
 * `allIDMessage`          Search in All ID Message (idMessage, idReply, idRoot)
 * `andLabel`              Search by label (and) : could be labelA,labelB
 * `andTag`                Search by tag (and) : could be tagA,tagB
-* `dateMaxCreation`       Search by dateCreation (timestamp), select messages where dateCreation <= dateMaxCreation
-* `dateMaxUpdate`         Search by dateUpdate (timestamp), select messages where dateUpdate <= dateMaxUpdate
-* `dateMinCreation`       Search by dateCreation (timestamp), select messages where dateCreation >= dateMinCreation
-* `dateMinUpdate`         Search by dateUpdate (timestamp), select messages where dateUpdate >= dateMinUpdate
 * `idMessage`             Search by IDMessage
 * `inReplyOfID`           Search by IDMessage InReply
 * `inReplyOfIDRoot`       Search by IDMessage IdRoot
 * `label`                 Search by label: could be labelA,labelB
+* `dateMaxCreation`       Search by dateCreation (timestamp), select messages where dateCreation <= dateMaxCreation
+* `dateMaxUpdate`         Search by dateUpdate (timestamp), select messages where dateUpdate <= dateMaxUpdate
+* `dateMinCreation`       Search by dateCreation (timestamp), select messages where dateCreation >= dateMinCreation
+* `dateMinUpdate`         Search by dateUpdate (timestamp), select messages where dateUpdate >= dateMinUpdate
+* `dateRefCreation`            This have to be used with dateRefDeltaMinCreation and / or dateRefDeltaMaxCreation. This could be BeginningOfMinute, BeginningOfHour, BeginningOfDay, BeginningOfWeek, BeginningOfMonth, BeginningOfQuarter, BeginningOfYear
+* `dateRefDeltaMaxCreation`    Add seconds to dateRefCreation flag
+* `dateRefDeltaMaxUpdate`      Add seconds to dateRefUpdate flag
+* `dateRefDeltaMinCreation`    Add seconds to dateRefCreation flag
+* `dateRefDeltaMinUpdate`      Add seconds to dateRefUpdate flag
+* `dateRefUpdate`              This have to be used with dateRefDeltaMinUpdate and / or dateRefDeltaMaxUpdate. This could be BeginningOfMinute, BeginningOfHour, BeginningOfDay, BeginningOfWeek, BeginningOfMonth, BeginningOfQuarter, BeginningOfYear
 * `lastHourMaxCreation`   Search by dateCreation, select messages where dateCreation <= Now Beginning Of Hour - (60 * lastHourMaxCreation)
 * `lastHourMaxUpdate`     Search by dateUpdate, select messages where dateUpdate <= Now Beginning Of Hour - (60 * lastHourMaxCreation)
 * `lastHourMinCreation`   Search by dateCreation, select messages where dateCreation >= Now Beginning Of Hour - (60 * lastHourMinCreation)
@@ -399,7 +405,51 @@ onlyMsgRoot string           onlyMsgRoot=true: restricts to root message only (i
 * `username`              Search by username : could be usernameA,usernameB
 
 ### Examples
+
+#### GET 100 last created messages messages
 ```bash
-curl -XGET https://<tatHostname>:<tatPort>/messages/topicA?skip=0&limit=100 | python -m json.tool
-curl -XGET https://<tatHostname>:<tatPort>/messages/topicA/subTopic?skip=0&limit=100&dateMinCreation=1405544146&dateMaxCreation=1405544146 | python -m json.tool
+curl -XGET https://<tatHostname>:<tatPort>/messages/topicA?skip=0&limit=100
+```
+
+#### Filter by date Creation
+
+This will return 100 messages created between 16/7/2014, 22:55:46 and 16/8/2014, 22:55:46
+
+* 1405544146 is 16/7/2014, 22:55:46
+* 1408222546 is 16/8/2014, 22:55:46
+
+```bash
+curl -XGET https://<tatHostname>:<tatPort>/messages/topicA/subTopic?skip=0&limit=100&dateMinCreation=1405544146&dateMaxCreation=1408222546
+```
+
+#### Count messages created since 8 hours
+
+```bash
+curl -XGET https://<tatHostname>:<tatPort>/messages/topicA?onlyCount=true&lastHourMinCreation=8
+```
+
+#### Count messages created since 3 days
+
+* lastHourMinCreation : 24hours x 3 days = 72
+
+```bash
+curl -XGET https://<tatHostname>:<tatPort>/messages/topicA?onlyCount=true&lastHourMinCreation=72
+```
+
+#### Count messages created since Beginning Of Month
+
+* dateRefCreation : Select beginning of month with "BeginningOfMonth" pattern. Start at monday.
+
+```bash
+curl -XGET https://<tatHostname>:<tatPort>/messages/topicA?onlyCount=true&dateRefCreation=BeginningOfMonth
+```
+
+#### Count messages created on Tuesday of current week
+
+* dateRefCreation : Select beginning of week with "BeginningOfWeek" pattern. Start at monday.
+* dateRefDeltaMinCreation : add seconds to dateRefCreation, to 60seconds x 60minutes x 24hours = 86400
+* dateRefDeltaMaxCreation : add seconds to dateRefCreation, to 60seconds x 60minutes x 48hours = 172800
+
+```bash
+curl -XGET https://<tatHostname>:<tatPort>/messages/topicA?onlyCount=true&dateRefCreation=BeginningOfWeek&dateRefDeltaMinCreation=86400&dateRefDeltaMaxCreation=172800
 ```

@@ -177,6 +177,60 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 		query = append(query, bson.M{"dateUpdate": bsonDateUpdate})
 	}
 
+	if criteria.DateRefCreation != "" {
+		start, err := tat.GetDateRef(criteria.DateRefCreation)
+		if err != nil {
+			return bson.M{}, err
+		}
+		var bsonRefDate = bson.M{}
+		if criteria.DateRefDeltaMinCreation != "" {
+			i, err := strconv.ParseFloat(criteria.DateRefDeltaMinCreation, 64)
+			if err != nil {
+				return bson.M{}, fmt.Errorf("Error while parsing dateMinCreation %s", err)
+			}
+			bsonRefDate["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(start.Unix()) + i))
+		} else {
+			bsonRefDate["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(start.Unix())))
+		}
+		if criteria.DateRefDeltaMaxCreation != "" {
+			i, err := strconv.ParseFloat(criteria.DateRefDeltaMaxCreation, 64)
+			if err != nil {
+				return bson.M{}, fmt.Errorf("Error while parsing dateMaxCreation %s", err)
+			}
+			bsonRefDate["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(start.Unix()) + i))
+		}
+		if len(bsonRefDate) > 0 {
+			query = append(query, bson.M{"dateCreation": bsonRefDate})
+		}
+	}
+
+	if criteria.DateRefUpdate != "" {
+		start, err := tat.GetDateRef(criteria.DateRefUpdate)
+		if err != nil {
+			return bson.M{}, err
+		}
+		var bsonRefDate = bson.M{}
+		if criteria.DateRefDeltaMinUpdate != "" {
+			i, err := strconv.ParseFloat(criteria.DateRefDeltaMinUpdate, 64)
+			if err != nil {
+				return bson.M{}, fmt.Errorf("Error while parsing dateMinUpdate %s", err)
+			}
+			bsonRefDate["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(start.Unix()) + i))
+		} else {
+			bsonRefDate["$gte"] = tat.TSFromDate(tat.DateFromFloat(float64(start.Unix())))
+		}
+		if criteria.DateRefDeltaMaxUpdate != "" {
+			i, err := strconv.ParseFloat(criteria.DateRefDeltaMaxUpdate, 64)
+			if err != nil {
+				return bson.M{}, fmt.Errorf("Error while parsing dateMaxUpdate %s", err)
+			}
+			bsonRefDate["$lte"] = tat.TSFromDate(tat.DateFromFloat(float64(start.Unix()) + i))
+		}
+		if len(bsonRefDate) > 0 {
+			query = append(query, bson.M{"dateUpdate": bsonRefDate})
+		}
+	}
+
 	var bsonDateLast = bson.M{}
 	now := time.Now()
 	if criteria.LastMinCreation != "" { // now - LastMinCreation

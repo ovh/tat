@@ -576,14 +576,14 @@ Tat Engine communicates only with JSON format with its API, even for messages se
 
 &lt;h2 id=&#34;getting-messages-list&#34;&gt;Getting Messages List&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/&amp;lt;topic&amp;gt;?skip=&amp;lt;skip&amp;gt;&amp;amp;limit=&amp;lt;limit&amp;gt; | python -m json.tool
-curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/&amp;lt;topic&amp;gt;?skip=&amp;lt;skip&amp;gt;&amp;amp;limit=&amp;lt;limit&amp;gt;&amp;amp;argName=valName&amp;amp;arg2Name=val2Name | python -m json.tool
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/&amp;lt;topic&amp;gt;?skip=&amp;lt;skip&amp;gt;&amp;amp;limit=&amp;lt;limit&amp;gt;
+curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/&amp;lt;topic&amp;gt;?skip=&amp;lt;skip&amp;gt;&amp;amp;limit=&amp;lt;limit&amp;gt;&amp;amp;argName=valName&amp;amp;arg2Name=val2Name
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Getting messages on one Public Topic (Read Only):&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/read/&amp;lt;topic&amp;gt;?skip=&amp;lt;skip&amp;gt;&amp;amp;limit=&amp;lt;limit&amp;gt; | python -m json.tool
-curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/read/&amp;lt;topic&amp;gt;?skip=&amp;lt;skip&amp;gt;&amp;amp;limit=&amp;lt;limit&amp;gt;&amp;amp;argName=valName&amp;amp;arg2Name=val2Name | python -m json.tool
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/read/&amp;lt;topic&amp;gt;?skip=&amp;lt;skip&amp;gt;&amp;amp;limit=&amp;lt;limit&amp;gt;
+curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/read/&amp;lt;topic&amp;gt;?skip=&amp;lt;skip&amp;gt;&amp;amp;limit=&amp;lt;limit&amp;gt;&amp;amp;argName=valName&amp;amp;arg2Name=val2Name
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;parameters&#34;&gt;Parameters&lt;/h3&gt;
@@ -592,14 +592,20 @@ curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/read/&amp
 &lt;li&gt;&lt;code&gt;allIDMessage&lt;/code&gt;          Search in All ID Message (idMessage, idReply, idRoot)&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;andLabel&lt;/code&gt;              Search by label (and) : could be labelA,labelB&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;andTag&lt;/code&gt;                Search by tag (and) : could be tagA,tagB&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;dateMaxCreation&lt;/code&gt;       Search by dateCreation (timestamp), select messages where dateCreation &amp;lt;= dateMaxCreation&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;dateMaxUpdate&lt;/code&gt;         Search by dateUpdate (timestamp), select messages where dateUpdate &amp;lt;= dateMaxUpdate&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;dateMinCreation&lt;/code&gt;       Search by dateCreation (timestamp), select messages where dateCreation &amp;gt;= dateMinCreation&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;dateMinUpdate&lt;/code&gt;         Search by dateUpdate (timestamp), select messages where dateUpdate &amp;gt;= dateMinUpdate&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;idMessage&lt;/code&gt;             Search by IDMessage&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;inReplyOfID&lt;/code&gt;           Search by IDMessage InReply&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;inReplyOfIDRoot&lt;/code&gt;       Search by IDMessage IdRoot&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;label&lt;/code&gt;                 Search by label: could be labelA,labelB&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateMaxCreation&lt;/code&gt;       Search by dateCreation (timestamp), select messages where dateCreation &amp;lt;= dateMaxCreation&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateMaxUpdate&lt;/code&gt;         Search by dateUpdate (timestamp), select messages where dateUpdate &amp;lt;= dateMaxUpdate&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateMinCreation&lt;/code&gt;       Search by dateCreation (timestamp), select messages where dateCreation &amp;gt;= dateMinCreation&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateMinUpdate&lt;/code&gt;         Search by dateUpdate (timestamp), select messages where dateUpdate &amp;gt;= dateMinUpdate&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateRefCreation&lt;/code&gt;            This have to be used with dateRefDeltaMinCreation and / or dateRefDeltaMaxCreation. This could be BeginningOfMinute, BeginningOfHour, BeginningOfDay, BeginningOfWeek, BeginningOfMonth, BeginningOfQuarter, BeginningOfYear&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateRefDeltaMaxCreation&lt;/code&gt;    Add seconds to dateRefCreation flag&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateRefDeltaMaxUpdate&lt;/code&gt;      Add seconds to dateRefUpdate flag&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateRefDeltaMinCreation&lt;/code&gt;    Add seconds to dateRefCreation flag&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateRefDeltaMinUpdate&lt;/code&gt;      Add seconds to dateRefUpdate flag&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateRefUpdate&lt;/code&gt;              This have to be used with dateRefDeltaMinUpdate and / or dateRefDeltaMaxUpdate. This could be BeginningOfMinute, BeginningOfHour, BeginningOfDay, BeginningOfWeek, BeginningOfMonth, BeginningOfQuarter, BeginningOfYear&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;lastHourMaxCreation&lt;/code&gt;   Search by dateCreation, select messages where dateCreation &amp;lt;= Now Beginning Of Hour - (60 * lastHourMaxCreation)&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;lastHourMaxUpdate&lt;/code&gt;     Search by dateUpdate, select messages where dateUpdate &amp;lt;= Now Beginning Of Hour - (60 * lastHourMaxCreation)&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;lastHourMinCreation&lt;/code&gt;   Search by dateCreation, select messages where dateCreation &amp;gt;= Now Beginning Of Hour - (60 * lastHourMinCreation)&lt;/li&gt;
@@ -630,8 +636,55 @@ onlyMsgRoot string           onlyMsgRoot=true: restricts to root message only (i
 
 &lt;h3 id=&#34;examples&#34;&gt;Examples&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/topicA?skip=0&amp;amp;limit=100 | python -m json.tool
-curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/topicA/subTopic?skip=0&amp;amp;limit=100&amp;amp;dateMinCreation=1405544146&amp;amp;dateMaxCreation=1405544146 | python -m json.tool
+&lt;h4 id=&#34;get-100-last-created-messages-messages&#34;&gt;GET 100 last created messages messages&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/topicA?skip=0&amp;amp;limit=100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;filter-by-date-creation&#34;&gt;Filter by date Creation&lt;/h4&gt;
+
+&lt;p&gt;This will return 100 messages created between 16/7/2014, 22:55:46 and 16/8/2014, 22:55:46&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1405544146 is 16/7/2014, 22:55:46&lt;/li&gt;
+&lt;li&gt;1408222546 is 16/8/2014, 22:55:46&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/topicA/subTopic?skip=0&amp;amp;limit=100&amp;amp;dateMinCreation=1405544146&amp;amp;dateMaxCreation=1408222546
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;count-messages-created-since-8-hours&#34;&gt;Count messages created since 8 hours&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/topicA?onlyCount=true&amp;amp;lastHourMinCreation=8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;count-messages-created-since-3-days&#34;&gt;Count messages created since 3 days&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;lastHourMinCreation : 24hours x 3 days = 72&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/topicA?onlyCount=true&amp;amp;lastHourMinCreation=72
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;count-messages-created-since-beginning-of-month&#34;&gt;Count messages created since Beginning Of Month&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;dateRefCreation : Select beginning of month with &amp;ldquo;BeginningOfMonth&amp;rdquo; pattern. Start at monday.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/topicA?onlyCount=true&amp;amp;dateRefCreation=BeginningOfMonth
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;count-messages-created-on-tuesday-of-current-week&#34;&gt;Count messages created on Tuesday of current week&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;dateRefCreation : Select beginning of week with &amp;ldquo;BeginningOfWeek&amp;rdquo; pattern. Start at monday.&lt;/li&gt;
+&lt;li&gt;dateRefDeltaMinCreation : add seconds to dateRefCreation, to 60seconds x 60minutes x 24hours = 86400&lt;/li&gt;
+&lt;li&gt;dateRefDeltaMaxCreation : add seconds to dateRefCreation, to 60seconds x 60minutes x 48hours = 172800&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/topicA?onlyCount=true&amp;amp;dateRefCreation=BeginningOfWeek&amp;amp;dateRefDeltaMinCreation=86400&amp;amp;dateRefDeltaMaxCreation=172800
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>

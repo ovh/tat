@@ -7,6 +7,9 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/jinzhu/now"
 )
 
 const (
@@ -96,44 +99,50 @@ type Message struct {
 
 // MessageCriteria are used to list messages
 type MessageCriteria struct {
-	Skip                int
-	Limit               int
-	TreeView            string
-	IDMessage           string
-	InReplyOfID         string
-	InReplyOfIDRoot     string
-	AllIDMessage        string // search in IDMessage OR InReplyOfID OR InReplyOfIDRoot
-	Text                string
-	Topic               string
-	Label               string `bson:"label" json:"label,omitempty"`
-	StartLabel          string `bson:"startLabel" json:"startLabel,omitempty"`
-	NotLabel            string `bson:"notLabel" json:"notLabel,omitempty"`
-	AndLabel            string `bson:"andLabel" json:"andLabel,omitempty"`
-	Tag                 string `bson:"tag" json:"tag,omitempty"`
-	StartTag            string `bson:"startTag" json:"startTag,omitempty"`
-	NotTag              string `bson:"notTag" json:"notTag,omitempty"`
-	AndTag              string `bson:"andTag" json:"andTag,omitempty"`
-	Username            string `bson:"username" json:"username,omitempty"`
-	DateMinCreation     string
-	DateMaxCreation     string
-	DateMinUpdate       string
-	DateMaxUpdate       string
-	LastMinCreation     string
-	LastMaxCreation     string
-	LastMinUpdate       string
-	LastMaxUpdate       string
-	LastHourMinCreation string
-	LastHourMaxCreation string
-	LastHourMinUpdate   string
-	LastHourMaxUpdate   string
-	LimitMinNbReplies   string
-	LimitMaxNbReplies   string
-	LimitMinNbVotesUP   string
-	LimitMinNbVotesDown string
-	LimitMaxNbVotesUP   string
-	LimitMaxNbVotesDown string
-	OnlyMsgRoot         string `bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty"`
-	OnlyCount           string
+	Skip                    int
+	Limit                   int
+	TreeView                string
+	IDMessage               string
+	InReplyOfID             string
+	InReplyOfIDRoot         string
+	AllIDMessage            string // search in IDMessage OR InReplyOfID OR InReplyOfIDRoot
+	Text                    string
+	Topic                   string
+	Label                   string `bson:"label" json:"label,omitempty"`
+	StartLabel              string `bson:"startLabel" json:"startLabel,omitempty"`
+	NotLabel                string `bson:"notLabel" json:"notLabel,omitempty"`
+	AndLabel                string `bson:"andLabel" json:"andLabel,omitempty"`
+	Tag                     string `bson:"tag" json:"tag,omitempty"`
+	StartTag                string `bson:"startTag" json:"startTag,omitempty"`
+	NotTag                  string `bson:"notTag" json:"notTag,omitempty"`
+	AndTag                  string `bson:"andTag" json:"andTag,omitempty"`
+	Username                string `bson:"username" json:"username,omitempty"`
+	DateMinCreation         string
+	DateMaxCreation         string
+	DateMinUpdate           string
+	DateMaxUpdate           string
+	LastMinCreation         string
+	LastMaxCreation         string
+	LastMinUpdate           string
+	LastMaxUpdate           string
+	LastHourMinCreation     string
+	LastHourMaxCreation     string
+	LastHourMinUpdate       string
+	LastHourMaxUpdate       string
+	DateRefCreation         string
+	DateRefDeltaMinCreation string
+	DateRefDeltaMaxCreation string
+	DateRefUpdate           string
+	DateRefDeltaMinUpdate   string
+	DateRefDeltaMaxUpdate   string
+	LimitMinNbReplies       string
+	LimitMaxNbReplies       string
+	LimitMinNbVotesUP       string
+	LimitMinNbVotesDown     string
+	LimitMaxNbVotesUP       string
+	LimitMaxNbVotesDown     string
+	OnlyMsgRoot             string `bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty"`
+	OnlyCount               string
 }
 
 // CacheKey returns cacke key value
@@ -249,6 +258,24 @@ func (m *MessageCriteria) CacheKey() []string {
 	}
 	if m.LimitMaxNbVotesDown != "" {
 		s = append(s, "LimitMaxNbVotesDown="+m.LimitMaxNbVotesDown)
+	}
+	if m.DateRefCreation != "" {
+		s = append(s, "DateRefCreation="+m.DateRefCreation)
+	}
+	if m.DateRefDeltaMinCreation != "" {
+		s = append(s, "DateRefDeltaMinCreation="+m.DateRefDeltaMinCreation)
+	}
+	if m.DateRefDeltaMaxCreation != "" {
+		s = append(s, "DateRefDeltaMaxCreation="+m.DateRefDeltaMaxCreation)
+	}
+	if m.DateRefUpdate != "" {
+		s = append(s, "DateRefUpdate="+m.DateRefUpdate)
+	}
+	if m.DateRefDeltaMinUpdate != "" {
+		s = append(s, "DateRefDeltaMinUpdate="+m.DateRefDeltaMinUpdate)
+	}
+	if m.DateRefDeltaMaxUpdate != "" {
+		s = append(s, "DateRefDeltaMaxUpdate="+m.DateRefDeltaMaxUpdate)
 	}
 	if m.OnlyMsgRoot != "" {
 		s = append(s, "OnlyMsgRoot="+m.OnlyMsgRoot)
@@ -699,6 +726,24 @@ func (m *MessageCriteria) GetURL() string {
 	if m.DateMaxUpdate != "" {
 		v.Set("dateMaxUpdate", m.DateMaxUpdate)
 	}
+	if m.DateRefCreation != "" {
+		v.Set("dateRefCreation", m.DateRefCreation)
+	}
+	if m.DateRefDeltaMinCreation != "" {
+		v.Set("dateRefDeltaMinCreation", m.DateRefDeltaMinCreation)
+	}
+	if m.DateRefDeltaMaxCreation != "" {
+		v.Set("dateRefDeltaMaxCreation", m.DateRefDeltaMaxCreation)
+	}
+	if m.DateRefUpdate != "" {
+		v.Set("dateRefUpdate", m.DateRefUpdate)
+	}
+	if m.DateRefDeltaMinUpdate != "" {
+		v.Set("dateRefDeltaMinUpdate", m.DateRefDeltaMinUpdate)
+	}
+	if m.DateRefDeltaMaxUpdate != "" {
+		v.Set("dateRefDeltaMaxUpdate", m.DateRefDeltaMaxUpdate)
+	}
 	if m.LastMinCreation != "" {
 		v.Set("lastMinCreation", m.LastMinCreation)
 	}
@@ -947,4 +992,26 @@ func (m *Message) GetTag(tag string) (int, string, error) {
 func (m *Message) ContainsTag(tag string) bool {
 	_, _, err := m.GetTag(tag)
 	return err == nil
+}
+
+func GetDateRef(pattern string) (time.Time, error) {
+	var dateRef time.Time
+	now.FirstDayMonday = true
+	switch pattern {
+	case "BeginningOfMinute":
+		return now.BeginningOfMinute(), nil
+	case "BeginningOfHour":
+		return now.BeginningOfHour(), nil
+	case "BeginningOfDay":
+		return now.BeginningOfDay(), nil
+	case "BeginningOfWeek":
+		return now.BeginningOfWeek(), nil
+	case "BeginningOfMonth":
+		return now.BeginningOfMonth(), nil
+	case "BeginningOfQuarter":
+		return now.BeginningOfQuarter(), nil
+	case "BeginningOfYear":
+		return now.BeginningOfYear(), nil
+	}
+	return dateRef, fmt.Errorf("Invalid pattern:%s", pattern)
 }
