@@ -679,7 +679,11 @@
 <li><a href="#simple-usage">Simple usage</a></li>
 <li><a href="#thread-on-tat">Thread on Tat</a></li>
 <li><a href="#faq">FAQ</a></li>
-<li><a href="#usage">Usage</a></li>
+<li><a href="#usage">Usage</a>
+<ul>
+<li><a href="#building">Building</a></li>
+<li><a href="#flags">Flags</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -733,6 +737,18 @@ Body: text of message
 Restriction on From ? Yes, see arg  : only @your-domain. All mail received from another domain are not send on tat.</p>
 
 <h2 id="usage">Usage</h2>
+
+<h3 id="building">Building</h3>
+
+<pre><code class="language-bash">mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/mail2tat/api
+go build
+./api -h
+</code></pre>
+
+<h3 id="flags">Flags</h3>
 
 <pre><code>./api -h
 MAIL2TAT - Mail to Tat

@@ -314,6 +314,18 @@ Restriction on From ? Yes, see arg  : only @your-domain. All mail received from 
 
 &lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
 
+&lt;h3 id=&#34;building&#34;&gt;Building&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/mail2tat/api
+go build
+./api -h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;flags&#34;&gt;Flags&lt;/h3&gt;
+
 &lt;pre&gt;&lt;code&gt;./api -h
 MAIL2TAT - Mail to Tat
 
@@ -371,6 +383,53 @@ TAT2XMPP_URL_TAT_ENGINE=http://tat.your-domain
 
 # Running TAT2XMPP
 ./tat2xmpp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
+
+&lt;h3 id=&#34;building&#34;&gt;Building&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/tat2xmpp/api
+go build
+./api -h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;flags&#34;&gt;Flags&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;
+./api -h
+Tat2XMPP
+
+Usage:
+  tat2xmpp [flags]
+  tat2xmpp [command]
+
+Available Commands:
+  version     Print the version.
+
+Flags:
+  -c, --configFile string            configuration file
+      --hook-key string              Hook Key, for using POST http://&amp;lt;url&amp;gt;/hook endpoint, with Header TAT2XMPPKEY
+      --listen-port string           RunKPI Listen Port (default &amp;quot;8088&amp;quot;)
+      --log-level string             Log Level : debug, info or warn
+      --password-tat-engine string   Password Tat Engine
+      --production                   Production mode
+      --url-tat-engine string        URL Tat Engine (default &amp;quot;http://localhost:8080&amp;quot;)
+      --username-tat-engine string   Username Tat Engine (default &amp;quot;tat.system.xmpp&amp;quot;)
+      --xmpp-bot-jid string          XMPP Bot JID (default &amp;quot;tat@localhost&amp;quot;)
+      --xmpp-bot-password string     XMPP Bot Password
+      --xmpp-debug                   XMPP Debug
+      --xmpp-insecure-skip-verify    XMPP InsecureSkipVerify (default true)
+      --xmpp-notls                   XMPP No TLS (default true)
+      --xmpp-server string           XMPP Server
+      --xmpp-session                 XMPP Session (default true)
+      --xmpp-starttls                XMPP Start TLS
+
+Use &amp;quot;tat2xmpp [command] --help&amp;quot; for more information about a command.
+
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>

@@ -40,6 +40,19 @@ Restriction on From ? Yes, see arg  : only @your-domain. All mail received from 
 
 ## Usage
 
+### Building
+
+```bash
+mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/mail2tat/api
+go build
+./api -h
+```
+
+### Flags
+
 ```
 ./api -h
 MAIL2TAT - Mail to Tat

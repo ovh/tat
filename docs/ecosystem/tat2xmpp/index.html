@@ -677,6 +677,11 @@
 <ul>
 <li><a href="#tat-configuration">TAT configuration</a></li>
 <li><a href="#tat2xmpp-configuration">TAT2XMPP Configuration</a></li>
+<li><a href="#usage">Usage</a>
+<ul>
+<li><a href="#building">Building</a></li>
+<li><a href="#flags">Flags</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -722,6 +727,53 @@ TAT2XMPP_URL_TAT_ENGINE=http://tat.your-domain
 
 # Running TAT2XMPP
 ./tat2xmpp
+</code></pre>
+
+<h2 id="usage">Usage</h2>
+
+<h3 id="building">Building</h3>
+
+<pre><code class="language-bash">mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/tat2xmpp/api
+go build
+./api -h
+</code></pre>
+
+<h3 id="flags">Flags</h3>
+
+<pre><code class="language-bash">
+./api -h
+Tat2XMPP
+
+Usage:
+  tat2xmpp [flags]
+  tat2xmpp [command]
+
+Available Commands:
+  version     Print the version.
+
+Flags:
+  -c, --configFile string            configuration file
+      --hook-key string              Hook Key, for using POST http://&lt;url&gt;/hook endpoint, with Header TAT2XMPPKEY
+      --listen-port string           RunKPI Listen Port (default &quot;8088&quot;)
+      --log-level string             Log Level : debug, info or warn
+      --password-tat-engine string   Password Tat Engine
+      --production                   Production mode
+      --url-tat-engine string        URL Tat Engine (default &quot;http://localhost:8080&quot;)
+      --username-tat-engine string   Username Tat Engine (default &quot;tat.system.xmpp&quot;)
+      --xmpp-bot-jid string          XMPP Bot JID (default &quot;tat@localhost&quot;)
+      --xmpp-bot-password string     XMPP Bot Password
+      --xmpp-debug                   XMPP Debug
+      --xmpp-insecure-skip-verify    XMPP InsecureSkipVerify (default true)
+      --xmpp-notls                   XMPP No TLS (default true)
+      --xmpp-server string           XMPP Server
+      --xmpp-session                 XMPP Session (default true)
+      --xmpp-starttls                XMPP Start TLS
+
+Use &quot;tat2xmpp [command] --help&quot; for more information about a command.
+
 </code></pre>
 
 
