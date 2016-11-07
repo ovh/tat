@@ -1636,7 +1636,7 @@ Users can delete their own presence.&lt;/p&gt;
 &lt;h1 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;MongoDB&lt;/li&gt;
+&lt;li&gt;MongoDB &amp;gt;= 3.2&lt;/li&gt;
 &lt;li&gt;Download latest release of Tat
 
 &lt;ul&gt;
@@ -1704,7 +1704,7 @@ INFO[0000] TAT is NOT linked to a redis
 &lt;h1 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;MongoDB, with ReplicaSet&lt;/li&gt;
+&lt;li&gt;MongoDB &amp;gt;= 3.2, with ReplicaSet&lt;/li&gt;
 &lt;li&gt;Redis with Slave and Sentinel&lt;/li&gt;
 &lt;li&gt;Download latest release of Tat
 

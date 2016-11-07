@@ -16,7 +16,7 @@ Don't worry, this installation describes below is used @ OVH to handle at least:
 ![Installation Production Way](/imgs/tat-installation-production.png?width=75%)
 
 # Prerequisites
-* MongoDB, with ReplicaSet
+* MongoDB >= 3.2, with ReplicaSet
 * Redis with Slave and Sentinel
 * Download latest release of Tat
  * OSX https://github.com/ovh/tat/releases/download/RELEASE_VERSION/tat-darwin-amd64

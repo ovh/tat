@@ -10,7 +10,7 @@ next: "/engine/production-installation"
 ![Installation Simple Way](/imgs/tat-installation-simple.png?width=50%)
 
 # Prerequisites
-* MongoDB
+* MongoDB >= 3.2
 * Download latest release of Tat
  * OSX https://github.com/ovh/tat/releases/download/RELEASE_VERSION/tat-darwin-amd64
  * Linux https://github.com/ovh/tat/releases/download/RELEASE_VERSION/tat-linux-amd64
