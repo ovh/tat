@@ -20,7 +20,7 @@ Return a mail to user, with instruction to validate his account.
 ```bash
 curl -XPOST \
     -H "Content-Type: application/json" \
-    -d '{"username": "userA", "fullname": "User AA", "email": "usera@foo.net", "callback": " Click on scheme://:host:port/user/verify/:username/:token to validate your account"}' \
+    -d '{"username": "userA", "fullname": "User AA", "email": "usera@foo.net", "callback": " Click on scheme://:host::port/user/verify/:username/:token to validate your account"}' \
     https://<tatHostname>:<tatPort>/user
 ```
 
