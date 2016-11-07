@@ -735,7 +735,7 @@ Password is encrypted in Tat Database (sha512 Sum).</p>
 
 <pre><code class="language-bash">curl -XPOST \
     -H &quot;Content-Type: application/json&quot; \
-    -d '{&quot;username&quot;: &quot;userA&quot;, &quot;fullname&quot;: &quot;User AA&quot;, &quot;email&quot;: &quot;usera@foo.net&quot;, &quot;callback&quot;: &quot; Click on:scheme://:host:port/user/verify/:token to validate your account&quot;}' \
+    -d '{&quot;username&quot;: &quot;userA&quot;, &quot;fullname&quot;: &quot;User AA&quot;, &quot;email&quot;: &quot;usera@foo.net&quot;, &quot;callback&quot;: &quot; Click on scheme://:host:port/user/verify/:username/:token to validate your account&quot;}' \
     https://&lt;tatHostname&gt;:&lt;tatPort&gt;/user
 </code></pre>
 

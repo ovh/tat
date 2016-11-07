@@ -1060,7 +1060,7 @@ Password is encrypted in Tat Database (sha512 Sum).&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPOST \
     -H &amp;quot;Content-Type: application/json&amp;quot; \
-    -d &#39;{&amp;quot;username&amp;quot;: &amp;quot;userA&amp;quot;, &amp;quot;fullname&amp;quot;: &amp;quot;User AA&amp;quot;, &amp;quot;email&amp;quot;: &amp;quot;usera@foo.net&amp;quot;, &amp;quot;callback&amp;quot;: &amp;quot; Click on:scheme://:host:port/user/verify/:token to validate your account&amp;quot;}&#39; \
+    -d &#39;{&amp;quot;username&amp;quot;: &amp;quot;userA&amp;quot;, &amp;quot;fullname&amp;quot;: &amp;quot;User AA&amp;quot;, &amp;quot;email&amp;quot;: &amp;quot;usera@foo.net&amp;quot;, &amp;quot;callback&amp;quot;: &amp;quot; Click on scheme://:host:port/user/verify/:username/:token to validate your account&amp;quot;}&#39; \
     https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/user
 &lt;/code&gt;&lt;/pre&gt;
 
