@@ -138,29 +138,40 @@ POST on `http://<hostname>:<port>/monitoring/sync`: send synchronous to tat engi
 curl -XGET http://<tatHostname>:<tatPort>/version
 ```
 
-# RUN
 
-## Al2Tat Flags Options
+## Usage
+
+### Building
+
+```bash
+mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/al2tat
+go build
+./al2tat -h
+```
+
+### Flags
 
 ```
+./al2tat -h
+Run Al2Tat
+
+Usage:
+  al2tat [flags]
+  al2tat [command]
+
+Available Commands:
+  version     Print the version.
+
 Flags:
-  -h, --help[=false]: help for al2tat
-      --listen-port="8082": Tat Engine Listen Port
-      --log-level="": Log Level: debug, info or warn
-      --production[=false]: Production mode
-      --url-tat-engine="http://localhost:8080": URL Tat Engine
-```
+      --listen-port string      Tat Engine Listen Port (default "8082")
+      --log-level string        Log Level : debug, info or warn
+      --production              Production mode
+      --url-tat-engine string   URL Tat Engine (default "http://localhost:8080")
 
-## Run with Docker
-```
-docker build -t al2tat .
-docker run -it --rm --name al2tat-instance1 <hostname>>:<port> al2tat
-```
-
-## Dev RUN
-
-```
-go get && go build && ./al2tat --help
+Use "al2tat [command] --help" for more information about a command.
 ```
 
 ### Environment

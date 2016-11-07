@@ -245,27 +245,37 @@ labels: facultative, add labels to message root, the first message sent for an i
 &lt;pre&gt;&lt;code&gt;curl -XGET http://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/version
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h1 id=&#34;run&#34;&gt;RUN&lt;/h1&gt;
+&lt;h2 id=&#34;usage-1&#34;&gt;Usage&lt;/h2&gt;
 
-&lt;h2 id=&#34;al2tat-flags-options&#34;&gt;Al2Tat Flags Options&lt;/h2&gt;
+&lt;h3 id=&#34;building&#34;&gt;Building&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;Flags:
-  -h, --help[=false]: help for al2tat
-      --listen-port=&amp;quot;8082&amp;quot;: Tat Engine Listen Port
-      --log-level=&amp;quot;&amp;quot;: Log Level: debug, info or warn
-      --production[=false]: Production mode
-      --url-tat-engine=&amp;quot;http://localhost:8080&amp;quot;: URL Tat Engine
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/al2tat
+go build
+./al2tat -h
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;run-with-docker&#34;&gt;Run with Docker&lt;/h2&gt;
+&lt;h3 id=&#34;flags&#34;&gt;Flags&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;docker build -t al2tat .
-docker run -it --rm --name al2tat-instance1 &amp;lt;hostname&amp;gt;&amp;gt;:&amp;lt;port&amp;gt; al2tat
-&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;./al2tat -h
+Run Al2Tat
 
-&lt;h2 id=&#34;dev-run&#34;&gt;Dev RUN&lt;/h2&gt;
+Usage:
+  al2tat [flags]
+  al2tat [command]
 
-&lt;pre&gt;&lt;code&gt;go get &amp;amp;&amp;amp; go build &amp;amp;&amp;amp; ./al2tat --help
+Available Commands:
+  version     Print the version.
+
+Flags:
+      --listen-port string      Tat Engine Listen Port (default &amp;quot;8082&amp;quot;)
+      --log-level string        Log Level : debug, info or warn
+      --production              Production mode
+      --url-tat-engine string   URL Tat Engine (default &amp;quot;http://localhost:8080&amp;quot;)
+
+Use &amp;quot;al2tat [command] --help&amp;quot; for more information about a command.
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;environment&#34;&gt;Environment&lt;/h3&gt;

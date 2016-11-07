@@ -696,13 +696,10 @@
 <ul>
 <li><a href="#version">Version</a></li>
 </ul></li>
-</ul></li>
-<li><a href="#run">RUN</a>
+<li><a href="#usage-1">Usage</a>
 <ul>
-<li><a href="#al2tat-flags-options">Al2Tat Flags Options</a></li>
-<li><a href="#run-with-docker">Run with Docker</a></li>
-<li><a href="#dev-run">Dev RUN</a>
-<ul>
+<li><a href="#building">Building</a></li>
+<li><a href="#flags">Flags</a></li>
 <li><a href="#environment">Environment</a></li>
 </ul></li>
 </ul></li>
@@ -861,27 +858,37 @@ labels: facultative, add labels to message root, the first message sent for an i
 <pre><code>curl -XGET http://&lt;tatHostname&gt;:&lt;tatPort&gt;/version
 </code></pre>
 
-<h1 id="run">RUN</h1>
+<h2 id="usage-1">Usage</h2>
 
-<h2 id="al2tat-flags-options">Al2Tat Flags Options</h2>
+<h3 id="building">Building</h3>
 
-<pre><code>Flags:
-  -h, --help[=false]: help for al2tat
-      --listen-port=&quot;8082&quot;: Tat Engine Listen Port
-      --log-level=&quot;&quot;: Log Level: debug, info or warn
-      --production[=false]: Production mode
-      --url-tat-engine=&quot;http://localhost:8080&quot;: URL Tat Engine
+<pre><code class="language-bash">mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/al2tat
+go build
+./al2tat -h
 </code></pre>
 
-<h2 id="run-with-docker">Run with Docker</h2>
+<h3 id="flags">Flags</h3>
 
-<pre><code>docker build -t al2tat .
-docker run -it --rm --name al2tat-instance1 &lt;hostname&gt;&gt;:&lt;port&gt; al2tat
-</code></pre>
+<pre><code>./al2tat -h
+Run Al2Tat
 
-<h2 id="dev-run">Dev RUN</h2>
+Usage:
+  al2tat [flags]
+  al2tat [command]
 
-<pre><code>go get &amp;&amp; go build &amp;&amp; ./al2tat --help
+Available Commands:
+  version     Print the version.
+
+Flags:
+      --listen-port string      Tat Engine Listen Port (default &quot;8082&quot;)
+      --log-level string        Log Level : debug, info or warn
+      --production              Production mode
+      --url-tat-engine string   URL Tat Engine (default &quot;http://localhost:8080&quot;)
+
+Use &quot;al2tat [command] --help&quot; for more information about a command.
 </code></pre>
 
 <h3 id="environment">Environment</h3>
