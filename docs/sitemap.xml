@@ -74,10 +74,6 @@
   </url>
   
   <url>
-    <loc>https://ovh.github.io/tat/ecosystem/tat2xmpp/</loc>
-  </url>
-  
-  <url>
     <loc>https://ovh.github.io/tat/tatcli/tatcli-config/</loc>
   </url>
   
@@ -94,6 +90,10 @@
   </url>
   
   <url>
+    <loc>https://ovh.github.io/tat/ecosystem/tat2es/</loc>
+  </url>
+  
+  <url>
     <loc>https://ovh.github.io/tat/tatcli/tatcli-group/</loc>
   </url>
   
@@ -107,6 +107,10 @@
   
   <url>
     <loc>https://ovh.github.io/tat/tatwebui/monitoringview/</loc>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/ecosystem/tat2xmpp/</loc>
   </url>
   
   <url>

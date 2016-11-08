@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/ovh/tat/master/tat.png" type="image/x-icon" />
 
     
-    <title>tatcli update -h</title>
+    <title>tat2es</title>
     <link href="https://ovh.github.io/tat/css/nucleus.css" rel="stylesheet">
     <link href="https://ovh.github.io/tat/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://ovh.github.io/tat/css/hybrid.css" rel="stylesheet">
@@ -25,7 +25,7 @@
     <link href="https://ovh.github.io/tat/css/style.css" rel="stylesheet">
 
   </head>
-  <body class="" data-url="/tatcli/tatcli-update/">
+  <body class="" data-url="/ecosystem/tat2es/">
     <nav id="sidebar">
   <div id="header-wrapper">
     <div id="header">
@@ -361,7 +361,7 @@
       
       
 
-      <li class="dd-item  parent" data-nav-id="/tatcli/">
+      <li class="dd-item  " data-nav-id="/tatcli/">
         <a href="https://ovh.github.io/tat/tatcli/">
           <span>
             
@@ -449,7 +449,7 @@
           
           
           
-            <li class="dd-item active" data-nav-id="/tatcli/tatcli-update/">
+            <li class="dd-item " data-nav-id="/tatcli/tatcli-update/">
               <a href="https://ovh.github.io/tat/tatcli/tatcli-update/">
                 <span>tatcli update -h     </i></span>
               </a>
@@ -529,7 +529,7 @@
       
       
 
-      <li class="dd-item  " data-nav-id="/ecosystem/">
+      <li class="dd-item  parent" data-nav-id="/ecosystem/">
         <a href="https://ovh.github.io/tat/ecosystem/">
           <span>
             
@@ -561,7 +561,7 @@
           
           
           
-            <li class="dd-item " data-nav-id="/ecosystem/tat2es/">
+            <li class="dd-item active" data-nav-id="/ecosystem/tat2es/">
               <a href="https://ovh.github.io/tat/ecosystem/tat2es/">
                 <span>tat2es     </i></span>
               </a>
@@ -656,17 +656,9 @@
                 
                 
                   
-                
-                  
-                
-                  
-                
-                  
-                
-                  
                     
                     
-                <a href="https://ovh.github.io/tat/tatcli/" itemprop="url"><span itemprop="title">Tat CLI Reference</span></a> <i class="fa fa-angle-right"></i>
+                <a href="https://ovh.github.io/tat/ecosystem/" itemprop="url"><span itemprop="title">Ecosystem</span></a> <i class="fa fa-angle-right"></i>
                     
                   
                 
@@ -674,7 +666,15 @@
                 
                   
                 
-                <span itemprop="title"> tatcli update -h</span>
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                <span itemprop="title"> tat2es</span>
               </div>
               
                   <div class="progress">
@@ -683,9 +683,11 @@
 <ul>
 <li>
 <ul>
-<li><a href="#command-description">Command Description</a>
+<li><a href="#tat2es-configuration">TAT2ES Configuration</a></li>
+<li><a href="#usage">Usage</a>
 <ul>
-<li><a href="#tatcli-update-h">tatcli update -h</a></li>
+<li><a href="#building">Building</a></li>
+<li><a href="#flags">Flags</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -699,32 +701,68 @@
             
     	        <div id="body-inner">
                 
-                <h1>tatcli update -h</h1>
+                <h1>tat2es</h1>
                 
 
 
 
-<h2 id="command-description">Command Description</h2>
+<p>Get messages from TAT and send them to ElasticSearch.</p>
 
-<h3 id="tatcli-update-h">tatcli update -h</h3>
+<h2 id="tat2es-configuration">TAT2ES Configuration</h2>
 
-<pre><code class="language-bash">tatcli update
+<pre><code class="language-bash">export TAT2ES_LISTEN_PORT=&quot;8080&quot;
+export TAT2ES_USERNAME_TAT_ENGINE=&quot;tat.system.jabber&quot;
+export TAT2ES_PRODUCTION=true
+export TAT2ES_PASSWORD_TAT_ENGINE=&quot;very-long-tat-password-of-tat.system.jabber&quot;
+export TAT2ES_URL_TAT_ENGINE=&quot;http://tat.your-domain&quot;
+export TAT2ES_TOPICS_INDEXES=&quot;/Topic/Sub-Topic1:ES_Index1,/Topic/Sub-Topic2:ES_Index2&quot;
+
+# Running TAT2ES
+./tat2es -h
+</code></pre>
+
+<h2 id="usage">Usage</h2>
+
+<h3 id="building">Building</h3>
+
+<pre><code class="language-bash">mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/tat2es/api
+go build
+./api -h
+</code></pre>
+
+<h3 id="flags">Flags</h3>
+
+<pre><code class="language-bash">
+./api -h
+TAT To ElasticSearch
 
 Usage:
-  tatcli update [flags]
-  tatcli update [command]
-
-Aliases:
-  update, up
+  tat2es [flags]
+  tat2es [command]
 
 Available Commands:
-  snapshot    Update tatcli to latest snapshot version: tatcli update snapshot
+  version     Print the version.
 
 Flags:
-  -h, --help=false: help for update
+      --cron-schedule string         Cron Schedule, see https://godoc.org/github.com/robfig/cron (default &quot;@every 3h&quot;)
+      --host-es string               Host ElasticSearch
+      --listen-port string           Tat2ES Listen Port (default &quot;8086&quot;)
+      --log-level string             Log Level: debug, info or warn
+      --messages-limit int           messages-limit is used by MessageCriteria.Limit for requesting TAT (default 1478642112)
+      --password-es string           Password ElasticSearch
+      --password-tat-engine string   Password Tat Engine
+      --port-es string               Port ElasticSearch (default &quot;9200&quot;)
+      --production                   Production mode
+      --timestamp int                from: timestamp unix format (default 1478642112)
+      --topics-indexes string        /Topic/Sub-Topic1:ES_Index1,/Topic/Sub-Topic2:ES_Index2
+      --url-tat-engine string        URL Tat Engine (default &quot;http://localhost:8080&quot;)
+      --user-es string               User ElasticSearch
+      --username-tat-engine string   Username Tat Engine
 
-Global Flags: see tatcli -h
-
+Use &quot;tat2es [command] --help&quot; for more information about a command.
 </code></pre>
 
 
@@ -733,8 +771,8 @@ Global Flags: see tatcli -h
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://ovh.github.io/tat/tatcli/tatcli-ui"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://ovh.github.io/tat/tatcli/tatcli-user" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://ovh.github.io/tat/ecosystem/mail2tat"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://ovh.github.io/tat/ecosystem/tat2xmpp" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

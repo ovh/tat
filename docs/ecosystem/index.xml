@@ -358,6 +358,75 @@ Flags:
     </item>
     
     <item>
+      <title>tat2es</title>
+      <link>https://ovh.github.io/tat/ecosystem/tat2es/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ovh.github.io/tat/ecosystem/tat2es/</guid>
+      <description>
+
+&lt;p&gt;Get messages from TAT and send them to ElasticSearch.&lt;/p&gt;
+
+&lt;h2 id=&#34;tat2es-configuration&#34;&gt;TAT2ES Configuration&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;export TAT2ES_LISTEN_PORT=&amp;quot;8080&amp;quot;
+export TAT2ES_USERNAME_TAT_ENGINE=&amp;quot;tat.system.jabber&amp;quot;
+export TAT2ES_PRODUCTION=true
+export TAT2ES_PASSWORD_TAT_ENGINE=&amp;quot;very-long-tat-password-of-tat.system.jabber&amp;quot;
+export TAT2ES_URL_TAT_ENGINE=&amp;quot;http://tat.your-domain&amp;quot;
+export TAT2ES_TOPICS_INDEXES=&amp;quot;/Topic/Sub-Topic1:ES_Index1,/Topic/Sub-Topic2:ES_Index2&amp;quot;
+
+# Running TAT2ES
+./tat2es -h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
+
+&lt;h3 id=&#34;building&#34;&gt;Building&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/tat2es/api
+go build
+./api -h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;flags&#34;&gt;Flags&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;
+./api -h
+TAT To ElasticSearch
+
+Usage:
+  tat2es [flags]
+  tat2es [command]
+
+Available Commands:
+  version     Print the version.
+
+Flags:
+      --cron-schedule string         Cron Schedule, see https://godoc.org/github.com/robfig/cron (default &amp;quot;@every 3h&amp;quot;)
+      --host-es string               Host ElasticSearch
+      --listen-port string           Tat2ES Listen Port (default &amp;quot;8086&amp;quot;)
+      --log-level string             Log Level: debug, info or warn
+      --messages-limit int           messages-limit is used by MessageCriteria.Limit for requesting TAT (default 1478642112)
+      --password-es string           Password ElasticSearch
+      --password-tat-engine string   Password Tat Engine
+      --port-es string               Port ElasticSearch (default &amp;quot;9200&amp;quot;)
+      --production                   Production mode
+      --timestamp int                from: timestamp unix format (default 1478642112)
+      --topics-indexes string        /Topic/Sub-Topic1:ES_Index1,/Topic/Sub-Topic2:ES_Index2
+      --url-tat-engine string        URL Tat Engine (default &amp;quot;http://localhost:8080&amp;quot;)
+      --user-es string               User ElasticSearch
+      --username-tat-engine string   Username Tat Engine
+
+Use &amp;quot;tat2es [command] --help&amp;quot; for more information about a command.
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
       <title>tat2xmpp</title>
       <link>https://ovh.github.io/tat/ecosystem/tat2xmpp/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -370,9 +439,9 @@ Flags:
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;
 [...]
 # TAT 2 XMPP Configuration
-TAT_TAT2XMPP_USERNAME=tat.system.jabber
-TAT_TAT2XMPP_URL=http://tat2xmpp.your-domain
-TAT_TAT2XMPP_KEY=a-key-used-by-tat2xmpp
+exportTAT_TAT2XMPP_USERNAME=tat.system.jabber
+exportTAT_TAT2XMPP_URL=http://tat2xmpp.your-domain
+exportTAT_TAT2XMPP_KEY=a-key-used-by-tat2xmpp
 [...]
 
 # Running TAT Engine
@@ -381,15 +450,15 @@ TAT_TAT2XMPP_KEY=a-key-used-by-tat2xmpp
 
 &lt;h2 id=&#34;tat2xmpp-configuration&#34;&gt;TAT2XMPP Configuration&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;TAT2XMPP_LISTEN_PORT=8080
-TAT2XMPP_HOOK_KEY=a-key-used-by-tat2xmpp
-TAT2XMPP_USERNAME_TAT_ENGINE=tat.system.jabber
-TAT2XMPP_XMPP_BOT_PASSWORD=password-of-bot-user-on-xmpp
-TAT2XMPP_PRODUCTION=true
-TAT2XMPP_PASSWORD_TAT_ENGINE=very-long-tat-password-of-tat.system.jabber
-TAT2XMPP_XMPP_BOT_JID=robot.tat@your-domain
-TAT2XMPP_XMPP_SERVER=your-jabber-server:5222
-TAT2XMPP_URL_TAT_ENGINE=http://tat.your-domain
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;export TAT2XMPP_LISTEN_PORT=8080
+export TAT2XMPP_HOOK_KEY=a-key-used-by-tat2xmpp
+export TAT2XMPP_USERNAME_TAT_ENGINE=tat.system.jabber
+export TAT2XMPP_XMPP_BOT_PASSWORD=password-of-bot-user-on-xmpp
+export TAT2XMPP_PRODUCTION=true
+export TAT2XMPP_PASSWORD_TAT_ENGINE=very-long-tat-password-of-tat.system.jabber
+export TAT2XMPP_XMPP_BOT_JID=robot.tat@your-domain
+export TAT2XMPP_XMPP_SERVER=your-jabber-server:5222
+export TAT2XMPP_URL_TAT_ENGINE=http://tat.your-domain
 
 # Running TAT2XMPP
 ./tat2xmpp

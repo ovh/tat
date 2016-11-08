@@ -3,7 +3,7 @@ title: "Mail2Tat"
 weight: 2
 toc: true
 prev: "/ecosystem/al2tat"
-next: "/ecosystem/tat2xmpp"
+next: "/ecosystem/tat2es"
 
 ---
 
