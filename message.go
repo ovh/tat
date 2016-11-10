@@ -143,9 +143,10 @@ type MessageCriteria struct {
 	LimitMaxNbVotesDown     string
 	OnlyMsgRoot             string `bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty"`
 	OnlyCount               string
+	SortBy			string `bson:"sortBy" json:"sortBy"`
 }
 
-// CacheKey returns cacke key value
+// CacheKey returns cache key value
 func (m *MessageCriteria) CacheKey() []string {
 	s := []string{}
 	if m == nil {

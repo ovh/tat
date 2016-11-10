@@ -346,6 +346,9 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 	if len(bsonNbVotesDown) > 0 {
 		query = append(query, bson.M{"nbVotesDown": bsonNbVotesDown})
 	}
+	if criteria.SortBy == "" {
+		criteria.SortBy = "-dateCreation"
+	}
 
 	if len(query) > 0 {
 		return bson.M{"$and": query}, nil
@@ -503,7 +506,7 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 	}
 
 	err = store.GetCMessages(topic.Collection).Find(c).
-		Sort("-dateCreation").
+		Sort(criteria.SortBy).
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
 		All(&messages)
@@ -601,7 +604,7 @@ func initTree(messages []tat.Message, criteria *tat.MessageCriteria, username st
 	if errc != nil {
 		return msgs, errc
 	}
-	err := store.GetCMessages(topic.Collection).Find(cr).Sort("-dateCreation").All(&msgs)
+	err := store.GetCMessages(topic.Collection).Find(cr).Sort(c.SortBy).All(&msgs)
 	if err != nil {
 		log.Errorf("initTree>> Error while Find Messages in getTree by username:%s with criterias:%s on topic:%s, err:%s", username, criteria.GetURL(), topic.Topic, err)
 		return messages, err
@@ -717,7 +720,7 @@ func getTree(messagesIn map[string][]tat.Message, criteria *tat.MessageCriteria,
 		if errc != nil {
 			return msgs, errc
 		}
-		err := store.GetCMessages(topic.Collection).Find(cr).Sort("-dateCreation").All(&msgs)
+		err := store.GetCMessages(topic.Collection).Find(cr).Sort(c.SortBy).All(&msgs)
 		if err != nil {
 			log.Errorf("getTree >> Error while Find Messages in getTree by username %s and criterias:%s on topic %s, err:%s", username, criteria.GetURL(), topic.Topic, err)
 			return messages, err
@@ -1587,7 +1590,7 @@ func MigrateMessagesToDedicatedTopic(topic *tat.Topic, limit int) (int, error) {
 	}
 	var msgsToMigrate []tat.Message
 	err := store.Tat().Session.DB(store.DatabaseName).C(store.CollectionDefaultMessages).Find(c).
-		Sort("-dateCreation").
+		Sort(criteria.SortBy).
 		Skip(0).
 		Limit(limit).
 		All(&msgsToMigrate)

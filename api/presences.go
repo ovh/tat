@@ -35,6 +35,9 @@ func (*PresencesController) buildCriteria(ctx *gin.Context) *tat.PresenceCriteri
 	c.Username = ctx.Query("username")
 	c.DateMinPresence = ctx.Query("dateMinPresence")
 	c.DateMaxPresence = ctx.Query("dateMaxPresence")
+	if c.SortBy == "" {
+		c.SortBy = "-datePresence"
+	}
 	return &c
 }
 

@@ -99,6 +99,7 @@ type TopicCriteria struct {
 	GetForTatAdmin       string
 	GetForAllTasksTopics bool
 	Group                string
+	SortBy		     string
 }
 
 // CacheKey returns cacke key value

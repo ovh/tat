@@ -254,7 +254,7 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 	}
 
 	err := cursor.Select(GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic)).
-		Sort("topic").
+		Sort(criteria.SortBy).
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
 		All(&topics)

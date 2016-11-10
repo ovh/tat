@@ -45,6 +45,9 @@ func (*UsersController) buildCriteria(ctx *gin.Context) *tat.UserCriteria {
 	c.Fullname = ctx.Query("fullname")
 	c.DateMinCreation = ctx.Query("dateMinCreation")
 	c.DateMaxCreation = ctx.Query("dateMaxCreation")
+	if c.SortBy == "" {
+		c.SortBy = "-dateCreation"
+	}
 	return &c
 }
 

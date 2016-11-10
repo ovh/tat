@@ -110,7 +110,7 @@ func ListUsers(criteria *tat.UserCriteria, isAdmin bool) (int, []tat.User, error
 	}
 
 	err = cursor.Select(getUserListField(isAdmin)).
-		Sort("-dateCreation").
+		Sort(criteria.SortBy).
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
 		All(&users)

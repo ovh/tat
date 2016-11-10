@@ -27,6 +27,7 @@ type GroupCriteria struct {
 	DateMinCreation string
 	DateMaxCreation string
 	UserUsername    string
+	SortBy		string
 }
 
 // CacheKey returns cacke key value
