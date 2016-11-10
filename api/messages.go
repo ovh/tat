@@ -10,7 +10,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
-	hook "github.com/ovh/tat/api/hook"
+	"github.com/ovh/tat/api/hook"
 	messageDB "github.com/ovh/tat/api/message"
 	presenceDB "github.com/ovh/tat/api/presence"
 	topicDB "github.com/ovh/tat/api/topic"
@@ -225,7 +225,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 				StartTag:    messageIn.StartTagReference,
 				AndLabel:    messageIn.LabelReference,
 				StartLabel:  messageIn.StartLabelReference,
-				OnlyMsgRoot: tat.True,
+				OnlyMsgRoot: messageIn.OnlyRootReference != tat.False, // default value must be true
 				Topic:       topic.Topic,
 			}
 			mlist, efind := messageDB.ListMessages(c, user.Username, *topic)
