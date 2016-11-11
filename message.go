@@ -320,6 +320,7 @@ type MessageJSON struct {
 	StartLabelReference string        `json:"startLabelReference"`
 	TagReference        string        `json:"tagReference"`
 	LabelReference      string        `json:"labelReference"`
+	OnlyRootReference   string 	  `json:"onlyRootReference"`
 	Action              string        `json:"action"`
 	DateCreation        float64       `json:"dateCreation"`
 	Labels              []Label       `json:"labels"`

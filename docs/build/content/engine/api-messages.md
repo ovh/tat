@@ -83,6 +83,7 @@ Reply, Like, Unlike, Add Label, Remove Label, etc... use idReference but it's po
 * StartTagReference
 * LabelReference
 * StartLabelReference
+* OnlyRootReference (true by default)
 
 ```bash
 curl -XPOST \
@@ -197,7 +198,7 @@ curl -XPUT \
     -H 'Content-Type: application/json' \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
-	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "update", "text": "my New Mesage updated"}'\
+	-d '{ "tagReference": "aaa", "onlyRootReference": "false", "action": "update", "text": "my New Mesage updated"}'\
 	https://<tatHostname>:<tatPort>/message/topic/sub-topic
 ```
 
