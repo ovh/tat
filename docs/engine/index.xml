@@ -322,6 +322,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
 &lt;li&gt;StartTagReference&lt;/li&gt;
 &lt;li&gt;LabelReference&lt;/li&gt;
 &lt;li&gt;StartLabelReference&lt;/li&gt;
+&lt;li&gt;OnlyRootReference (true by default)&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPOST \
@@ -432,7 +433,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &#39;Content-Type: application/json&#39; \
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
-	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;update&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot;my New Mesage updated&amp;quot;}&#39;\
+	-d &#39;{ &amp;quot;tagReference&amp;quot;: &amp;quot;aaa&amp;quot;, &amp;quot;onlyRootReference&amp;quot;: &amp;quot;false&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;update&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot;my New Mesage updated&amp;quot;}&#39;\
 	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 

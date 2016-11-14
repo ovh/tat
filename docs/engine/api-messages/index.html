@@ -810,6 +810,7 @@
 <li>StartTagReference</li>
 <li>LabelReference</li>
 <li>StartLabelReference</li>
+<li>OnlyRootReference (true by default)</li>
 </ul>
 
 <pre><code class="language-bash">curl -XPOST \
@@ -920,7 +921,7 @@
     -H 'Content-Type: application/json' \
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
-	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;update&quot;, &quot;text&quot;: &quot;my New Mesage updated&quot;}'\
+	-d '{ &quot;tagReference&quot;: &quot;aaa&quot;, &quot;onlyRootReference&quot;: &quot;false&quot;, &quot;action&quot;: &quot;update&quot;, &quot;text&quot;: &quot;my New Mesage updated&quot;}'\
 	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
 </code></pre>
 
