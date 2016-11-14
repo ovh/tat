@@ -220,12 +220,16 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 				return message, tat.Topic{}, nil, e
 			}
 		} else { // TagReference, StartTagReference,LabelReference, StartLabelReference
+			onlyMsgRoot := tat.True // default value must be true
+			if messageIn.OnlyRootReference != tat.True {
+				onlyMsgRoot = tat.False
+			}
 			c := &tat.MessageCriteria{
 				AndTag:      messageIn.TagReference,
 				StartTag:    messageIn.StartTagReference,
 				AndLabel:    messageIn.LabelReference,
 				StartLabel:  messageIn.StartLabelReference,
-				OnlyMsgRoot: messageIn.OnlyRootReference != tat.False, // default value must be true
+				OnlyMsgRoot: onlyMsgRoot,
 				Topic:       topic.Topic,
 			}
 			mlist, efind := messageDB.ListMessages(c, user.Username, *topic)
