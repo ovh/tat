@@ -221,7 +221,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 			}
 		} else { // TagReference, StartTagReference,LabelReference, StartLabelReference
 			onlyMsgRoot := tat.True // default value must be true
-			if messageIn.OnlyRootReference != tat.True {
+			if messageIn.OnlyRootReference == tat.False {
 				onlyMsgRoot = tat.False
 			}
 			c := &tat.MessageCriteria{
