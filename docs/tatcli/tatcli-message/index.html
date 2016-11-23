@@ -806,6 +806,7 @@ Flags:
       --notLabel string                  Search by label (exclude): could be labelA,labelB
       --notTag string                    Search by tag (exclude) : could be tagA,tagB
       --onlyCount string                 --onlyCount=true: only count messages, without retrieve msg. limit, skip, treeview criterias are ignored.
+      --onlyMsgReply string              --onlyMsgReply=true: restricts to reply message only (inReplyOfIDRoot not empty). If treeView is used, limit search criteria to reply, messages root are still given, independently of search criteria.
       --onlyMsgRoot string               --onlyMsgRoot=true: restricts to root message only (inReplyOfIDRoot empty). If treeView is used, limit search criteria to root message, replies are still given, independently of search criteria.
       --startLabel string                Search by a label prefix: --startLabel='mykey:,myKey2:'
       --startTag string                  Search by a tag prefix: --startTag='mykey:,myKey2:'
