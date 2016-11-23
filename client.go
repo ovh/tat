@@ -13,7 +13,7 @@ import (
 	"github.com/facebookgo/httpcontrol"
 )
 
-// Client representes a Client configuration to connect to api
+// Client represents a Client configuration to connect to api
 type Client struct {
 	username       string
 	password       string
