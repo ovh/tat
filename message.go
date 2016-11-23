@@ -142,6 +142,7 @@ type MessageCriteria struct {
 	LimitMaxNbVotesUP       string
 	LimitMaxNbVotesDown     string
 	OnlyMsgRoot             string `bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty"`
+	OnlyMsgReply            string `bson:"onlyMsgReply" json:"onlyMsgReply,omitempty"`
 	OnlyCount               string
 }
 
@@ -280,6 +281,9 @@ func (m *MessageCriteria) CacheKey() []string {
 	if m.OnlyMsgRoot != "" {
 		s = append(s, "OnlyMsgRoot="+m.OnlyMsgRoot)
 	}
+	if m.OnlyMsgReply != "" {
+		s = append(s, "OnlyMsgReply="+m.OnlyMsgReply)
+	}
 	if m.OnlyCount != "" {
 		s = append(s, "OnlyCount="+m.OnlyCount)
 	}
@@ -320,7 +324,7 @@ type MessageJSON struct {
 	StartLabelReference string        `json:"startLabelReference"`
 	TagReference        string        `json:"tagReference"`
 	LabelReference      string        `json:"labelReference"`
-	OnlyRootReference   string 	  `json:"onlyRootReference"`
+	OnlyRootReference   string        `json:"onlyRootReference"`
 	Action              string        `json:"action"`
 	DateCreation        float64       `json:"dateCreation"`
 	Labels              []Label       `json:"labels"`
@@ -793,6 +797,9 @@ func (m *MessageCriteria) GetURL() string {
 	if m.OnlyMsgRoot == True {
 		v.Set("onlyMsgRoot", "true")
 	}
+	if m.OnlyMsgReply == True {
+		v.Set("onlyMsgReply", "true")
+	}
 	if m.OnlyCount == True {
 		v.Set("onlyCount", "true")
 	}
@@ -888,6 +895,8 @@ func GetMessageCriteriaFromURLValues(values url.Values) (*MessageCriteria, error
 			c.LimitMaxNbVotesDown = v[0]
 		case "onlyMsgRoot":
 			c.OnlyMsgRoot = v[0]
+		case "onlyMsgReply":
+			c.OnlyMsgReply = v[0]
 		case "onlyCount":
 			c.OnlyCount = v[0]
 		}

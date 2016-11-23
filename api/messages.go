@@ -73,6 +73,7 @@ func (*MessagesController) buildCriteria(ctx *gin.Context) *tat.MessageCriteria 
 	c.LimitMinNbReplies = ctx.Query("limitMinNbReplies")
 	c.LimitMaxNbReplies = ctx.Query("limitMaxNbReplies")
 	c.OnlyMsgRoot = ctx.Query("onlyMsgRoot")
+	c.OnlyMsgReply = ctx.Query("onlyMsgReply")
 	c.OnlyCount = ctx.Query("onlyCount")
 	return &c
 }

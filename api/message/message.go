@@ -69,6 +69,10 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 		queryOnlyMsgRoot := bson.M{"inReplyOfIDRoot": bson.M{"$eq": ""}}
 		query = append(query, queryOnlyMsgRoot)
 	}
+	if criteria.OnlyMsgReply == tat.True {
+		queryOnlyMsgReply := bson.M{"inReplyOfIDRoot": bson.M{"$ne": ""}}
+		query = append(query, queryOnlyMsgReply)
+	}
 
 	if criteria.AllIDMessage != "" {
 		queryIDMessages := bson.M{}
