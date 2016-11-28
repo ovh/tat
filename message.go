@@ -879,6 +879,18 @@ func GetMessageCriteriaFromURLValues(values url.Values) (*MessageCriteria, error
 			c.LastHourMinUpdate = v[0]
 		case "lastHourMaxUpdate":
 			c.LastHourMaxUpdate = v[0]
+		case "dateRefCreation":
+			c.DateRefCreation = v[0]
+		case "dateRefDeltaMinCreation":
+			c.DateRefDeltaMinCreation = v[0]
+		case "dateRefDeltaMaxCreation":
+			c.DateRefDeltaMaxCreation = v[0]
+		case "dateRefUpdate":
+			c.DateRefUpdate = v[0]
+		case "dateRefDeltaMinUpdate":
+			c.DateRefDeltaMinUpdate = v[0]
+		case "dateRefDeltaMaxUpdate":
+			c.DateRefDeltaMaxUpdate = v[0]
 		case "username":
 			c.Username = v[0]
 		case "limitMinNbReplies":
