@@ -12,7 +12,6 @@ import (
 	"github.com/ovh/tat/api/store"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"crypto/cipher"
 )
 
 func buildPresenceCriteria(criteria *tat.PresenceCriteria) (bson.M, error) {

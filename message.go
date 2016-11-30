@@ -284,7 +284,9 @@ func (m *MessageCriteria) CacheKey() []string {
 	if m.OnlyCount != "" {
 		s = append(s, "OnlyCount="+m.OnlyCount)
 	}
-
+	if m.SortBy != "" {
+		s = append(s, "SortBy="+m.SortBy)
+	}
 	return s
 }
 
