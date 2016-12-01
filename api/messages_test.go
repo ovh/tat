@@ -6,6 +6,7 @@ import (
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/tests"
 	"github.com/stretchr/testify/assert"
+	"log"
 )
 
 var messagesCtrl = &MessagesController{}
@@ -145,4 +146,17 @@ func TestMessagesList(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(messagesSearchStartTag.Messages))
 
+	messages, err = client.MessageList(topic.Topic, &tat.MessageCriteria{SortBy: "-dateUpdate"})
+	assert.NoError(t, err)
+	assert.Equal(t, 5, len(messages.Messages))
+
+	// Need to change ErrorLogFunc because next test will imply logError
+	// and we do not want to fail because it is logical
+	tat.ErrorLogFunc = log.Printf
+	messages, err = client.MessageList(topic.Topic, &tat.MessageCriteria{SortBy: "-dateUpdate", TreeView: tat.TreeViewOneTree})
+	assert.Nil(t, messages)
+	//assert.NoError(t, err)
+	assert.EqualError(t, err, "Response code:403 (want:200) with Body:{\"error\":\"Sort must be -dateCreation or treeView will not work\"}\n{\"messages\":[],\"isTopicRw\":true,\"isTopicAdmin\":false}\n")
+
+	tat.ErrorLogFunc = t.Errorf
 }

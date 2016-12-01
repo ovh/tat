@@ -350,6 +350,10 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 		criteria.SortBy = "-dateCreation"
 	}
 
+	if (criteria.TreeView == tat.TreeViewFullTree || criteria.TreeView == tat.TreeViewOneTree) && criteria.SortBy != "-dateCreation" {
+		return bson.M{}, fmt.Errorf("Sort must be -dateCreation or treeView will not work")
+	}
+
 	if len(query) > 0 {
 		return bson.M{"$and": query}, nil
 	} else if len(query) == 1 {

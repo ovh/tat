@@ -799,6 +799,9 @@ func (m *MessageCriteria) GetURL() string {
 	if m.OnlyCount == True {
 		v.Set("onlyCount", "true")
 	}
+	if m.SortBy != "" {
+		v.Set("sortBy", m.SortBy)
+	}
 	return v.Encode()
 }
 
@@ -893,6 +896,8 @@ func GetMessageCriteriaFromURLValues(values url.Values) (*MessageCriteria, error
 			c.OnlyMsgRoot = v[0]
 		case "onlyCount":
 			c.OnlyCount = v[0]
+		case "sortBy":
+			c.SortBy = v[0]
 		}
 	}
 
