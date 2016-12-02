@@ -99,7 +99,7 @@ type TopicCriteria struct {
 	GetForTatAdmin       string
 	GetForAllTasksTopics bool
 	Group                string
-	SortBy		     string
+	SortBy               string
 }
 
 // CacheKey returns cache key value
@@ -148,7 +148,7 @@ func (t *TopicCriteria) CacheKey() []string {
 		s = append(s, "group="+t.Group)
 	}
 	if t.SortBy != "" {
-		s = append(s, "sortBy="+t.SortBy)
+		s = append(s, "sort_by="+t.SortBy)
 	}
 	return s
 }

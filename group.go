@@ -27,7 +27,7 @@ type GroupCriteria struct {
 	DateMinCreation string
 	DateMaxCreation string
 	UserUsername    string
-	SortBy		string
+	SortBy          string
 }
 
 // CacheKey returns cacke key value
@@ -61,7 +61,7 @@ func (g *GroupCriteria) CacheKey() []string {
 		s = append(s, "user_username="+g.UserUsername)
 	}
 	if g.SortBy != "" {
-		s = append(s, "sortBy="+g.SortBy)
+		s = append(s, "sort_by="+g.SortBy)
 	}
 	return s
 }
