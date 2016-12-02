@@ -352,6 +352,14 @@ tatcli msg add /Internal/YourTopic/Dashing &amp;quot;#monitoring #item:Bar&amp;q
 &lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-dashing-view-standardview1.png?width=80%&#34; alt=&#34;Dashing View in Standard View&#34; /&gt;
 &lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-dashing-view-standardview2.png?width=80%&#34; alt=&#34;Dashing View in Standard View&#34; /&gt;&lt;/p&gt;
 
+&lt;h3 id=&#34;legend&#34;&gt;Legend&lt;/h3&gt;
+
+&lt;p&gt;You can add legend on widget-data-series.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;widget-data-series:LegenA:5 4 3 7 5 10 3
+widget-data-series:LegenB:5 4 3 7 5 10 3
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
 
 &lt;p&gt;In plugin.tpl.json file, add this line :&lt;/p&gt;

@@ -152,6 +152,16 @@ In standard View, theses messages look like:
 ![Dashing View in Standard View](/imgs/tatwebui-dashing-view-standardview1.png?width=80%)
 ![Dashing View in Standard View](/imgs/tatwebui-dashing-view-standardview2.png?width=80%)
 
+
+### Legend
+
+You can add legend on widget-data-series.
+
+```
+widget-data-series:LegenA:5 4 3 7 5 10 3
+widget-data-series:LegenB:5 4 3 7 5 10 3
+```
+
 ## Configuration
 In plugin.tpl.json file, add this line :
 
