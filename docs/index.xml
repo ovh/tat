@@ -1149,6 +1149,7 @@ onlyMsgRoot string           onlyMsgRoot=true: restricts to root message only (i
 &lt;li&gt;&lt;code&gt;topic&lt;/code&gt;                 Search by topic&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;treeView&lt;/code&gt;              Tree View of messages: onetree or fulltree. Default: notree&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;username&lt;/code&gt;              Search by username : could be usernameA,usernameB&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sortBy&lt;/code&gt;                Sort message. Use &amp;lsquo;-&amp;rsquo; to reverse sort. Default is &amp;ndash;sortBy=-dateCreation. You can use: text, topic, inReplyOfID, inReplyOfIDRoot, nbLikes, labels, likers, votersUP, votersDown, nbVotesUP, nbVotesDown, userMentions, urls, tags, dateCreation, dateUpdate, author, nbReplies&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&#34;examples&#34;&gt;Examples&lt;/h3&gt;

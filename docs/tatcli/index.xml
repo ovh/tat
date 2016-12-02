@@ -268,6 +268,7 @@ Flags:
       --onlyCount string                 --onlyCount=true: only count messages, without retrieve msg. limit, skip, treeview criterias are ignored.
       --onlyMsgReply string              --onlyMsgReply=true: restricts to reply message only (inReplyOfIDRoot not empty). If treeView is used, limit search criteria to reply, messages root are still given, independently of search criteria.
       --onlyMsgRoot string               --onlyMsgRoot=true: restricts to root message only (inReplyOfIDRoot empty). If treeView is used, limit search criteria to root message, replies are still given, independently of search criteria.
+      --sortBy string                    --sortBy=-dateCreation: sort message. Use &#39;-&#39; to reverse sort. Default is --sortBy=-dateCreation. You can use: text, topic, inReplyOfID, inReplyOfIDRoot, nbLikes, labels, likers, votersUP, votersDown, nbVotesUP, nbVotesDown, userMentions, urls, tags, dateCreation, dateUpdate, author, nbReplies
       --startLabel string                Search by a label prefix: --startLabel=&#39;mykey:,myKey2:&#39;
       --startTag string                  Search by a tag prefix: --startTag=&#39;mykey:,myKey2:&#39;
       --tag string                       Search by tag : could be tagA,tagB

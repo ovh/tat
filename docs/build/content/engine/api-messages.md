@@ -404,6 +404,7 @@ onlyMsgRoot string           onlyMsgRoot=true: restricts to root message only (i
 * `topic`                 Search by topic
 * `treeView`              Tree View of messages: onetree or fulltree. Default: notree
 * `username`              Search by username : could be usernameA,usernameB
+* `sortBy`                Sort message. Use '-' to reverse sort. Default is --sortBy=-dateCreation. You can use: text, topic, inReplyOfID, inReplyOfIDRoot, nbLikes, labels, likers, votersUP, votersDown, nbVotesUP, nbVotesDown, userMentions, urls, tags, dateCreation, dateUpdate, author, nbReplies
 
 ### Examples
 
