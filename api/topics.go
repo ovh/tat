@@ -49,6 +49,10 @@ func (*TopicsController) buildCriteria(ctx *gin.Context, user *tat.User) *tat.To
 	if c.OnlyFavorites == "true" {
 		c.Topic = strings.Join(user.FavoritesTopics, ",")
 	}
+
+	if c.SortBy == "" {
+		c.SortBy = "topic"
+	}
 	return &c
 }
 

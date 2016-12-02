@@ -109,7 +109,7 @@ func listPresencesInternal(criteria *tat.PresenceCriteria, allFields bool) (int,
 		return -1, presences, fmt.Errorf("Error while count Presences %s", err)
 	}
 	err = cursor.Select(getFieldsPresence(allFields)).
-		Sort("-datePresence").
+		Sort(criteria.SortBy).
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
 		All(&presences)

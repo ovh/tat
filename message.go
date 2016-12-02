@@ -144,9 +144,10 @@ type MessageCriteria struct {
 	OnlyMsgRoot             string `bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty"`
 	OnlyMsgReply            string `bson:"onlyMsgReply" json:"onlyMsgReply,omitempty"`
 	OnlyCount               string
+	SortBy			string `bson:"sortBy" json:"sortBy"`
 }
 
-// CacheKey returns cacke key value
+// CacheKey returns cache key value
 func (m *MessageCriteria) CacheKey() []string {
 	s := []string{}
 	if m == nil {
@@ -287,7 +288,9 @@ func (m *MessageCriteria) CacheKey() []string {
 	if m.OnlyCount != "" {
 		s = append(s, "OnlyCount="+m.OnlyCount)
 	}
-
+	if m.SortBy != "" {
+		s = append(s, "SortBy="+m.SortBy)
+	}
 	return s
 }
 
@@ -803,6 +806,9 @@ func (m *MessageCriteria) GetURL() string {
 	if m.OnlyCount == True {
 		v.Set("onlyCount", "true")
 	}
+	if m.SortBy != "" {
+		v.Set("sortBy", m.SortBy)
+	}
 	return v.Encode()
 }
 
@@ -911,6 +917,8 @@ func GetMessageCriteriaFromURLValues(values url.Values) (*MessageCriteria, error
 			c.OnlyMsgReply = v[0]
 		case "onlyCount":
 			c.OnlyCount = v[0]
+		case "sortBy":
+			c.SortBy = v[0]
 		}
 	}
 
