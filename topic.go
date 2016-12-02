@@ -102,7 +102,7 @@ type TopicCriteria struct {
 	SortBy		     string
 }
 
-// CacheKey returns cacke key value
+// CacheKey returns cache key value
 func (t *TopicCriteria) CacheKey() []string {
 	var s = []string{}
 	if t == nil {
@@ -146,6 +146,9 @@ func (t *TopicCriteria) CacheKey() []string {
 	}
 	if t.Group != "" {
 		s = append(s, "group="+t.Group)
+	}
+	if t.SortBy != "" {
+		s = append(s, "sortBy="+t.SortBy)
 	}
 	return s
 }

@@ -60,6 +60,9 @@ func (g *GroupCriteria) CacheKey() []string {
 	if g.UserUsername != "" {
 		s = append(s, "user_username="+g.UserUsername)
 	}
+	if g.SortBy != "" {
+		s = append(s, "sortBy="+g.SortBy)
+	}
 	return s
 }
 
