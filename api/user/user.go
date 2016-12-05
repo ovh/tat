@@ -109,8 +109,12 @@ func ListUsers(criteria *tat.UserCriteria, isAdmin bool) (int, []tat.User, error
 		return -1, users, fmt.Errorf("Error while count Users %s", err)
 	}
 
+	sortBy := criteria.SortBy
+	if sortBy == "" {
+		sortBy = "-dateCreation"
+	}
 	err = cursor.Select(getUserListField(isAdmin)).
-		Sort(criteria.SortBy).
+		Sort(sortBy).
 		Skip(criteria.Skip).
 		Limit(criteria.Limit).
 		All(&users)

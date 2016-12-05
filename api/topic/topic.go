@@ -253,8 +253,8 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 		oneTopic = true
 	}
 
-	sortBy := criteria.SortBy;
-	if criteria.SortBy == "" {
+	sortBy := criteria.SortBy
+	if sortBy == "" {
 		sortBy = "topic"
 	}
 	err := cursor.Select(GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic)).
