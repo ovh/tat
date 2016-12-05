@@ -47,7 +47,7 @@ func CheckPassword() gin.HandlerFunc {
 
 		user, err := validateTatHeaders(tatHeaders)
 		if err != nil {
-			log.Errorf("Error, send 401, err : %s", err.Error())
+			log.Debugf("CheckPassword> Error, send 401, err: %s", err.Error())
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			ctx.AbortWithError(http.StatusUnauthorized, err)
 			return
@@ -111,7 +111,8 @@ func validateTatHeaders(tatHeaders tatHeadersType) (tat.User, error) {
 		if !found {
 			return user, fmt.Errorf("Invalid Tat credentials for username %s", tatHeaders.username)
 		} else if err != nil {
-			return user, fmt.Errorf("Error with DB Backend  %s, err:%s", tatHeaders.username, err.Error())
+			log.Errorf("validateTatHeaders> Error with DB Backend %s, err:%s", tatHeaders.username, err.Error())
+			return user, fmt.Errorf("validateTatHeaders> Error with DB Backend for %s", tatHeaders.username)
 		}
 	}
 
