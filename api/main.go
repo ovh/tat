@@ -206,7 +206,7 @@ func init() {
 	flags.Int("write-timeout", 50, "Write Timeout in seconds")
 	viper.BindPFlag("write_timeout", flags.Lookup("write-timeout"))
 
-	flags.Int("db-socket-timeout", 60, "Session DB Socket Timeout in seconds")
+	flags.Int("db-socket-timeout", 40, "Session DB Socket Timeout in seconds")
 	viper.BindPFlag("db_socket_timeout", flags.Lookup("db-socket-timeout"))
 
 	flags.String("redis-hosts", "", "Optional - Used for Cache - Redis hosts (comma separated for cluster)")
