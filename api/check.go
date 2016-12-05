@@ -49,7 +49,7 @@ func CheckPassword() gin.HandlerFunc {
 		if err != nil {
 			log.Debugf("CheckPassword> Error, send 401, err: %s", err.Error())
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-			ctx.AbortWithError(http.StatusUnauthorized, err)
+			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
