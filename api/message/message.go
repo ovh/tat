@@ -388,27 +388,27 @@ func FindByID(message *tat.Message, id string, topic tat.Topic) error {
 // messageListFromCache returns msglist, isInCache, error
 func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]tat.Message, bool, error) {
 	keyList := cache.CriteriaKey(criteria, "tat", "messages", topic.Topic, "list_messages")
-	log.Debugf("messageListFromCache>>> Load %s", keyList)
+	log.Debugf("messageListFromCache: Load %s", keyList)
 
 	c := cache.Client()
 	if inCache, err := c.Exists(keyList).Result(); !inCache || err != nil {
-		log.Debugf("messageListFromCache>>> key %s does not exist", keyList)
+		log.Debugf("messageListFromCache: key %s does not exist", keyList)
 		return []tat.Message{}, false, nil
 	}
 
 	keyListList := cache.Key(cache.TatMessagesKeys()...)
 	isMember, err := c.SIsMember(keyListList, keyList).Result()
 	if err != nil {
-		log.Debugf("messageListFromCache>>> error with sismember on %s with key:%s, err:%s", keyListList, keyList, err)
+		log.Debugf("messageListFromCache: error with sismember on %s with key:%s, err:%s", keyListList, keyList, err)
 		return []tat.Message{}, false, nil
 	}
 
 	if !isMember {
 		// key tat:messages:<topic>:<criteria> exists, but not in tat:message:keys
 		// so del tat:messages:<topic>:<criteria>
-		log.Warnf("messageListFromCache>>> key %s exists, but not in %s, so we delete this key ", keyList, keyListList)
+		log.Warnf("messageListFromCache: key %s exists, but not in %s, so we delete this key ", keyList, keyListList)
 		if _, errdel := c.Del(keyList).Result(); errdel != nil {
-			log.Warnf("messageListFromCache>>> error while delete key %s, so flushDb...", keyList)
+			log.Warnf("messageListFromCache: error while delete key %s, so flushDb...", keyList)
 			c.FlushDb()
 		}
 		return []tat.Message{}, false, nil
@@ -416,25 +416,25 @@ func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]ta
 
 	msgIDs, err := c.ZRevRange(keyList, 0, -1).Result()
 	if err != nil {
-		log.Warnf("listMessagesFromCache>>> Unable to load msg ID: %s", err)
+		log.Warnf("listMessagesFromCache: Unable to load msg ID: %s", err)
 		return []tat.Message{}, false, err
 	}
 
 	if len(msgIDs) == 0 {
-		log.Debugf("messageListFromCache>>> len(msgIDs)== 0, return, err:", err)
+		log.Debugf("messageListFromCache: len(msgIDs)== 0, return, err:", err)
 		return []tat.Message{}, true, nil
 	}
 
 	msgBytes, _ := c.MGet(msgIDs...).Result()
-	//log.Debugf("messageListFromCache>>> Messages ID loaded from cache : %s %s", keyList, msgBytes)
+	//log.Debugf("messageListFromCache: Messages ID loaded from cache : %s %s", keyList, msgBytes)
 	msg := []tat.Message{}
 	for _, bytes := range msgBytes {
 		if bytes != nil {
 			m := &tat.Message{}
-			//	log.Debugf("messageListFromCache>>> %T %s", bytes, bytes)
+			//	log.Debugf("messageListFromCache: %T %s", bytes, bytes)
 			if bytes != redis.Nil {
 				if errm := json.Unmarshal([]byte(bytes.(string)), m); errm != nil {
-					log.Warnf("messageListFromCache>>> Unable to unmarshal messsage %v : %s", bytes, errm)
+					log.Warnf("messageListFromCache: Unable to unmarshal messsage %v : %s", bytes, errm)
 					continue
 				}
 				msg = append(msg, *m)
@@ -455,9 +455,9 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 	defer pipeline.Close()
 
 	keyList := cache.CriteriaKey(criteria, "tat", "messages", topic.Topic, "list_messages") //tat:messages:<topic>:list_messages:<criteria>
-	log.Debugf("cacheMessageList>>> Push %s in cache", keyList)
+	log.Debugf("cacheMessageList: Push %s in cache", keyList)
 	keyListList := cache.Key(cache.TatMessagesKeys()...) // tat:messages:keys
-	log.Debugf("cacheMessageList>>> Saving key %s in %s", keyList, keyListList)
+	log.Debugf("cacheMessageList: Saving key %s in %s", keyList, keyListList)
 	pipeline.SAdd(keyListList, keyList)
 
 	for _, m := range messages {
@@ -479,7 +479,7 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 		log.Warnf("cacheListMessages: Error executing pipeline: %s", err)
 		return err
 	}
-	log.Debugf("cacheMessageList>>> %s cached", keyList)
+	log.Debugf("cacheMessageList: %s cached", keyList)
 	return nil
 }
 
@@ -510,7 +510,7 @@ func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topi
 	}
 
 	if criteria.Limit > 500 {
-		log.Warnf("ListMessages >> criteriaLimitWarn >> criteria with limit more than 500, username:%s topic:%s criteria:%s", username, topic.Topic, criteria.GetURL())
+		log.Warnf("ListMessages: criteriaLimitWarn: criteria with limit more than 500, username:%s topic:%s criteria:%s", username, topic.Topic, criteria.GetURL())
 	}
 
 	err = store.GetCMessages(topic.Collection).Find(c).
@@ -614,7 +614,7 @@ func initTree(messages []tat.Message, criteria *tat.MessageCriteria, username st
 	}
 	err := store.GetCMessages(topic.Collection).Find(cr).Sort(c.SortBy).All(&msgs)
 	if err != nil {
-		log.Errorf("initTree>> Error while Find Messages in getTree by username:%s with criterias:%s on topic:%s, err:%s", username, criteria.GetURL(), topic.Topic, err)
+		log.Errorf("initTree: Error while Find Messages in getTree by username:%s with criterias:%s on topic:%s, err:%s", username, criteria.GetURL(), topic.Topic, err)
 		return messages, err
 	}
 	return msgs, nil
@@ -730,7 +730,7 @@ func getTree(messagesIn map[string][]tat.Message, criteria *tat.MessageCriteria,
 		}
 		err := store.GetCMessages(topic.Collection).Find(cr).Sort(c.SortBy).All(&msgs)
 		if err != nil {
-			log.Errorf("getTree >> Error while Find Messages in getTree by username %s and criterias:%s on topic %s, err:%s", username, criteria.GetURL(), topic.Topic, err)
+			log.Errorf("getTree :Error while Find Messages in getTree by username %s and criterias:%s on topic %s, err:%s", username, criteria.GetURL(), topic.Topic, err)
 			return messages, err
 		}
 

@@ -61,7 +61,7 @@ func Init(t *testing.T) {
 		return
 	}
 
-	log.Infof(">>> Connected to database %s", dbAddr)
+	log.Infof("Connected to database %s", dbAddr)
 	initiliazed = true
 }
 

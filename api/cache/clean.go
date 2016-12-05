@@ -46,7 +46,7 @@ func cleanAllByType(key string) {
 		pipeline.Del(keys...)
 		removeSomeMembers(pipeline, key, keys...)
 		if _, err := pipeline.Exec(); err != nil {
-			log.Warnf("CleanMessagesLists >> Error executing pipeline: %s", err)
+			log.Warnf("CleanMessagesLists: Error executing pipeline: %s", err)
 			FlushDB()
 		}
 
@@ -112,7 +112,7 @@ func CleanMessagesLists(topic string) {
 		removeSomeMembers(pipeline, key, members...)
 
 		if _, err := pipeline.Exec(); err != nil {
-			log.Warnf("CleanMessagesLists >> Error executing pipeline: %s", err)
+			log.Warnf("CleanMessagesLists: Error executing pipeline: %s", err)
 			FlushDB()
 		}
 

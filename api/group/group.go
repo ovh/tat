@@ -132,7 +132,7 @@ func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int,
 
 	ccount, _ := cache.Client().Get(kcount).Int64()
 	if len(groups) > 0 && ccount > 0 {
-		log.Debugf("ListGroups>>> groups (%s) loaded from cache", k)
+		log.Debugf("ListGroups: groups (%s) loaded from cache", k)
 		return int(ccount), groups, nil
 	}
 
@@ -165,7 +165,7 @@ func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int,
 	cache.Client().Set(kcount, count, time.Hour)
 	bytes, _ = json.Marshal(groups)
 	if len(bytes) > 0 {
-		log.Debugf("ListGroups>>> Put %s in cache", k)
+		log.Debugf("ListGroups: Put %s in cache", k)
 		cache.Client().Set(k, string(bytes), time.Hour)
 	}
 	ku := cache.Key("tat", "users", username, "groups")

@@ -46,7 +46,7 @@ func sendOnKafkaTopic(hook *tat.HookJSON, topicKafka string, topic tat.Topic) er
 	log.Debugf("sendOnKafkaTopic enter for post on kafka topic %s setted on tat topic %s", topicKafka, topic.Topic)
 
 	if !hookKafkaEnabled {
-		return fmt.Errorf("sendOnKafkaTopic >> Kafka not initialized")
+		return fmt.Errorf("sendOnKafkaTopic: Kafka not initialized")
 	}
 
 	data, err := json.Marshal(hook)

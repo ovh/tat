@@ -144,7 +144,7 @@ type MessageCriteria struct {
 	OnlyMsgRoot             string `bson:"onlyMsgRoot" json:"onlyMsgRoot,omitempty"`
 	OnlyMsgReply            string `bson:"onlyMsgReply" json:"onlyMsgReply,omitempty"`
 	OnlyCount               string
-	SortBy			string `bson:"sortBy" json:"sortBy"`
+	SortBy                  string `bson:"sortBy" json:"sortBy"`
 }
 
 // CacheKey returns cache key value
@@ -969,15 +969,15 @@ func (c *Client) messagesList(topic string, criteria *MessageCriteria) ([]byte, 
 	criteria.Topic = topic
 
 	path := fmt.Sprintf("/messages%s?%s", criteria.Topic, criteria.GetURL())
-	DebugLogFunc("MessageList>>> Path requested: %s", path)
+	DebugLogFunc("MessageList: Path requested: %s", path)
 
 	body, err := c.reqWant(http.MethodGet, 200, path, nil)
 	if err != nil {
-		ErrorLogFunc("messagesList >> Error getting messages list: %s", err)
+		ErrorLogFunc("messagesList: Error getting messages list: %s", err)
 		return nil, err
 	}
 
-	DebugLogFunc("MessageList>>> Messages List Response, len body %d", len(body))
+	DebugLogFunc("MessageList: Messages List Response, len body %d", len(body))
 	return body, err
 }
 

@@ -21,7 +21,7 @@ func initWebhook() {
 }
 
 func sendWebHook(hook *tat.HookJSON, path string, topic tat.Topic, headerName, headerValue string) error {
-	log.Debugf("sendWebHook >> enter for post webhook setted on topic %s", topic.Topic)
+	log.Debugf("sendWebHook: enter for post webhook setted on topic %s", topic.Topic)
 
 	data, err := json.Marshal(hook)
 	if err != nil {
@@ -50,12 +50,12 @@ func sendWebHook(hook *tat.HookJSON, path string, topic tat.Topic, headerName, h
 	}()
 
 	if err != nil {
-		return fmt.Errorf("sendWebHook >> err:%s", err)
+		return fmt.Errorf("sendWebHook: err:%s", err)
 	}
 
 	body, errb := ioutil.ReadAll(resp.Body)
 	if errb != nil {
-		return fmt.Errorf("sendWebHook >> Error with ioutil.ReadAll %s", errb.Error())
+		return fmt.Errorf("sendWebHook: Error with ioutil.ReadAll %s", errb.Error())
 	}
 
 	if resp != nil && resp.StatusCode > 300 {

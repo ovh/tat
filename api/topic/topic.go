@@ -236,7 +236,7 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 
 	ccount, _ := cache.Client().Get(kcount).Int64()
 	if len(topics) > 0 && ccount > 0 {
-		log.Debugf("ListTopics>>> topics (%s) loaded from cache", k)
+		log.Debugf("ListTopics: topics (%s) loaded from cache", k)
 		return int(ccount), topics, nil
 	}
 
@@ -271,7 +271,7 @@ func ListTopics(criteria *tat.TopicCriteria, u *tat.User, isAdmin, withTags, wit
 	cache.Client().Set(kcount, count, time.Hour)
 	bytes, _ = json.Marshal(topics)
 	if len(bytes) > 0 {
-		log.Debugf("ListTopics>>> Put %s in cache", k)
+		log.Debugf("ListTopics: Put %s in cache", k)
 		cache.Client().Set(k, string(bytes), time.Hour)
 	}
 	ku := cache.Key("tat", "users", username, "topics")
@@ -390,7 +390,7 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 		log.Errorf("Error while inserting history for new topic %s", err)
 	}
 
-	log.Debugf("Insert>>> Clean topics cache for user %s", u.Username)
+	log.Debugf("Insert: Clean topics cache for user %s", u.Username)
 	cache.CleanAllTopicsLists()
 
 	return AddRwUser(topic, u.Username, u.Username, false)
@@ -398,7 +398,7 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 
 // Delete deletes a topic from database
 func Delete(topic *tat.Topic, u *tat.User) error {
-	log.Debugf("Delete>>> Clean topics cache for user %s", u.Username)
+	log.Debugf("Delete: Clean topics cache for user %s", u.Username)
 	if topic.Collection != "" {
 
 		err := store.Tat().CTopics.Update(
