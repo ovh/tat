@@ -30,6 +30,8 @@ to hear from you! Make sure to read CONTRIBUTING file on repository concerned be
 
 ### Ecosystem
 
-* Al2tat [Doc](/ecosystem/al2tat/) - [https://github.com/ovh/al2tat](https://github.com/ovh/al2tat) - [LICENSE](https://github.com/ovh/al2tat/blob/master/LICENSE) - [CONTRIBUTING](https://github.com/ovh/al2tat/blob/master/CONTRIBUTING.md)
-* Mail2tat [Doc](/ecosystem/mail2tat/) - [https://github.com/ovh/mail2tat](https://github.com/ovh/mail2tat) - [LICENSE](https://github.com/ovh/mail2tat/blob/master/LICENSE) - [CONTRIBUTING](https://github.com/ovh/mail2tat/blob/master/CONTRIBUTING.md)
-* Tat2XMPP [Doc](/ecosystem/tat2xmpp/) - [https://github.com/ovh/tat2xmpp](https://github.com/ovh/tat2xmpp) - [LICENSE](https://github.com/ovh/tat2xmpp/blob/master/LICENSE) - [CONTRIBUTING](https://github.com/ovh/tat2xmpp/blob/master/CONTRIBUTING.md)
+* Tat-Contrib repository: [https://github.com/ovh/tat-contrib](https://github.com/ovh/tat-contrib)
+* Al2tat [Doc](/ecosystem/al2tat/) - [https://github.com/ovh/tat-contrib/al2tat](https://github.com/ovh/tat-contrib/al2tat) - [LICENSE](https://github.com/ovh/tat-contrib/al2tat/blob/master/LICENSE) - [CONTRIBUTING](https://github.com/ovh/tat-contrib/al2tat/blob/master/CONTRIBUTING.md)
+* Mail2tat [Doc](/ecosystem/mail2tat/) - [https://github.com/ovh/tat-contrib/mail2tat](https://github.com/ovh/tat-contrib/mail2tat) - [LICENSE](https://github.com/ovh/tat-contrib/mail2tat/blob/master/LICENSE) - [CONTRIBUTING](https://github.com/ovh/tat-contrib/mail2tat/blob/master/CONTRIBUTING.md)
+* Tat2XMPP [Doc](/ecosystem/tat2xmpp/) - [https://github.com/ovh/tat-contrib/tat2xmpp](https://github.com/ovh/tat-contrib/tat2xmpp) - [LICENSE](https://github.com/ovh/tat-contrib/tat2xmpp/blob/master/LICENSE) - [CONTRIBUTING](https://github.com/ovh/tat-contrib/tat2xmpp/blob/master/CONTRIBUTING.md)
+* Tat2es [Doc](/ecosystem/tat2es/) - [https://github.com/ovh/tat-contrib/tat2es](https://github.com/ovh/tat-contrib/tat2es) - [LICENSE](https://github.com/ovh/tat-contrib/tat2es/blob/master/LICENSE) - [CONTRIBUTING](https://github.com/ovh/tat-contrib/tat2es/blob/master/CONTRIBUTING.md)
