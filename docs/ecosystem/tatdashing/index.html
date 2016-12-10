@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/ovh/tat/master/tat.png" type="image/x-icon" />
 
     
-    <title>API - Topics</title>
+    <title>tatdashing</title>
     <link href="https://ovh.github.io/tat/css/nucleus.css" rel="stylesheet">
     <link href="https://ovh.github.io/tat/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://ovh.github.io/tat/css/hybrid.css" rel="stylesheet">
@@ -25,7 +25,7 @@
     <link href="https://ovh.github.io/tat/css/style.css" rel="stylesheet">
 
   </head>
-  <body class="" data-url="/engine/api-topics/">
+  <body class="" data-url="/ecosystem/tatdashing/">
     <nav id="sidebar">
   <div id="header-wrapper">
     <div id="header">
@@ -261,7 +261,7 @@
       
       
 
-      <li class="dd-item  parent" data-nav-id="/engine/">
+      <li class="dd-item  " data-nav-id="/engine/">
         <a href="https://ovh.github.io/tat/engine/">
           <span>
             
@@ -293,7 +293,7 @@
           
           
           
-            <li class="dd-item active" data-nav-id="/engine/api-topics/">
+            <li class="dd-item " data-nav-id="/engine/api-topics/">
               <a href="https://ovh.github.io/tat/engine/api-topics/">
                 <span>API - Topics     </i></span>
               </a>
@@ -529,7 +529,7 @@
       
       
 
-      <li class="dd-item  " data-nav-id="/ecosystem/">
+      <li class="dd-item  parent" data-nav-id="/ecosystem/">
         <a href="https://ovh.github.io/tat/ecosystem/">
           <span>
             
@@ -577,7 +577,7 @@
           
           
           
-            <li class="dd-item " data-nav-id="/ecosystem/tatdashing/">
+            <li class="dd-item active" data-nav-id="/ecosystem/tatdashing/">
               <a href="https://ovh.github.io/tat/ecosystem/tatdashing/">
                 <span>tatdashing     </i></span>
               </a>
@@ -664,11 +664,9 @@
                 
                 
                   
-                
-                  
                     
                     
-                <a href="https://ovh.github.io/tat/engine/" itemprop="url"><span itemprop="title">Tat Engine Reference</span></a> <i class="fa fa-angle-right"></i>
+                <a href="https://ovh.github.io/tat/ecosystem/" itemprop="url"><span itemprop="title">Ecosystem</span></a> <i class="fa fa-angle-right"></i>
                     
                   
                 
@@ -682,7 +680,9 @@
                 
                   
                 
-                <span itemprop="title"> API - Topics</span>
+                  
+                
+                <span itemprop="title"> tatdashing</span>
               </div>
               
                   <div class="progress">
@@ -691,37 +691,19 @@
 <ul>
 <li>
 <ul>
-<li><a href="#create-a-topic">Create a Topic</a></li>
-<li><a href="#delete-a-topic">Delete a topic</a></li>
-<li><a href="#truncate-a-topic">Truncate a topic</a></li>
-<li><a href="#compute-tags-on-a-topic">Compute tags on a topic</a></li>
-<li><a href="#compute-labels-on-a-topic">Compute labels on a topic</a></li>
-<li><a href="#compute-tags-on-all-topics">Compute tags on all topics</a></li>
-<li><a href="#compute-labels-on-all-topics">Compute labels on all topics</a></li>
-<li><a href="#set-a-param-on-all-topics">Set a param on all topics</a></li>
-<li><a href="#truncate-cached-tags-on-a-topic">Truncate cached tags on a topic</a></li>
-<li><a href="#truncate-cached-labels-on-a-topic">Truncate cached labels on a topic</a></li>
-<li><a href="#getting-one-topic">Getting one Topic</a></li>
-<li><a href="#getting-topics-list">Getting Topics List</a>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#build-and-run">Build And Run</a>
 <ul>
-<li><a href="#parameters">Parameters</a></li>
-<li><a href="#example">Example</a></li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#build">Build</a></li>
+<li><a href="#flags">Flags</a></li>
 </ul></li>
-<li><a href="#add-a-parameter-to-a-topic">Add a parameter to a topic</a></li>
-<li><a href="#remove-a-parameter-to-a-topic">Remove a parameter to a topic</a></li>
-<li><a href="#add-a-read-only-user-to-a-topic">Add a read only user to a topic</a></li>
-<li><a href="#add-a-read-write-user-to-a-topic">Add a read write user to a topic</a></li>
-<li><a href="#add-an-admin-user-to-a-topic">Add an admin user to a topic</a></li>
-<li><a href="#delete-a-read-only-user-from-a-topic">Delete a read only user from a topic</a></li>
-<li><a href="#delete-a-read-write-user-from-a-topic">Delete a read write user from a topic</a></li>
-<li><a href="#delete-an-admin-user-from-a-topic">Delete an admin user from a topic</a></li>
-<li><a href="#add-a-read-only-group-to-a-topic">Add a read only group to a topic</a></li>
-<li><a href="#add-a-read-write-group-to-a-topic">Add a read write group to a topic</a></li>
-<li><a href="#add-an-admin-group-to-a-topic">Add an admin group to a topic</a></li>
-<li><a href="#delete-a-read-only-group-from-a-topic">Delete a read only group from a topic</a></li>
-<li><a href="#delete-a-read-write-group-from-a-topic">Delete a read write group from a topic</a></li>
-<li><a href="#delete-an-admin-group-from-a-topic">Delete an admin group from a topic</a></li>
-<li><a href="#update-param-on-one-topic-admin-or-admin-on-topic">Update param on one topic: admin or admin on topic</a></li>
+<li><a href="#usage">Usage</a>
+<ul>
+<li><a href="#compute-color-and-bg-color">Compute color and bg-color</a></li>
+<li><a href="#compute-value-s">Compute value(s)</a></li>
+</ul></li>
+<li><a href="#examples">Examples</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -734,349 +716,116 @@
             
     	        <div id="body-inner">
                 
-                <h1>API - Topics</h1>
+                <h1>tatdashing</h1>
                 
 
 
 
-<h2 id="create-a-topic">Create a Topic</h2>
+<h2 id="overview">Overview</h2>
 
-<p>Rules:</p>
+<p>Each 30seconds, tatDashing computes dashboard. This uService gets information on tat and &ldquo;relabel&rdquo; messages on your dashing topic.</p>
+
+<h2 id="build-and-run">Build And Run</h2>
+
+<h3 id="configuration">Configuration</h3>
+
+<pre><code class="language-bash">
+export TATDASHING_PRODUCTION=true
+export TATDASHING_LISTEN_PORT=8080
+export TATDASHING_PASSWORD_TAT_ENGINE=&quot;very-long-tat-password-of-tat.system.dashing&quot;
+export TATDASHING_URL_TAT_ENGINE=&quot;http://tat.your-domain&quot;
+export TATDASHING_USERNAME_TAT_ENGINE=&quot;tat.system.dashing&quot;
+
+# Run TatDashing
+./api -h
+</code></pre>
+
+<h3 id="build">Build</h3>
+
+<pre><code class="language-bash">mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/tatdashing/api
+go build
+./api -h
+</code></pre>
+
+<h3 id="flags">Flags</h3>
+
+<pre><code class="language-bash">$ ./api -h
+
+Tat Dashing
+
+Usage:
+  tatdashing [flags]
+
+Flags:
+      --listen-port string           Listen Port (default &quot;8085&quot;)
+      --log-level string             Log Level : debug, info or warn
+      --password-tat-engine string   Password Tat Engine
+      --production                   Production mode
+      --url-tat-engine string        URL Tat Engine (default &quot;http://localhost:8080&quot;)
+      --username-tat-engine string   Username Tat Engine (default &quot;tat.system.dashing&quot;)
+</code></pre>
+
+<h2 id="usage">Usage</h2>
+
+<p>To use it, you have to :</p>
 
 <ul>
-<li>User can create a root topic if he is a Tat Admin.</li>
-<li>User can create topics under <code>/Private/username/</code></li>
-<li>User can create topics if he is an admin on the Parent Topic or belong to an admin group on the Parent topic.
-Example:  Create /AAA/BBB: Parent Topic is /AAA</li>
-</ul>
-
-<pre><code class="language-bash">curl -XPOST \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;description&quot;: &quot;Topic Description&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic
-</code></pre>
-
-<h2 id="delete-a-topic">Delete a topic</h2>
-
-<pre><code class="language-bash">curl -XDELETE \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/subtopic
-</code></pre>
-
-<h2 id="truncate-a-topic">Truncate a topic</h2>
-
-<p>Only for Tat Admin and administrators on topic.</p>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/truncate
-</code></pre>
-
-<h2 id="compute-tags-on-a-topic">Compute tags on a topic</h2>
-
-<p>Only for Tat Admin and administrators on topic.</p>
-
-<p>Set &ldquo;tags&rdquo; attribute on topic, with an array of all tags used in this topic.
-One entry in &ldquo;tags&rdquo; attribute per text of tag.</p>
-
-<p>Topic&rsquo;s tags are showed with :
-GET https://<tatHostname>:<tatPort>/topic/topicName</p>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/compute/tags
-</code></pre>
-
-<p>Example of usage of tags attribute: autocompletion of tag on UI when written new message on a topic</p>
-
-<h2 id="compute-labels-on-a-topic">Compute labels on a topic</h2>
-
-<p>Only for Tat Admin and administrators on topic.</p>
-
-<p>Set &ldquo;labels&rdquo; attribute on topic, with an array of all labels used in this topic.
-One entry in &ldquo;labels&rdquo; attribute per text &amp; color of label.</p>
-
-<p>Topic&rsquo;s labels are showed with :
-GET https://<tatHostname>:<tatPort>/topic/topicName</p>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/compute/labels
-</code></pre>
-
-<p>Example of usage of labels attribute: label autocompletion on UI when adding new label</p>
-
-<h2 id="compute-tags-on-all-topics">Compute tags on all topics</h2>
-
-<p>Only for Tat Admin.</p>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topics/compute/tags
-</code></pre>
-
-<h2 id="compute-labels-on-all-topics">Compute labels on all topics</h2>
-
-<p>Only for Tat Admin.</p>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topics/compute/labels
-</code></pre>
-
-<h2 id="set-a-param-on-all-topics">Set a param on all topics</h2>
-
-<p>Only for Tat Admin and for attributes isAutoComputeTags and isAutoComputeLabels.</p>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;paramName&quot;:&quot;isAutoComputeLabels&quot;,&quot;paramValue&quot;:&quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topics/param
-</code></pre>
-
-<h2 id="truncate-cached-tags-on-a-topic">Truncate cached tags on a topic</h2>
-
-<p>Only for Tat Admin and administrators on topic.</p>
-
-<p>Truncate &ldquo;tags&rdquo; attribute on topic.</p>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/tags/truncate
-</code></pre>
-
-<h2 id="truncate-cached-labels-on-a-topic">Truncate cached labels on a topic</h2>
-
-<p>Only for Tat Admin and administrators on topic.</p>
-
-<p>Truncate &ldquo;labels&rdquo; attribute on topic.</p>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/labels/truncate
-</code></pre>
-
-<h2 id="getting-one-topic">Getting one Topic</h2>
-
-<pre><code class="language-bash">curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/topicName | python -m json.tool
-curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/topicName/subTopic | python -m json.tool
-</code></pre>
-
-<h2 id="getting-topics-list">Getting Topics List</h2>
-
-<pre><code class="language-bash">curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topics?skip=&lt;skip&gt;&amp;limit=&lt;limit&gt; | python -m json.tool
-curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topics?skip=&lt;skip&gt;&amp;limit=&lt;limit&gt;&amp;argName=valName&amp;arg2Name=val2Name | python -m json.tool
-</code></pre>
-
-<h3 id="parameters">Parameters</h3>
+<li>Add user tat.system.dashing read write on your dashing topic</li>
+<li>Add user tat.system.dashing read only on topics where you have your data. For example, in examples below, tat.system.dashing is Read Only on topics /Internal/Alerts and /Internal/PullRequests</li>
+<li>Create initial root message with like &ldquo;#monitoring #item:Alerts&rdquo;, see full documentation about that on <a href="https://ovh.github.io/tat/tatwebui/dashingview/">https://ovh.github.io/tat/tatwebui/dashingview/</a>
 
 <ul>
-<li>skip: Skip skips over the n initial documents from the query results</li>
-<li>limit: Limit restricts the maximum number of documents retrieved</li>
-<li>topic: Topic name, example: /topicA</li>
-<li>topicPath: Topic start path, example: /topicA will return /topicA/subA, /topicA/subB</li>
-<li>idTopic: id of topic</li>
-<li>description: description of topic</li>
-<li>dateMinCreation: filter result on dateCreation, timestamp Unix format</li>
-<li>dateMaxCreation: filter result on dateCreation, timestamp Unix Format</li>
-<li>getNbMsgUnread: if true, add new array to return, topicsMsgUnread with topic:flag. flag can be -1 if unknown, 0 or 1 if there is one or more messages unread</li>
-<li>onlyFavorites: if true, return only favorites topics, except /Private/*. All privates topics are returned.</li>
-<li>getForTatAdmin: if true, and requester is a Tat Admin, returns all topics (except /Private/*) without checking user access</li>
+<li>Add labels on this root message, like &ldquo;order:12&rdquo;, &ldquo;url</li>
+<li>Add reply for each label you want to rewrite</li>
+</ul></li>
 </ul>
 
-<h3 id="example">Example</h3>
+<h3 id="compute-color-and-bg-color">Compute color and bg-color</h3>
 
-<pre><code class="language-bash">curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topics?skip=0&amp;limit=100 | python -m json.tool
-</code></pre>
+<p>Example for compute label &ldquo;color&rdquo;:</p>
 
-<h2 id="add-a-parameter-to-a-topic">Add a parameter to a topic</h2>
+<ul>
+<li><code>#label:color:08f1f4:0:10,ce352c</code> : if value is &gt;= 0 and value &lt;= 10, color will be #08f1f4, else color will be #ce352c</li>
+<li><code>#label:color:08f1f4:0:10,ce352c:11:20;fa6800</code> : if value is &gt;= 0 and value &lt;= 10, color will be #08f1f4, else if value is &gt;=11 and value &lt;= 20, color will be #ce352c, else  color will be #fa6800</li>
+</ul>
 
-<p>For admin of topic or on <code>/Private/username/*</code></p>
+<h3 id="compute-value-s">Compute value(s)</h3>
 
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;key&quot;: &quot;keyOfParameter&quot;, &quot;value&quot;: &quot;valueOfParameter&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/add/parameter
-</code></pre>
+<p>This reply : #TatDashing #label:0:value #value:0:/Internal/Alerts?tag=CD&amp;notLabel=done&amp;onlyMsgRoot=true&rdquo; will :</p>
 
-<h2 id="remove-a-parameter-to-a-topic">Remove a parameter to a topic</h2>
+<ul>
+<li>compute label &ldquo;value&rdquo; by</li>
+<li>count messages from /Internal/Alerts with tag=CD and notLabel=done and onlyMsgRoot=true to avoid counting exclude alert replay.</li>
+</ul>
 
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;key&quot;: &quot;keyOfParameter&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/remove/parameter
-</code></pre>
+<h2 id="examples">Examples</h2>
 
-<h2 id="add-a-read-only-user-to-a-topic">Add a read only user to a topic</h2>
+<p>Display alerts from /Internal/Alerts with tag=CD and notLabel=done. Don&rsquo;t forget onlyMsgRoot for exclude alert replay</p>
 
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;username&quot;: &quot;usernameToAdd&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/add/rouser
-</code></pre>
+<p><img src="https://ovh.github.io/tat/imgs/tatdashing-alerts-view.png?width=50%" alt="View Alerts" /></p>
 
-<h2 id="add-a-read-write-user-to-a-topic">Add a read write user to a topic</h2>
+<p>Labels color, bg-color and value are computed by TatDashing uService.</p>
 
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;username&quot;: &quot;usernameToAdd&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/add/rwuser
-</code></pre>
+<p><img src="https://ovh.github.io/tat/imgs/tatdashing-alerts-details.png?width=50%" alt="Details Alerts" /></p>
 
-<h2 id="add-an-admin-user-to-a-topic">Add an admin user to a topic</h2>
+<p>Display Opened and Approved Pull Requests for projects TEXTANDTAGS, CDS and CD,</p>
 
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;username&quot;: &quot;usernameToAdd&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/add/adminuser
-</code></pre>
+<p><img src="https://ovh.github.io/tat/imgs/tatdashing-pullRequest-view.png?width=50%" alt="View PullRequests" /></p>
 
-<h2 id="delete-a-read-only-user-from-a-topic">Delete a read only user from a topic</h2>
+<p>Labels color, bg-color and value are computed by TatDashing uService.</p>
 
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;username&quot;: &quot;usernameToRemove&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/remove/rouser
-</code></pre>
+<p><img src="https://ovh.github.io/tat/imgs/tatdashing-pullRequest-details.png?width=50%" alt="Details PullRequests" /></p>
 
-<h2 id="delete-a-read-write-user-from-a-topic">Delete a read write user from a topic</h2>
+<p>A graph with Chartist (see. <a href="https://gionkunz.github.io/chartist-js/examples.html">https://gionkunz.github.io/chartist-js/examples.html</a> )</p>
 
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;username&quot;: &quot;usernameToRemove&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/remove/wuser
-</code></pre>
+<p><img src="https://ovh.github.io/tat/imgs/tatdashing-complex-view.png?width=50%" alt="View Advanced Graph" /></p>
 
-<h2 id="delete-an-admin-user-from-a-topic">Delete an admin user from a topic</h2>
+<p>Label widget-data-series is computed by TatDashing uService. value:0 is first point, value:1 is second point, etc&hellip;</p>
 
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;username&quot;: &quot;usernameToRemove&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/remove/adminuser
-</code></pre>
-
-<h2 id="add-a-read-only-group-to-a-topic">Add a read only group to a topic</h2>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;groupname&quot;: &quot;groupnameToAdd&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/add/rogroup
-</code></pre>
-
-<h2 id="add-a-read-write-group-to-a-topic">Add a read write group to a topic</h2>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;groupname&quot;: &quot;groupnameToAdd&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/add/rwgroup
-</code></pre>
-
-<h2 id="add-an-admin-group-to-a-topic">Add an admin group to a topic</h2>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;groupname&quot;: &quot;groupnameToAdd&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/add/admingroup
-</code></pre>
-
-<h2 id="delete-a-read-only-group-from-a-topic">Delete a read only group from a topic</h2>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;groupname&quot;: &quot;groupnameToRemove&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/remove/rogroup
-</code></pre>
-
-<h2 id="delete-a-read-write-group-from-a-topic">Delete a read write group from a topic</h2>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;groupname&quot;: &quot;groupnameToRemove&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/remove/rwgroup
-</code></pre>
-
-<h2 id="delete-an-admin-group-from-a-topic">Delete an admin group from a topic</h2>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;groupname&quot;: &quot;groupnameToRemove&quot;, &quot;recursive&quot;: &quot;false&quot;}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/remove/rwgroup
-</code></pre>
-
-<h2 id="update-param-on-one-topic-admin-or-admin-on-topic">Update param on one topic: admin or admin on topic</h2>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;recursive&quot;: &quot;false&quot;, &quot;maxlength&quot;: 140, &quot;canForceDate&quot;: false, &quot;canUpdateMsg&quot;: false, &quot;canDeleteMsg&quot;: false, &quot;canUpdateAllMsg&quot;: false, &quot;canDeleteAllMsg&quot;: false, &quot;adminCanUpdateAllMsg&quot;: false, &quot;adminCanDeleteAllMsg&quot;: false}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/param
-</code></pre>
-
-<p>Parameters key is optional.</p>
-
-<p>Example with key parameters :</p>
-
-<pre><code class="language-bash">curl -XPUT \
-    -H &quot;Content-Type: application/json&quot; \
-    -H &quot;Tat_username: admin&quot; \
-    -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;:&quot;/Internal/Alerts&quot;,&quot;recursive&quot;:false,&quot;maxlength&quot;:300,&quot;canForceDate&quot;:false,&quot;canUpdateMsg&quot;:false,&quot;canDeleteMsg&quot;:true,&quot;canUpdateAllMsg&quot;:false,&quot;canDeleteAllMsg&quot;:false,&quot;adminCanUpdateAllMsg&quot;:false,&quot;adminCanDeleteAllMsg&quot;:false,&quot;parameters&quot;:[{&quot;key&quot;:&quot;agileview&quot;,&quot;value&quot;:&quot;qsdf#qsdf&quot;},{&quot;key&quot;:&quot;tatwebui.view.default&quot;,&quot;value&quot;:&quot;standardview-list&quot;},{&quot;key&quot;:&quot;tatwebui.view.forced&quot;,&quot;value&quot;:&quot;&quot;}]}' \
-    https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/param
-</code></pre>
+<p><img src="https://ovh.github.io/tat/imgs/tatdashing-complex-details.png?width=50%" alt="Details Advanced Graph" /></p>
 
 
       
@@ -1084,8 +833,8 @@ curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topics?skip=&lt;skip&gt;&
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://ovh.github.io/tat/engine/api-messages"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://ovh.github.io/tat/engine/api-users" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://ovh.github.io/tat/ecosystem/mail2tat"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://ovh.github.io/tat/ecosystem/tat2es" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

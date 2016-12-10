@@ -1,5 +1,5 @@
 ---
-title: "Al2Tat"
+title: "al2tat"
 weight: 1
 toc: true
 prev: "/ecosystem"

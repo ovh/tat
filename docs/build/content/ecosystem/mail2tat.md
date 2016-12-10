@@ -1,9 +1,9 @@
 ---
-title: "Mail2Tat"
+title: "mail2tat"
 weight: 2
 toc: true
 prev: "/ecosystem/al2tat"
-next: "/ecosystem/tat2es"
+next: "/ecosystem/tatdashing"
 
 ---
 

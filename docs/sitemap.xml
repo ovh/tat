@@ -30,10 +30,6 @@
   </url>
   
   <url>
-    <loc>https://ovh.github.io/tat/ecosystem/al2tat/</loc>
-  </url>
-  
-  <url>
     <loc>https://ovh.github.io/tat/engine/general/</loc>
   </url>
   
@@ -54,6 +50,10 @@
   </url>
   
   <url>
+    <loc>https://ovh.github.io/tat/ecosystem/al2tat/</loc>
+  </url>
+  
+  <url>
     <loc>https://ovh.github.io/tat/engine/api-messages/</loc>
   </url>
   
@@ -66,11 +66,11 @@
   </url>
   
   <url>
-    <loc>https://ovh.github.io/tat/ecosystem/mail2tat/</loc>
+    <loc>https://ovh.github.io/tat/tatwebui/standardview/</loc>
   </url>
   
   <url>
-    <loc>https://ovh.github.io/tat/tatwebui/standardview/</loc>
+    <loc>https://ovh.github.io/tat/ecosystem/mail2tat/</loc>
   </url>
   
   <url>
@@ -115,6 +115,10 @@
   
   <url>
     <loc>https://ovh.github.io/tat/tatcli/tatcli-message/</loc>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/ecosystem/tatdashing/</loc>
   </url>
   
   <url>

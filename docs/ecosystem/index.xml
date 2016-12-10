@@ -23,7 +23,7 @@
     </item>
     
     <item>
-      <title>Al2Tat</title>
+      <title>al2tat</title>
       <link>https://ovh.github.io/tat/ecosystem/al2tat/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -280,7 +280,7 @@ run()
     </item>
     
     <item>
-      <title>Mail2Tat</title>
+      <title>mail2tat</title>
       <link>https://ovh.github.io/tat/ecosystem/mail2tat/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -376,8 +376,8 @@ export TAT2ES_PASSWORD_TAT_ENGINE=&amp;quot;very-long-tat-password-of-tat.system
 export TAT2ES_URL_TAT_ENGINE=&amp;quot;http://tat.your-domain&amp;quot;
 export TAT2ES_TOPICS_INDEXES=&amp;quot;/Topic/Sub-Topic1:ES_Index1,/Topic/Sub-Topic2:ES_Index2&amp;quot;
 
-# Running TAT2ES
-./tat2es -h
+# Run TAT2ES
+./api -h
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
@@ -510,6 +510,122 @@ Flags:
 Use &amp;quot;tat2xmpp [command] --help&amp;quot; for more information about a command.
 
 &lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>tatdashing</title>
+      <link>https://ovh.github.io/tat/ecosystem/tatdashing/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ovh.github.io/tat/ecosystem/tatdashing/</guid>
+      <description>
+
+&lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;Each 30seconds, tatDashing computes dashboard. This uService gets information on tat and &amp;ldquo;relabel&amp;rdquo; messages on your dashing topic.&lt;/p&gt;
+
+&lt;h2 id=&#34;build-and-run&#34;&gt;Build And Run&lt;/h2&gt;
+
+&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;
+export TATDASHING_PRODUCTION=true
+export TATDASHING_LISTEN_PORT=8080
+export TATDASHING_PASSWORD_TAT_ENGINE=&amp;quot;very-long-tat-password-of-tat.system.dashing&amp;quot;
+export TATDASHING_URL_TAT_ENGINE=&amp;quot;http://tat.your-domain&amp;quot;
+export TATDASHING_USERNAME_TAT_ENGINE=&amp;quot;tat.system.dashing&amp;quot;
+
+# Run TatDashing
+./api -h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;build&#34;&gt;Build&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/tatdashing/api
+go build
+./api -h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;flags&#34;&gt;Flags&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ ./api -h
+
+Tat Dashing
+
+Usage:
+  tatdashing [flags]
+
+Flags:
+      --listen-port string           Listen Port (default &amp;quot;8085&amp;quot;)
+      --log-level string             Log Level : debug, info or warn
+      --password-tat-engine string   Password Tat Engine
+      --production                   Production mode
+      --url-tat-engine string        URL Tat Engine (default &amp;quot;http://localhost:8080&amp;quot;)
+      --username-tat-engine string   Username Tat Engine (default &amp;quot;tat.system.dashing&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
+
+&lt;p&gt;To use it, you have to :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Add user tat.system.dashing read write on your dashing topic&lt;/li&gt;
+&lt;li&gt;Add user tat.system.dashing read only on topics where you have your data. For example, in examples below, tat.system.dashing is Read Only on topics /Internal/Alerts and /Internal/PullRequests&lt;/li&gt;
+&lt;li&gt;Create initial root message with like &amp;ldquo;#monitoring #item:Alerts&amp;rdquo;, see full documentation about that on &lt;a href=&#34;https://ovh.github.io/tat/tatwebui/dashingview/&#34;&gt;https://ovh.github.io/tat/tatwebui/dashingview/&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Add labels on this root message, like &amp;ldquo;order:12&amp;rdquo;, &amp;ldquo;url&lt;/li&gt;
+&lt;li&gt;Add reply for each label you want to rewrite&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;compute-color-and-bg-color&#34;&gt;Compute color and bg-color&lt;/h3&gt;
+
+&lt;p&gt;Example for compute label &amp;ldquo;color&amp;rdquo;:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;#label:color:08f1f4:0:10,ce352c&lt;/code&gt; : if value is &amp;gt;= 0 and value &amp;lt;= 10, color will be #08f1f4, else color will be #ce352c&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;#label:color:08f1f4:0:10,ce352c:11:20;fa6800&lt;/code&gt; : if value is &amp;gt;= 0 and value &amp;lt;= 10, color will be #08f1f4, else if value is &amp;gt;=11 and value &amp;lt;= 20, color will be #ce352c, else  color will be #fa6800&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;compute-value-s&#34;&gt;Compute value(s)&lt;/h3&gt;
+
+&lt;p&gt;This reply : #TatDashing #label:0:value #value:0:/Internal/Alerts?tag=CD&amp;amp;notLabel=done&amp;amp;onlyMsgRoot=true&amp;rdquo; will :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;compute label &amp;ldquo;value&amp;rdquo; by&lt;/li&gt;
+&lt;li&gt;count messages from /Internal/Alerts with tag=CD and notLabel=done and onlyMsgRoot=true to avoid counting exclude alert replay.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;examples&#34;&gt;Examples&lt;/h2&gt;
+
+&lt;p&gt;Display alerts from /Internal/Alerts with tag=CD and notLabel=done. Don&amp;rsquo;t forget onlyMsgRoot for exclude alert replay&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatdashing-alerts-view.png?width=50%&#34; alt=&#34;View Alerts&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Labels color, bg-color and value are computed by TatDashing uService.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatdashing-alerts-details.png?width=50%&#34; alt=&#34;Details Alerts&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Display Opened and Approved Pull Requests for projects TEXTANDTAGS, CDS and CD,&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatdashing-pullRequest-view.png?width=50%&#34; alt=&#34;View PullRequests&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Labels color, bg-color and value are computed by TatDashing uService.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatdashing-pullRequest-details.png?width=50%&#34; alt=&#34;Details PullRequests&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;A graph with Chartist (see. &lt;a href=&#34;https://gionkunz.github.io/chartist-js/examples.html&#34;&gt;https://gionkunz.github.io/chartist-js/examples.html&lt;/a&gt; )&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatdashing-complex-view.png?width=50%&#34; alt=&#34;View Advanced Graph&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Label widget-data-series is computed by TatDashing uService. value:0 is first point, value:1 is second point, etc&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatdashing-complex-details.png?width=50%&#34; alt=&#34;Details Advanced Graph&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     

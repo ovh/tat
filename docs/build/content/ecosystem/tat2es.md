@@ -2,7 +2,7 @@
 title: "tat2es"
 weight: 3
 toc: true
-prev: "/ecosystem/mail2tat"
+prev: "/ecosystem/tatdashing"
 next: "/ecosystem/tat2xmpp"
 
 ---
@@ -19,8 +19,8 @@ export TAT2ES_PASSWORD_TAT_ENGINE="very-long-tat-password-of-tat.system.jabber"
 export TAT2ES_URL_TAT_ENGINE="http://tat.your-domain"
 export TAT2ES_TOPICS_INDEXES="/Topic/Sub-Topic1:ES_Index1,/Topic/Sub-Topic2:ES_Index2"
 
-# Running TAT2ES
-./tat2es -h
+# Run TAT2ES
+./api -h
 ```
 
 ## Usage

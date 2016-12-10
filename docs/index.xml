@@ -103,263 +103,6 @@
     </item>
     
     <item>
-      <title>Al2Tat</title>
-      <link>https://ovh.github.io/tat/ecosystem/al2tat/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ovh.github.io/tat/ecosystem/al2tat/</guid>
-      <description>
-
-&lt;p&gt;&lt;img align=&#34;right&#34; src=&#34;https://raw.githubusercontent.com/ovh/tat/master/tat.png&#34;&gt;&lt;/p&gt;
-
-&lt;p&gt;This microservice can be used :&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;to send alerts to Tat (&lt;a href=&#34;https://github.com/ovh/tat&#34;&gt;https://github.com/ovh/tat&lt;/a&gt;).&lt;/li&gt;
-&lt;li&gt;to send monitoring events to Tat.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;alerts&#34;&gt;Alerts&lt;/h2&gt;
-
-&lt;p&gt;An alert is an event with a &amp;lsquo;AL&amp;rsquo; status. An alert can be replayed, al2tat attach
-this on a root message. If there is a new occurrence with same summary with
-&amp;lsquo;UP&amp;rsquo; status, alert will be closed.
-Best Tat view for theses: StandardView (&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-standardview&#34;&gt;https://github.com/ovh/tatwebui-plugin-standardview&lt;/a&gt;)&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Compute Replay: if alarm already exists, the replay will be a reply of root alarm&lt;/li&gt;
-&lt;li&gt;Pre-select Label :
-
-&lt;ul&gt;
-&lt;li&gt;a new alarm &amp;ldquo;AL&amp;rdquo; will receive label &amp;ldquo;open&amp;rdquo; with red color on tat&lt;/li&gt;
-&lt;li&gt;a new alarm &amp;ldquo;UP&amp;rdquo; will receive label &amp;ldquo;done&amp;rdquo; with green color on tat&lt;/li&gt;
-&lt;li&gt;A new alarm &amp;ldquo;AL&amp;rdquo; will close previous &amp;ldquo;AL&amp;rdquo; in same thread&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;monitoring-events&#34;&gt;Monitoring Events&lt;/h2&gt;
-
-&lt;p&gt;An event monitoring is attached to one item (host, soft, person&amp;hellip; whatever), all events are held three days, and only 30 events are retained after 3d. Best Tat view for theses: Monitoring View (&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-monitoringview&#34;&gt;https://github.com/ovh/tatwebui-plugin-monitoringview&lt;/a&gt;)&lt;/p&gt;
-
-&lt;h1 id=&#34;usage&#34;&gt;Usage&lt;/h1&gt;
-
-&lt;h2 id=&#34;alert&#34;&gt;Alert&lt;/h2&gt;
-
-&lt;h3 id=&#34;store-new-alert&#34;&gt;Store new alert&lt;/h3&gt;
-
-&lt;p&gt;If &lt;code&gt;Tat_topic == &amp;quot;&amp;quot;&lt;/code&gt;, default value is &lt;code&gt;/Internal/Alerts&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;curl -XPOST \
-    -H &amp;quot;Content-Type: application/json&amp;quot; \
-    -H &amp;quot;Tat_username: yourTatUser&amp;quot; \
-    -H &amp;quot;Tat_password: yourTatPassword&amp;quot; \
-    -H &amp;quot;Tat_topic: /Internal/Alerts&amp;quot; \
-    -d &#39;{
-    &amp;quot;status&amp;quot;: &amp;quot;AL&amp;quot;,
-    &amp;quot;nbAlert&amp;quot;: 1,
-    &amp;quot;service&amp;quot;: &amp;quot;YourService&amp;quot;,
-    &amp;quot;summary&amp;quot;: &amp;quot;your alert description here&amp;quot;
-}&#39; http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/alert
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;nbAlert&lt;/code&gt; can be used to represent the number of elements impacted by your alert.
-It is not used to compute alert&amp;rsquo;s repetitions.&lt;/p&gt;
-
-&lt;h3 id=&#34;store-new-alert-with-a-label&#34;&gt;Store new alert with a label&lt;/h3&gt;
-
-&lt;p&gt;If &lt;code&gt;Tat_topic == &amp;quot;&amp;quot;&lt;/code&gt;, default value is &lt;code&gt;/Internal/Alerts&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;curl -XPOST \
-    -H &amp;quot;Content-Type: application/json&amp;quot; \
-    -H &amp;quot;Tat_username: tatusername&amp;quot; \
-    -H &amp;quot;Tat_password: tatpassword&amp;quot; \
-    -H &amp;quot;Tat_topic: /Internal/Alerts&amp;quot; \
-    -d &#39;{
-    &amp;quot;status&amp;quot;: &amp;quot;AL&amp;quot;,
-    &amp;quot;nbAlert&amp;quot;: 3,
-    &amp;quot;service&amp;quot;: &amp;quot;YourService&amp;quot;,
-    &amp;quot;labels&amp;quot;: [{&amp;quot;text&amp;quot;: &amp;quot;critical:high&amp;quot;, &amp;quot;color&amp;quot;:&amp;quot;#d04437&amp;quot;}],
-    &amp;quot;summary&amp;quot;: &amp;quot; your alert description here&amp;quot;
-}&#39; http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/alert
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;sync-vs-async&#34;&gt;Sync vs Async&lt;/h3&gt;
-
-&lt;p&gt;POST on &lt;code&gt;http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/alert&lt;/code&gt;: send asynchronous to tat engine.&lt;/p&gt;
-
-&lt;p&gt;POST on &lt;code&gt;http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/alert/sync&lt;/code&gt;: send synchronous to tat engine, and return message&lt;/p&gt;
-
-&lt;h3 id=&#34;purge-alerts&#34;&gt;Purge alerts&lt;/h3&gt;
-
-&lt;p&gt;You have to call endpoint: &lt;code&gt;/purge/:skip/:limit&lt;/code&gt; to purge Tat_topic, for keeping
-30 replies on each alerts.&lt;/p&gt;
-
-&lt;p&gt;Purge example the last 100 alerts on tat :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;curl -XPUT \
-    -H &amp;quot;Content-Type: application/json&amp;quot; \
-    -H &amp;quot;Tat_username: tatusername&amp;quot; \
-    -H &amp;quot;Tat_password: tatpassword&amp;quot; \
-    -H &amp;quot;Tat_topic: /Internal/Alerts&amp;quot;
-}&#39; http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/purge/0/100
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;monitoring&#34;&gt;Monitoring&lt;/h2&gt;
-
-&lt;h3 id=&#34;store-a-new-event&#34;&gt;Store a new event&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;curl -XPOST \
-    -H &amp;quot;Content-Type: application/json&amp;quot; \
-    -H &amp;quot;Tat_username: yourTatUser&amp;quot; \
-    -H &amp;quot;Tat_password: yourTatPassword&amp;quot; \
-    -H &amp;quot;Tat_topic: /Internal/Monitoring&amp;quot; \
-    -d &#39;{
-    &amp;quot;status&amp;quot;: &amp;quot;AL&amp;quot;,
-    &amp;quot;item&amp;quot;: &amp;quot;yourApplication&amp;quot;,
-    &amp;quot;service&amp;quot;: &amp;quot;SERVICE&amp;quot;,
-    &amp;quot;summary&amp;quot;: &amp;quot;your description&amp;quot;,
-    &amp;quot;labels&amp;quot;: [{&amp;quot;text&amp;quot;: &amp;quot;critical:high&amp;quot;, &amp;quot;color&amp;quot;:&amp;quot;#d04437&amp;quot;}]
-}&#39; http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/monitoring
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;with :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;status: AL or UP
-service: your service
-summary: description of event
-item: your application name, or host...
-labels: facultative, add labels to message root, the first message sent for an item.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;sync-vs-async-1&#34;&gt;Sync vs Async&lt;/h3&gt;
-
-&lt;p&gt;POST on &lt;code&gt;http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/monitoring&lt;/code&gt;: send asynchronous to tat engine.&lt;/p&gt;
-
-&lt;p&gt;POST on &lt;code&gt;http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/monitoring/sync&lt;/code&gt;: send synchronous to tat engine, and return message&lt;/p&gt;
-
-&lt;h2 id=&#34;system&#34;&gt;System&lt;/h2&gt;
-
-&lt;h3 id=&#34;version&#34;&gt;Version&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;curl -XGET http://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/version
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;usage-1&#34;&gt;Usage&lt;/h2&gt;
-
-&lt;h3 id=&#34;building&#34;&gt;Building&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mkdir -p $GOPATH/src/github.com/ovh
-cd $GOPATH/src/github.com/ovh
-git clone git@github.com:ovh/tat-contrib.git
-cd tat-contrib/al2tat
-go build
-./al2tat -h
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;flags&#34;&gt;Flags&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;./al2tat -h
-Run Al2Tat
-
-Usage:
-  al2tat [flags]
-  al2tat [command]
-
-Available Commands:
-  version     Print the version.
-
-Flags:
-      --listen-port string      Tat Engine Listen Port (default &amp;quot;8082&amp;quot;)
-      --log-level string        Log Level : debug, info or warn
-      --production              Production mode
-      --url-tat-engine string   URL Tat Engine (default &amp;quot;http://localhost:8080&amp;quot;)
-
-Use &amp;quot;al2tat [command] --help&amp;quot; for more information about a command.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;environment&#34;&gt;Environment&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;AL2TAT_LISTEN_PORT&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Example :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;export AL2TAT_LISTEN_PORT=8181 &amp;amp;&amp;amp; ./al2tat
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;is same than&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;./al2tat --listen-port=&amp;quot;8181&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h1 id=&#34;examples-for-posting-an-alert&#34;&gt;Examples for POSTing an alert&lt;/h1&gt;
-
-&lt;h2 id=&#34;perl-version&#34;&gt;Perl version&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-perl&#34;&gt;package AL2TAT;
-
-use Exporter qw(import);
-
-our @EXPORT_OK = qw(run getMessage);
-
-use strict;
-use warnings;
-use LWP::UserAgent;
-
-sub run
-{
-  my &amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/alert&amp;quot;;
-  my $TAT_TOPIC_KEY = &amp;quot;/Private/yourTopic&amp;quot;;
-  my $TAT_USER_KEY = &amp;quot;yourUsernameOnTat&amp;quot;;
-  my $TAT_PASSWORD_KEY = &amp;quot;yourTatVeryLongPasswordHere&amp;quot;;
-
-  my $message = getMessage();
-  sendMessage($TAT_URL_KEY, $TAT_TOPIC_KEY, $TAT_USER_KEY, $TAT_PASSWORD_KEY, $message);
-}
-
-sub sendMessage
-{
-    my $url = $_[0];
-    my $topic = $_[1];
-    my $user = $_[2];
-    my $password = $_[3];
-    my $message = $_[4];
-
-    my $req = HTTP::Request-&amp;gt;new(POST =&amp;gt; $url);
-    $req-&amp;gt;header(&#39;Content-Type&#39; =&amp;gt; &#39;application/json&#39;);
-    $req-&amp;gt;header(&#39;Tat_username&#39; =&amp;gt; $user);
-    $req-&amp;gt;header(&#39;Tat_password&#39; =&amp;gt; $password);
-    $req-&amp;gt;header(&#39;Tat_topic&#39; =&amp;gt; $topic);
-
-    my $post_data = &#39;{&amp;quot;status&amp;quot;: &amp;quot;AL&amp;quot;, &amp;quot;nbAlert&amp;quot;: 1, &amp;quot;service&amp;quot;: &amp;quot;TEST&amp;quot;, &amp;quot;summary&amp;quot;: &amp;quot;&#39;.$message.&#39;&amp;quot;}&#39;;
-    $req-&amp;gt;content($post_data);
-
-    my $ua = LWP::UserAgent-&amp;gt;new;
-    my $resp = $ua-&amp;gt;request($req);
-
-    print &amp;quot;Response Status: &amp;quot;, $resp-&amp;gt;code, &amp;quot;\n&amp;quot;;
-    if ($resp-&amp;gt;is_success) {
-        my $message = $resp-&amp;gt;decoded_content;
-        print &amp;quot;Received reply: $message\n&amp;quot;;
-    } else {
-        print &amp;quot;HTTP POST error message: &amp;quot;, $resp-&amp;gt;message, &amp;quot;\n&amp;quot;;
-    }
-}
-
-sub getMessage
-{
-    return &amp;quot;Message from perl &amp;quot;;
-}
-
-run()
-
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
       <title>General</title>
       <link>https://ovh.github.io/tat/engine/general/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -756,6 +499,263 @@ Some OVH views are opensourced like:&lt;/p&gt;
 &lt;li&gt;&lt;a href=&#34;https://ovh.github.io/tat/tatwebui/pastatview&#34;&gt;Pastat View&lt;/a&gt;: a Gist like&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://ovh.github.io/tat/tatwebui/cdsview&#34;&gt;CDS View&lt;/a&gt;: Display &lt;a href=&#34;https://github.com/ovh/cds&#34;&gt;CDS&lt;/a&gt; Notifications&lt;/li&gt;
 &lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>al2tat</title>
+      <link>https://ovh.github.io/tat/ecosystem/al2tat/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ovh.github.io/tat/ecosystem/al2tat/</guid>
+      <description>
+
+&lt;p&gt;&lt;img align=&#34;right&#34; src=&#34;https://raw.githubusercontent.com/ovh/tat/master/tat.png&#34;&gt;&lt;/p&gt;
+
+&lt;p&gt;This microservice can be used :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;to send alerts to Tat (&lt;a href=&#34;https://github.com/ovh/tat&#34;&gt;https://github.com/ovh/tat&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;to send monitoring events to Tat.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;alerts&#34;&gt;Alerts&lt;/h2&gt;
+
+&lt;p&gt;An alert is an event with a &amp;lsquo;AL&amp;rsquo; status. An alert can be replayed, al2tat attach
+this on a root message. If there is a new occurrence with same summary with
+&amp;lsquo;UP&amp;rsquo; status, alert will be closed.
+Best Tat view for theses: StandardView (&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-standardview&#34;&gt;https://github.com/ovh/tatwebui-plugin-standardview&lt;/a&gt;)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Compute Replay: if alarm already exists, the replay will be a reply of root alarm&lt;/li&gt;
+&lt;li&gt;Pre-select Label :
+
+&lt;ul&gt;
+&lt;li&gt;a new alarm &amp;ldquo;AL&amp;rdquo; will receive label &amp;ldquo;open&amp;rdquo; with red color on tat&lt;/li&gt;
+&lt;li&gt;a new alarm &amp;ldquo;UP&amp;rdquo; will receive label &amp;ldquo;done&amp;rdquo; with green color on tat&lt;/li&gt;
+&lt;li&gt;A new alarm &amp;ldquo;AL&amp;rdquo; will close previous &amp;ldquo;AL&amp;rdquo; in same thread&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;monitoring-events&#34;&gt;Monitoring Events&lt;/h2&gt;
+
+&lt;p&gt;An event monitoring is attached to one item (host, soft, person&amp;hellip; whatever), all events are held three days, and only 30 events are retained after 3d. Best Tat view for theses: Monitoring View (&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-monitoringview&#34;&gt;https://github.com/ovh/tatwebui-plugin-monitoringview&lt;/a&gt;)&lt;/p&gt;
+
+&lt;h1 id=&#34;usage&#34;&gt;Usage&lt;/h1&gt;
+
+&lt;h2 id=&#34;alert&#34;&gt;Alert&lt;/h2&gt;
+
+&lt;h3 id=&#34;store-new-alert&#34;&gt;Store new alert&lt;/h3&gt;
+
+&lt;p&gt;If &lt;code&gt;Tat_topic == &amp;quot;&amp;quot;&lt;/code&gt;, default value is &lt;code&gt;/Internal/Alerts&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -XPOST \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: yourTatUser&amp;quot; \
+    -H &amp;quot;Tat_password: yourTatPassword&amp;quot; \
+    -H &amp;quot;Tat_topic: /Internal/Alerts&amp;quot; \
+    -d &#39;{
+    &amp;quot;status&amp;quot;: &amp;quot;AL&amp;quot;,
+    &amp;quot;nbAlert&amp;quot;: 1,
+    &amp;quot;service&amp;quot;: &amp;quot;YourService&amp;quot;,
+    &amp;quot;summary&amp;quot;: &amp;quot;your alert description here&amp;quot;
+}&#39; http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/alert
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;nbAlert&lt;/code&gt; can be used to represent the number of elements impacted by your alert.
+It is not used to compute alert&amp;rsquo;s repetitions.&lt;/p&gt;
+
+&lt;h3 id=&#34;store-new-alert-with-a-label&#34;&gt;Store new alert with a label&lt;/h3&gt;
+
+&lt;p&gt;If &lt;code&gt;Tat_topic == &amp;quot;&amp;quot;&lt;/code&gt;, default value is &lt;code&gt;/Internal/Alerts&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -XPOST \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: tatusername&amp;quot; \
+    -H &amp;quot;Tat_password: tatpassword&amp;quot; \
+    -H &amp;quot;Tat_topic: /Internal/Alerts&amp;quot; \
+    -d &#39;{
+    &amp;quot;status&amp;quot;: &amp;quot;AL&amp;quot;,
+    &amp;quot;nbAlert&amp;quot;: 3,
+    &amp;quot;service&amp;quot;: &amp;quot;YourService&amp;quot;,
+    &amp;quot;labels&amp;quot;: [{&amp;quot;text&amp;quot;: &amp;quot;critical:high&amp;quot;, &amp;quot;color&amp;quot;:&amp;quot;#d04437&amp;quot;}],
+    &amp;quot;summary&amp;quot;: &amp;quot; your alert description here&amp;quot;
+}&#39; http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/alert
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;sync-vs-async&#34;&gt;Sync vs Async&lt;/h3&gt;
+
+&lt;p&gt;POST on &lt;code&gt;http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/alert&lt;/code&gt;: send asynchronous to tat engine.&lt;/p&gt;
+
+&lt;p&gt;POST on &lt;code&gt;http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/alert/sync&lt;/code&gt;: send synchronous to tat engine, and return message&lt;/p&gt;
+
+&lt;h3 id=&#34;purge-alerts&#34;&gt;Purge alerts&lt;/h3&gt;
+
+&lt;p&gt;You have to call endpoint: &lt;code&gt;/purge/:skip/:limit&lt;/code&gt; to purge Tat_topic, for keeping
+30 replies on each alerts.&lt;/p&gt;
+
+&lt;p&gt;Purge example the last 100 alerts on tat :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: tatusername&amp;quot; \
+    -H &amp;quot;Tat_password: tatpassword&amp;quot; \
+    -H &amp;quot;Tat_topic: /Internal/Alerts&amp;quot;
+}&#39; http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/purge/0/100
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;monitoring&#34;&gt;Monitoring&lt;/h2&gt;
+
+&lt;h3 id=&#34;store-a-new-event&#34;&gt;Store a new event&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -XPOST \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: yourTatUser&amp;quot; \
+    -H &amp;quot;Tat_password: yourTatPassword&amp;quot; \
+    -H &amp;quot;Tat_topic: /Internal/Monitoring&amp;quot; \
+    -d &#39;{
+    &amp;quot;status&amp;quot;: &amp;quot;AL&amp;quot;,
+    &amp;quot;item&amp;quot;: &amp;quot;yourApplication&amp;quot;,
+    &amp;quot;service&amp;quot;: &amp;quot;SERVICE&amp;quot;,
+    &amp;quot;summary&amp;quot;: &amp;quot;your description&amp;quot;,
+    &amp;quot;labels&amp;quot;: [{&amp;quot;text&amp;quot;: &amp;quot;critical:high&amp;quot;, &amp;quot;color&amp;quot;:&amp;quot;#d04437&amp;quot;}]
+}&#39; http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/monitoring
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;with :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;status: AL or UP
+service: your service
+summary: description of event
+item: your application name, or host...
+labels: facultative, add labels to message root, the first message sent for an item.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;sync-vs-async-1&#34;&gt;Sync vs Async&lt;/h3&gt;
+
+&lt;p&gt;POST on &lt;code&gt;http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/monitoring&lt;/code&gt;: send asynchronous to tat engine.&lt;/p&gt;
+
+&lt;p&gt;POST on &lt;code&gt;http://&amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/monitoring/sync&lt;/code&gt;: send synchronous to tat engine, and return message&lt;/p&gt;
+
+&lt;h2 id=&#34;system&#34;&gt;System&lt;/h2&gt;
+
+&lt;h3 id=&#34;version&#34;&gt;Version&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -XGET http://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/version
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;usage-1&#34;&gt;Usage&lt;/h2&gt;
+
+&lt;h3 id=&#34;building&#34;&gt;Building&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/al2tat
+go build
+./al2tat -h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;flags&#34;&gt;Flags&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;./al2tat -h
+Run Al2Tat
+
+Usage:
+  al2tat [flags]
+  al2tat [command]
+
+Available Commands:
+  version     Print the version.
+
+Flags:
+      --listen-port string      Tat Engine Listen Port (default &amp;quot;8082&amp;quot;)
+      --log-level string        Log Level : debug, info or warn
+      --production              Production mode
+      --url-tat-engine string   URL Tat Engine (default &amp;quot;http://localhost:8080&amp;quot;)
+
+Use &amp;quot;al2tat [command] --help&amp;quot; for more information about a command.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;environment&#34;&gt;Environment&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;AL2TAT_LISTEN_PORT&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Example :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export AL2TAT_LISTEN_PORT=8181 &amp;amp;&amp;amp; ./al2tat
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;is same than&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;./al2tat --listen-port=&amp;quot;8181&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;examples-for-posting-an-alert&#34;&gt;Examples for POSTing an alert&lt;/h1&gt;
+
+&lt;h2 id=&#34;perl-version&#34;&gt;Perl version&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-perl&#34;&gt;package AL2TAT;
+
+use Exporter qw(import);
+
+our @EXPORT_OK = qw(run getMessage);
+
+use strict;
+use warnings;
+use LWP::UserAgent;
+
+sub run
+{
+  my &amp;lt;hostname&amp;gt;:&amp;lt;port&amp;gt;/alert&amp;quot;;
+  my $TAT_TOPIC_KEY = &amp;quot;/Private/yourTopic&amp;quot;;
+  my $TAT_USER_KEY = &amp;quot;yourUsernameOnTat&amp;quot;;
+  my $TAT_PASSWORD_KEY = &amp;quot;yourTatVeryLongPasswordHere&amp;quot;;
+
+  my $message = getMessage();
+  sendMessage($TAT_URL_KEY, $TAT_TOPIC_KEY, $TAT_USER_KEY, $TAT_PASSWORD_KEY, $message);
+}
+
+sub sendMessage
+{
+    my $url = $_[0];
+    my $topic = $_[1];
+    my $user = $_[2];
+    my $password = $_[3];
+    my $message = $_[4];
+
+    my $req = HTTP::Request-&amp;gt;new(POST =&amp;gt; $url);
+    $req-&amp;gt;header(&#39;Content-Type&#39; =&amp;gt; &#39;application/json&#39;);
+    $req-&amp;gt;header(&#39;Tat_username&#39; =&amp;gt; $user);
+    $req-&amp;gt;header(&#39;Tat_password&#39; =&amp;gt; $password);
+    $req-&amp;gt;header(&#39;Tat_topic&#39; =&amp;gt; $topic);
+
+    my $post_data = &#39;{&amp;quot;status&amp;quot;: &amp;quot;AL&amp;quot;, &amp;quot;nbAlert&amp;quot;: 1, &amp;quot;service&amp;quot;: &amp;quot;TEST&amp;quot;, &amp;quot;summary&amp;quot;: &amp;quot;&#39;.$message.&#39;&amp;quot;}&#39;;
+    $req-&amp;gt;content($post_data);
+
+    my $ua = LWP::UserAgent-&amp;gt;new;
+    my $resp = $ua-&amp;gt;request($req);
+
+    print &amp;quot;Response Status: &amp;quot;, $resp-&amp;gt;code, &amp;quot;\n&amp;quot;;
+    if ($resp-&amp;gt;is_success) {
+        my $message = $resp-&amp;gt;decoded_content;
+        print &amp;quot;Received reply: $message\n&amp;quot;;
+    } else {
+        print &amp;quot;HTTP POST error message: &amp;quot;, $resp-&amp;gt;message, &amp;quot;\n&amp;quot;;
+    }
+}
+
+sub getMessage
+{
+    return &amp;quot;Message from perl &amp;quot;;
+}
+
+run()
+
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
