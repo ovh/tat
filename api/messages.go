@@ -28,7 +28,7 @@ func (*MessagesController) buildCriteria(ctx *gin.Context) *tat.MessageCriteria 
 	}
 	c.Skip = skip
 	limit, e2 := strconv.Atoi(ctx.DefaultQuery("limit", "100"))
-	if e2 != nil {
+	if e2 != nil || limit <= 0 {
 		limit = 10
 	}
 
@@ -120,6 +120,11 @@ func (m *MessagesController) List(ctx *gin.Context) {
 
 func (m *MessagesController) innerList(ctx *gin.Context) (*tat.MessagesJSON, tat.User, tat.Topic, *tat.MessageCriteria, int, error) {
 	var criteria = m.buildCriteria(ctx)
+
+	if criteria.Limit <= 0 || criteria.Limit > 1000 {
+		return nil, tat.User{}, tat.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("Please put a limit <= 50 for fetching message")
+	}
+
 	log.Debugf("criteria::---> %+v", criteria)
 	out := &tat.MessagesJSON{}
 
@@ -187,6 +192,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 	messageIn.Topic = topicIn
 
 	if messageIn.Topic == "/" && messageIn.IDReference != "" {
+		log.Warnf("preCheckTopic fallback to FindByIDDefaultCollection for %s", messageIn.IDReference)
 		if efind := messageDB.FindByIDDefaultCollection(&message, messageIn.IDReference); efind != nil {
 			e := errors.New("Invalid request, no topic and message " + messageIn.IDReference + " not found in default collection:" + efind.Error())
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
