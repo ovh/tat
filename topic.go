@@ -189,6 +189,15 @@ type TopicJSON struct {
 	IsTopicAdmin bool   `json:"isTopicAdmin"`
 }
 
+// TopicDistributionJSON represents struct used by Engine while returns topic distribution
+type TopicDistributionJSON struct {
+	ID         string `json:"id"`
+	Topic      string `json:"topic"`
+	Count      int    `json:"count"`
+	Dedicated  bool   `json:"dedicated"`
+	Collection string `json:"collection"`
+}
+
 // TopicNameJSON represents struct, only topic name
 type TopicNameJSON struct {
 	Topic string `json:"topic"`

@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -128,6 +129,49 @@ func externalIP() string {
 		return ips
 	}
 	return "are you connected to the network?"
+}
+
+// DistributionTopics returns total number of messages
+func (*StatsController) DistributionTopics(ctx *gin.Context) {
+	c := &tat.TopicCriteria{}
+	skip, e := strconv.Atoi(ctx.DefaultQuery("skip", "0"))
+	if e != nil {
+		skip = 0
+	}
+	c.Skip = skip
+	limit, e2 := strconv.Atoi(ctx.DefaultQuery("limit", "20"))
+	if e2 != nil {
+		limit = 20
+	}
+	c.Limit = limit
+
+	count, topics, err := topic.ListTopics(c, nil, true, false, false)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error while listing topics %s", err)})
+		return
+	}
+
+	info := ""
+	t := []tat.TopicDistributionJSON{}
+	for _, topic := range topics {
+		countMsg, err := message.CountMessages(&tat.MessageCriteria{Topic: topic.Topic}, "internal", topic)
+		if err != nil {
+			info += fmt.Sprintf("Error on topic %s: %s", topic.Topic, err)
+		}
+		t = append(t, tat.TopicDistributionJSON{
+			ID:         topic.ID,
+			Topic:      topic.Topic,
+			Count:      countMsg,
+			Dedicated:  topic.Collection != "",
+			Collection: topic.Collection,
+		})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"total":  count,
+		"info":   info,
+		"topics": t,
+	})
 }
 
 // Distribution returns total number of messages
