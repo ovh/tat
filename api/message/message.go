@@ -370,8 +370,8 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 // TODO remove this func after migrate all topic to dedicated
 func FindByIDDefaultCollection(message *tat.Message, id string) error {
 	err := store.Tat().CDefaultMessages.Find(bson.M{"_id": id}).One(&message)
-	if err != nil {
-		log.Errorf("Error while fetching message with id %s", id)
+	if err != mgo.ErrNotFound {
+		log.Errorf("Error while fetching message (FindByIDDefaultCollection) with id %s", id)
 	}
 	return err
 }
@@ -379,7 +379,7 @@ func FindByIDDefaultCollection(message *tat.Message, id string) error {
 // FindByID returns message by given ID
 func FindByID(message *tat.Message, id string, topic tat.Topic) error {
 	err := store.GetCMessages(topic.Collection).Find(bson.M{"_id": id}).One(&message)
-	if err != nil {
+	if err != mgo.ErrNotFound {
 		log.Errorf("Error while fetching message with id %s", id)
 	}
 	return err

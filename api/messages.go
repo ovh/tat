@@ -194,7 +194,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 	if messageIn.Topic == "/" && messageIn.IDReference != "" {
 		log.Warnf("preCheckTopic fallback to FindByIDDefaultCollection for %s", messageIn.IDReference)
 		if efind := messageDB.FindByIDDefaultCollection(&message, messageIn.IDReference); efind != nil {
-			e := errors.New("Invalid request, no topic and message " + messageIn.IDReference + " not found in default collection:" + efind.Error())
+			e := errors.New("Invalid request, no topic and message " + messageIn.IDReference + " not found in default collection")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 			return message, tat.Topic{}, nil, e
 		}
