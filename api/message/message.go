@@ -370,7 +370,7 @@ func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.
 // TODO remove this func after migrate all topic to dedicated
 func FindByIDDefaultCollection(message *tat.Message, id string) error {
 	err := store.Tat().CDefaultMessages.Find(bson.M{"_id": id}).One(&message)
-	if err != mgo.ErrNotFound {
+	if err != nil && err != mgo.ErrNotFound {
 		log.Errorf("Error while fetching message (FindByIDDefaultCollection) with id %s", id)
 	}
 	return err
@@ -379,7 +379,7 @@ func FindByIDDefaultCollection(message *tat.Message, id string) error {
 // FindByID returns message by given ID
 func FindByID(message *tat.Message, id string, topic tat.Topic) error {
 	err := store.GetCMessages(topic.Collection).Find(bson.M{"_id": id}).One(&message)
-	if err != mgo.ErrNotFound {
+	if err != nil && err != mgo.ErrNotFound {
 		log.Errorf("Error while fetching message with id %s", id)
 	}
 	return err
@@ -1486,30 +1486,6 @@ func CountAllMessages() (int, error) {
 		count += c
 	}
 	return count, nil
-}
-
-// DistributionMessages returns distribution of messages per topic
-func DistributionMessages(col string) ([]bson.M, error) {
-	pipeline := []bson.M{
-		{
-			"$group": bson.M{
-				"_id": bson.M{col: "$" + col},
-				"count": bson.M{
-					"$sum": 1,
-				},
-			},
-		},
-		{
-			"$sort": bson.M{
-				"count": -1,
-			},
-		},
-	}
-	pipe := store.Tat().CDefaultMessages.Pipe(pipeline)
-	results := []bson.M{}
-
-	err := pipe.All(&results)
-	return results, err
 }
 
 // CountMessages list messages with given criteria

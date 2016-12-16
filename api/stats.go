@@ -174,22 +174,6 @@ func (*StatsController) DistributionTopics(ctx *gin.Context) {
 	})
 }
 
-// Distribution returns total number of messages
-func (*StatsController) Distribution(ctx *gin.Context) {
-	rt, err := message.DistributionMessages("topic")
-	if err != nil {
-		log.Errorf("Error while get distributions of messages per topic %s", err)
-	}
-	ru, err := message.DistributionMessages("author.username")
-	if err != nil {
-		log.Errorf("Error while get distributions of messages per user %s", err)
-	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"topics": rt,
-		"users":  ru,
-	})
-}
-
 // DBServerStatus returns stats of db : serverStatus
 func (*StatsController) DBServerStatus(ctx *gin.Context) {
 	serverStatus, err := store.DBServerStatus()

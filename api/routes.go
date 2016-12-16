@@ -98,7 +98,6 @@ func initRoutesStats(router *gin.RouterGroup, checkPassword gin.HandlerFunc) {
 	{
 		admin.GET("/count", statsCtrl.Count)
 		admin.GET("/instance", statsCtrl.Instance)
-		admin.GET("/distribution", statsCtrl.Distribution)
 		admin.GET("/distribution/topics", statsCtrl.DistributionTopics)
 		admin.GET("/db/stats", statsCtrl.DBStats)
 		admin.GET("/db/replSetGetConfig", statsCtrl.DBReplSetGetConfig)
