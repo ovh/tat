@@ -950,7 +950,13 @@ func (t *TopicsController) MigrateToDedicatedTopic(ctx *gin.Context) {
 
 // MigrateMessagesForDedicatedTopic migrates all msg of a topic to a dedicated collection
 func (t *TopicsController) MigrateMessagesForDedicatedTopic(ctx *gin.Context) {
-	limit, e2 := strconv.Atoi(ctx.DefaultQuery("limit", "500"))
+	slimit, e1 := GetParam(ctx, "limit")
+	if e1 != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": e1.Error()})
+		return
+	}
+
+	limit, e2 := strconv.Atoi(slimit)
 	if e2 != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": e2.Error()})
 		return
