@@ -400,14 +400,14 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 func Delete(topic *tat.Topic, u *tat.User) error {
 	log.Debugf("Delete: Clean topics cache for user %s", u.Username)
 	if topic.Collection != "" {
-
 		err := store.Tat().CTopics.Update(
 			bson.M{"_id": topic.ID},
 			bson.M{"$set": bson.M{"description": topic.Description + " TODEL"}})
 		if err != nil {
 			log.Errorf("Error while update description before delete topic %s err:%s", topic.Topic, err)
 		}
-
+		store.Tat().Session.SetMode(mgo.Strong, true)
+		defer store.Tat().Session.SetMode(mgo.SecondaryPreferred, true)
 		if err := store.Tat().Session.DB(store.DatabaseName).C(topic.Collection).DropCollection(); err != nil {
 			return fmt.Errorf("Error while drop collection for topic %s err: %s", topic.Topic, err)
 		}
