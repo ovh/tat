@@ -1,15 +1,20 @@
 package main
 
 import (
+	"crypto/tls"
 	"errors"
-	"log"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"runtime"
 	"time"
 
-	"github.com/Sirupsen/logrus"
+	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
+	loghook "github.com/ovh/logrus-ovh-hook"
 	"github.com/ovh/tat"
+	"github.com/spf13/viper"
+
 	userDB "github.com/ovh/tat/api/user"
 )
 
@@ -69,6 +74,41 @@ func tatRecovery(c *gin.Context) {
 
 }
 
+func initLog() {
+	if viper.GetBool("production") {
+		// Only log the warning severity or above.
+		log.SetLevel(log.InfoLevel)
+		gin.SetMode(gin.ReleaseMode)
+		log.SetFormatter(&log.JSONFormatter{})
+	} else {
+		log.SetLevel(log.DebugLevel)
+	}
+
+	if viper.GetString("graylog_host") != "" && viper.GetString("graylog_port") != "" {
+		graylogcfg := &loghook.Config{
+			Addr:      fmt.Sprintf("%s:%s", viper.GetString("graylog_host"), viper.GetString("graylog_port")),
+			Protocol:  viper.GetString("graylog_protocol"),
+			TLSConfig: &tls.Config{ServerName: viper.GetString("graylog_host")},
+		}
+
+		var extra map[string]interface{}
+		if viper.GetString("graylog_extra_key") != "" && viper.GetString("graylog_extra_value") != "" {
+			extra = map[string]interface{}{
+				viper.GetString("graylog_extra_key"): viper.GetString("graylog_extra_value"),
+			}
+		}
+
+		h, err := loghook.NewHook(graylogcfg, extra)
+
+		if err != nil {
+			log.Errorf("Error while initialize graylog hook: %s", err)
+		} else {
+			log.AddHook(h)
+			log.SetOutput(ioutil.Discard)
+		}
+	}
+}
+
 // ginrus returns a gin.HandlerFunc (middleware) that logs requests using logrus.
 //
 // Requests with errors are logged using logrus.Error().
@@ -77,7 +117,7 @@ func tatRecovery(c *gin.Context) {
 // It receives:
 //   1. A time package format string (e.g. time.RFC3339).
 //   2. A boolean stating whether to use UTC time zone or local.
-func ginrus(logger *logrus.Logger, timeFormat string, utc bool) gin.HandlerFunc {
+func ginrus(l *log.Logger, timeFormat string, utc bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		// some evil middlewares modify this values
@@ -94,7 +134,7 @@ func ginrus(logger *logrus.Logger, timeFormat string, utc bool) gin.HandlerFunc 
 		username, _ := c.Get(tat.TatHeaderUsername)
 		tatReferer, _ := c.Get(tat.TatHeaderXTatRefererLower)
 
-		entry := logger.WithFields(logrus.Fields{
+		entry := l.WithFields(log.Fields{
 			"status":      c.Writer.Status(),
 			"method":      c.Request.Method,
 			"path":        path,
@@ -107,13 +147,15 @@ func ginrus(logger *logrus.Logger, timeFormat string, utc bool) gin.HandlerFunc 
 			"tatfrom":     tatReferer,
 		})
 
+		msg := fmt.Sprintf("%d %s %s %s", c.Writer.Status(), c.Request.Method, path, username)
+
 		if len(c.Errors) > 0 {
 			// Append error field if this is an erroneous request.
-			entry.Error(c.Errors.String())
+			entry.Error(fmt.Sprintf("ERROR %s %s", msg, c.Errors.String()))
 		} else if c.Writer.Status() >= 400 {
-			entry.Warn()
+			entry.Warn(fmt.Sprintf("WARN %s", msg))
 		} else {
-			entry.Info()
+			entry.Info(fmt.Sprintf("INFO %s", msg))
 		}
 	}
 }

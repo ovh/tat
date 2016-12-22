@@ -248,7 +248,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 			}
 			if len(mlist) != 1 {
 				if messageIn.Action != "" {
-					e := errors.New(fmt.Sprintf("Searched Message, expected 1 message and %d message(s) matching on tat", len(mlist)))
+					e := fmt.Errorf("Searched Message, expected 1 message and %d message(s) matching on tat", len(mlist))
 					ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 					return message, tat.Topic{}, nil, e
 				}
@@ -298,7 +298,7 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 	return message, *topic, &user, nil
 }
 
-// Create messages on one topic
+// CreateBulk creates messages on one topic
 func (m *MessagesController) CreateBulk(ctx *gin.Context) {
 	messagesIn := &tat.MessagesJSONIn{}
 	ctx.Bind(messagesIn)

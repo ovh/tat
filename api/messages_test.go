@@ -118,8 +118,8 @@ func TestMessagesList(t *testing.T) {
 	assert.Equal(t, 1, len(messages.Messages))
 
 	msgs := []tat.MessageJSON{{Text: "MessageA #createBulk", Topic: topic.Topic}, {Text: "MessageB #createBulk", Topic: topic.Topic}}
-	messagesJson, err := client.MessageAddBulk(msgs)
-	assert.NotNil(t, messagesJson)
+	messagesJSON, err := client.MessageAddBulk(msgs)
+	assert.NotNil(t, messagesJSON)
 	assert.NoError(t, err)
 
 	messagesSearchBulk, err := client.MessageList(topic.Topic, &tat.MessageCriteria{Text: "#createBulk"})

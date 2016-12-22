@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"time"
-
 	"net/http"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
@@ -27,14 +26,7 @@ var mainCmd = &cobra.Command{
 		viper.SetEnvPrefix("tat")
 		viper.AutomaticEnv()
 
-		if viper.GetBool("production") {
-			// Only log the warning severity or above.
-			log.SetLevel(log.InfoLevel)
-			gin.SetMode(gin.ReleaseMode)
-			log.SetFormatter(&log.JSONFormatter{})
-		} else {
-			log.SetLevel(log.DebugLevel)
-		}
+		initLog()
 
 		router := gin.New()
 		router.Use(tatRecovery)
@@ -248,6 +240,23 @@ func init() {
 	flags.String("kafka-client-id", "", "Ex: --kafka-client-id=xxxx-yyyy")
 	viper.BindPFlag("kafka_client_id", flags.Lookup("kafka-client-id"))
 
+	flags.String("graylog-protocol", "", "Ex: --graylog-protocol=xxxx-yyyy")
+	viper.BindPFlag("graylog_protocol", flags.Lookup("graylog-protocol"))
+
+	flags.String("graylog-server-name", "", "Ex: --graylog-server-name=xxxx-yyyy")
+	viper.BindPFlag("graylog_server_name", flags.Lookup("graylog-server-name"))
+
+	flags.String("graylog-host", "", "Ex: --graylog-host=xxxx-yyyy")
+	viper.BindPFlag("graylog_host", flags.Lookup("graylog-host"))
+
+	flags.String("graylog-port", "", "Ex: --graylog-port=12202")
+	viper.BindPFlag("graylog_port", flags.Lookup("graylog-port"))
+
+	flags.String("graylog-extra-key", "", "Ex: --graylog-extra-key=xxxx-yyyy")
+	viper.BindPFlag("graylog_extra_key", flags.Lookup("graylog-extra-key"))
+
+	flags.String("graylog-extra-value", "", "Ex: --graylog-extra-value=xxxx-yyyy")
+	viper.BindPFlag("graylog_extra_value", flags.Lookup("graylog-extra-value"))
 }
 
 func main() {
