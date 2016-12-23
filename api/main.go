@@ -257,6 +257,9 @@ func init() {
 
 	flags.String("graylog-extra-value", "", "Ex: --graylog-extra-value=xxxx-yyyy")
 	viper.BindPFlag("graylog_extra_value", flags.Lookup("graylog-extra-value"))
+
+	flags.String("log-field-app-id", "", "Ex: --log_field_app_id=xxxx-yyyy")
+	viper.BindPFlag("log_field_app_id", flags.Lookup("log-field-app-id"))
 }
 
 func main() {

@@ -74,6 +74,8 @@ func tatRecovery(c *gin.Context) {
 
 }
 
+var logFieldAppID string
+
 func initLog() {
 	if viper.GetBool("production") {
 		// Only log the warning severity or above.
@@ -83,6 +85,8 @@ func initLog() {
 	} else {
 		log.SetLevel(log.DebugLevel)
 	}
+
+	logFieldAppID = viper.GetString("log_field_app_id")
 
 	if viper.GetString("graylog_host") != "" && viper.GetString("graylog_port") != "" {
 		graylogcfg := &loghook.Config{
@@ -135,6 +139,7 @@ func ginrus(l *log.Logger, timeFormat string, utc bool) gin.HandlerFunc {
 		tatReferer, _ := c.Get(tat.TatHeaderXTatRefererLower)
 
 		entry := l.WithFields(log.Fields{
+			"appID":       logFieldAppID,
 			"status":      c.Writer.Status(),
 			"method":      c.Request.Method,
 			"path":        path,
@@ -147,7 +152,7 @@ func ginrus(l *log.Logger, timeFormat string, utc bool) gin.HandlerFunc {
 			"tatfrom":     tatReferer,
 		})
 
-		msg := fmt.Sprintf("%d %s %s %s", c.Writer.Status(), c.Request.Method, path, username)
+		msg := fmt.Sprintf("%d %s %s %s %d", c.Writer.Status(), c.Request.Method, path, username, latency)
 
 		if len(c.Errors) > 0 {
 			// Append error field if this is an erroneous request.
