@@ -137,22 +137,27 @@ func ginrus(l *log.Logger, timeFormat string, utc bool) gin.HandlerFunc {
 
 		username, _ := c.Get(tat.TatHeaderUsername)
 		tatReferer, _ := c.Get(tat.TatHeaderXTatRefererLower)
+		sec := latency.Seconds()
+		ms := latency / time.Millisecond
 
 		entry := l.WithFields(log.Fields{
-			"appID":       logFieldAppID,
-			"status":      c.Writer.Status(),
-			"method":      c.Request.Method,
-			"path":        path,
-			"query":       query,
-			"ip":          c.ClientIP(),
-			"latency":     latency,
-			"user-agent":  c.Request.UserAgent(),
-			"time":        end.Format(timeFormat),
-			"tatusername": username,
-			"tatfrom":     tatReferer,
+			"appID":         logFieldAppID,
+			"status":        c.Writer.Status(),
+			"method":        c.Request.Method,
+			"path":          path,
+			"query":         query,
+			"ip":            c.ClientIP(),
+			"latency":       latency,
+			"latencyns":     latency.Nanoseconds(),
+			"latencyms":     ms,
+			"latencysecond": sec,
+			"user-agent":    c.Request.UserAgent(),
+			"time":          end.Format(timeFormat),
+			"tatusername":   username,
+			"tatfrom":       tatReferer,
 		})
 
-		msg := fmt.Sprintf("%d %s %s %s %d", c.Writer.Status(), c.Request.Method, path, username, latency)
+		msg := fmt.Sprintf("%d %s %s %s %fs %dms %dns", c.Writer.Status(), c.Request.Method, path, username, sec, ms, latency)
 
 		if len(c.Errors) > 0 {
 			// Append error field if this is an erroneous request.
