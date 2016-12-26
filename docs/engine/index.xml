@@ -258,7 +258,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;text&amp;quot;: &amp;quot;text&amp;quot; }&#39; \
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You can add labels from the creation&lt;/p&gt;
@@ -268,7 +268,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;text&amp;quot;: &amp;quot;text&amp;quot;, &amp;quot;dateCreation&amp;quot;: 11123232, &amp;quot;labels&amp;quot;: [{&amp;quot;text&amp;quot;: &amp;quot;labelA&amp;quot;, &amp;quot;color&amp;quot;: &amp;quot;#eeeeee&amp;quot;}, {&amp;quot;text&amp;quot;: &amp;quot;labelB&amp;quot;, &amp;quot;color&amp;quot;: &amp;quot;#ffffff&amp;quot;}] }&#39; \
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You can add replies from the creation&lt;/p&gt;
@@ -278,7 +278,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
   -d &#39;{ &amp;quot;text&amp;quot;: &amp;quot;text&amp;quot;, &amp;quot;replies&amp;quot;:[&amp;quot;reply A&amp;quot;, &amp;quot;reply B&amp;quot;] }&#39; \
-  https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+  https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You can add replies, with labels, from the creation&lt;/p&gt;
@@ -288,7 +288,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
   -d &#39;{ &amp;quot;text&amp;quot;: &amp;quot;text msg root&amp;quot;, &amp;quot;messages&amp;quot;: [{ &amp;quot;text&amp;quot;: &amp;quot;text reply&amp;quot;, &amp;quot;labels&amp;quot;: [{&amp;quot;text&amp;quot;: &amp;quot;labelA&amp;quot;, &amp;quot;color&amp;quot;: &amp;quot;#eeeeee&amp;quot;}] }] }&#39; \
-  https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+  https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;If you use a &lt;code&gt;system user&lt;/code&gt;, you can force message&amp;rsquo;s date&lt;/p&gt;
@@ -298,7 +298,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;text&amp;quot;: &amp;quot;text&amp;quot;, &amp;quot;dateCreation&amp;quot;: 11123232 }&#39; \
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Return HTTP 201 if OK&lt;/p&gt;
@@ -310,7 +310,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;[{ &amp;quot;text&amp;quot;: &amp;quot;text message A&amp;quot; },{ &amp;quot;text&amp;quot;: &amp;quot;text message B&amp;quot;, &amp;quot;labels&amp;quot;: [{&amp;quot;text&amp;quot;: &amp;quot;labelA&amp;quot;, &amp;quot;color&amp;quot;: &amp;quot;#eeeeee&amp;quot;}] }]&#39; \
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/messages/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;action-on-a-existing-message&#34;&gt;Action on a existing message&lt;/h2&gt;
@@ -330,7 +330,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;text&amp;quot;: &amp;quot;text&amp;quot;, &amp;quot;startTagReference&amp;quot;: &amp;quot;keyTag:&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;reply&amp;quot;}&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;If several messages match to your request, Tat gives you a HTTP Bad Request.&lt;/p&gt;
@@ -342,7 +342,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;text&amp;quot;: &amp;quot;text&amp;quot;, &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;reply&amp;quot;}&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;reply-to-a-message-with-create-root-message-if-necessary&#34;&gt;Reply to a message, with create root message if necessary&lt;/h2&gt;
@@ -360,7 +360,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
   -d &#39;{ &amp;quot;text&amp;quot;: &amp;quot;the root message #aaa&amp;quot;, &amp;quot;replies&amp;quot;:[&amp;quot;reply A&amp;quot;, &amp;quot;reply B&amp;quot;], &amp;quot;tagReference&amp;quot;: &amp;quot;aaa&amp;quot;}&#39; \
-  https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+  https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;like-a-message&#34;&gt;Like a message&lt;/h2&gt;
@@ -370,7 +370,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;like&amp;quot;}&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;unlike-a-message&#34;&gt;Unlike a message&lt;/h2&gt;
@@ -380,7 +380,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;unlike&amp;quot;}&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;add-a-label-to-a-message&#34;&gt;Add a label to a message&lt;/h2&gt;
@@ -392,7 +392,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;label&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot;myLabel&amp;quot;, &amp;quot;option&amp;quot;: &amp;quot;rgba(143,199,148,0.61)&amp;quot;}&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;remove-a-label-from-a-message&#34;&gt;Remove a label from a message&lt;/h2&gt;
@@ -402,7 +402,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;unlabel&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot;myLabel&amp;quot;}&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;remove-all-labels-and-add-new-ones&#34;&gt;Remove all labels and add new ones&lt;/h2&gt;
@@ -412,7 +412,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;relabel&amp;quot;, &amp;quot;labels&amp;quot;: [{&amp;quot;text&amp;quot;: &amp;quot;labelA&amp;quot;, &amp;quot;color&amp;quot;: &amp;quot;#eeeeee&amp;quot;}, {&amp;quot;text&amp;quot;: &amp;quot;labelB&amp;quot;, &amp;quot;color&amp;quot;: &amp;quot;#ffffff&amp;quot;}]}&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Return HTTP 201 if OK&lt;/p&gt;
@@ -424,8 +424,20 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;relabel&amp;quot;, &amp;quot;labels&amp;quot;: [{&amp;quot;text&amp;quot;: &amp;quot;labelA&amp;quot;, &amp;quot;color&amp;quot;: &amp;quot;#eeeeee&amp;quot;}, {&amp;quot;text&amp;quot;: &amp;quot;labelB&amp;quot;, &amp;quot;color&amp;quot;: &amp;quot;#ffffff&amp;quot;}], &amp;quot;options&amp;quot;: [&amp;quot;labelAToRemove&amp;quot;, &amp;quot;labelAToRemove&amp;quot;] }&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;remove-all-labels-and-add-new-ones-on-existing-message-create-message-otherwise&#34;&gt;Remove all labels and add new ones on existing message, create message otherwise&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &#39;Content-Type: application/json&#39; \
+    -H &amp;quot;Tat_username: username&amp;quot; \
+    -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
+	-d &#39;{ &amp;quot;tagReference&amp;quot;: &amp;quot;foo&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot;a text with #foo&amp;quot; &amp;quot;action&amp;quot;: &amp;quot;relabelorcreate&amp;quot;, &amp;quot;labels&amp;quot;: [{&amp;quot;text&amp;quot;: &amp;quot;labelA&amp;quot;, &amp;quot;color&amp;quot;: &amp;quot;#eeeeee&amp;quot;}, {&amp;quot;text&amp;quot;: &amp;quot;labelB&amp;quot;, &amp;quot;color&amp;quot;: &amp;quot;#ffffff&amp;quot;}]}&#39;\
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If a message with tag &lt;code&gt;foo&lt;/code&gt; already exists on topic, apply new labels. If message does not exist, a new message will be created.&lt;/p&gt;
 
 &lt;h2 id=&#34;update-a-message&#34;&gt;Update a message&lt;/h2&gt;
 
@@ -434,7 +446,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;tagReference&amp;quot;: &amp;quot;aaa&amp;quot;, &amp;quot;onlyRootReference&amp;quot;: &amp;quot;false&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;update&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot;my New Mesage updated&amp;quot;}&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;concat-a-message-adding-additional-text-to-one-message&#34;&gt;Concat a message : adding additional text to one message&lt;/h2&gt;
@@ -444,7 +456,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;concat&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot; additional text&amp;quot;}&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;move-a-message-to-another-topic&#34;&gt;Move a message to another topic&lt;/h2&gt;
@@ -542,7 +554,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;voteup&amp;quot; }&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;remove-a-vote-up-from-a-message&#34;&gt;Remove a Vote UP from a message&lt;/h2&gt;
@@ -552,7 +564,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;unvoteup&amp;quot; }&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;vote-down-a-message&#34;&gt;Vote Down a message&lt;/h2&gt;
@@ -562,7 +574,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;votedown&amp;quot; }&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;remove-vote-down-from-a-message&#34;&gt;Remove Vote Down from a message&lt;/h2&gt;
@@ -572,7 +584,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
     -H &amp;quot;Tat_username: username&amp;quot; \
     -H &amp;quot;Tat_password: passwordOfUser&amp;quot; \
 	-d &#39;{ &amp;quot;idReference&amp;quot;: &amp;quot;9797q87KJhqsfO7Usdqd&amp;quot;, &amp;quot;action&amp;quot;: &amp;quot;unvotedown&amp;quot; }&#39;\
-	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/topic/sub-topic
+	https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/message/a-topic/sub-topic
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;getting-messages-list&#34;&gt;Getting Messages List&lt;/h2&gt;

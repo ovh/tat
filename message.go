@@ -49,8 +49,10 @@ const (
 	MessageActionUnvoteup = "unvoteup"
 	// MessageActionUnvotedown for tedown action on a message
 	MessageActionUnvotedown = "unvotedown"
-	// MessageActionRelabel for elabel action on a message
+	// MessageActionRelabel for relabel action on a message
 	MessageActionRelabel = "relabel"
+	// MessageActionRelabelOrCreate for relabeloradd action on a message
+	MessageActionRelabelOrCreate = "relabelorcreate"
 	// MessageActionConcat for concat action on a message
 	MessageActionConcat = "concat"
 	// MessageActionMove for move action on a message
@@ -292,6 +294,15 @@ func (m *MessageCriteria) CacheKey() []string {
 		s = append(s, "SortBy="+m.SortBy)
 	}
 	return s
+}
+
+// MessageReferenceJSON is used for and action On A Existing Message
+type MessageReferenceJSON struct {
+	TagReference        string `json:"tagReference"`
+	StartTagReference   string `json:"startTagReference"`
+	LabelReference      string `json:"labelReference"`
+	StartLabelReference string `json:"startLabelReference"`
+	IDReference         string `json:"idReference"`
 }
 
 // MessagesJSON represents a message and information if current topic is RW
@@ -640,6 +651,30 @@ func (c *Client) MessageRelabel(topic, idMessage string, labels []Label, options
 	}
 
 	return c.processForMessageJSONOut("PUT", "/message"+message.Topic, 201, message)
+}
+
+// MessageRelabelOrCreate removes all labels and add new ones to a message if message exists, create message otherwise
+//  msg := tat.MessageJSON{
+//    Text:         "a text with a #tag",
+//    Labels:       []tat.Label{{Text:"textLabel", Color:"red"}},
+//    TagReference: "a #tag",
+//    Topic:        "/Internal/YourTopic",
+//  }
+//  if _, err := getClient().MessageRelabelOrCreate(msg); err != nil {
+//    return fmt.Errorf("Error while MessageAdd:%s", err)
+//  }
+func (c *Client) MessageRelabelOrCreate(msg MessageJSON) (*MessageJSONOut, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	if msg.Topic == "" {
+		return nil, fmt.Errorf("A message must have a Topic")
+	}
+
+	msg.Action = MessageActionRelabelOrCreate
+
+	return c.processForMessageJSONOut("PUT", "/message"+msg.Topic, 201, msg)
 }
 
 func (c *Client) processForMessageJSONOutBytes(method, path string, want int, message MessageJSON) ([]byte, error) {

@@ -1201,6 +1201,12 @@ func RemoveAllAndAddNewLabel(message *tat.Message, labels []tat.Label, topic tat
 	return nil
 }
 
+// RemoveAllAndAddNewLabelOrCreate removes all labels and add new label on message
+func RemoveAllAndAddNewLabelOrCreate(message *tat.Message, labels []tat.Label, topic tat.Topic) error {
+	// TODO
+	return nil
+}
+
 // RemoveSomeAndAddNewLabel removes some labels and add new label on message
 func RemoveSomeAndAddNewLabel(message *tat.Message, labelsToAdd []tat.Label, labelsToRemove []string, topic tat.Topic) error {
 	//message.Labels = append(message.Labels, labels...)

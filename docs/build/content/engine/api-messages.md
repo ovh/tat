@@ -15,7 +15,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text" }' \
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 You can add labels from the creation
@@ -26,7 +26,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text", "dateCreation": 11123232, "labels": [{"text": "labelA", "color": "#eeeeee"}, {"text": "labelB", "color": "#ffffff"}] }' \
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 You can add replies from the creation
@@ -37,7 +37,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
   -d '{ "text": "text", "replies":["reply A", "reply B"] }' \
-  https://<tatHostname>:<tatPort>/message/topic/sub-topic
+  https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 You can add replies, with labels, from the creation
@@ -48,7 +48,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
   -d '{ "text": "text msg root", "messages": [{ "text": "text reply", "labels": [{"text": "labelA", "color": "#eeeeee"}] }] }' \
-  https://<tatHostname>:<tatPort>/message/topic/sub-topic
+  https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 If you use a `system user`, you can force message's date
@@ -59,7 +59,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text", "dateCreation": 11123232 }' \
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 Return HTTP 201 if OK
@@ -72,7 +72,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '[{ "text": "text message A" },{ "text": "text message B", "labels": [{"text": "labelA", "color": "#eeeeee"}] }]' \
-	https://<tatHostname>:<tatPort>/messages/topic/sub-topic
+	https://<tatHostname>:<tatPort>/messages/a-topic/sub-topic
 ```
 
 ## Action on a existing message
@@ -91,7 +91,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text", "startTagReference": "keyTag:", "action": "reply"}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 If several messages match to your request, Tat gives you a HTTP Bad Request.
@@ -104,7 +104,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "text": "text", "idReference": "9797q87KJhqsfO7Usdqd", "action": "reply"}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Reply to a message, with create root message if necessary
@@ -121,7 +121,7 @@ curl -XPOST \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
   -d '{ "text": "the root message #aaa", "replies":["reply A", "reply B"], "tagReference": "aaa"}' \
-  https://<tatHostname>:<tatPort>/message/topic/sub-topic
+  https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Like a message
@@ -131,7 +131,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "like"}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Unlike a message
@@ -141,7 +141,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unlike"}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Add a label to a message
@@ -153,7 +153,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "label", "text": "myLabel", "option": "rgba(143,199,148,0.61)"}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Remove a label from a message
@@ -164,7 +164,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unlabel", "text": "myLabel"}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Remove all labels and add new ones
@@ -175,7 +175,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "relabel", "labels": [{"text": "labelA", "color": "#eeeeee"}, {"text": "labelB", "color": "#ffffff"}]}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 Return HTTP 201 if OK
@@ -188,8 +188,21 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "relabel", "labels": [{"text": "labelA", "color": "#eeeeee"}, {"text": "labelB", "color": "#ffffff"}], "options": ["labelAToRemove", "labelAToRemove"] }'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
+
+## Remove all labels and add new ones on existing message, create message otherwise
+
+```bash
+curl -XPUT \
+    -H 'Content-Type: application/json' \
+    -H "Tat_username: username" \
+    -H "Tat_password: passwordOfUser" \
+	-d '{ "tagReference": "foo", "text": "a text with #foo" "action": "relabelorcreate", "labels": [{"text": "labelA", "color": "#eeeeee"}, {"text": "labelB", "color": "#ffffff"}]}'\
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
+```
+
+If a message with tag `foo` already exists on topic, apply new labels. If message does not exist, a new message will be created.
 
 ## Update a message
 
@@ -199,7 +212,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "tagReference": "aaa", "onlyRootReference": "false", "action": "update", "text": "my New Mesage updated"}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Concat a message : adding additional text to one message
@@ -210,7 +223,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "concat", "text": " additional text"}'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Move a message to another topic
@@ -310,7 +323,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "voteup" }'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Remove a Vote UP from a message
@@ -321,7 +334,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unvoteup" }'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Vote Down a message
@@ -332,7 +345,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "votedown" }'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Remove Vote Down from a message
@@ -343,7 +356,7 @@ curl -XPUT \
     -H "Tat_username: username" \
     -H "Tat_password: passwordOfUser" \
 	-d '{ "idReference": "9797q87KJhqsfO7Usdqd", "action": "unvotedown" }'\
-	https://<tatHostname>:<tatPort>/message/topic/sub-topic
+	https://<tatHostname>:<tatPort>/message/a-topic/sub-topic
 ```
 
 ## Getting Messages List

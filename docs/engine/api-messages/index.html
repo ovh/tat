@@ -702,6 +702,7 @@
 <li><a href="#remove-a-label-from-a-message">Remove a label from a message</a></li>
 <li><a href="#remove-all-labels-and-add-new-ones">Remove all labels and add new ones</a></li>
 <li><a href="#remove-some-labels-and-add-new-ones">Remove some labels and add new ones</a></li>
+<li><a href="#remove-all-labels-and-add-new-ones-on-existing-message-create-message-otherwise">Remove all labels and add new ones on existing message, create message otherwise</a></li>
 <li><a href="#update-a-message">Update a message</a></li>
 <li><a href="#concat-a-message-adding-additional-text-to-one-message">Concat a message : adding additional text to one message</a></li>
 <li><a href="#move-a-message-to-another-topic">Move a message to another topic</a></li>
@@ -754,7 +755,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;text&quot;: &quot;text&quot; }' \
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <p>You can add labels from the creation</p>
@@ -764,7 +765,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;text&quot;: &quot;text&quot;, &quot;dateCreation&quot;: 11123232, &quot;labels&quot;: [{&quot;text&quot;: &quot;labelA&quot;, &quot;color&quot;: &quot;#eeeeee&quot;}, {&quot;text&quot;: &quot;labelB&quot;, &quot;color&quot;: &quot;#ffffff&quot;}] }' \
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <p>You can add replies from the creation</p>
@@ -774,7 +775,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
   -d '{ &quot;text&quot;: &quot;text&quot;, &quot;replies&quot;:[&quot;reply A&quot;, &quot;reply B&quot;] }' \
-  https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+  https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <p>You can add replies, with labels, from the creation</p>
@@ -784,7 +785,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
   -d '{ &quot;text&quot;: &quot;text msg root&quot;, &quot;messages&quot;: [{ &quot;text&quot;: &quot;text reply&quot;, &quot;labels&quot;: [{&quot;text&quot;: &quot;labelA&quot;, &quot;color&quot;: &quot;#eeeeee&quot;}] }] }' \
-  https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+  https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <p>If you use a <code>system user</code>, you can force message&rsquo;s date</p>
@@ -794,7 +795,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;text&quot;: &quot;text&quot;, &quot;dateCreation&quot;: 11123232 }' \
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <p>Return HTTP 201 if OK</p>
@@ -806,7 +807,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '[{ &quot;text&quot;: &quot;text message A&quot; },{ &quot;text&quot;: &quot;text message B&quot;, &quot;labels&quot;: [{&quot;text&quot;: &quot;labelA&quot;, &quot;color&quot;: &quot;#eeeeee&quot;}] }]' \
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/messages/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/messages/a-topic/sub-topic
 </code></pre>
 
 <h2 id="action-on-a-existing-message">Action on a existing message</h2>
@@ -826,7 +827,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;text&quot;: &quot;text&quot;, &quot;startTagReference&quot;: &quot;keyTag:&quot;, &quot;action&quot;: &quot;reply&quot;}'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <p>If several messages match to your request, Tat gives you a HTTP Bad Request.</p>
@@ -838,7 +839,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;text&quot;: &quot;text&quot;, &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;reply&quot;}'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="reply-to-a-message-with-create-root-message-if-necessary">Reply to a message, with create root message if necessary</h2>
@@ -856,7 +857,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
   -d '{ &quot;text&quot;: &quot;the root message #aaa&quot;, &quot;replies&quot;:[&quot;reply A&quot;, &quot;reply B&quot;], &quot;tagReference&quot;: &quot;aaa&quot;}' \
-  https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+  https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="like-a-message">Like a message</h2>
@@ -866,7 +867,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;like&quot;}'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="unlike-a-message">Unlike a message</h2>
@@ -876,7 +877,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;unlike&quot;}'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="add-a-label-to-a-message">Add a label to a message</h2>
@@ -888,7 +889,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;label&quot;, &quot;text&quot;: &quot;myLabel&quot;, &quot;option&quot;: &quot;rgba(143,199,148,0.61)&quot;}'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="remove-a-label-from-a-message">Remove a label from a message</h2>
@@ -898,7 +899,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;unlabel&quot;, &quot;text&quot;: &quot;myLabel&quot;}'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="remove-all-labels-and-add-new-ones">Remove all labels and add new ones</h2>
@@ -908,7 +909,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;relabel&quot;, &quot;labels&quot;: [{&quot;text&quot;: &quot;labelA&quot;, &quot;color&quot;: &quot;#eeeeee&quot;}, {&quot;text&quot;: &quot;labelB&quot;, &quot;color&quot;: &quot;#ffffff&quot;}]}'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <p>Return HTTP 201 if OK</p>
@@ -920,8 +921,20 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;relabel&quot;, &quot;labels&quot;: [{&quot;text&quot;: &quot;labelA&quot;, &quot;color&quot;: &quot;#eeeeee&quot;}, {&quot;text&quot;: &quot;labelB&quot;, &quot;color&quot;: &quot;#ffffff&quot;}], &quot;options&quot;: [&quot;labelAToRemove&quot;, &quot;labelAToRemove&quot;] }'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
+
+<h2 id="remove-all-labels-and-add-new-ones-on-existing-message-create-message-otherwise">Remove all labels and add new ones on existing message, create message otherwise</h2>
+
+<pre><code class="language-bash">curl -XPUT \
+    -H 'Content-Type: application/json' \
+    -H &quot;Tat_username: username&quot; \
+    -H &quot;Tat_password: passwordOfUser&quot; \
+	-d '{ &quot;tagReference&quot;: &quot;foo&quot;, &quot;text&quot;: &quot;a text with #foo&quot; &quot;action&quot;: &quot;relabelorcreate&quot;, &quot;labels&quot;: [{&quot;text&quot;: &quot;labelA&quot;, &quot;color&quot;: &quot;#eeeeee&quot;}, {&quot;text&quot;: &quot;labelB&quot;, &quot;color&quot;: &quot;#ffffff&quot;}]}'\
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
+</code></pre>
+
+<p>If a message with tag <code>foo</code> already exists on topic, apply new labels. If message does not exist, a new message will be created.</p>
 
 <h2 id="update-a-message">Update a message</h2>
 
@@ -930,7 +943,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;tagReference&quot;: &quot;aaa&quot;, &quot;onlyRootReference&quot;: &quot;false&quot;, &quot;action&quot;: &quot;update&quot;, &quot;text&quot;: &quot;my New Mesage updated&quot;}'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="concat-a-message-adding-additional-text-to-one-message">Concat a message : adding additional text to one message</h2>
@@ -940,7 +953,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;concat&quot;, &quot;text&quot;: &quot; additional text&quot;}'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="move-a-message-to-another-topic">Move a message to another topic</h2>
@@ -1038,7 +1051,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;voteup&quot; }'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="remove-a-vote-up-from-a-message">Remove a Vote UP from a message</h2>
@@ -1048,7 +1061,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;unvoteup&quot; }'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="vote-down-a-message">Vote Down a message</h2>
@@ -1058,7 +1071,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;votedown&quot; }'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="remove-vote-down-from-a-message">Remove Vote Down from a message</h2>
@@ -1068,7 +1081,7 @@
     -H &quot;Tat_username: username&quot; \
     -H &quot;Tat_password: passwordOfUser&quot; \
 	-d '{ &quot;idReference&quot;: &quot;9797q87KJhqsfO7Usdqd&quot;, &quot;action&quot;: &quot;unvotedown&quot; }'\
-	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/topic/sub-topic
+	https://&lt;tatHostname&gt;:&lt;tatPort&gt;/message/a-topic/sub-topic
 </code></pre>
 
 <h2 id="getting-messages-list">Getting Messages List</h2>

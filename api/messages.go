@@ -246,7 +246,12 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 				ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 				return message, tat.Topic{}, nil, e
 			}
-			if len(mlist) != 1 {
+
+			if messageIn.Action == tat.MessageActionRelabelOrCreate {
+				if len(mlist) == 1 {
+					message = mlist[0]
+				}
+			} else if len(mlist) != 1 {
 				if messageIn.Action != "" {
 					e := fmt.Errorf("Searched Message, expected 1 message and %d message(s) matching on tat", len(mlist))
 					ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
@@ -269,7 +274,8 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 			messageIn.Action == tat.MessageActionLabel || messageIn.Action == tat.MessageActionUnlabel ||
 			messageIn.Action == tat.MessageActionVoteup || messageIn.Action == tat.MessageActionVotedown ||
 			messageIn.Action == tat.MessageActionUnvoteup || messageIn.Action == tat.MessageActionUnvotedown ||
-			messageIn.Action == tat.MessageActionRelabel || messageIn.Action == tat.MessageActionConcat {
+			messageIn.Action == tat.MessageActionRelabel || messageIn.Action == tat.MessageActionRelabelOrCreate ||
+			messageIn.Action == tat.MessageActionConcat {
 			topicName = m.inverseIfDMTopic(ctx, message.Topic)
 		} else if messageIn.Action == tat.MessageActionMove {
 			topicName = topicIn
@@ -280,13 +286,13 @@ func (m *MessagesController) preCheckTopic(ctx *gin.Context, messageIn *tat.Mess
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
 			return message, tat.Topic{}, nil, e
 		}
-		if topicName == "" && messageIn.Action == "" {
+		if topicName == "" && (messageIn.Action == "" || messageIn.Action == tat.MessageActionRelabelOrCreate) {
 			topicName = messageIn.Topic
 		}
 
 		topic, err = topicDB.FindByTopic(topicName, true, true, true, &user)
 		if err != nil {
-			e := errors.New("Topic " + topicName + " does not exist")
+			e := errors.New("Topic '" + topicName + "' does not exist")
 			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 			return message, tat.Topic{}, nil, e
 		}
@@ -381,7 +387,8 @@ func (m *MessagesController) Update(ctx *gin.Context) {
 		return
 	}
 
-	if messageIn.Action == tat.MessageActionLabel || messageIn.Action == tat.MessageActionUnlabel || messageIn.Action == tat.MessageActionRelabel {
+	if messageIn.Action == tat.MessageActionLabel || messageIn.Action == tat.MessageActionUnlabel ||
+		messageIn.Action == tat.MessageActionRelabel || messageIn.Action == tat.MessageActionRelabelOrCreate {
 		m.addOrRemoveLabel(ctx, messageIn, messageReference, *user, topic)
 		return
 	}
@@ -446,7 +453,7 @@ func (m *MessagesController) messageDelete(ctx *gin.Context, cascade, force bool
 	topic, errf := topicDB.FindByTopic(topicIn, true, false, false, &user)
 	if errf != nil {
 		log.Errorf("messageDelete> err:%s", errf)
-		e := fmt.Sprintf("Topic %s does not exist", topicIn)
+		e := fmt.Sprintf("Topic '%s' does not exist", topicIn)
 		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
 		return
 	}
@@ -592,6 +599,25 @@ func (m *MessagesController) addOrRemoveLabel(ctx *gin.Context, messageIn *tat.M
 			return
 		}
 		out = &tat.MessageJSONOut{Info: fmt.Sprintf("label %s removed from message", messageIn.Text), Message: message}
+	} else if messageIn.Action == tat.MessageActionRelabelOrCreate && len(messageIn.Options) == 0 {
+		if message.ID != "" {
+			if err := messageDB.RemoveAllAndAddNewLabel(&message, messageIn.Labels, topic); err != nil {
+				errInfo := fmt.Sprintf("Error while removing all labels and add new ones for a message %s", err.Error())
+				log.Errorf(errInfo)
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": errInfo})
+				return
+			}
+			out = &tat.MessageJSONOut{Info: fmt.Sprintf("all labels removed and new labels %s added to message", messageIn.Text), Message: message}
+		} else {
+			// create new message
+			var code int
+			var errCreate error
+			out, code, errCreate = m.createSingle(ctx, messageIn)
+			if errCreate != nil {
+				ctx.JSON(code, gin.H{"error": errCreate})
+				return
+			}
+		}
 	} else if messageIn.Action == tat.MessageActionRelabel && len(messageIn.Options) == 0 {
 		if err := messageDB.RemoveAllAndAddNewLabel(&message, messageIn.Labels, topic); err != nil {
 			errInfo := fmt.Sprintf("Error while removing all labels and add new ones for a message %s", err.Error())

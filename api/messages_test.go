@@ -158,5 +158,16 @@ func TestMessagesList(t *testing.T) {
 	//assert.NoError(t, err)
 	assert.EqualError(t, err, "Response code:403 (want:200) with Body:{\"error\":\"Sort must be -dateCreation or treeView will not work\"}\n{\"messages\":[],\"isTopicRw\":true,\"isTopicAdmin\":false}\n")
 
+	msg := tat.MessageJSON{
+		Topic:        topic.Topic,
+		TagReference: "foocreate",
+		Labels:       []tat.Label{{Text: "labelA", Color: "#eeeeee"}, {Text: "labelD", Color: "#eeeeee"}},
+		Text:         "new text",
+	}
+	message, err = client.MessageRelabelOrCreate(msg)
+	assert.NotNil(t, message)
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(message.Message.Labels), "this message should have 2 labels")
+
 	tat.ErrorLogFunc = t.Errorf
 }
