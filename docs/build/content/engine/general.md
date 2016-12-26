@@ -88,6 +88,7 @@ next: "/engine/api-messages"
  * list        [Engine](/engine/api-messages/#getting-messages-list) [Tatcli](/tatcli/tatcli-message/#getting-message) [Go-SDK](https://godoc.org/github.com/ovh/tat#Client.MessageList)
  * move        [Engine](/engine/api-messages/#move-a-message-to-another-topic) [Tatcli](/tatcli/tatcli-message/#move-a-message-to-another-topic) [Go-SDK](https://godoc.org/github.com/ovh/tat#Client.MessageMove)
  * relabel     [Engine](/engine/api-messages/#remove-all-labels-and-add-new-ones) [Tatcli](/tatcli/tatcli-message/#remove-all-labels-and-add-new-ones-to-a-message) [Go-SDK](https://godoc.org/github.com/ovh/tat#Client.MessageRelabel)
+ * relabelorcreate     [Engine](/engine/api-messages/#remove-all-labels-and-add-new-ones-on-existing-message-create-message-otherwise) [Go-SDK](https://godoc.org/github.com/ovh/tat#Client.MessageRelabelOrCreate)
  * reply       [Engine](/engine/api-messages/#reply-to-a-message) [Tatcli](/tatcli/tatcli-message/#reply-to-a-message) [Go-SDK](https://godoc.org/github.com/ovh/tat#Client.MessageReply)
  * task        [Engine](/engine/api-messages/#create-a-task-from-a-message) [Tatcli](/tatcli/tatcli-message/#create-a-task-from-one-message) [Go-SDK](https://godoc.org/github.com/ovh/tat#Client.MessageTask)
  * unlabel     [Engine](/engine/api-messages/#remove-a-label-from-a-message) [Tatcli](/tatcli/tatcli-message/#remove-a-label-from-a-message) [Go-SDK](https://godoc.org/github.com/ovh/tat#Client.MessageUnlabel)
