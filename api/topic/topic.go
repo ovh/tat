@@ -134,7 +134,7 @@ func buildTopicCriteria(criteria *tat.TopicCriteria, user *tat.User) (bson.M, er
 
 // GetTopicSelectedFields return allowed selected field on mongo
 func GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M {
-	b := bson.M{}
+	var b bson.M
 
 	if isAdmin {
 		b = bson.M{
@@ -149,6 +149,7 @@ func GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 			"adminUsers":           1,
 			"adminGroups":          1,
 			"maxlength":            1,
+			"maxreplies":           1,
 			"canForceDate":         1,
 			"canUpdateMsg":         1,
 			"canDeleteMsg":         1,
@@ -187,6 +188,7 @@ func GetTopicSelectedFields(isAdmin, withTags, withLabels, oneTopic bool) bson.M
 			"isAutoComputeTags":    1,
 			"isAutoComputeLabels":  1,
 			"maxlength":            1,
+			"maxreplies":           1,
 			"dateLastMessage":      1,
 			"parameters":           1,
 		}
@@ -296,6 +298,7 @@ func InitPrivateTopic() {
 		Description:          "Private Topics",
 		DateCreation:         time.Now().Unix(),
 		MaxLength:            tat.DefaultMessageMaxSize,
+		MaxReplies:           tat.DefaultMessageMaxReplies,
 		CanForceDate:         false,
 		CanUpdateMsg:         false,
 		CanDeleteMsg:         false,
@@ -340,7 +343,8 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 
 	topic.ID = bson.NewObjectId().Hex()
 	topic.DateCreation = time.Now().Unix()
-	topic.MaxLength = tat.DefaultMessageMaxSize // topic MaxLenth messages
+	topic.MaxLength = tat.DefaultMessageMaxSize     // topic MaxLenth messages
+	topic.MaxReplies = tat.DefaultMessageMaxReplies // topic max replies on a message
 	topic.CanForceDate = false
 	topic.IsAutoComputeLabels = true
 	topic.IsAutoComputeTags = true
@@ -725,15 +729,21 @@ func setAParam(topic *tat.Topic, key, value string) error {
 	if key == "isAutoComputeTags" || key == "isAutoComputeLabels" {
 		v, err := strconv.ParseBool(value)
 		if err != nil {
-			return fmt.Errorf("Error while set param %s whith value %s", key, value)
+			return fmt.Errorf("Error while set param %s with value %s", key, value)
 		}
-		return setABoolParam(topic, key, v)
+		return setParamInDB(topic, key, v)
+	} else if key == "maxreplies" {
+		v, err := strconv.Atoi(value)
+		if err != nil {
+			return fmt.Errorf("Error while set param %s with value %s", key, value)
+		}
+		return setParamInDB(topic, key, v)
 	}
 	return fmt.Errorf("set param %s is an invalid action", key)
 }
 
-func setABoolParam(topic *tat.Topic, key string, value bool) error {
-	if key != "isAutoComputeTags" && key != "isAutoComputeLabels" {
+func setParamInDB(topic *tat.Topic, key string, value interface{}) error {
+	if key != "maxreplies" && key != "isAutoComputeTags" && key != "isAutoComputeLabels" {
 		return fmt.Errorf("set param %s is an invalid action", key)
 	}
 
@@ -742,7 +752,7 @@ func setABoolParam(topic *tat.Topic, key string, value bool) error {
 		bson.M{"$set": bson.M{key: value}},
 	)
 	if err != nil {
-		log.Errorf("Error while update topic %s, param %s with new value %t", topic.Topic, key, value)
+		log.Errorf("Error while update topic %s, param %s with new value %s", topic.Topic, key, value)
 	}
 	cache.CleanTopicByName(topic.Topic)
 	return nil
@@ -790,9 +800,9 @@ func IsTopicExists(topicName string) bool {
 	return err == nil // no error, return true
 }
 
-// SetParam update param maxLength, canForceDate, canUpdateMsg, canDeleteMsg,
+// SetParam update param maxLength, maxReplies, canForceDate, canUpdateMsg, canDeleteMsg,
 // canUpdateAllMsg, canDeleteAllMsg, adminCanUpdateAllMsg, adminCanDeleteAllMsg, parameters on topic
-func SetParam(topic *tat.Topic, username string, recursive bool, maxLength int,
+func SetParam(topic *tat.Topic, username string, recursive bool, maxLength, maxReplies int,
 	canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanUpdateAllMsg, adminCanDeleteAllMsg,
 	isAutoComputeTags, isAutoComputeLabels bool, parameters []tat.TopicParameter) error {
 
@@ -810,6 +820,7 @@ func SetParam(topic *tat.Topic, username string, recursive bool, maxLength int,
 
 	update := bson.M{
 		"maxlength":            maxLength,
+		"maxreplies":           maxReplies,
 		"canForceDate":         canForceDate,
 		"canUpdateMsg":         canUpdateMsg,
 		"canDeleteMsg":         canDeleteMsg,
@@ -830,8 +841,8 @@ func SetParam(topic *tat.Topic, username string, recursive bool, maxLength int,
 		log.Errorf("Error while updateAll parameters : %s", err.Error())
 		return err
 	}
-	h := fmt.Sprintf("update param to maxlength:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, adminCanDeleteAllMsg:%t isAutoComputeTags:%t, isAutoComputeLabels:%t",
-		maxLength, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanDeleteAllMsg, isAutoComputeTags, isAutoComputeLabels)
+	h := fmt.Sprintf("update param to maxlength:%d, maxreplies:%d, canForceDate:%t, canUpdateMsg:%t, canDeleteMsg:%t, canUpdateAllMsg:%t, canDeleteAllMsg:%t, adminCanDeleteAllMsg:%t isAutoComputeTags:%t, isAutoComputeLabels:%t",
+		maxLength, maxReplies, canForceDate, canUpdateMsg, canDeleteMsg, canUpdateAllMsg, canDeleteAllMsg, adminCanDeleteAllMsg, isAutoComputeTags, isAutoComputeLabels)
 
 	err = addToHistory(topic, selector, username, h)
 	cache.CleanTopicByName(topic.Topic)

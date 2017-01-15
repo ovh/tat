@@ -6,7 +6,7 @@ import (
 
 var HookTat2XMPPHeaderKey = "Tat2xmppkey"
 
-// HookJSON represents a json sent to an external system, for a event about a message
+// HookMessageJSON represents a json sent to an external system, for a event about a message
 type HookMessageJSON struct {
 	Action         string          `json:"action"`
 	MessageJSONOut *MessageJSONOut `json:"message"`

@@ -23,6 +23,7 @@ type Topic struct {
 	AdminGroups          []string         `bson:"adminGroups" json:"adminGroups,omitempty"`
 	History              []string         `bson:"history" json:"history"`
 	MaxLength            int              `bson:"maxlength" json:"maxlength"`
+	MaxReplies           int              `bson:"maxreplies" json:"maxreplies"`
 	CanForceDate         bool             `bson:"canForceDate" json:"canForceDate"`
 	CanUpdateMsg         bool             `bson:"canUpdateMsg" json:"canUpdateMsg"`
 	CanDeleteMsg         bool             `bson:"canDeleteMsg" json:"canDeleteMsg"`
@@ -551,6 +552,7 @@ func (c *Client) TopicDeleteParameters(topic string, params []string, recursive 
 type TopicParameters struct {
 	Topic                string `json:"topic"`
 	MaxLength            int    `json:"maxlength"`
+	MaxReplies           int    `json:"maxreplies"`
 	CanForceDate         bool   `json:"canForceDate"`
 	CanUpdateMsg         bool   `json:"canUpdateMsg"`
 	CanDeleteMsg         bool   `json:"canDeleteMsg"`

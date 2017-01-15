@@ -131,12 +131,14 @@ func TestMessagesList(t *testing.T) {
 		Topic:  topic.Topic,
 		Labels: []tat.Label{{Text: "xxx:yyy", Color: "#eeeeee"}},
 	})
+	assert.NoError(t, err)
 
 	message, err = client.MessageAdd(tat.MessageJSON{
 		Text:   "foo #tag:bbb",
 		Topic:  topic.Topic,
 		Labels: []tat.Label{{Text: "xxx:zzz", Color: "#eeeeee"}},
 	})
+	assert.NoError(t, err)
 
 	messagesSearchStartLabel, err := client.MessageList(topic.Topic, &tat.MessageCriteria{StartLabel: "xxx"})
 	assert.NoError(t, err)

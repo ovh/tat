@@ -159,7 +159,7 @@ func (m *MessagesController) innerList(ctx *gin.Context) (*tat.MessagesJSON, tat
 
 	topic, errt := topicDB.FindByTopic(criteria.Topic, true, false, false, &user)
 	if errt != nil {
-		topicCriteria := ""
+		var topicCriteria string
 		_, topicCriteria, err = checkDMTopic(ctx, criteria.Topic)
 		if err != nil {
 			return out, tat.User{}, tat.Topic{}, criteria, http.StatusBadRequest, fmt.Errorf("topic " + criteria.Topic + " does not exist or you have no read access on it")
@@ -716,7 +716,7 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *tat.Me
 }
 
 func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *tat.MessageJSON, message tat.Message, user tat.User, topic tat.Topic, isAdminOnTopic bool) {
-	info := ""
+	var info string
 
 	if isAdminOnTopic && topic.CanUpdateAllMsg {
 		// ok, user is admin on topic, and admin can update all msg
@@ -732,8 +732,7 @@ func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *tat.Mess
 		}
 	}
 
-	err := messageDB.Update(&message, user, topic, messageIn.Text, messageIn.Action)
-	if err != nil {
+	if err := messageDB.Update(&message, user, topic, messageIn.Text, messageIn.Action); err != nil {
 		log.Errorf("Error while update a message %s", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -87,7 +87,7 @@ func (t *TopicsController) List(ctx *gin.Context) {
 		}
 
 		unread := make(map[string]int)
-		knownPresence := false
+		var knownPresence bool
 		for _, topic := range topics {
 			if tat.ArrayContains(user.OffNotificationsTopics, topic.Topic) {
 				continue
@@ -774,6 +774,7 @@ func (t *TopicsController) RemoveAdminGroup(ctx *gin.Context) {
 type paramsJSON struct {
 	Topic                string               `json:"topic"`
 	MaxLength            int                  `json:"maxlength"`
+	MaxReplies           int                  `json:"maxreplies"`
 	CanForceDate         bool                 `json:"canForceDate"`
 	CanUpdateMsg         bool                 `json:"canUpdateMsg"`
 	CanDeleteMsg         bool                 `json:"canDeleteMsg"`
@@ -787,7 +788,7 @@ type paramsJSON struct {
 	Parameters           []tat.TopicParameter `json:"parameters"`
 }
 
-// SetParam update Topic Parameters : MaxLength, CanForeceDate, CanUpdateMsg, CanDeleteMsg, CanUpdateAllMsg, CanDeleteAllMsg, AdminCanDeleteAllMsg
+// SetParam update Topic Parameters : MaxLength, MaxReplies, CanForeceDate, CanUpdateMsg, CanDeleteMsg, CanUpdateAllMsg, CanDeleteAllMsg, AdminCanDeleteAllMsg
 // admin only, except on Private topic
 func (t *TopicsController) SetParam(ctx *gin.Context) {
 	var paramsBind paramsJSON
@@ -819,6 +820,7 @@ func (t *TopicsController) SetParam(ctx *gin.Context) {
 	err = topicDB.SetParam(topic, getCtxUsername(ctx),
 		paramsBind.Recursive,
 		paramsBind.MaxLength,
+		paramsBind.MaxReplies,
 		paramsBind.CanForceDate,
 		paramsBind.CanUpdateMsg,
 		paramsBind.CanDeleteMsg,

@@ -139,6 +139,9 @@ func (c *Client) GroupUpdate(groupname, newGroupname, newDescription string) err
 
 	m := GroupJSON{Name: newGroupname, Description: newDescription}
 	jsonStr, err := json.Marshal(m)
+	if err != nil {
+		return err
+	}
 
 	_, err = c.reqWant("PUT", http.StatusOK, "/group/edit/"+groupname, jsonStr)
 	if err != nil {

@@ -55,7 +55,7 @@ func (*UsersController) buildCriteria(ctx *gin.Context) *tat.UserCriteria {
 func (u *UsersController) List(ctx *gin.Context) {
 	criteria := u.buildCriteria(ctx)
 
-	listAsAdmin := false
+	var listAsAdmin bool
 	if isTatAdmin(ctx) {
 		listAsAdmin = true
 	} else {

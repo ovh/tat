@@ -44,7 +44,7 @@ Available Commands:
   deleteRwGroup     Delete Read Write Groups from a topic: tatcli topic deleteRwGroup [--recursive] <topic> <groupname1> [<groupname2>]...
   deleteRwUser      Delete Read Write Users from a topic: tatcli topic deleteRwUser [--recursive] <topic> <username1> [username2]...
   list              List all topics: tatcli topic list [<skip>] [<limit>], tatcli topic list -h for see all criterias
-  parameter         Update param on one topic: tatcli topic param [--recursive] <topic> <maxLength> <canForceDate> <canUpdateMsg> <canDeleteMsg> <canUpdateAllMsg> <canDeleteAllMsg> <adminCanUpdateAllMsg> <adminCanDeleteAllMsg> <isAutoComputeTags> <isAutoComputeLabels>
+  parameter         Update param on one topic: tatcli topic param [--recursive] <topic> <maxReplies> <maxLength> <canForceDate> <canUpdateMsg> <canDeleteMsg> <canUpdateAllMsg> <canDeleteAllMsg> <adminCanUpdateAllMsg> <adminCanDeleteAllMsg> <isAutoComputeTags> <isAutoComputeLabels>
   truncate          Remove all messages in a topic, only for tat admin and administrators on topic : tatcli topic truncate <topic> [--force]
   truncatelabels    Truncate Labels on this topic, only for tat admin and administrators on topic : tatcli topic truncatelabels <topic>
   truncatetags      Truncate Tags on this topic, only for tat admin and administrators on topic : tatcli topic truncatetags <topic>

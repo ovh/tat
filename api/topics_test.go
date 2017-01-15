@@ -189,6 +189,7 @@ func TestTopicsFilterManage(t *testing.T) {
 	t.Logf("Filter on %s: %+v", topic.Topic, createdUpdated.Topic.Filters)
 
 	_, err = client.TopicRemoveFilter(tat.Filter{Topic: topic.Topic, ID: createdUpdated.Topic.Filters[0].ID})
+	assert.NoError(t, err)
 
 	createdUpdatedBis, errc := client.TopicOne(topic.Topic)
 	assert.NotNil(t, createdUpdatedBis)
