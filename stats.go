@@ -17,6 +17,13 @@ type StatsCountJSON struct {
 	Users     int       `json:"users"`
 }
 
+// StatsDistributionTopicsJSON is used by GET /distribution/topics
+type StatsDistributionTopicsJSON struct {
+	Total  int                     `json:"total"`
+	Info   string                  `json:"info"`
+	Topics []TopicDistributionJSON `json:"topics"`
+}
+
 // StatsCount calls GET /stats/count
 func (c *Client) StatsCount() (*StatsCountJSON, error) {
 	body, err := c.reqWant("GET", 200, "/stats/count", nil)
