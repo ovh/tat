@@ -791,6 +791,9 @@ func FindByTopic(topicIn string, isAdmin, withTags, withLabels bool, user *tat.U
 	if nb != 1 && len(topics) != 1 {
 		return nil, fmt.Errorf("Invalid Request. Get many topics instead one")
 	}
+	if topics[0].MaxReplies == 0 {
+		topics[0].MaxReplies = tat.DefaultMessageMaxReplies
+	}
 	return &topics[0], nil
 }
 
