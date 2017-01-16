@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/ovh/tat"
@@ -172,4 +173,49 @@ func TestMessagesList(t *testing.T) {
 	assert.Equal(t, 2, len(message.Message.Labels), "this message should have 2 labels")
 
 	tat.ErrorLogFunc = t.Errorf
+}
+
+func TestMessagesInsert(t *testing.T) {
+	tests.Init(t)
+	router := tests.Router(t)
+	client := tests.TATClient(t, tests.AdminUser)
+
+	initRoutesGroups(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesMessages(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesPresences(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesTopics(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesUsers(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesStats(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+	initRoutesSystem(router, tests.FakeAuthHandler(t, tests.AdminUser, "X-TAT-TEST", true, false))
+
+	topic, err := client.TopicCreate(tat.TopicCreateJSON{
+		Topic:       "/" + tests.RandomString(t, 10),
+		Description: "this is a test",
+	})
+
+	assert.NotNil(t, topic)
+	assert.NoError(t, err)
+	if topic != nil {
+		t.Logf("Topic %s created", topic.Topic)
+	}
+
+	defer client.TopicDelete(tat.TopicNameJSON{Topic: topic.Topic})
+	defer client.TopicTruncate(tat.TopicNameJSON{Topic: topic.Topic})
+
+	message, err := client.MessageAdd(tat.MessageJSON{Text: "test test", Topic: topic.Topic})
+	assert.NotNil(t, message)
+	assert.NoError(t, err)
+
+	for nb := 0; nb < 35; nb++ {
+		r, errr := client.MessageAdd(tat.MessageJSON{Text: fmt.Sprintf("reply %d", nb), IDReference: message.Message.ID, Topic: topic.Topic})
+		t.Logf("Reply %d %s added on root %s", nb, r.Message.ID, message.Message.ID)
+		assert.NotNil(t, r)
+		assert.NoError(t, errr)
+	}
+
+	replies, errl := client.MessageList(topic.Topic, &tat.MessageCriteria{IDMessage: message.Message.ID, TreeView: tat.TreeViewOneTree})
+	assert.NoError(t, errl)
+	assert.Equal(t, 1, len(replies.Messages))
+	assert.Equal(t, 30, len(replies.Messages[0].Replies))
+
 }

@@ -38,7 +38,7 @@ func InitDB() {
 	}
 }
 
-func buildMessageCriteria(criteria *tat.MessageCriteria, username string) (bson.M, error) {
+func buildMessageCriteria(criteria *tat.MessageCriteria) (bson.M, error) {
 	var query = []bson.M{}
 
 	if criteria.IDMessage != "" {
@@ -485,7 +485,7 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 
 // ListMessages list messages with given criteria
 func ListMessages(criteria *tat.MessageCriteria, username string, topic tat.Topic) ([]tat.Message, error) {
-	c, errc := buildMessageCriteria(criteria, username)
+	c, errc := buildMessageCriteria(criteria)
 	if errc != nil {
 		return []tat.Message{}, errc
 	}
@@ -612,7 +612,7 @@ func initTree(messages []tat.Message, criteria *tat.MessageCriteria, username st
 		NotTag:       criteria.NotTag,
 	}
 	var msgs []tat.Message
-	cr, errc := buildMessageCriteria(c, username)
+	cr, errc := buildMessageCriteria(c)
 	if errc != nil {
 		return msgs, errc
 	}
@@ -719,7 +719,7 @@ func FullTreeMessages(messages []tat.Message, nloop int, criteria *tat.MessageCr
 func getTree(messagesIn map[string][]tat.Message, criteria *tat.MessageCriteria, username string, topic tat.Topic) ([]tat.Message, error) {
 	var messages []tat.Message
 
-	toDelete := false
+	var toDelete bool
 	for idMessage := range messagesIn {
 		toDelete = false
 		c := &tat.MessageCriteria{
@@ -728,7 +728,7 @@ func getTree(messagesIn map[string][]tat.Message, criteria *tat.MessageCriteria,
 			NotTag:       criteria.NotTag,
 		}
 		var msgs []tat.Message
-		cr, errc := buildMessageCriteria(c, username)
+		cr, errc := buildMessageCriteria(c)
 		if errc != nil {
 			return msgs, errc
 		}
@@ -834,8 +834,12 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 					"$inc": bson.M{"nbReplies": 1}})
 
 			if err != nil {
-				log.Errorf("Error while updating root message %s (%s)for reply %s", messageReference.ID, inReplyOfID, err.Error())
+				log.Errorf("Error while updating root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, err.Error())
 				return fmt.Errorf("Error while updating dateUpdate or root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, err.Error())
+			}
+			if err := purgeReplies(messageReference.ID, topic); err != nil {
+				log.Errorf("Error while compute purgeReplies on root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, err.Error())
+				return fmt.Errorf("Error while compute purgeReplies on root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, err.Error())
 			}
 		}
 	} else { // root message
@@ -901,6 +905,52 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 	}
 	//Clean the cache for this topic
 	cache.CleanMessagesLists(topic.Topic)
+	return nil
+}
+
+func purgeReplies(idRoot string, topic tat.Topic) error {
+
+	keep := topic.MaxReplies
+	if keep == 0 {
+		keep = tat.DefaultMessageMaxReplies
+	}
+
+	var msgRoot = tat.Message{}
+	if err := FindByID(&msgRoot, idRoot, topic); err != nil {
+		return err
+	}
+	if msgRoot.NbReplies <= int64(keep) {
+		return nil
+	}
+
+	cr, errc := buildMessageCriteria(&tat.MessageCriteria{
+		InReplyOfIDRoot: idRoot,
+	})
+	if errc != nil {
+		return errc
+	}
+
+	var msgLastKeep tat.Message
+	// keep -1 -> new reply is not inserted at this time
+	if err := store.GetCMessages(topic.Collection).Find(cr).Skip(keep - 1).Limit(1).Sort("-dateCreation").One(&msgLastKeep); err != nil {
+		if err == mgo.ErrNotFound {
+			return nil
+		}
+		log.Errorf("purgeReplies: Error while Find Messages on topic %s, err:%s", topic.Topic, err)
+		return err
+	}
+
+	var query = []bson.M{}
+	query = append(query, bson.M{"dateCreation": bson.M{"$lte": tat.TSFromDate(tat.DateFromFloat(msgLastKeep.DateCreation))}})
+	query = append(query, bson.M{"inReplyOfIDRoot": msgRoot.ID})
+	changeInfo, errd := store.GetCMessages(topic.Collection).RemoveAll(bson.M{"$and": query})
+	log.Debugf("purgeReplies: removed:%s", query, changeInfo.Removed)
+
+	if errd != nil {
+		log.Errorf("purgeReplies: Error while RemoveAll on topic %s, err:%s", topic.Topic, errd)
+		return errd
+	}
+
 	return nil
 }
 
@@ -1495,8 +1545,8 @@ func CountAllMessages() (int, error) {
 }
 
 // CountMessages list messages with given criteria
-func CountMessages(criteria *tat.MessageCriteria, username string, topic tat.Topic) (int, error) {
-	c, errc := buildMessageCriteria(criteria, username)
+func CountMessages(criteria *tat.MessageCriteria, topic tat.Topic) (int, error) {
+	c, errc := buildMessageCriteria(criteria)
 	if errc != nil {
 		return -1, errc
 	}
@@ -1529,7 +1579,7 @@ func ComputeReplies(topic tat.Topic) (int, error) {
 			continue
 		}
 		c := &tat.MessageCriteria{InReplyOfID: msg.InReplyOfID}
-		if nb, err := CountMessages(c, "", topic); err == nil {
+		if nb, err := CountMessages(c, topic); err == nil {
 			err := store.GetCMessages(topic.Collection).Update(
 				bson.M{"_id": msg.InReplyOfID},
 				bson.M{"$set": bson.M{"nbReplies": nb}})
@@ -1543,7 +1593,6 @@ func ComputeReplies(topic tat.Topic) (int, error) {
 
 	//Clean the cache for this topic
 	cache.CleanMessagesLists(topic.Topic)
-
 	return nbCompute, nil
 }
 
@@ -1578,7 +1627,7 @@ func AllTopicsComputeReplies() (string, error) {
 func MigrateMessagesToDedicatedTopic(topic *tat.Topic, limit int) (int, error) {
 	criteria := &tat.MessageCriteria{Topic: topic.Topic}
 
-	c, errc := buildMessageCriteria(criteria, "")
+	c, errc := buildMessageCriteria(criteria)
 	if errc != nil {
 		return -1, errc
 	}

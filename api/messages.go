@@ -89,7 +89,7 @@ func (m *MessagesController) List(ctx *gin.Context) {
 	}
 
 	if criteria.OnlyCount == tat.True {
-		count, e := messageDB.CountMessages(criteria, user.Username, topic)
+		count, e := messageDB.CountMessages(criteria, topic)
 		if e != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Error()})
 			return

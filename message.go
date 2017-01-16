@@ -695,7 +695,6 @@ func (c *Client) processForMessageJSONOutBytes(method, path string, want int, me
 }
 
 func (c *Client) processForMessageJSONOut(method, path string, want int, message MessageJSON) (*MessageJSONOut, error) {
-
 	body, err := c.processForMessageJSONOutBytes(method, path, want, message)
 	if err != nil {
 		return nil, err
@@ -704,7 +703,6 @@ func (c *Client) processForMessageJSONOut(method, path string, want int, message
 	if err := json.Unmarshal(body, out); err != nil {
 		return nil, err
 	}
-
 	return out, nil
 }
 

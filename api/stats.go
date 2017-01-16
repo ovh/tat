@@ -154,7 +154,7 @@ func (*StatsController) DistributionTopics(ctx *gin.Context) {
 	info := ""
 	t := []tat.TopicDistributionJSON{}
 	for _, topic := range topics {
-		countMsg, err := message.CountMessages(&tat.MessageCriteria{Topic: topic.Topic}, "internal", topic)
+		countMsg, err := message.CountMessages(&tat.MessageCriteria{Topic: topic.Topic}, topic)
 		if err != nil {
 			info += fmt.Sprintf("Error on topic %s: %s", topic.Topic, err)
 		}
