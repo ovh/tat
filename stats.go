@@ -2,6 +2,9 @@ package tat
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -38,9 +41,22 @@ func (c *Client) StatsCount() (*StatsCountJSON, error) {
 	return out, nil
 }
 
-// StatsDistribution returns Stats Distribution per topics and per users
-func (c *Client) StatsDistribution() ([]byte, error) {
-	return c.simpleGetAndGetBytes("/stats/distribution")
+// StatsDistributionTopics returns Stats Distribution per topics and per users
+func (c *Client) StatsDistributionTopics(skip, limit int) (*StatsDistributionTopicsJSON, error) {
+	v := url.Values{}
+	v.Set("skip", strconv.Itoa(skip))
+	v.Set("limit", strconv.Itoa(limit))
+	path := fmt.Sprintf("/stats/distribution/topics?%s", v.Encode())
+	body, err := c.reqWant("GET", 200, path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &StatsDistributionTopicsJSON{}
+	if err := json.Unmarshal(body, out); err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 // StatsDBStats returns DB Stats

@@ -167,11 +167,13 @@ func (*StatsController) DistributionTopics(ctx *gin.Context) {
 		})
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"total":  count,
-		"info":   info,
-		"topics": t,
-	})
+	out := tat.StatsDistributionTopicsJSON{
+		Total:  count,
+		Info:   info,
+		Topics: t,
+	}
+
+	ctx.JSON(http.StatusOK, out)
 }
 
 // DBServerStatus returns stats of db : serverStatus
