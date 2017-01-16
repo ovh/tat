@@ -828,19 +828,32 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 		messageReference.DateUpdate = dateToStore
 
 		if message.Text != "" {
-			err := store.GetCMessages(topic.Collection).Update(
+			purgeDone, errp := purgeReplies(messageReference.ID, topic)
+			if errp != nil {
+				log.Errorf("Error while compute purgeReplies on root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, errp.Error())
+				return fmt.Errorf("Error while compute purgeReplies on root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, errp.Error())
+			}
+
+			cmd := "$inc"
+			toset := 1
+			if purgeDone {
+				cmd = "$set"
+				toset = topic.MaxReplies
+				if topic.MaxReplies == 0 {
+					toset = tat.DefaultMessageMaxReplies
+				}
+			}
+
+			erru := store.GetCMessages(topic.Collection).Update(
 				bson.M{"_id": messageReference.ID},
 				bson.M{"$set": bson.M{"dateUpdate": dateToStore},
-					"$inc": bson.M{"nbReplies": 1}})
+					cmd: bson.M{"nbReplies": toset}})
 
-			if err != nil {
-				log.Errorf("Error while updating root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, err.Error())
-				return fmt.Errorf("Error while updating dateUpdate or root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, err.Error())
+			if erru != nil {
+				log.Errorf("Error while updating root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, erru.Error())
+				return fmt.Errorf("Error while updating dateUpdate or root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, erru.Error())
 			}
-			if err := purgeReplies(messageReference.ID, topic); err != nil {
-				log.Errorf("Error while compute purgeReplies on root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, err.Error())
-				return fmt.Errorf("Error while compute purgeReplies on root message %s (%s) for reply %s", messageReference.ID, inReplyOfID, err.Error())
-			}
+
 		}
 	} else { // root message
 		message.Topic = topic.Topic
@@ -908,7 +921,7 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 	return nil
 }
 
-func purgeReplies(idRoot string, topic tat.Topic) error {
+func purgeReplies(idRoot string, topic tat.Topic) (bool, error) {
 
 	keep := topic.MaxReplies
 	if keep == 0 {
@@ -917,27 +930,25 @@ func purgeReplies(idRoot string, topic tat.Topic) error {
 
 	var msgRoot = tat.Message{}
 	if err := FindByID(&msgRoot, idRoot, topic); err != nil {
-		return err
+		return false, err
 	}
-	if msgRoot.NbReplies <= int64(keep) {
-		return nil
+	if msgRoot.NbReplies < int64(keep) {
+		return false, nil
 	}
 
-	cr, errc := buildMessageCriteria(&tat.MessageCriteria{
-		InReplyOfIDRoot: idRoot,
-	})
+	cr, errc := buildMessageCriteria(&tat.MessageCriteria{InReplyOfIDRoot: idRoot})
 	if errc != nil {
-		return errc
+		return false, errc
 	}
 
 	var msgLastKeep tat.Message
 	// keep -1 -> new reply is not inserted at this time
 	if err := store.GetCMessages(topic.Collection).Find(cr).Skip(keep - 1).Limit(1).Sort("-dateCreation").One(&msgLastKeep); err != nil {
 		if err == mgo.ErrNotFound {
-			return nil
+			return false, nil
 		}
 		log.Errorf("purgeReplies: Error while Find Messages on topic %s, err:%s", topic.Topic, err)
-		return err
+		return false, err
 	}
 
 	var query = []bson.M{}
@@ -948,10 +959,10 @@ func purgeReplies(idRoot string, topic tat.Topic) error {
 
 	if errd != nil {
 		log.Errorf("purgeReplies: Error while RemoveAll on topic %s, err:%s", topic.Topic, errd)
-		return errd
+		return false, errd
 	}
 
-	return nil
+	return true, nil
 }
 
 //isUsernameExist retrieve information from user with username
