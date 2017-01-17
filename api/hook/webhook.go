@@ -50,18 +50,18 @@ func sendWebHook(hook *tat.HookJSON, path string, topic tat.Topic, headerName, h
 	}()
 
 	if err != nil {
-		return fmt.Errorf("sendWebHook: err:%s", err)
+		return fmt.Errorf("sendWebHook: path:%s err:%s", path, err)
 	}
 
 	body, errb := ioutil.ReadAll(resp.Body)
 	if errb != nil {
-		return fmt.Errorf("sendWebHook: Error with ioutil.ReadAll %s", errb.Error())
+		return fmt.Errorf("sendWebHook: path:%s Error with ioutil.ReadAll %s", path, errb.Error())
 	}
 
 	if resp != nil && resp.StatusCode > 300 {
-		log.Errorf("sendWebHook, err received: %d, body:%s", resp.StatusCode, body)
+		log.Errorf("sendWebHook, path:%s err received: %d, body:%s", path, resp.StatusCode, body)
 	} else {
-		log.Debugf("Response from webhook %s", body)
+		log.Debugf("Response from path:%s webhook %s", path, body)
 	}
 
 	return nil
