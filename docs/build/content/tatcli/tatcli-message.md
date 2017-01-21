@@ -203,6 +203,27 @@ tatcli message list /YourTopic 0 10
 ```
 
 ### Stream messages and exec a command on each message
+
+Execute 'myLights' binary for each new message on topic /YourTopic/YourSubTopic
+
 ```bash
 tatcli msg list /YourTopic/YourSubTopic --stream --exec "./myLights --pulse blue --duration=1000"
+```
+
+Execute 'myLights' binary for each new message on topic /YourTopic/YourSubTopic and
+another command if there is an error while requesting tat.
+
+```bash
+tatcli msg list /YourTopic/YourSubTopic --stream --exec "./myLights --pulse blue --duration=1000" --exec "./myLights --pulse red --duration=2000"
+```
+
+Count messages with label open on topic /Internal/Alerts, then :
+
+* if there is 0 message, execute `blinkstick --morph green`
+* if there are between 1 and 5 messages, execute `blinkstick --morph yellow`
+* if there are more than 5 messages, execute `blinkstick --morph red`
+* if there is an error while requesting tat, execute `blinkstick --pulse red --duration=2000`
+
+```bash
+tatcli msg list /Internal/Alerts --label=open --stream --exec 0:0:'blinkstick --morph green' --exec 1:5:'blinkstick --morph blue' --exec 6::'blinkstick --morph yellow' --execErr "blinkstick --pulse red --duration=2000"
 ```

@@ -927,7 +927,27 @@ tatcli message list /YourTopic 0 10
 
 <h3 id="stream-messages-and-exec-a-command-on-each-message">Stream messages and exec a command on each message</h3>
 
+<p>Execute &lsquo;myLights&rsquo; binary for each new message on topic /YourTopic/YourSubTopic</p>
+
 <pre><code class="language-bash">tatcli msg list /YourTopic/YourSubTopic --stream --exec &quot;./myLights --pulse blue --duration=1000&quot;
+</code></pre>
+
+<p>Execute &lsquo;myLights&rsquo; binary for each new message on topic /YourTopic/YourSubTopic and
+another command if there is an error while requesting tat.</p>
+
+<pre><code class="language-bash">tatcli msg list /YourTopic/YourSubTopic --stream --exec &quot;./myLights --pulse blue --duration=1000&quot; --exec &quot;./myLights --pulse red --duration=2000&quot;
+</code></pre>
+
+<p>Count messages with label open on topic /Internal/Alerts, then :</p>
+
+<ul>
+<li>if there is 0 message, execute <code>blinkstick --morph green</code></li>
+<li>if there are between 1 and 5 messages, execute <code>blinkstick --morph yellow</code></li>
+<li>if there are more than 5 messages, execute <code>blinkstick --morph red</code></li>
+<li>if there is an error while requesting tat, execute <code>blinkstick --pulse red --duration=2000</code></li>
+</ul>
+
+<pre><code class="language-bash">tatcli msg list /Internal/Alerts --label=open --stream --exec 0:0:'blinkstick --morph green' --exec 1:5:'blinkstick --morph blue' --exec 6::'blinkstick --morph yellow' --execErr &quot;blinkstick --pulse red --duration=2000&quot;
 </code></pre>
 
 

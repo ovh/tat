@@ -378,7 +378,27 @@ tatcli message list /YourTopic 0 10
 
 &lt;h3 id=&#34;stream-messages-and-exec-a-command-on-each-message&#34;&gt;Stream messages and exec a command on each message&lt;/h3&gt;
 
+&lt;p&gt;Execute &amp;lsquo;myLights&amp;rsquo; binary for each new message on topic /YourTopic/YourSubTopic&lt;/p&gt;
+
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;tatcli msg list /YourTopic/YourSubTopic --stream --exec &amp;quot;./myLights --pulse blue --duration=1000&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Execute &amp;lsquo;myLights&amp;rsquo; binary for each new message on topic /YourTopic/YourSubTopic and
+another command if there is an error while requesting tat.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;tatcli msg list /YourTopic/YourSubTopic --stream --exec &amp;quot;./myLights --pulse blue --duration=1000&amp;quot; --exec &amp;quot;./myLights --pulse red --duration=2000&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Count messages with label open on topic /Internal/Alerts, then :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;if there is 0 message, execute &lt;code&gt;blinkstick --morph green&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;if there are between 1 and 5 messages, execute &lt;code&gt;blinkstick --morph yellow&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;if there are more than 5 messages, execute &lt;code&gt;blinkstick --morph red&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;if there is an error while requesting tat, execute &lt;code&gt;blinkstick --pulse red --duration=2000&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;tatcli msg list /Internal/Alerts --label=open --stream --exec 0:0:&#39;blinkstick --morph green&#39; --exec 1:5:&#39;blinkstick --morph blue&#39; --exec 6::&#39;blinkstick --morph yellow&#39; --execErr &amp;quot;blinkstick --pulse red --duration=2000&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
