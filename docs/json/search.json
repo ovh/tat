@@ -140,7 +140,7 @@
     {
         "uri": "./tat/tatcli/general",
         "title": "General",
-        "content": "---\ntitle: \"General\"\nweight: 1\ntoc: true\nprev: \"/tatcli\"\nnext: \"/tatcli/tatcli-config\"\n\n---\n\nimg align=\"right\" src=\"https://raw.githubusercontent.com/ovh/tat/master/tat.png\"\n\nTatcli, a Tat Command Line Interface.\n\nSee Tat Engine for more information: https://github.com/ovh/tat\n\nDownload\nDownload latest binary on release page https://github.com/ovh/tat/tatcli/releases\nthen chmod +x tatcli\n\nIf you have already installed tatcli, you can update it with tatcli update.\n\n Usage - General Rules\n\nA successful command will give you no feedback. If you want one, you can use -v argument.\nAfter each command, the exit code can be found in the $? variable. No error if exit code equals 0.\n",
+        "content": "---\ntitle: \"General\"\nweight: 1\ntoc: true\nprev: \"/tatcli\"\nnext: \"/tatcli/tatcli-config\"\n\n---\n\nimg align=\"right\" src=\"https://raw.githubusercontent.com/ovh/tat/master/tat.png\"\n\nTatcli, a Tat Command Line Interface.\n\nSee Tat Engine for more information: https://github.com/ovh/tat\n\nDownload\nDownload latest binary on release page https://github.com/ovh/tat/releases \nthen chmod +x tatcli\n\nIf you have already installed tatcli, you can update it with tatcli update.\n\n Usage - General Rules\n\nA successful command will give you no feedback. If you want one, you can use -v argument.\nAfter each command, the exit code can be found in the $? variable. No error if exit code equals 0.\n",
         "tags": []
     },
     {

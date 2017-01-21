@@ -244,7 +244,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
 
 &lt;h2 id=&#34;download&#34;&gt;Download&lt;/h2&gt;
 
-&lt;p&gt;Download latest binary on release page &lt;a href=&#34;https://github.com/ovh/tat/tatcli/releases&#34;&gt;https://github.com/ovh/tat/tatcli/releases&lt;/a&gt;
+&lt;p&gt;Download latest binary on release page &lt;a href=&#34;https://github.com/ovh/tat/releases &#34;&gt;https://github.com/ovh/tat/releases &lt;/a&gt;
 then &lt;code&gt;chmod +x tatcli&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;If you have already installed tatcli, you can update it with &lt;code&gt;tatcli update&lt;/code&gt;.&lt;/p&gt;
