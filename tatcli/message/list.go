@@ -192,6 +192,13 @@ func processMsg(msg tat.Message) {
 func execCmd(ex string) {
 	opts := strings.Split(ex, " ")
 	if ex != "" {
+
+		_, err := exec.LookPath(opts[0])
+		if err != nil {
+			internal.Exit("Invalid --exec path for %s, err: %s", opts[0], err.Error())
+			return
+		}
+
 		s := spinner.New(spinner.CharSets[35], 100*time.Millisecond)
 		cmd := exec.Command(opts[0], opts[1:]...)
 		s.Start()
