@@ -241,7 +241,13 @@ func (v *Viper) WatchConfig() {
 		defer watcher.Close()
 
 		// we have to watch the entire directory to pick up renames/atomic saves in a cross-platform way
-		configFile := filepath.Clean(v.getConfigFile())
+		filename, err := v.getConfigFile()
+		if err != nil {
+			log.Println("error:", err)
+			return
+		}
+
+		configFile := filepath.Clean(filename)
 		configDir, _ := filepath.Split(configFile)
 
 		done := make(chan bool)
@@ -399,49 +405,22 @@ func (v *Viper) providerPathExists(p *defaultRemoteProvider) bool {
 	return false
 }
 
-// searchMapForKey may end up traversing the map if the key references a nested
-// item (foo.bar), but will use a fast path for the common case.
-// Note: This assumes that the key given is already lowercase.
-func (v *Viper) searchMapForKey(source map[string]interface{}, lcaseKey string) interface{} {
-	if !strings.Contains(lcaseKey, v.keyDelim) {
-		v, ok := source[lcaseKey]
-		if ok {
-			return v
-		}
-		return nil
-	}
-
-	path := strings.Split(lcaseKey, v.keyDelim)
-	return v.searchMap(source, path)
-}
-
 // searchMap recursively searches for a value for path in source map.
 // Returns nil if not found.
-// Note: This assumes that the path entries are lower cased.
+// Note: This assumes that the path entries and map keys are lower cased.
 func (v *Viper) searchMap(source map[string]interface{}, path []string) interface{} {
 	if len(path) == 0 {
 		return source
 	}
 
-	// Fast path
-	if len(path) == 1 {
-		if v, ok := source[path[0]]; ok {
-			return v
-		}
-		return nil
-	}
-
-	var ok bool
-	var next interface{}
-	for k, v := range source {
-		if k == path[0] {
-			ok = true
-			next = v
-			break
-		}
-	}
-
+	next, ok := source[path[0]]
 	if ok {
+		// Fast path
+		if len(path) == 1 {
+			return next
+		}
+
+		// Nested case
 		switch next.(type) {
 		case map[interface{}]interface{}:
 			return v.searchMap(cast.ToStringMap(next), path[1:])
@@ -450,9 +429,6 @@ func (v *Viper) searchMap(source map[string]interface{}, path []string) interfac
 			// if the type of `next` is the same as the type being asserted
 			return v.searchMap(next.(map[string]interface{}), path[1:])
 		default:
-			if len(path) == 1 {
-				return next
-			}
 			// got a value but nested key expected, return "nil" for not found
 			return nil
 		}
@@ -469,6 +445,8 @@ func (v *Viper) searchMap(source map[string]interface{}, path []string) interfac
 //
 // This should be useful only at config level (other maps may not contain dots
 // in their keys).
+//
+// Note: This assumes that the path entries and map keys are lower cased.
 func (v *Viper) searchMapWithPathPrefixes(source map[string]interface{}, path []string) interface{} {
 	if len(path) == 0 {
 		return source
@@ -478,17 +456,14 @@ func (v *Viper) searchMapWithPathPrefixes(source map[string]interface{}, path []
 	for i := len(path); i > 0; i-- {
 		prefixKey := strings.ToLower(strings.Join(path[0:i], v.keyDelim))
 
-		var ok bool
-		var next interface{}
-		for k, v := range source {
-			if strings.ToLower(k) == prefixKey {
-				ok = true
-				next = v
-				break
-			}
-		}
-
+		next, ok := source[prefixKey]
 		if ok {
+			// Fast path
+			if i == len(path) {
+				return next
+			}
+
+			// Nested case
 			var val interface{}
 			switch next.(type) {
 			case map[interface{}]interface{}:
@@ -498,9 +473,6 @@ func (v *Viper) searchMapWithPathPrefixes(source map[string]interface{}, path []
 				// if the type of `next` is the same as the type being asserted
 				val = v.searchMapWithPathPrefixes(next.(map[string]interface{}), path[i:])
 			default:
-				if len(path) == i {
-					val = next
-				}
 				// got a value but nested key expected, do nothing and look for next prefix
 			}
 			if val != nil {
@@ -604,6 +576,7 @@ func GetViper() *Viper {
 }
 
 // Get can retrieve any value given the key to use.
+// Get is case-insensitive for a key.
 // Get has the behavior of returning the value associated with the first
 // place from where it is set. Viper will check in the following order:
 // override, flag, env, config file, key/value store, default
@@ -620,7 +593,8 @@ func (v *Viper) Get(key string) interface{} {
 	valType := val
 	if v.typeByDefValue {
 		// TODO(bep) this branch isn't covered by a single test.
-		defVal := v.searchMapForKey(v.defaults, lcaseKey)
+		path := strings.Split(lcaseKey, v.keyDelim)
+		defVal := v.searchMap(v.defaults, path)
 		if defVal != nil {
 			valType = defVal
 		}
@@ -646,6 +620,7 @@ func (v *Viper) Get(key string) interface{} {
 }
 
 // Sub returns new Viper instance representing a sub tree of this instance.
+// Sub is case-insensitive for a key.
 func Sub(key string) *Viper { return v.Sub(key) }
 func (v *Viper) Sub(key string) *Viper {
 	subv := New()
@@ -883,16 +858,14 @@ func (v *Viper) find(lcaseKey string) interface{} {
 
 	// if the requested key is an alias, then return the proper key
 	lcaseKey = v.realKey(lcaseKey)
-
-	// Set() override first
-	val = v.searchMapForKey(v.override, lcaseKey)
-	if val != nil {
-		return val
-	}
-
 	path = strings.Split(lcaseKey, v.keyDelim)
 	nested = len(path) > 1
 
+	// Set() override first
+	val = v.searchMap(v.override, path)
+	if val != nil {
+		return val
+	}
 	if nested && v.isPathShadowedInDeepMap(path, v.override) != "" {
 		return nil
 	}
@@ -912,7 +885,6 @@ func (v *Viper) find(lcaseKey string) interface{} {
 			return flag.ValueString()
 		}
 	}
-
 	if nested && v.isPathShadowedInFlatMap(path, v.pflags) != "" {
 		return nil
 	}
@@ -934,7 +906,7 @@ func (v *Viper) find(lcaseKey string) interface{} {
 			return val
 		}
 	}
-	if shadow := v.isPathShadowedInFlatMap(path, v.env); shadow != "" {
+	if nested && v.isPathShadowedInFlatMap(path, v.env) != "" {
 		return nil
 	}
 
@@ -943,7 +915,7 @@ func (v *Viper) find(lcaseKey string) interface{} {
 	if val != nil {
 		return val
 	}
-	if shadow := v.isPathShadowedInDeepMap(path, v.config); shadow != "" {
+	if nested && v.isPathShadowedInDeepMap(path, v.config) != "" {
 		return nil
 	}
 
@@ -952,7 +924,7 @@ func (v *Viper) find(lcaseKey string) interface{} {
 	if val != nil {
 		return val
 	}
-	if shadow := v.isPathShadowedInDeepMap(path, v.kvstore); shadow != "" {
+	if nested && v.isPathShadowedInDeepMap(path, v.kvstore) != "" {
 		return nil
 	}
 
@@ -961,7 +933,7 @@ func (v *Viper) find(lcaseKey string) interface{} {
 	if val != nil {
 		return val
 	}
-	if shadow := v.isPathShadowedInDeepMap(path, v.defaults); shadow != "" {
+	if nested && v.isPathShadowedInDeepMap(path, v.defaults) != "" {
 		return nil
 	}
 
@@ -986,6 +958,7 @@ func (v *Viper) find(lcaseKey string) interface{} {
 }
 
 // IsSet checks to see if the key has been set in any of the data locations.
+// IsSet is case-insensitive for a key.
 func IsSet(key string) bool { return v.IsSet(key) }
 func (v *Viper) IsSet(key string) bool {
 	lcaseKey := strings.ToLower(key)
@@ -1067,11 +1040,13 @@ func (v *Viper) InConfig(key string) bool {
 }
 
 // SetDefault sets the default value for this key.
+// SetDefault is case-insensitive for a key.
 // Default only used when no value is provided by the user via flag, config or ENV.
 func SetDefault(key string, value interface{}) { v.SetDefault(key, value) }
 func (v *Viper) SetDefault(key string, value interface{}) {
 	// If alias passed in, then set the proper default
 	key = v.realKey(strings.ToLower(key))
+	value = toCaseInsensitiveValue(value)
 
 	path := strings.Split(key, v.keyDelim)
 	lastKey := strings.ToLower(path[len(path)-1])
@@ -1082,12 +1057,14 @@ func (v *Viper) SetDefault(key string, value interface{}) {
 }
 
 // Set sets the value for the key in the override regiser.
+// Set is case-insensitive for a key.
 // Will be used instead of values obtained via
 // flags, config file, ENV, default, or key/value store.
 func Set(key string, value interface{}) { v.Set(key, value) }
 func (v *Viper) Set(key string, value interface{}) {
 	// If alias passed in, then set the proper override
 	key = v.realKey(strings.ToLower(key))
+	value = toCaseInsensitiveValue(value)
 
 	path := strings.Split(key, v.keyDelim)
 	lastKey := strings.ToLower(path[len(path)-1])
@@ -1102,11 +1079,16 @@ func (v *Viper) Set(key string, value interface{}) {
 func ReadInConfig() error { return v.ReadInConfig() }
 func (v *Viper) ReadInConfig() error {
 	jww.INFO.Println("Attempting to read in config file")
+	filename, err := v.getConfigFile()
+	if err != nil {
+		return err
+	}
+
 	if !stringInSlice(v.getConfigType(), SupportedExts) {
 		return UnsupportedConfigError(v.getConfigType())
 	}
 
-	file, err := afero.ReadFile(v.fs, v.getConfigFile())
+	file, err := afero.ReadFile(v.fs, filename)
 	if err != nil {
 		return err
 	}
@@ -1120,11 +1102,16 @@ func (v *Viper) ReadInConfig() error {
 func MergeInConfig() error { return v.MergeInConfig() }
 func (v *Viper) MergeInConfig() error {
 	jww.INFO.Println("Attempting to merge in config file")
+	filename, err := v.getConfigFile()
+	if err != nil {
+		return err
+	}
+
 	if !stringInSlice(v.getConfigType(), SupportedExts) {
 		return UnsupportedConfigError(v.getConfigType())
 	}
 
-	file, err := afero.ReadFile(v.fs, v.getConfigFile())
+	file, err := afero.ReadFile(v.fs, filename)
 	if err != nil {
 		return err
 	}
@@ -1175,6 +1162,14 @@ func castToMapStringInterface(
 }
 
 func castMapStringToMapInterface(src map[string]string) map[string]interface{} {
+	tgt := map[string]interface{}{}
+	for k, v := range src {
+		tgt[k] = v
+	}
+	return tgt
+}
+
+func castMapFlagToMapInterface(src map[string]FlagValue) map[string]interface{} {
 	tgt := map[string]interface{}{}
 	for k, v := range src {
 		tgt[k] = v
@@ -1327,8 +1322,8 @@ func (v *Viper) AllKeys() []string {
 	// add all paths, by order of descending priority to ensure correct shadowing
 	m = v.flattenAndMergeMap(m, castMapStringToMapInterface(v.aliases), "")
 	m = v.flattenAndMergeMap(m, v.override, "")
-	m = v.mergeFlatMap(m, v.pflags)
-	m = v.mergeFlatMap(m, v.env)
+	m = v.mergeFlatMap(m, castMapFlagToMapInterface(v.pflags))
+	m = v.mergeFlatMap(m, castMapStringToMapInterface(v.env))
 	m = v.flattenAndMergeMap(m, v.config, "")
 	m = v.flattenAndMergeMap(m, v.kvstore, "")
 	m = v.flattenAndMergeMap(m, v.defaults, "")
@@ -1380,16 +1375,7 @@ func (v *Viper) flattenAndMergeMap(shadow map[string]bool, m map[string]interfac
 
 // mergeFlatMap merges the given maps, excluding values of the second map
 // shadowed by values from the first map.
-func (v *Viper) mergeFlatMap(shadow map[string]bool, mi interface{}) map[string]bool {
-	// unify input map
-	var m map[string]interface{}
-	switch mi.(type) {
-	case map[string]string, map[string]FlagValue:
-		m = cast.ToStringMap(mi)
-	default:
-		return shadow
-	}
-
+func (v *Viper) mergeFlatMap(shadow map[string]bool, m map[string]interface{}) map[string]bool {
 	// scan keys
 outer:
 	for k, _ := range m {
@@ -1460,7 +1446,11 @@ func (v *Viper) getConfigType() string {
 		return v.configType
 	}
 
-	cf := v.getConfigFile()
+	cf, err := v.getConfigFile()
+	if err != nil {
+		return ""
+	}
+
 	ext := filepath.Ext(cf)
 
 	if len(ext) > 1 {
@@ -1470,15 +1460,15 @@ func (v *Viper) getConfigType() string {
 	return ""
 }
 
-func (v *Viper) getConfigFile() string {
+func (v *Viper) getConfigFile() (string, error) {
 	// if explicitly set, then use it
 	if v.configFile != "" {
-		return v.configFile
+		return v.configFile, nil
 	}
 
 	cf, err := v.findConfigFile()
 	if err != nil {
-		return ""
+		return "", err
 	}
 
 	v.configFile = cf

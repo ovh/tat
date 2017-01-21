@@ -19,5 +19,14 @@ deploy:
   file:
     - api/bin/tat-darwin-amd64
     - api/bin/tat-linux-amd64
+    - tatcli/bin/tatcli-darwin-386
+    - tatcli/bin/tatcli-darwin-amd64
+    - tatcli/bin/tatcli-freebsd-386
+    - tatcli/bin/tatcli-freebsd-amd64
+    - tatcli/bin/tatcli-linux-386
+    - tatcli/bin/tatcli-linux-amd64
+    - tatcli/bin/tatcli-linux-arm
+    - tatcli/bin/tatcli-windows-386
+    - tatcli/bin/tatcli-windows-amd64
   on:
     tags: true

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tatcli-rsses on TAT - TextAndTag Documentation</title>
+    <title>Tatclis on TAT - TextAndTag Documentation</title>
     <link>https://ovh.github.io/tat/tatcli/index.xml</link>
-    <description>Recent content in Tatcli-rsses on TAT - TextAndTag Documentation</description>
+    <description>Recent content in Tatclis on TAT - TextAndTag Documentation</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <atom:link href="https://ovh.github.io/tat/tatcli/index.xml" rel="self" type="application/rss+xml" />
@@ -40,7 +40,7 @@
 
 &lt;h2 id=&#34;download&#34;&gt;Download&lt;/h2&gt;
 
-&lt;p&gt;Download latest binary on release page &lt;a href=&#34;https://github.com/ovh/tatcli/releases&#34;&gt;https://github.com/ovh/tatcli/releases&lt;/a&gt;
+&lt;p&gt;Download latest binary on release page &lt;a href=&#34;https://github.com/ovh/tat/tatcli/releases&#34;&gt;https://github.com/ovh/tat/tatcli/releases&lt;/a&gt;
 then &lt;code&gt;chmod +x tatcli&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;If you have already installed tatcli, you can update it with &lt;code&gt;tatcli update&lt;/code&gt;.&lt;/p&gt;
@@ -524,7 +524,7 @@ Available Commands:
   deleteRwGroup     Delete Read Write Groups from a topic: tatcli topic deleteRwGroup [--recursive] &amp;lt;topic&amp;gt; &amp;lt;groupname1&amp;gt; [&amp;lt;groupname2&amp;gt;]...
   deleteRwUser      Delete Read Write Users from a topic: tatcli topic deleteRwUser [--recursive] &amp;lt;topic&amp;gt; &amp;lt;username1&amp;gt; [username2]...
   list              List all topics: tatcli topic list [&amp;lt;skip&amp;gt;] [&amp;lt;limit&amp;gt;], tatcli topic list -h for see all criterias
-  parameter         Update param on one topic: tatcli topic param [--recursive] &amp;lt;topic&amp;gt; &amp;lt;maxLength&amp;gt; &amp;lt;canForceDate&amp;gt; &amp;lt;canUpdateMsg&amp;gt; &amp;lt;canDeleteMsg&amp;gt; &amp;lt;canUpdateAllMsg&amp;gt; &amp;lt;canDeleteAllMsg&amp;gt; &amp;lt;adminCanUpdateAllMsg&amp;gt; &amp;lt;adminCanDeleteAllMsg&amp;gt; &amp;lt;isAutoComputeTags&amp;gt; &amp;lt;isAutoComputeLabels&amp;gt;
+  parameter         Update param on one topic: tatcli topic param [--recursive] &amp;lt;topic&amp;gt; &amp;lt;maxReplies&amp;gt; &amp;lt;maxLength&amp;gt; &amp;lt;canForceDate&amp;gt; &amp;lt;canUpdateMsg&amp;gt; &amp;lt;canDeleteMsg&amp;gt; &amp;lt;canUpdateAllMsg&amp;gt; &amp;lt;canDeleteAllMsg&amp;gt; &amp;lt;adminCanUpdateAllMsg&amp;gt; &amp;lt;adminCanDeleteAllMsg&amp;gt; &amp;lt;isAutoComputeTags&amp;gt; &amp;lt;isAutoComputeLabels&amp;gt;
   truncate          Remove all messages in a topic, only for tat admin and administrators on topic : tatcli topic truncate &amp;lt;topic&amp;gt; [--force]
   truncatelabels    Truncate Labels on this topic, only for tat admin and administrators on topic : tatcli topic truncatelabels &amp;lt;topic&amp;gt;
   truncatetags      Truncate Tags on this topic, only for tat admin and administrators on topic : tatcli topic truncatetags &amp;lt;topic&amp;gt;

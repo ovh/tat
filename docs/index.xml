@@ -9,100 +9,6 @@
     <atom:link href="https://ovh.github.io/tat/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Ecosystem</title>
-      <link>https://ovh.github.io/tat/ecosystem/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ovh.github.io/tat/ecosystem/</guid>
-      <description>
-
-&lt;h3 id=&#34;chapter-6&#34;&gt;Chapter 6&lt;/h3&gt;
-
-&lt;h1 id=&#34;ecosystem&#34;&gt;Ecosystem&lt;/h1&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
-      <link>https://ovh.github.io/tat/overview/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ovh.github.io/tat/overview/</guid>
-      <description>
-
-&lt;h3 id=&#34;chapter-1&#34;&gt;Chapter 1&lt;/h3&gt;
-
-&lt;h1 id=&#34;tat-overview&#34;&gt;TAT Overview&lt;/h1&gt;
-
-&lt;p&gt;Discover what is Tat and the core-concepts behind it.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Tat CLI Reference</title>
-      <link>https://ovh.github.io/tat/tatcli/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ovh.github.io/tat/tatcli/</guid>
-      <description>
-
-&lt;h3 id=&#34;chapter-4&#34;&gt;Chapter 4&lt;/h3&gt;
-
-&lt;h1 id=&#34;tatcli&#34;&gt;TATCLI&lt;/h1&gt;
-
-&lt;p&gt;Reference&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Tat Engine Reference</title>
-      <link>https://ovh.github.io/tat/engine/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ovh.github.io/tat/engine/</guid>
-      <description>
-
-&lt;h3 id=&#34;chapter-3&#34;&gt;Chapter 3&lt;/h3&gt;
-
-&lt;h1 id=&#34;tat-engine&#34;&gt;Tat Engine&lt;/h1&gt;
-
-&lt;p&gt;Reference&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Tat SDK</title>
-      <link>https://ovh.github.io/tat/sdk/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ovh.github.io/tat/sdk/</guid>
-      <description>
-
-&lt;h3 id=&#34;chapter-5&#34;&gt;Chapter 5&lt;/h3&gt;
-
-&lt;h1 id=&#34;overview&#34;&gt;Overview&lt;/h1&gt;
-
-&lt;p&gt;TAT SDK&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://godoc.org/github.com/ovh/tat#Client&#34;&gt;Godoc&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Tat Webui</title>
-      <link>https://ovh.github.io/tat/tatwebui/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ovh.github.io/tat/tatwebui/</guid>
-      <description>
-
-&lt;h3 id=&#34;chapter-2&#34;&gt;Chapter 2&lt;/h3&gt;
-
-&lt;h1 id=&#34;tat-webui&#34;&gt;Tat Webui&lt;/h1&gt;
-</description>
-    </item>
-    
-    <item>
       <title>General</title>
       <link>https://ovh.github.io/tat/engine/general/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -338,7 +244,7 @@ Tat Engine communicates only with JSON format with its API, even for messages se
 
 &lt;h2 id=&#34;download&#34;&gt;Download&lt;/h2&gt;
 
-&lt;p&gt;Download latest binary on release page &lt;a href=&#34;https://github.com/ovh/tatcli/releases&#34;&gt;https://github.com/ovh/tatcli/releases&lt;/a&gt;
+&lt;p&gt;Download latest binary on release page &lt;a href=&#34;https://github.com/ovh/tat/tatcli/releases&#34;&gt;https://github.com/ovh/tat/tatcli/releases&lt;/a&gt;
 then &lt;code&gt;chmod +x tatcli&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;If you have already installed tatcli, you can update it with &lt;code&gt;tatcli update&lt;/code&gt;.&lt;/p&gt;
@@ -448,7 +354,7 @@ Please check next chapter &lt;a href=&#34;../golang-full-example&#34;&gt;&amp;ld
 &amp;hellip;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Tat Engine exposes only an HTTP REST API. You can manipulate this API with Tat Command Line Interface, aka tatcli, see &lt;a href=&#34;https://github.com/ovh/tatcli&#34;&gt;https://github.com/ovh/tatcli&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Tat Engine exposes only an HTTP REST API. You can manipulate this API with Tat Command Line Interface, aka tatcli, see &lt;a href=&#34;https://github.com/ovh/tat/tatcli&#34;&gt;https://github.com/ovh/tat/tatcli&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;A WebUI is also available, see &lt;a href=&#34;https://github.com/ovh/tatwebui&#34;&gt;https://github.com/ovh/tatwebui&lt;/a&gt;.&lt;/p&gt;
 
@@ -1430,7 +1336,640 @@ func readConfig() {
 
 &lt;p&gt;You should split this file into many files.&lt;/p&gt;
 
-&lt;p&gt;See &lt;a href=&#34;https://github.com/ovh/tatcli&#34;&gt;https://github.com/ovh/tatcli&lt;/a&gt; for CLI with many subcommands.&lt;/p&gt;
+&lt;p&gt;See &lt;a href=&#34;https://github.com/ovh/tat/tatcli&#34;&gt;https://github.com/ovh/tat/tatcli&lt;/a&gt; for CLI with many subcommands.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Standard View</title>
+      <link>https://ovh.github.io/tat/tatwebui/standardview/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ovh.github.io/tat/tatwebui/standardview/</guid>
+      <description>
+
+&lt;h2 id=&#34;screenshots&#34;&gt;Screenshots&lt;/h2&gt;
+
+&lt;h3 id=&#34;messages-list&#34;&gt;Messages - List&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-standard-view-list.png?width=80%&#34; alt=&#34;Standard View&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;messages-edit&#34;&gt;Messages - Edit&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-standard-view-details.png?width=80%&#34; alt=&#34;Standard View&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
+
+&lt;p&gt;In plugin.tpl.json file, add this line :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;quot;tatwebui-plugin-standardview&amp;quot;: &amp;quot;git+https://github.com/ovh/tatwebui-plugin-standardview.git&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;source&#34;&gt;Source&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-standardview&#34;&gt;https://github.com/ovh/tatwebui-plugin-standardview&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>mail2tat</title>
+      <link>https://ovh.github.io/tat/ecosystem/mail2tat/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ovh.github.io/tat/ecosystem/mail2tat/</guid>
+      <description>
+
+&lt;p&gt;Create a message on Tat by sending a mail. Mail2tat check an imap account
+and create a message for each mail received.&lt;/p&gt;
+
+&lt;h2 id=&#34;tat-configuration&#34;&gt;Tat Configuration&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Add Read Write to user tat.system.mail on your destination topic&lt;/li&gt;
+&lt;li&gt;Check option : &amp;ldquo;System User can force dateCreation of message ?&amp;rdquo;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;simple-usage&#34;&gt;Simple usage&lt;/h2&gt;
+
+&lt;p&gt;Send a mail to tat@your-domain with&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;subjet : &amp;lt;topicName&amp;gt;
+Body : text of message
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Example of subject : &lt;code&gt;/Internal/YourTopic&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;thread-on-tat&#34;&gt;Thread on Tat&lt;/h2&gt;
+
+&lt;p&gt;Send a mail to tat@your-domain with :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;subjet : &amp;lt;topicName&amp;gt;,&amp;lt;idGroup&amp;gt;
+Body: text of message
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Example of subject: &lt;code&gt;/Internal/YourTopic,something&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;faq&#34;&gt;FAQ&lt;/h2&gt;
+
+&lt;p&gt;Time between sending mail and post on tat ? Each minute : check mail and send on tat.
+Restriction on From ? Yes, see arg  : only @your-domain. All mail received from another domain are not send on tat.&lt;/p&gt;
+
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
+
+&lt;h3 id=&#34;building&#34;&gt;Building&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mkdir -p $GOPATH/src/github.com/ovh
+cd $GOPATH/src/github.com/ovh
+git clone git@github.com:ovh/tat-contrib.git
+cd tat-contrib/mail2tat/api
+go build
+./api -h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;flags&#34;&gt;Flags&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;./api -h
+MAIL2TAT - Mail to Tat
+
+Usage:
+  mail2tat [flags]
+
+Flags:
+      --activate-cron                Activate Cron (default true)
+      --imap-host string             IMAP Host
+      --imap-password string         IMAP Password
+      --imap-username string         IMAP Username
+      --listen-port string           RunKPI Listen Port (default &amp;quot;8084&amp;quot;)
+      --log-level string             Log Level : debug, info or warn
+      --password-tat-engine string   Password Tat Engine
+      --production                   Production mode
+      --url-tat-engine string        URL Tat Engine (default &amp;quot;http://localhost:8080&amp;quot;)
+      --username-tat-engine string   Username Tat Engine
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>tatcli config -h</title>
+      <link>https://ovh.github.io/tat/tatcli/tatcli-config/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ovh.github.io/tat/tatcli/tatcli-config/</guid>
+      <description>
+
+&lt;h2 id=&#34;command-description&#34;&gt;Command Description&lt;/h2&gt;
+
+&lt;h3 id=&#34;tatcli-config-h&#34;&gt;tatcli config -h&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;Config commands: tatcli config &amp;lt;command&amp;gt;
+
+Usage:
+  tatcli config [command]
+
+Aliases:
+  config, c
+
+
+Available Commands:
+  template    Write a template configuration file in $HOME/.tatcli/config.json: tatcli config template
+  show        Show Configuration: tatcli config show
+
+Flags:
+  -h, --help=false: help for config
+
+Global Flags: see tatcli -h
+
+Use &amp;quot;tatcli config [command] --help&amp;quot; for more information about a command.
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;example&#34;&gt;Example&lt;/h2&gt;
+
+&lt;h3 id=&#34;credentials&#34;&gt;Credentials&lt;/h3&gt;
+
+&lt;p&gt;Config file is under $HOME/.tatcli/config.json
+You can create it with this command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;tatcli config template
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Template is:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+  &amp;quot;username&amp;quot;:&amp;quot;myUsername&amp;quot;,
+  &amp;quot;password&amp;quot;:&amp;quot;myPassword&amp;quot;,
+  &amp;quot;url&amp;quot;:&amp;quot;http://urltat:port&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>API - Topics</title>
+      <link>https://ovh.github.io/tat/engine/api-topics/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ovh.github.io/tat/engine/api-topics/</guid>
+      <description>
+
+&lt;h2 id=&#34;create-a-topic&#34;&gt;Create a Topic&lt;/h2&gt;
+
+&lt;p&gt;Rules:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;User can create a root topic if he is a Tat Admin.&lt;/li&gt;
+&lt;li&gt;User can create topics under &lt;code&gt;/Private/username/&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;User can create topics if he is an admin on the Parent Topic or belong to an admin group on the Parent topic.
+Example:  Create /AAA/BBB: Parent Topic is /AAA&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPOST \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;description&amp;quot;: &amp;quot;Topic Description&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;delete-a-topic&#34;&gt;Delete a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XDELETE \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/subtopic
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;truncate-a-topic&#34;&gt;Truncate a topic&lt;/h2&gt;
+
+&lt;p&gt;Only for Tat Admin and administrators on topic.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/truncate
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;compute-tags-on-a-topic&#34;&gt;Compute tags on a topic&lt;/h2&gt;
+
+&lt;p&gt;Only for Tat Admin and administrators on topic.&lt;/p&gt;
+
+&lt;p&gt;Set &amp;ldquo;tags&amp;rdquo; attribute on topic, with an array of all tags used in this topic.
+One entry in &amp;ldquo;tags&amp;rdquo; attribute per text of tag.&lt;/p&gt;
+
+&lt;p&gt;Topic&amp;rsquo;s tags are showed with :
+GET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/topicName&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/compute/tags
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Example of usage of tags attribute: autocompletion of tag on UI when written new message on a topic&lt;/p&gt;
+
+&lt;h2 id=&#34;compute-labels-on-a-topic&#34;&gt;Compute labels on a topic&lt;/h2&gt;
+
+&lt;p&gt;Only for Tat Admin and administrators on topic.&lt;/p&gt;
+
+&lt;p&gt;Set &amp;ldquo;labels&amp;rdquo; attribute on topic, with an array of all labels used in this topic.
+One entry in &amp;ldquo;labels&amp;rdquo; attribute per text &amp;amp; color of label.&lt;/p&gt;
+
+&lt;p&gt;Topic&amp;rsquo;s labels are showed with :
+GET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/topicName&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/compute/labels
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Example of usage of labels attribute: label autocompletion on UI when adding new label&lt;/p&gt;
+
+&lt;h2 id=&#34;compute-tags-on-all-topics&#34;&gt;Compute tags on all topics&lt;/h2&gt;
+
+&lt;p&gt;Only for Tat Admin.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topics/compute/tags
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;compute-labels-on-all-topics&#34;&gt;Compute labels on all topics&lt;/h2&gt;
+
+&lt;p&gt;Only for Tat Admin.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topics/compute/labels
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;set-a-param-on-all-topics&#34;&gt;Set a param on all topics&lt;/h2&gt;
+
+&lt;p&gt;Only for Tat Admin and for attributes isAutoComputeTags and isAutoComputeLabels.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;paramName&amp;quot;:&amp;quot;isAutoComputeLabels&amp;quot;,&amp;quot;paramValue&amp;quot;:&amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topics/param
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;truncate-cached-tags-on-a-topic&#34;&gt;Truncate cached tags on a topic&lt;/h2&gt;
+
+&lt;p&gt;Only for Tat Admin and administrators on topic.&lt;/p&gt;
+
+&lt;p&gt;Truncate &amp;ldquo;tags&amp;rdquo; attribute on topic.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/tags/truncate
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;truncate-cached-labels-on-a-topic&#34;&gt;Truncate cached labels on a topic&lt;/h2&gt;
+
+&lt;p&gt;Only for Tat Admin and administrators on topic.&lt;/p&gt;
+
+&lt;p&gt;Truncate &amp;ldquo;labels&amp;rdquo; attribute on topic.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/labels/truncate
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;getting-one-topic&#34;&gt;Getting one Topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/topicName | python -m json.tool
+curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/topicName/subTopic | python -m json.tool
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;getting-topics-list&#34;&gt;Getting Topics List&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topics?skip=&amp;lt;skip&amp;gt;&amp;amp;limit=&amp;lt;limit&amp;gt; | python -m json.tool
+curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topics?skip=&amp;lt;skip&amp;gt;&amp;amp;limit=&amp;lt;limit&amp;gt;&amp;amp;argName=valName&amp;amp;arg2Name=val2Name | python -m json.tool
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;parameters&#34;&gt;Parameters&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;skip: Skip skips over the n initial documents from the query results&lt;/li&gt;
+&lt;li&gt;limit: Limit restricts the maximum number of documents retrieved&lt;/li&gt;
+&lt;li&gt;topic: Topic name, example: /topicA&lt;/li&gt;
+&lt;li&gt;topicPath: Topic start path, example: /topicA will return /topicA/subA, /topicA/subB&lt;/li&gt;
+&lt;li&gt;idTopic: id of topic&lt;/li&gt;
+&lt;li&gt;description: description of topic&lt;/li&gt;
+&lt;li&gt;dateMinCreation: filter result on dateCreation, timestamp Unix format&lt;/li&gt;
+&lt;li&gt;dateMaxCreation: filter result on dateCreation, timestamp Unix Format&lt;/li&gt;
+&lt;li&gt;getNbMsgUnread: if true, add new array to return, topicsMsgUnread with topic:flag. flag can be -1 if unknown, 0 or 1 if there is one or more messages unread&lt;/li&gt;
+&lt;li&gt;onlyFavorites: if true, return only favorites topics, except /Private/*. All privates topics are returned.&lt;/li&gt;
+&lt;li&gt;getForTatAdmin: if true, and requester is a Tat Admin, returns all topics (except /Private/*) without checking user access&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topics?skip=0&amp;amp;limit=100 | python -m json.tool
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;add-a-parameter-to-a-topic&#34;&gt;Add a parameter to a topic&lt;/h2&gt;
+
+&lt;p&gt;For admin of topic or on &lt;code&gt;/Private/username/*&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;key&amp;quot;: &amp;quot;keyOfParameter&amp;quot;, &amp;quot;value&amp;quot;: &amp;quot;valueOfParameter&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/add/parameter
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;remove-a-parameter-to-a-topic&#34;&gt;Remove a parameter to a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;key&amp;quot;: &amp;quot;keyOfParameter&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/remove/parameter
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;add-a-read-only-user-to-a-topic&#34;&gt;Add a read only user to a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;username&amp;quot;: &amp;quot;usernameToAdd&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/add/rouser
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;add-a-read-write-user-to-a-topic&#34;&gt;Add a read write user to a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;username&amp;quot;: &amp;quot;usernameToAdd&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/add/rwuser
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;add-an-admin-user-to-a-topic&#34;&gt;Add an admin user to a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;username&amp;quot;: &amp;quot;usernameToAdd&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/add/adminuser
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;delete-a-read-only-user-from-a-topic&#34;&gt;Delete a read only user from a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;username&amp;quot;: &amp;quot;usernameToRemove&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/remove/rouser
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;delete-a-read-write-user-from-a-topic&#34;&gt;Delete a read write user from a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;username&amp;quot;: &amp;quot;usernameToRemove&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/remove/wuser
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;delete-an-admin-user-from-a-topic&#34;&gt;Delete an admin user from a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;username&amp;quot;: &amp;quot;usernameToRemove&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/remove/adminuser
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;add-a-read-only-group-to-a-topic&#34;&gt;Add a read only group to a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;groupname&amp;quot;: &amp;quot;groupnameToAdd&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/add/rogroup
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;add-a-read-write-group-to-a-topic&#34;&gt;Add a read write group to a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;groupname&amp;quot;: &amp;quot;groupnameToAdd&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/add/rwgroup
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;add-an-admin-group-to-a-topic&#34;&gt;Add an admin group to a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;groupname&amp;quot;: &amp;quot;groupnameToAdd&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/add/admingroup
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;delete-a-read-only-group-from-a-topic&#34;&gt;Delete a read only group from a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;groupname&amp;quot;: &amp;quot;groupnameToRemove&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/remove/rogroup
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;delete-a-read-write-group-from-a-topic&#34;&gt;Delete a read write group from a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;groupname&amp;quot;: &amp;quot;groupnameToRemove&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/remove/rwgroup
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;delete-an-admin-group-from-a-topic&#34;&gt;Delete an admin group from a topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;groupname&amp;quot;: &amp;quot;groupnameToRemove&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/remove/rwgroup
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;update-param-on-one-topic-admin-or-admin-on-topic&#34;&gt;Update param on one topic: admin or admin on topic&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;, &amp;quot;maxlength&amp;quot;: 140, &amp;quot;maxreplies&amp;quot;: 30, &amp;quot;canForceDate&amp;quot;: false, &amp;quot;canUpdateMsg&amp;quot;: false, &amp;quot;canDeleteMsg&amp;quot;: false, &amp;quot;canUpdateAllMsg&amp;quot;: false, &amp;quot;canDeleteAllMsg&amp;quot;: false, &amp;quot;adminCanUpdateAllMsg&amp;quot;: false, &amp;quot;adminCanDeleteAllMsg&amp;quot;: false}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/param
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Parameters key is optional.&lt;/p&gt;
+
+&lt;p&gt;Example with key parameters :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;curl -XPUT \
+    -H &amp;quot;Content-Type: application/json&amp;quot; \
+    -H &amp;quot;Tat_username: admin&amp;quot; \
+    -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
+    -d &#39;{&amp;quot;topic&amp;quot;:&amp;quot;/Internal/Alerts&amp;quot;,&amp;quot;recursive&amp;quot;:false,&amp;quot;maxlength&amp;quot;:300,&amp;quot;maxreplies&amp;quot;:30,&amp;quot;canForceDate&amp;quot;:false,&amp;quot;canUpdateMsg&amp;quot;:false,&amp;quot;canDeleteMsg&amp;quot;:true,&amp;quot;canUpdateAllMsg&amp;quot;:false,&amp;quot;canDeleteAllMsg&amp;quot;:false,&amp;quot;adminCanUpdateAllMsg&amp;quot;:false,&amp;quot;adminCanDeleteAllMsg&amp;quot;:false,&amp;quot;parameters&amp;quot;:[{&amp;quot;key&amp;quot;:&amp;quot;agileview&amp;quot;,&amp;quot;value&amp;quot;:&amp;quot;qsdf#qsdf&amp;quot;},{&amp;quot;key&amp;quot;:&amp;quot;tatwebui.view.default&amp;quot;,&amp;quot;value&amp;quot;:&amp;quot;standardview-list&amp;quot;},{&amp;quot;key&amp;quot;:&amp;quot;tatwebui.view.forced&amp;quot;,&amp;quot;value&amp;quot;:&amp;quot;&amp;quot;}]}&#39; \
+    https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/param
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>DevOps LifeCycle / Feedback Loop</title>
+      <link>https://ovh.github.io/tat/overview/lifecycle/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ovh.github.io/tat/overview/lifecycle/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle.png?width=50%&#34; alt=&#34;DevOps LifeCycle&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;feedback-everywhere&#34;&gt;Feedback everywhere&lt;/h2&gt;
+
+&lt;p&gt;We want feedback, not only when applications are in production, but everywhere.
+PullRequest, build, Release, Monitoring, etc&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;Following examples show how we are using Tat through our DevOps lifecycle @ OVH.&lt;/p&gt;
+
+&lt;p&gt;First of all, TaT was designed to be a hub of all Continuous Delivery and DevOps communcation. By plugin all the software running in Plug all the software running in your DevOps ecosystem to Tat, you&amp;rsquo;ll be able to follow all the things in TaT and improve as well team and machines collaboration]&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Plan :
+
+Code :
+
+Build And Tests :
+
+Release :
+
+Monitor :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;plan&#34;&gt;Plan&lt;/h2&gt;
+
+&lt;p&gt;Starting the DevOps lifcycle with an agile view designed to plan your next release/iteration&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-plan.png?width=250px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-plan-agile.png?width=750px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-plan-roadmap.png?width=750px&#34; alt=&#34;DevOps LifeCycle Plan&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;code&#34;&gt;Code&lt;/h2&gt;
+
+&lt;p&gt;Follow Pull Request, and share pieces of Code&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-code.png?width=250px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-code-gist.png?width=750px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-code-pull-request.png?width=750px&#34; alt=&#34;DevOps LifeCycle Code&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;build-test&#34;&gt;Build &amp;amp; Test&lt;/h2&gt;
+
+&lt;p&gt;Follow Continuous Integration, Continuous Delivery Pipelines through a pipeline views. Here shown with CDS (lien vers CDS).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-build.png?width=250px&#34; alt=&#34;DevOps LifeCycle Build&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-build-cds.png?width=750px&#34; alt=&#34;DevOps LifeCycle Build&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;release&#34;&gt;Release&lt;/h2&gt;
+
+&lt;p&gt;End of your cycle commitment: build automatically your release note from your git repository, JIRA &amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-release.png?width=250px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-release-changelog-1.png?width=750px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-release-changelog-2.png?width=750px&#34; alt=&#34;DevOps LifeCycle Release&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;deploy&#34;&gt;Deploy&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-deploy.png?width=250px&#34; alt=&#34;DevOps LifeCycle Deploy&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-build-cds.png?width=750px&#34; alt=&#34;DevOps LifeCycle Deploy&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;monitor&#34;&gt;Monitor&lt;/h2&gt;
+
+&lt;p&gt;Build your own dashing view, monitor things with a light Terminal UI, showing resources heatmap of planning your interventions..&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-monitor.png?width=250px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-monitor-dashboard.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-monitor-tatcli.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-monitor-multiple.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-monitor-oncall.png?width=750px&#34; alt=&#34;DevOps LifeCycle Monitor&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;feedback&#34;&gt;Feedback&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-feedback.png?width=250px&#34; alt=&#34;DevOps LifeCycle Feedback&#34; /&gt;
+&lt;img src=&#34;https://ovh.github.io/tat/imgs/devops-lifecycle-feedback-kpi.png?width=750px&#34; alt=&#34;DevOps LifeCycle Feedback&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Notifications View</title>
+      <link>https://ovh.github.io/tat/tatwebui/notificationsview/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ovh.github.io/tat/tatwebui/notificationsview/</guid>
+      <description>
+
+&lt;p&gt;When a message contains a mention for someone, a other message is created by Tat Engine in topic
+/Private/username/Notifications, where username is the user mentioned.&lt;/p&gt;
+
+&lt;p&gt;Example :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;a message &amp;ldquo;a first notification for @yesnault&amp;rdquo; in topic /Internal/App&lt;/li&gt;
+&lt;li&gt;a other message &amp;ldquo;and a second @yesnault in topic /Internal/App&amp;rdquo; in topic /Internal/App&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;see result in screenshot below for these two messages in topic /Private/yesnault/Notifications&lt;/p&gt;
+
+&lt;h2 id=&#34;screenshot&#34;&gt;Screenshot&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://ovh.github.io/tat/imgs/tatwebui-notifications-view.png?width=80%&#34; alt=&#34;Notifications View&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
+
+&lt;p&gt;In plugin.tpl.json file, add this line :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;quot;tatwebui-plugin-notificationsview&amp;quot;: &amp;quot;git+https://github.com/ovh/tatwebui-plugin-notificationsview.git&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;source&#34;&gt;Source&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/ovh/tatwebui-plugin-notificationsview&#34;&gt;https://github.com/ovh/tatwebui-plugin-notificationsview&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

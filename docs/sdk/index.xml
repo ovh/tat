@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sdk-rsses on TAT - TextAndTag Documentation</title>
+    <title>Sdks on TAT - TextAndTag Documentation</title>
     <link>https://ovh.github.io/tat/sdk/index.xml</link>
-    <description>Recent content in Sdk-rsses on TAT - TextAndTag Documentation</description>
+    <description>Recent content in Sdks on TAT - TextAndTag Documentation</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <atom:link href="https://ovh.github.io/tat/sdk/index.xml" rel="self" type="application/rss+xml" />
@@ -232,7 +232,7 @@ func readConfig() {
 
 &lt;p&gt;You should split this file into many files.&lt;/p&gt;
 
-&lt;p&gt;See &lt;a href=&#34;https://github.com/ovh/tatcli&#34;&gt;https://github.com/ovh/tatcli&lt;/a&gt; for CLI with many subcommands.&lt;/p&gt;
+&lt;p&gt;See &lt;a href=&#34;https://github.com/ovh/tat/tatcli&#34;&gt;https://github.com/ovh/tat/tatcli&lt;/a&gt; for CLI with many subcommands.&lt;/p&gt;
 </description>
     </item>
     

@@ -14,7 +14,7 @@ Tatcli, a Tat Command Line Interface.
 See Tat Engine for more information: https://github.com/ovh/tat
 
 ## Download
-Download latest binary on release page https://github.com/ovh/tatcli/releases
+Download latest binary on release page https://github.com/ovh/tat/tatcli/releases
 then `chmod +x tatcli`
 
 If you have already installed tatcli, you can update it with `tatcli update`.

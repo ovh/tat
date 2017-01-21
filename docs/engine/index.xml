@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Engine-rsses on TAT - TextAndTag Documentation</title>
+    <title>Engines on TAT - TextAndTag Documentation</title>
     <link>https://ovh.github.io/tat/engine/index.xml</link>
-    <description>Recent content in Engine-rsses on TAT - TextAndTag Documentation</description>
+    <description>Recent content in Engines on TAT - TextAndTag Documentation</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <atom:link href="https://ovh.github.io/tat/engine/index.xml" rel="self" type="application/rss+xml" />
@@ -1035,7 +1035,7 @@ curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topics?sk
     -H &amp;quot;Content-Type: application/json&amp;quot; \
     -H &amp;quot;Tat_username: admin&amp;quot; \
     -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
-    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;, &amp;quot;maxlength&amp;quot;: 140, &amp;quot;canForceDate&amp;quot;: false, &amp;quot;canUpdateMsg&amp;quot;: false, &amp;quot;canDeleteMsg&amp;quot;: false, &amp;quot;canUpdateAllMsg&amp;quot;: false, &amp;quot;canDeleteAllMsg&amp;quot;: false, &amp;quot;adminCanUpdateAllMsg&amp;quot;: false, &amp;quot;adminCanDeleteAllMsg&amp;quot;: false}&#39; \
+    -d &#39;{&amp;quot;topic&amp;quot;: &amp;quot;/topicA&amp;quot;, &amp;quot;recursive&amp;quot;: &amp;quot;false&amp;quot;, &amp;quot;maxlength&amp;quot;: 140, &amp;quot;maxreplies&amp;quot;: 30, &amp;quot;canForceDate&amp;quot;: false, &amp;quot;canUpdateMsg&amp;quot;: false, &amp;quot;canDeleteMsg&amp;quot;: false, &amp;quot;canUpdateAllMsg&amp;quot;: false, &amp;quot;canDeleteAllMsg&amp;quot;: false, &amp;quot;adminCanUpdateAllMsg&amp;quot;: false, &amp;quot;adminCanDeleteAllMsg&amp;quot;: false}&#39; \
     https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/param
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -1047,7 +1047,7 @@ curl -XGET https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topics?sk
     -H &amp;quot;Content-Type: application/json&amp;quot; \
     -H &amp;quot;Tat_username: admin&amp;quot; \
     -H &amp;quot;Tat_password: passwordAdmin&amp;quot; \
-    -d &#39;{&amp;quot;topic&amp;quot;:&amp;quot;/Internal/Alerts&amp;quot;,&amp;quot;recursive&amp;quot;:false,&amp;quot;maxlength&amp;quot;:300,&amp;quot;canForceDate&amp;quot;:false,&amp;quot;canUpdateMsg&amp;quot;:false,&amp;quot;canDeleteMsg&amp;quot;:true,&amp;quot;canUpdateAllMsg&amp;quot;:false,&amp;quot;canDeleteAllMsg&amp;quot;:false,&amp;quot;adminCanUpdateAllMsg&amp;quot;:false,&amp;quot;adminCanDeleteAllMsg&amp;quot;:false,&amp;quot;parameters&amp;quot;:[{&amp;quot;key&amp;quot;:&amp;quot;agileview&amp;quot;,&amp;quot;value&amp;quot;:&amp;quot;qsdf#qsdf&amp;quot;},{&amp;quot;key&amp;quot;:&amp;quot;tatwebui.view.default&amp;quot;,&amp;quot;value&amp;quot;:&amp;quot;standardview-list&amp;quot;},{&amp;quot;key&amp;quot;:&amp;quot;tatwebui.view.forced&amp;quot;,&amp;quot;value&amp;quot;:&amp;quot;&amp;quot;}]}&#39; \
+    -d &#39;{&amp;quot;topic&amp;quot;:&amp;quot;/Internal/Alerts&amp;quot;,&amp;quot;recursive&amp;quot;:false,&amp;quot;maxlength&amp;quot;:300,&amp;quot;maxreplies&amp;quot;:30,&amp;quot;canForceDate&amp;quot;:false,&amp;quot;canUpdateMsg&amp;quot;:false,&amp;quot;canDeleteMsg&amp;quot;:true,&amp;quot;canUpdateAllMsg&amp;quot;:false,&amp;quot;canDeleteAllMsg&amp;quot;:false,&amp;quot;adminCanUpdateAllMsg&amp;quot;:false,&amp;quot;adminCanDeleteAllMsg&amp;quot;:false,&amp;quot;parameters&amp;quot;:[{&amp;quot;key&amp;quot;:&amp;quot;agileview&amp;quot;,&amp;quot;value&amp;quot;:&amp;quot;qsdf#qsdf&amp;quot;},{&amp;quot;key&amp;quot;:&amp;quot;tatwebui.view.default&amp;quot;,&amp;quot;value&amp;quot;:&amp;quot;standardview-list&amp;quot;},{&amp;quot;key&amp;quot;:&amp;quot;tatwebui.view.forced&amp;quot;,&amp;quot;value&amp;quot;:&amp;quot;&amp;quot;}]}&#39; \
     https://&amp;lt;tatHostname&amp;gt;:&amp;lt;tatPort&amp;gt;/topic/param
 &lt;/code&gt;&lt;/pre&gt;
 </description>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="generator" content="Hugo 0.18-DEV" />
+    <meta name="generator" content="Hugo 0.19-DEV" />
     <meta name="description" content="">
 
 
@@ -1062,7 +1062,7 @@ curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topics?skip=&lt;skip&gt;&
     -H &quot;Content-Type: application/json&quot; \
     -H &quot;Tat_username: admin&quot; \
     -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;recursive&quot;: &quot;false&quot;, &quot;maxlength&quot;: 140, &quot;canForceDate&quot;: false, &quot;canUpdateMsg&quot;: false, &quot;canDeleteMsg&quot;: false, &quot;canUpdateAllMsg&quot;: false, &quot;canDeleteAllMsg&quot;: false, &quot;adminCanUpdateAllMsg&quot;: false, &quot;adminCanDeleteAllMsg&quot;: false}' \
+    -d '{&quot;topic&quot;: &quot;/topicA&quot;, &quot;recursive&quot;: &quot;false&quot;, &quot;maxlength&quot;: 140, &quot;maxreplies&quot;: 30, &quot;canForceDate&quot;: false, &quot;canUpdateMsg&quot;: false, &quot;canDeleteMsg&quot;: false, &quot;canUpdateAllMsg&quot;: false, &quot;canDeleteAllMsg&quot;: false, &quot;adminCanUpdateAllMsg&quot;: false, &quot;adminCanDeleteAllMsg&quot;: false}' \
     https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/param
 </code></pre>
 
@@ -1074,7 +1074,7 @@ curl -XGET https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topics?skip=&lt;skip&gt;&
     -H &quot;Content-Type: application/json&quot; \
     -H &quot;Tat_username: admin&quot; \
     -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{&quot;topic&quot;:&quot;/Internal/Alerts&quot;,&quot;recursive&quot;:false,&quot;maxlength&quot;:300,&quot;canForceDate&quot;:false,&quot;canUpdateMsg&quot;:false,&quot;canDeleteMsg&quot;:true,&quot;canUpdateAllMsg&quot;:false,&quot;canDeleteAllMsg&quot;:false,&quot;adminCanUpdateAllMsg&quot;:false,&quot;adminCanDeleteAllMsg&quot;:false,&quot;parameters&quot;:[{&quot;key&quot;:&quot;agileview&quot;,&quot;value&quot;:&quot;qsdf#qsdf&quot;},{&quot;key&quot;:&quot;tatwebui.view.default&quot;,&quot;value&quot;:&quot;standardview-list&quot;},{&quot;key&quot;:&quot;tatwebui.view.forced&quot;,&quot;value&quot;:&quot;&quot;}]}' \
+    -d '{&quot;topic&quot;:&quot;/Internal/Alerts&quot;,&quot;recursive&quot;:false,&quot;maxlength&quot;:300,&quot;maxreplies&quot;:30,&quot;canForceDate&quot;:false,&quot;canUpdateMsg&quot;:false,&quot;canDeleteMsg&quot;:true,&quot;canUpdateAllMsg&quot;:false,&quot;canDeleteAllMsg&quot;:false,&quot;adminCanUpdateAllMsg&quot;:false,&quot;adminCanDeleteAllMsg&quot;:false,&quot;parameters&quot;:[{&quot;key&quot;:&quot;agileview&quot;,&quot;value&quot;:&quot;qsdf#qsdf&quot;},{&quot;key&quot;:&quot;tatwebui.view.default&quot;,&quot;value&quot;:&quot;standardview-list&quot;},{&quot;key&quot;:&quot;tatwebui.view.forced&quot;,&quot;value&quot;:&quot;&quot;}]}' \
     https://&lt;tatHostname&gt;:&lt;tatPort&gt;/topic/param
 </code></pre>
 

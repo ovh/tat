@@ -2,34 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://ovh.github.io/tat/</loc>
-  </url>
-  
-  <url>
-    <loc>https://ovh.github.io/tat/ecosystem/</loc>
-  </url>
-  
-  <url>
-    <loc>https://ovh.github.io/tat/overview/</loc>
-  </url>
-  
-  <url>
-    <loc>https://ovh.github.io/tat/tatcli/</loc>
-  </url>
-  
-  <url>
-    <loc>https://ovh.github.io/tat/engine/</loc>
-  </url>
-  
-  <url>
-    <loc>https://ovh.github.io/tat/sdk/</loc>
-  </url>
-  
-  <url>
-    <loc>https://ovh.github.io/tat/tatwebui/</loc>
-  </url>
-  
-  <url>
     <loc>https://ovh.github.io/tat/engine/general/</loc>
   </url>
   
@@ -207,6 +179,70 @@
   
   <url>
     <loc>https://ovh.github.io/tat/engine/production-installation/</loc>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/ecosystem/</loc>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/ecosystem/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/engine/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/overview/</loc>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/overview/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/sdk/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/tatcli/</loc>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/engine/</loc>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/sdk/</loc>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/tatwebui/</loc>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/tatcli/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/tatnhack/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://ovh.github.io/tat/tatwebui/</loc>
+    <priority>0</priority>
   </url>
   
 </urlset>

@@ -125,4 +125,4 @@ func readConfig() {
 ## Notice
 You should split this file into many files.
 
-See https://github.com/ovh/tatcli for CLI with many subcommands.
+See https://github.com/ovh/tat/tatcli for CLI with many subcommands.

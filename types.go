@@ -1,9 +1,9 @@
 package tat
 
-// Version of Tat Engine
+// Version of Tat
 // One Line for this, used by release.sh script
 // Keep "const Version on one line"
-const Version = "3.1.0"
+const Version = "5.0.0"
 
 const (
 	// TatHeaderUsername is Tat_username header

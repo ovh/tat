@@ -15,7 +15,7 @@ to hear from you! Make sure to read CONTRIBUTING file on repository concerned be
 ### Main Components
 * Tat Engine [Doc](/engine/) - [http://github.com/ovh/tat](http://github.com/ovh/tat) - [LICENSE](http://github.com/ovh/tat/blob/master/LICENSE) - [CONTRIBUTING](http://github.com/ovh/tat/blob/master/CONTRIBUTING.md)
 * Tatwebui [Doc](/tatwebui/) - [http://github.com/ovh/tatwebui](http://github.com/ovh/tatwebui) - [LICENSE](http://github.com/ovh/tatwebui/blob/master/LICENSE) - [CONTRIBUTING](http://github.com/ovh/tatwebui/blob/master/CONTRIBUTING.md)
-* Tatcli [Doc](/tatcli/) - [http://github.com/ovh/tatcli](http://github.com/ovh/tatcli) - [LICENSE](http://github.com/ovh/tatcli/blob/master/LICENSE) - [CONTRIBUTING](http://github.com/ovh/tatcli/blob/master/CONTRIBUTING.md)
+* Tatcli [Doc](/tatcli/) - [http://github.com/ovh/tat/tatcli](http://github.com/ovh/tat/tatcli) - [LICENSE](http://github.com/ovh/tat/tatcli/blob/master/LICENSE) - [CONTRIBUTING](http://github.com/ovh/tat/tatcli/blob/master/CONTRIBUTING.md)
 
 
 ### Views
