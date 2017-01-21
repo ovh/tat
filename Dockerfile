@@ -2,7 +2,7 @@ FROM alpine
 MAINTAINER yvonnick.esnault@corp.ovh.com
 RUN apk add --update -t deps wget ca-certificates && \
     mkdir /app && cd /app && \
-    TAT_VERSION="5.0.0" && \
+    TAT_VERSION="5.0.1" && \
     wget https://github.com/ovh/tat/releases/download/v${TAT_VERSION}/tat-linux-amd64 && \
     chmod +x tat-linux-amd64 && \
     chown -R nobody:nogroup /app && \
