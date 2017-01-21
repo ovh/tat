@@ -714,6 +714,7 @@
 <li><a href="#remove-a-message-from-tasks">Remove a message from tasks</a></li>
 <li><a href="#move-a-message-to-another-topic">Move a message to another topic</a></li>
 <li><a href="#getting-message">Getting message</a></li>
+<li><a href="#stream-messages-and-exec-a-command-on-each-message">Stream messages and exec a command on each message</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -771,13 +772,14 @@ Available Commands:
 
 <h3 id="command-message-list">Command Message list</h3>
 
-<pre><code>List all messages of a topic: tatcli msg list &lt;topic&gt; &lt;skip&gt; &lt;limit&gt;
+<pre><code>List all messages on one topic: tatcli msg list &lt;Topic&gt; &lt;skip&gt; &lt;limit&gt;
 
 Usage:
   tatcli message list [flags]
 
 Aliases:
   list, l
+
 
 Flags:
       --allIDMessage string              Search in All ID Message (idMessage, idReply, idRoot)
@@ -793,6 +795,7 @@ Flags:
       --dateRefDeltaMinCreation string   Add seconds to dateRefCreation flag
       --dateRefDeltaMinUpdate string     Add seconds to dateRefUpdate flag
       --dateRefUpdate string             This have to be used with dateRefDeltaMinUpdate and / or dateRefDeltaMaxUpdate. This could be BeginningOfMinute, BeginningOfHour, BeginningOfDay, BeginningOfWeek, BeginningOfMonth, BeginningOfQuarter, BeginningOfYear
+      --exec string                      --stream required. exec a cmd on each new message: --stream --exec 'myLights --pulse blue --duration=1000'
       --idMessage string                 Search by IDMessage
       --inReplyOfID string               Search by IDMessage InReply
       --inReplyOfIDRoot string           Search by IDMessage IdRoot
@@ -819,12 +822,12 @@ Flags:
       --sortBy string                    --sortBy=-dateCreation: sort message. Use '-' to reverse sort. Default is --sortBy=-dateCreation. You can use: text, topic, inReplyOfID, inReplyOfIDRoot, nbLikes, labels, likers, votersUP, votersDown, nbVotesUP, nbVotesDown, userMentions, urls, tags, dateCreation, dateUpdate, author, nbReplies
       --startLabel string                Search by a label prefix: --startLabel='mykey:,myKey2:'
       --startTag string                  Search by a tag prefix: --startTag='mykey:,myKey2:'
+  -s, --stream                           stream messages --stream. Request tat each 10s, default sort: dateUpdate
       --tag string                       Search by tag : could be tagA,tagB
       --text string                      Search by text
       --topic string                     Search by topic
       --treeView string                  Tree View of messages: onetree or fulltree. Default: notree
       --username string                  Search by username : could be usernameA,usernameB
-
 
 </code></pre>
 
@@ -832,72 +835,72 @@ Flags:
 
 <h3 id="create-a-message">Create a message</h3>
 
-<pre><code class="language-bash">tatcli message add /topic my message
+<pre><code class="language-bash">tatcli message add /YourTopic my message
 </code></pre>
 
 <p>With labels:</p>
 
-<pre><code class="language-bash">tatcli msg add --label=&quot;#cccccc;label,#dddddd;label2&quot; /topic my message
+<pre><code class="language-bash">tatcli msg add --label=&quot;#cccccc;label,#dddddd;label2&quot; /YourTopic my message
 </code></pre>
 
 <p>If you are a <code>system user</code>, you can force date creation. Date as timestamp</p>
 
-<pre><code class="language-bash">tatcli message add --dateCreation=11111 /topic my message
+<pre><code class="language-bash">tatcli message add --dateCreation=11111 /YourTopic my message
 </code></pre>
 
 <h3 id="reply-to-a-message">Reply to a message</h3>
 
-<pre><code class="language-bash">tatcli message reply /topic idOfMessage my message
+<pre><code class="language-bash">tatcli message reply /YourTopic idOfMessage my message
 </code></pre>
 
 <h3 id="like-a-message">Like a message</h3>
 
-<pre><code class="language-bash">tatcli message like /topic idOfMessage
+<pre><code class="language-bash">tatcli message like /YourTopic idOfMessage
 </code></pre>
 
 <h3 id="unlike-a-message">Unlike a message</h3>
 
-<pre><code class="language-bash">tatcli message unlike /topic idOfMessage
+<pre><code class="language-bash">tatcli message unlike /YourTopic idOfMessage
 </code></pre>
 
 <h3 id="add-a-label-to-a-message">Add a label to a message</h3>
 
-<pre><code class="language-bash">tatcli message label /topic idOfMessage color myLabel
+<pre><code class="language-bash">tatcli message label /YourTopic idOfMessage color myLabel
 </code></pre>
 
 <h3 id="remove-a-label-from-a-message">Remove a label from a message</h3>
 
-<pre><code class="language-bash">tatcli message unlabel /topic idOfMessage myLabel
+<pre><code class="language-bash">tatcli message unlabel /YourTopic idOfMessage myLabel
 </code></pre>
 
 <h3 id="remove-all-labels-and-add-new-ones-to-a-message">Remove all labels and add new ones to a message</h3>
 
-<pre><code class="language-bash">tatcli message relabel /topic idOfMessage --label=&quot;#cccccc;label,#dddddd;label2&quot;
+<pre><code class="language-bash">tatcli message relabel /YourTopic idOfMessage --label=&quot;#cccccc;label,#dddddd;label2&quot;
 </code></pre>
 
 <h3 id="update-a-message-by-adding-additional-text-at-the-end-of-message">Update a message by adding additional text at the end of message</h3>
 
-<pre><code class="language-bash">tatcli message concat /topic idOfMessage additional text
+<pre><code class="language-bash">tatcli message concat /YourTopic idOfMessage additional text
 </code></pre>
 
 <h3 id="vote-up-a-message">Vote UP a message</h3>
 
-<pre><code class="language-bash">tatcli message voteup /topic idOfMessage
+<pre><code class="language-bash">tatcli message voteup /YourTopic idOfMessage
 </code></pre>
 
 <h3 id="vote-down-a-message">Vote Down a message</h3>
 
-<pre><code class="language-bash">tatcli message votedown /topic idOfMessage
+<pre><code class="language-bash">tatcli message votedown /YourTopic idOfMessage
 </code></pre>
 
 <h3 id="remove-a-vote-up-from-a-message">Remove a Vote UP from a message</h3>
 
-<pre><code class="language-bash">tatcli message unvoteup /topic idOfMessage
+<pre><code class="language-bash">tatcli message unvoteup /YourTopic idOfMessage
 </code></pre>
 
 <h3 id="remove-a-vote-down-from-a-message">Remove a Vote Down from a message</h3>
 
-<pre><code class="language-bash">tatcli message unvotedown /topic idOfMessage
+<pre><code class="language-bash">tatcli message unvotedown /YourTopic idOfMessage
 </code></pre>
 
 <h3 id="create-a-task-from-one-message">Create a task from one message</h3>
@@ -917,8 +920,13 @@ Flags:
 
 <h3 id="getting-message">Getting message</h3>
 
-<pre><code class="language-bash">tatcli message list /topic
-tatcli message list /topic 0 10
+<pre><code class="language-bash">tatcli message list /YourTopic
+tatcli message list /YourTopic 0 10
+</code></pre>
+
+<h3 id="stream-messages-and-exec-a-command-on-each-message">Stream messages and exec a command on each message</h3>
+
+<pre><code class="language-bash">tatcli msg list /YourTopic/YourSubTopic --stream --exec &quot;./myLights --pulse blue --duration=1000&quot;
 </code></pre>
 
 

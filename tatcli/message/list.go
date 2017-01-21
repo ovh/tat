@@ -65,7 +65,7 @@ func init() {
 	cmdMessageList.Flags().StringVarP(&criteria.OnlyCount, "onlyCount", "", "", "--onlyCount=true: only count messages, without retrieve msg. limit, skip, treeview criterias are ignored.")
 	cmdMessageList.Flags().StringVarP(&criteria.SortBy, "sortBy", "", "", "--sortBy=-dateCreation: sort message. Use '-' to reverse sort. Default is --sortBy=-dateCreation. You can use: text, topic, inReplyOfID, inReplyOfIDRoot, nbLikes, labels, likers, votersUP, votersDown, nbVotesUP, nbVotesDown, userMentions, urls, tags, dateCreation, dateUpdate, author, nbReplies")
 	cmdMessageList.Flags().BoolVarP(&stream, "stream", "s", false, "stream messages --stream. Request tat each 10s, default sort: dateUpdate")
-	cmdMessageList.Flags().StringVarP(&execMsg, "exec", "", "", "exec a cmd on each new message: --exec 'myLights --pulse blue --duration=1000'")
+	cmdMessageList.Flags().StringVarP(&execMsg, "exec", "", "", "--stream required. exec a cmd on each new message: --stream --exec 'myLights --pulse blue --duration=1000'")
 }
 
 var cmdMessageList = &cobra.Command{

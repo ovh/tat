@@ -47,13 +47,14 @@ Available Commands:
 ### Command Message list
 
 ```
-List all messages of a topic: tatcli msg list <topic> <skip> <limit>
+List all messages on one topic: tatcli msg list <Topic> <skip> <limit>
 
 Usage:
   tatcli message list [flags]
 
 Aliases:
   list, l
+
 
 Flags:
       --allIDMessage string              Search in All ID Message (idMessage, idReply, idRoot)
@@ -69,6 +70,7 @@ Flags:
       --dateRefDeltaMinCreation string   Add seconds to dateRefCreation flag
       --dateRefDeltaMinUpdate string     Add seconds to dateRefUpdate flag
       --dateRefUpdate string             This have to be used with dateRefDeltaMinUpdate and / or dateRefDeltaMaxUpdate. This could be BeginningOfMinute, BeginningOfHour, BeginningOfDay, BeginningOfWeek, BeginningOfMonth, BeginningOfQuarter, BeginningOfYear
+      --exec string                      --stream required. exec a cmd on each new message: --stream --exec 'myLights --pulse blue --duration=1000'
       --idMessage string                 Search by IDMessage
       --inReplyOfID string               Search by IDMessage InReply
       --inReplyOfIDRoot string           Search by IDMessage IdRoot
@@ -95,12 +97,12 @@ Flags:
       --sortBy string                    --sortBy=-dateCreation: sort message. Use '-' to reverse sort. Default is --sortBy=-dateCreation. You can use: text, topic, inReplyOfID, inReplyOfIDRoot, nbLikes, labels, likers, votersUP, votersDown, nbVotesUP, nbVotesDown, userMentions, urls, tags, dateCreation, dateUpdate, author, nbReplies
       --startLabel string                Search by a label prefix: --startLabel='mykey:,myKey2:'
       --startTag string                  Search by a tag prefix: --startTag='mykey:,myKey2:'
+  -s, --stream                           stream messages --stream. Request tat each 10s, default sort: dateUpdate
       --tag string                       Search by tag : could be tagA,tagB
       --text string                      Search by text
       --topic string                     Search by topic
       --treeView string                  Tree View of messages: onetree or fulltree. Default: notree
       --username string                  Search by username : could be usernameA,usernameB
-
 
 ```
 
@@ -108,74 +110,74 @@ Flags:
 
 ### Create a message
 ```bash
-tatcli message add /topic my message
+tatcli message add /YourTopic my message
 ```
 
 With labels:
 
 ```bash
-tatcli msg add --label="#cccccc;label,#dddddd;label2" /topic my message
+tatcli msg add --label="#cccccc;label,#dddddd;label2" /YourTopic my message
 ```
 
 If you are a `system user`, you can force date creation. Date as timestamp
 
 ```bash
-tatcli message add --dateCreation=11111 /topic my message
+tatcli message add --dateCreation=11111 /YourTopic my message
 ```
 
 ### Reply to a message
 ```bash
-tatcli message reply /topic idOfMessage my message
+tatcli message reply /YourTopic idOfMessage my message
 ```
 
 ### Like a message
 ```bash
-tatcli message like /topic idOfMessage
+tatcli message like /YourTopic idOfMessage
 ```
 
 ### Unlike a message
 ```bash
-tatcli message unlike /topic idOfMessage
+tatcli message unlike /YourTopic idOfMessage
 ```
 
 ### Add a label to a message
 ```bash
-tatcli message label /topic idOfMessage color myLabel
+tatcli message label /YourTopic idOfMessage color myLabel
 ```
 
 ### Remove a label from a message
 ```bash
-tatcli message unlabel /topic idOfMessage myLabel
+tatcli message unlabel /YourTopic idOfMessage myLabel
 ```
 
 ### Remove all labels and add new ones to a message
 ```bash
-tatcli message relabel /topic idOfMessage --label="#cccccc;label,#dddddd;label2"
+tatcli message relabel /YourTopic idOfMessage --label="#cccccc;label,#dddddd;label2"
 ```
 
 ### Update a message by adding additional text at the end of message
 ```bash
-tatcli message concat /topic idOfMessage additional text
+tatcli message concat /YourTopic idOfMessage additional text
 ```
 
 ### Vote UP a message
 ```bash
-tatcli message voteup /topic idOfMessage
+tatcli message voteup /YourTopic idOfMessage
 ```
 
 ### Vote Down a message
 ```bash
-tatcli message votedown /topic idOfMessage
+tatcli message votedown /YourTopic idOfMessage
 ```
 
 ### Remove a Vote UP from a message
 ```bash
-tatcli message unvoteup /topic idOfMessage
+tatcli message unvoteup /YourTopic idOfMessage
 ```
 
 ### Remove a Vote Down from a message
 ```bash
-tatcli message unvotedown /topic idOfMessage
+tatcli message unvotedown /YourTopic idOfMessage
 ```
 
 ### Create a task from one message
@@ -195,6 +197,11 @@ tatcli message move /MyOldTopic/SubTopic idOfMessage /MyNewTopic/SubTopic
 
 ### Getting message
 ```bash
-tatcli message list /topic
-tatcli message list /topic 0 10
+tatcli message list /YourTopic
+tatcli message list /YourTopic 0 10
+```
+
+### Stream messages and exec a command on each message
+```bash
+tatcli msg list /YourTopic/YourSubTopic --stream --exec "./myLights --pulse blue --duration=1000"
 ```
