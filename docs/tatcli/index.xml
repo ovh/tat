@@ -246,7 +246,8 @@ Flags:
       --dateRefDeltaMinCreation string   Add seconds to dateRefCreation flag
       --dateRefDeltaMinUpdate string     Add seconds to dateRefUpdate flag
       --dateRefUpdate string             This have to be used with dateRefDeltaMinUpdate and / or dateRefDeltaMaxUpdate. This could be BeginningOfMinute, BeginningOfHour, BeginningOfDay, BeginningOfWeek, BeginningOfMonth, BeginningOfQuarter, BeginningOfYear
-      --exec string                      --stream required. exec a cmd on each new message: --stream --exec &#39;myLights --pulse blue --duration=1000&#39;
+      --exec stringSlice                 --stream required. Exec a cmd on each new message: --stream --exec &#39;myLights --pulse blue --duration=1000&#39; With only --onlyMsgCount=true : --exec min:max:cmda --exec min:max:cmdb, example: --exec 0:4:&#39;cmdA&#39; --exec 5::&#39;cmdb&#39;
+      --execErr stringSlice              --stream required. Exec a cmd on each error while requesting tat: --stream --exec &#39;myLights --pulse blue --duration=1000&#39; --execErr &#39;myLights --pulse red --duration=2000&#39;
       --idMessage string                 Search by IDMessage
       --inReplyOfID string               Search by IDMessage InReply
       --inReplyOfIDRoot string           Search by IDMessage IdRoot
