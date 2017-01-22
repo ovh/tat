@@ -18,6 +18,7 @@ var (
 	criteria         tat.MessageCriteria
 	stream           bool
 	execMsg, execErr []string
+	streamFormat     string
 )
 
 func init() {
@@ -68,6 +69,7 @@ func init() {
 	cmdMessageList.Flags().BoolVarP(&stream, "stream", "s", false, "stream messages --stream. Request tat each 10s, default sort: dateUpdate")
 	cmdMessageList.Flags().StringSliceVarP(&execMsg, "exec", "", nil, `--stream required. Exec a cmd on each new message: --stream --exec 'myLights --pulse blue --duration=1000' With only --onlyMsgCount=true : --exec min:max:cmda --exec min:max:cmdb, example: --exec 0:4:'cmdA' --exec 5::'cmdb'`)
 	cmdMessageList.Flags().StringSliceVarP(&execErr, "execErr", "", nil, `--stream required. Exec a cmd on each error while requesting tat: --stream --exec 'myLights --pulse blue --duration=1000' --execErr 'myLights --pulse red --duration=2000'`)
+	cmdMessageList.Flags().StringVarP(&streamFormat, "streamFormat", "", "$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT", `--stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_MSG_LABELS $TAT_MSG_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS`)
 }
 
 var cmdMessageList = &cobra.Command{
@@ -118,7 +120,7 @@ func cmdMessageListStream(topic string) {
 			}
 			processCount(out.Count)
 			if out.Count != lastCount {
-				time.Sleep(10 * time.Second)
+				processWait()
 			}
 			continue
 		}
@@ -138,16 +140,28 @@ func cmdMessageListStream(topic string) {
 
 		// do not wait if request reach criteria.Limit
 		if len(out.Messages) < criteria.Limit {
-			time.Sleep(10 * time.Second)
+			processWait()
 		}
 	}
+}
+
+func processWait() {
+	// see https://github.com/briandowns/spinner
+	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+	s.Start()
+	time.Sleep(10 * time.Second)
+	s.Stop()
 }
 
 func processExecError(err error) {
 	fmt.Printf("Error:%s", err)
 	for _, ex := range execErr {
-		execCmd(ex)
+		execCmd(ex, nil)
 	}
+	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+	s.Start()
+	time.Sleep(5 * time.Second)
+	s.Stop()
 }
 
 func processCount(count int) {
@@ -177,20 +191,93 @@ func processCount(count int) {
 		}
 
 		if count >= min && count <= max {
-			execCmd(tuple[2])
+			execCmd(tuple[2], nil)
 		}
 	}
 }
 
 func processMsg(msg tat.Message) {
-	fmt.Printf("%s %s %s\n", time.Unix(int64(msg.DateUpdate), 0).Format(time.Stamp), msg.Author.Username, msg.Text)
+
+	if streamFormat == "" {
+		internal.Exit("--streamFormat can not be empty")
+	}
+
+	fmt.Printf("%s\n", streamFormatMsg(msg, streamFormat))
 	for _, ex := range execMsg {
-		execCmd(ex)
+		execCmd(ex, &msg)
 	}
 }
 
-func execCmd(ex string) {
-	opts := strings.Split(ex, " ")
+func streamFormatMsg(msg tat.Message, out string) string {
+
+	out = strings.Replace(out, "$TAT_MSG_ID", msg.ID, -1)
+	out = strings.Replace(out, "$TAT_MSG_TEXT", msg.Text, -1)
+	out = strings.Replace(out, "$TAT_MSG_TOPIC", msg.Topic, -1)
+	out = strings.Replace(out, "$TAT_MSG_INREPLYOFID", msg.InReplyOfID, -1)
+	out = strings.Replace(out, "$TAT_MSG_INREPLYOFIDROOT", msg.InReplyOfIDRoot, -1)
+	out = strings.Replace(out, "$TAT_MSG_NBLIKES", fmt.Sprintf("%d", msg.NbLikes), -1)
+	out = strings.Replace(out, "$TAT_MSG_NBVOTESUP", fmt.Sprintf("%d", msg.NbVotesUP), -1)
+	out = strings.Replace(out, "$TAT_MSG_NBVOTESDOWN", fmt.Sprintf("%d", msg.NbVotesDown), -1)
+	out = strings.Replace(out, "$TAT_MSG_DATECREATION_HUMAN", fmt.Sprintf("%s", time.Unix(int64(msg.DateUpdate), 0).Format(time.Stamp)), -1)
+	out = strings.Replace(out, "$TAT_MSG_DATECREATION", fmt.Sprintf("%f", msg.DateCreation), -1)
+	out = strings.Replace(out, "$TAT_MSG_DATEUPDATE_HUMAN", fmt.Sprintf("%s", time.Unix(int64(msg.DateUpdate), 0).Format(time.Stamp)), -1)
+	out = strings.Replace(out, "$TAT_MSG_DATEUPDATE", fmt.Sprintf("%f", msg.DateUpdate), -1)
+	out = strings.Replace(out, "$TAT_MSG_AUTHOR_USERNAME", msg.Author.Username, -1)
+	out = strings.Replace(out, "$TAT_MSG_NBREPLIES", fmt.Sprintf("%d", msg.NbReplies), -1)
+
+	labels := ""
+	for _, l := range msg.Labels {
+		labels += l.Text + " "
+	}
+	out = strings.Replace(out, "$TAT_MSG_MSG_LABELS", labels, -1)
+
+	tags := ""
+	for _, t := range msg.Tags {
+		tags += t + " "
+	}
+	out = strings.Replace(out, "$TAT_MSG_MSG_TAGS", tags, -1)
+
+	likers := ""
+	for _, t := range msg.Likers {
+		likers += t + " "
+	}
+	out = strings.Replace(out, "$TAT_MSG_LIKERS", likers, -1)
+
+	votersUP := ""
+	for _, t := range msg.VotersUP {
+		votersUP += t + " "
+	}
+	out = strings.Replace(out, "$TAT_MSG_VOTERSUP", votersUP, -1)
+
+	votersDown := ""
+	for _, t := range msg.VotersDown {
+		votersDown += t + " "
+	}
+	out = strings.Replace(out, "$TAT_MSG_VOTERSDOWN", votersDown, -1)
+
+	userMentions := ""
+	for _, t := range msg.UserMentions {
+		userMentions += t + " "
+	}
+	out = strings.Replace(out, "$TAT_MSG_USERMENTIONS", userMentions, -1)
+
+	urls := ""
+	for _, t := range msg.Urls {
+		urls += t + " "
+	}
+	out = strings.Replace(out, "$TAT_MSG_URLS", urls, -1)
+
+	return out
+}
+
+func execCmd(ex string, msg *tat.Message) {
+
+	toExec := ex
+	if msg != nil {
+		toExec = streamFormatMsg(*msg, ex)
+	}
+
+	opts := strings.Split(toExec, " ")
 	if ex != "" {
 
 		_, err := exec.LookPath(opts[0])

@@ -275,6 +275,7 @@ Flags:
       --startLabel string                Search by a label prefix: --startLabel=&#39;mykey:,myKey2:&#39;
       --startTag string                  Search by a tag prefix: --startTag=&#39;mykey:,myKey2:&#39;
   -s, --stream                           stream messages --stream. Request tat each 10s, default sort: dateUpdate
+      --streamFormat string              --stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_MSG_LABELS $TAT_MSG_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS (default &amp;quot;$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT&amp;quot;)
       --tag string                       Search by tag : could be tagA,tagB
       --text string                      Search by text
       --topic string                     Search by topic
@@ -389,6 +390,8 @@ another command if there is an error while requesting tat.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;tatcli msg list /YourTopic/YourSubTopic --stream --exec &amp;quot;./myLights --pulse blue --duration=1000&amp;quot; --exec &amp;quot;./myLights --pulse red --duration=2000&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;h3 id=&#34;stream-messages-and-exec-a-command-on-count-value&#34;&gt;Stream messages and exec a command on count value&lt;/h3&gt;
+
 &lt;p&gt;Count messages with label open on topic /Internal/Alerts, then :&lt;/p&gt;
 
 &lt;ul&gt;
@@ -400,6 +403,46 @@ another command if there is an error while requesting tat.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;tatcli msg list /Internal/Alerts --label=open --stream --exec 0:0:&#39;blinkstick --morph green&#39; --exec 1:5:&#39;blinkstick --morph blue&#39; --exec 6::&#39;blinkstick --morph yellow&#39; --execErr &amp;quot;blinkstick --pulse red --duration=2000&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;stream-messages-format-output-and-exec-with-arguments&#34;&gt;Stream messages, format output and exec with arguments&lt;/h3&gt;
+
+&lt;p&gt;Stream messages and display only username and text.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;tatcli msg list /Internal/Alerts --stream --streamFormat &#39;$TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT &#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Stream messages and execute foo.sh on each message with 2 arguments: message ID and message Text.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;echo &#39;echo $* &amp;gt;&amp;gt; foo.log&#39; &amp;gt; foo.sh &amp;amp;&amp;amp; chmod +x foo.sh
+
+tatcli msg list /Internal/Alerts --stream --exec &#39;./foo.sh $TAT_MSG_ID $TAT_MSG_TEXT&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can use :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_ID&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_TEXT&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_TOPIC&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_INREPLYOFID&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_INREPLYOFIDROOT&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_NBLIKES&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_NBVOTESUP&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_NBVOTESDOWN&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_DATECREATION&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_DATECREATION_HUMAN&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_DATEUPDATE&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_DATEUPDATE_HUMAN&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_AUTHOR_USERNAME&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_NBREPLIES&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_MSG_LABELS&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_MSG_TAGS&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_LIKERS&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_VOTERSUP&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_VOTERSDOWN&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_USERMENTIONS&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$TAT_MSG_URLS&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
     </item>
     

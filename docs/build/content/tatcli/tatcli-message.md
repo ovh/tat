@@ -99,6 +99,7 @@ Flags:
       --startLabel string                Search by a label prefix: --startLabel='mykey:,myKey2:'
       --startTag string                  Search by a tag prefix: --startTag='mykey:,myKey2:'
   -s, --stream                           stream messages --stream. Request tat each 10s, default sort: dateUpdate
+      --streamFormat string              --stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_MSG_LABELS $TAT_MSG_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS (default "$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT")
       --tag string                       Search by tag : could be tagA,tagB
       --text string                      Search by text
       --topic string                     Search by topic
@@ -217,6 +218,8 @@ another command if there is an error while requesting tat.
 tatcli msg list /YourTopic/YourSubTopic --stream --exec "./myLights --pulse blue --duration=1000" --exec "./myLights --pulse red --duration=2000"
 ```
 
+### Stream messages and exec a command on count value
+
 Count messages with label open on topic /Internal/Alerts, then :
 
 * if there is 0 message, execute `blinkstick --morph green`
@@ -227,3 +230,42 @@ Count messages with label open on topic /Internal/Alerts, then :
 ```bash
 tatcli msg list /Internal/Alerts --label=open --stream --exec 0:0:'blinkstick --morph green' --exec 1:5:'blinkstick --morph blue' --exec 6::'blinkstick --morph yellow' --execErr "blinkstick --pulse red --duration=2000"
 ```
+
+### Stream messages, format output and exec with arguments
+
+Stream messages and display only username and text.
+```bash
+tatcli msg list /Internal/Alerts --stream --streamFormat '$TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT '
+```
+
+Stream messages and execute foo.sh on each message with 2 arguments: message ID and message Text.
+
+```bash
+echo 'echo $* >> foo.log' > foo.sh && chmod +x foo.sh
+
+tatcli msg list /Internal/Alerts --stream --exec './foo.sh $TAT_MSG_ID $TAT_MSG_TEXT'
+```
+
+You can use :
+
+* `$TAT_MSG_ID`
+* `$TAT_MSG_TEXT`
+* `$TAT_MSG_TOPIC`
+* `$TAT_MSG_INREPLYOFID`
+* `$TAT_MSG_INREPLYOFIDROOT`
+* `$TAT_MSG_NBLIKES`
+* `$TAT_MSG_NBVOTESUP`
+* `$TAT_MSG_NBVOTESDOWN`
+* `$TAT_MSG_DATECREATION`
+* `$TAT_MSG_DATECREATION_HUMAN`
+* `$TAT_MSG_DATEUPDATE`
+* `$TAT_MSG_DATEUPDATE_HUMAN`
+* `$TAT_MSG_AUTHOR_USERNAME`
+* `$TAT_MSG_NBREPLIES`
+* `$TAT_MSG_MSG_LABELS`
+* `$TAT_MSG_MSG_TAGS`
+* `$TAT_MSG_LIKERS`
+* `$TAT_MSG_VOTERSUP`
+* `$TAT_MSG_VOTERSDOWN`
+* `$TAT_MSG_USERMENTIONS`
+* `$TAT_MSG_URLS`

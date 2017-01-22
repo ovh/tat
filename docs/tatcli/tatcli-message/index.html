@@ -715,6 +715,8 @@
 <li><a href="#move-a-message-to-another-topic">Move a message to another topic</a></li>
 <li><a href="#getting-message">Getting message</a></li>
 <li><a href="#stream-messages-and-exec-a-command-on-each-message">Stream messages and exec a command on each message</a></li>
+<li><a href="#stream-messages-and-exec-a-command-on-count-value">Stream messages and exec a command on count value</a></li>
+<li><a href="#stream-messages-format-output-and-exec-with-arguments">Stream messages, format output and exec with arguments</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -824,6 +826,7 @@ Flags:
       --startLabel string                Search by a label prefix: --startLabel='mykey:,myKey2:'
       --startTag string                  Search by a tag prefix: --startTag='mykey:,myKey2:'
   -s, --stream                           stream messages --stream. Request tat each 10s, default sort: dateUpdate
+      --streamFormat string              --stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_MSG_LABELS $TAT_MSG_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS (default &quot;$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT&quot;)
       --tag string                       Search by tag : could be tagA,tagB
       --text string                      Search by text
       --topic string                     Search by topic
@@ -938,6 +941,8 @@ another command if there is an error while requesting tat.</p>
 <pre><code class="language-bash">tatcli msg list /YourTopic/YourSubTopic --stream --exec &quot;./myLights --pulse blue --duration=1000&quot; --exec &quot;./myLights --pulse red --duration=2000&quot;
 </code></pre>
 
+<h3 id="stream-messages-and-exec-a-command-on-count-value">Stream messages and exec a command on count value</h3>
+
 <p>Count messages with label open on topic /Internal/Alerts, then :</p>
 
 <ul>
@@ -949,6 +954,46 @@ another command if there is an error while requesting tat.</p>
 
 <pre><code class="language-bash">tatcli msg list /Internal/Alerts --label=open --stream --exec 0:0:'blinkstick --morph green' --exec 1:5:'blinkstick --morph blue' --exec 6::'blinkstick --morph yellow' --execErr &quot;blinkstick --pulse red --duration=2000&quot;
 </code></pre>
+
+<h3 id="stream-messages-format-output-and-exec-with-arguments">Stream messages, format output and exec with arguments</h3>
+
+<p>Stream messages and display only username and text.</p>
+
+<pre><code class="language-bash">tatcli msg list /Internal/Alerts --stream --streamFormat '$TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT '
+</code></pre>
+
+<p>Stream messages and execute foo.sh on each message with 2 arguments: message ID and message Text.</p>
+
+<pre><code class="language-bash">echo 'echo $* &gt;&gt; foo.log' &gt; foo.sh &amp;&amp; chmod +x foo.sh
+
+tatcli msg list /Internal/Alerts --stream --exec './foo.sh $TAT_MSG_ID $TAT_MSG_TEXT'
+</code></pre>
+
+<p>You can use :</p>
+
+<ul>
+<li><code>$TAT_MSG_ID</code></li>
+<li><code>$TAT_MSG_TEXT</code></li>
+<li><code>$TAT_MSG_TOPIC</code></li>
+<li><code>$TAT_MSG_INREPLYOFID</code></li>
+<li><code>$TAT_MSG_INREPLYOFIDROOT</code></li>
+<li><code>$TAT_MSG_NBLIKES</code></li>
+<li><code>$TAT_MSG_NBVOTESUP</code></li>
+<li><code>$TAT_MSG_NBVOTESDOWN</code></li>
+<li><code>$TAT_MSG_DATECREATION</code></li>
+<li><code>$TAT_MSG_DATECREATION_HUMAN</code></li>
+<li><code>$TAT_MSG_DATEUPDATE</code></li>
+<li><code>$TAT_MSG_DATEUPDATE_HUMAN</code></li>
+<li><code>$TAT_MSG_AUTHOR_USERNAME</code></li>
+<li><code>$TAT_MSG_NBREPLIES</code></li>
+<li><code>$TAT_MSG_MSG_LABELS</code></li>
+<li><code>$TAT_MSG_MSG_TAGS</code></li>
+<li><code>$TAT_MSG_LIKERS</code></li>
+<li><code>$TAT_MSG_VOTERSUP</code></li>
+<li><code>$TAT_MSG_VOTERSDOWN</code></li>
+<li><code>$TAT_MSG_USERMENTIONS</code></li>
+<li><code>$TAT_MSG_URLS</code></li>
+</ul>
 
 
       
