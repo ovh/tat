@@ -110,7 +110,17 @@ func cmdMessageListStream(topic string) {
 		criteria.Skip = 0
 		criteria.Limit = 10
 		criteria.SortBy = "dateUpdate"
-		criteria.DateMinUpdate = fmt.Sprintf("%f", lastTime)
+
+		if criteria.OnlyCount != tat.True || (criteria.LastMinCreation == "" &&
+			criteria.LastMaxCreation == "" &&
+			criteria.LastMinUpdate == "" &&
+			criteria.LastMaxUpdate == "" &&
+			criteria.LastHourMinCreation == "" &&
+			criteria.LastHourMaxCreation == "" &&
+			criteria.LastHourMinUpdate == "" &&
+			criteria.LastHourMaxUpdate == "") {
+			criteria.DateMinUpdate = fmt.Sprintf("%f", lastTime)
+		}
 
 		if criteria.OnlyCount == tat.True {
 			out, err := c.MessageCount(topic, &criteria)
