@@ -69,7 +69,7 @@ func init() {
 	cmdMessageList.Flags().BoolVarP(&stream, "stream", "s", false, "stream messages --stream. Request tat each 10s, default sort: dateUpdate")
 	cmdMessageList.Flags().StringSliceVarP(&execMsg, "exec", "", nil, `--stream required. Exec a cmd on each new message: --stream --exec 'myLights --pulse blue --duration=1000' With only --onlyMsgCount=true : --exec min:max:cmda --exec min:max:cmdb, example: --exec 0:4:'cmdA' --exec 5::'cmdb'`)
 	cmdMessageList.Flags().StringSliceVarP(&execErr, "execErr", "", nil, `--stream required. Exec a cmd on each error while requesting tat: --stream --exec 'myLights --pulse blue --duration=1000' --execErr 'myLights --pulse red --duration=2000'`)
-	cmdMessageList.Flags().StringVarP(&streamFormat, "streamFormat", "", "$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT", `--stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_MSG_LABELS $TAT_MSG_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS`)
+	cmdMessageList.Flags().StringVarP(&streamFormat, "streamFormat", "", "$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT", `--stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_LABELS $TAT_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS`)
 }
 
 var cmdMessageList = &cobra.Command{
@@ -239,13 +239,13 @@ func streamFormatMsg(msg tat.Message, out string) string {
 	for _, l := range msg.Labels {
 		labels += l.Text + " "
 	}
-	out = strings.Replace(out, "$TAT_MSG_MSG_LABELS", labels, -1)
+	out = strings.Replace(out, "$TAT_MSG_LABELS", labels, -1)
 
 	tags := ""
 	for _, t := range msg.Tags {
 		tags += t + " "
 	}
-	out = strings.Replace(out, "$TAT_MSG_MSG_TAGS", tags, -1)
+	out = strings.Replace(out, "$TAT_MSG_TAGS", tags, -1)
 
 	likers := ""
 	for _, t := range msg.Likers {

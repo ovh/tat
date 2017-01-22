@@ -716,7 +716,10 @@
 <li><a href="#getting-message">Getting message</a></li>
 <li><a href="#stream-messages-and-exec-a-command-on-each-message">Stream messages and exec a command on each message</a></li>
 <li><a href="#stream-messages-and-exec-a-command-on-count-value">Stream messages and exec a command on count value</a></li>
-<li><a href="#stream-messages-format-output-and-exec-with-arguments">Stream messages, format output and exec with arguments</a></li>
+<li><a href="#stream-messages-format-output-and-exec-with-arguments">Stream messages, format output and exec with arguments</a>
+<ul>
+<li><a href="#example-green-if-new-up-alert-orange-if-new-al-alert-on-message-with-foo-tag">Example : Green if new UP alert, Orange if new AL alert on message with FOO tag</a></li>
+</ul></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -826,7 +829,7 @@ Flags:
       --startLabel string                Search by a label prefix: --startLabel='mykey:,myKey2:'
       --startTag string                  Search by a tag prefix: --startTag='mykey:,myKey2:'
   -s, --stream                           stream messages --stream. Request tat each 10s, default sort: dateUpdate
-      --streamFormat string              --stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_MSG_LABELS $TAT_MSG_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS (default &quot;$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT&quot;)
+      --streamFormat string              --stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_LABELS $TAT_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS (default &quot;$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT&quot;)
       --tag string                       Search by tag : could be tagA,tagB
       --text string                      Search by text
       --topic string                     Search by topic
@@ -986,14 +989,31 @@ tatcli msg list /Internal/Alerts --stream --exec './foo.sh $TAT_MSG_ID $TAT_MSG_
 <li><code>$TAT_MSG_DATEUPDATE_HUMAN</code></li>
 <li><code>$TAT_MSG_AUTHOR_USERNAME</code></li>
 <li><code>$TAT_MSG_NBREPLIES</code></li>
-<li><code>$TAT_MSG_MSG_LABELS</code></li>
-<li><code>$TAT_MSG_MSG_TAGS</code></li>
+<li><code>$TAT_MSG_LABELS</code></li>
+<li><code>$TAT_MSG_TAGS</code></li>
 <li><code>$TAT_MSG_LIKERS</code></li>
 <li><code>$TAT_MSG_VOTERSUP</code></li>
 <li><code>$TAT_MSG_VOTERSDOWN</code></li>
 <li><code>$TAT_MSG_USERMENTIONS</code></li>
 <li><code>$TAT_MSG_URLS</code></li>
 </ul>
+
+<h4 id="example-green-if-new-up-alert-orange-if-new-al-alert-on-message-with-foo-tag">Example : Green if new UP alert, Orange if new AL alert on message with FOO tag</h4>
+
+<p>tatcli msg list /Internal/Alerts –tag FOO &ndash;stream &ndash;exec &lsquo;./blink.sh $TAT_MSG_TAG&rsquo;</p>
+
+<p>with blink.sh :</p>
+
+<pre><code>#!/bin/bash
+
+for tag in &quot;$*&quot;
+do
+test &quot;${tag#*AL}&quot; != &quot;$tag&quot; &amp;&amp; blinkstick --pulse red --duration=1000 &amp;&amp; exit 0
+test &quot;${tag#*UP}&quot; != &quot;$tag&quot; &amp;&amp; blinkstick --pulse blue --duration=1000 &amp;&amp; exit 0
+done
+
+exit 1;
+</code></pre>
 
 
       

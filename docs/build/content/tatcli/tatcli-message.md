@@ -99,7 +99,7 @@ Flags:
       --startLabel string                Search by a label prefix: --startLabel='mykey:,myKey2:'
       --startTag string                  Search by a tag prefix: --startTag='mykey:,myKey2:'
   -s, --stream                           stream messages --stream. Request tat each 10s, default sort: dateUpdate
-      --streamFormat string              --stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_MSG_LABELS $TAT_MSG_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS (default "$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT")
+      --streamFormat string              --stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_LABELS $TAT_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS (default "$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT")
       --tag string                       Search by tag : could be tagA,tagB
       --text string                      Search by text
       --topic string                     Search by topic
@@ -262,10 +262,29 @@ You can use :
 * `$TAT_MSG_DATEUPDATE_HUMAN`
 * `$TAT_MSG_AUTHOR_USERNAME`
 * `$TAT_MSG_NBREPLIES`
-* `$TAT_MSG_MSG_LABELS`
-* `$TAT_MSG_MSG_TAGS`
+* `$TAT_MSG_LABELS`
+* `$TAT_MSG_TAGS`
 * `$TAT_MSG_LIKERS`
 * `$TAT_MSG_VOTERSUP`
 * `$TAT_MSG_VOTERSDOWN`
 * `$TAT_MSG_USERMENTIONS`
 * `$TAT_MSG_URLS`
+
+
+#### Example : Green if new UP alert, Orange if new AL alert on message with FOO tag
+
+tatcli msg list /Internal/Alerts –tag FOO --stream --exec './blink.sh $TAT_MSG_TAG'
+
+with blink.sh :
+
+```
+#!/bin/bash
+
+for tag in "$*"
+do
+test "${tag#*AL}" != "$tag" && blinkstick --pulse red --duration=1000 && exit 0
+test "${tag#*UP}" != "$tag" && blinkstick --pulse blue --duration=1000 && exit 0
+done
+
+exit 1;
+```
