@@ -460,7 +460,7 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 	log.Debugf("cacheMessageList: Saving key %s in %s", keyList, keyListList)
 	pipeline.SAdd(keyListList, keyList)
 
-	for _, m := range messages {
+	for score, m := range messages {
 		keyMessage := cache.Key("tat", "messages", m.ID, criteria.TreeView)
 		bytes, err := json.Marshal(m)
 		if err != nil {
@@ -469,7 +469,7 @@ func cacheMessageList(criteria *tat.MessageCriteria, topic *tat.Topic, messages 
 		}
 		z := redis.Z{
 			Member: keyMessage,
-			Score:  m.DateCreation,
+			Score:  -float64(score),
 		}
 		pipeline.ZAdd(keyList, z)
 		pipeline.Set(keyMessage, string(bytes), 0)
