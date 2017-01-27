@@ -2,6 +2,7 @@ package tat
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -15,22 +16,24 @@ import (
 
 // Client represents a Client configuration to connect to api
 type Client struct {
-	username       string
-	password       string
-	url            string
-	referer        string
-	requestTimeout time.Duration
-	maxTries       uint
+	username              string
+	password              string
+	url                   string
+	referer               string
+	requestTimeout        time.Duration
+	maxTries              uint
+	sslInsecureSkipVerify bool
 }
 
 //Options is a struct to initialize a TAT client
 type Options struct {
-	Username       string
-	Password       string
-	URL            string
-	Referer        string
-	RequestTimeout time.Duration
-	MaxTries       uint
+	Username              string
+	Password              string
+	URL                   string
+	Referer               string
+	RequestTimeout        time.Duration
+	MaxTries              uint
+	SSLInsecureSkipVerify bool
 }
 
 type httpClient interface {
@@ -58,12 +61,13 @@ func NewClient(opts Options) (*Client, error) {
 		return nil, fmt.Errorf("Invalid configuration, please check url of Tat Engine")
 	}
 	c := &Client{
-		url:            opts.URL,
-		username:       opts.Username,
-		password:       opts.Password,
-		referer:        "TAT-SDK-" + Version,
-		requestTimeout: time.Minute,
-		maxTries:       5,
+		url:                   opts.URL,
+		username:              opts.Username,
+		password:              opts.Password,
+		referer:               "TAT-SDK-" + Version,
+		requestTimeout:        time.Minute,
+		maxTries:              5,
+		sslInsecureSkipVerify: opts.SSLInsecureSkipVerify,
 	}
 	if opts.Referer != "" {
 		c.referer = opts.Referer
@@ -116,6 +120,9 @@ func (c *Client) reqWant(method string, wantCode int, path string, jsonStr []byt
 			Transport: &httpcontrol.Transport{
 				RequestTimeout: c.requestTimeout,
 				MaxTries:       c.maxTries,
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: c.sslInsecureSkipVerify,
+				},
 			},
 		}
 	}

@@ -71,7 +71,6 @@ func tatRecovery(c *gin.Context) {
 		}
 	}()
 	c.Next()
-
 }
 
 var logFieldAppID string

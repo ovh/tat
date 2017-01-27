@@ -34,7 +34,7 @@ func main() {
 	rootCmd.PersistentFlags().BoolVarP(&internal.Debug, "debug", "", false, "debug output - display request and response")
 	rootCmd.PersistentFlags().BoolVarP(&internal.Pretty, "pretty", "t", false, "Pretty Print Json Output")
 	rootCmd.PersistentFlags().BoolVarP(&internal.ShowStackTrace, "showStackTrace", "", false, "Show Stack Trace if tatcli panic")
-	rootCmd.PersistentFlags().BoolVarP(&internal.SSLInsecureSkipVerify, "sslInsecureSkipVerify", "l", false, "Skip certificate check with SSL connection")
+	rootCmd.PersistentFlags().BoolVarP(&internal.SSLInsecureSkipVerify, "sslInsecureSkipVerify", "k", false, "Skip certificate check with SSL connection")
 	rootCmd.PersistentFlags().StringVarP(&internal.URL, "url", "", "", "URL Tat Engine, facultative if you have a "+home+"/.tatcli/config.json file")
 	rootCmd.PersistentFlags().StringVarP(&internal.TatwebuiURL, "tatwebui-url", "", "", "URL of Tat WebUI, facultative")
 	rootCmd.PersistentFlags().StringVarP(&internal.Username, "username", "u", "", "username, facultative if you have a "+home+"/.tatcli/config.json file")
@@ -45,10 +45,11 @@ func main() {
 	viper.BindPFlag("tatwebui-url", rootCmd.PersistentFlags().Lookup("tatwebui-url"))
 	viper.BindPFlag("username", rootCmd.PersistentFlags().Lookup("username"))
 	viper.BindPFlag("password", rootCmd.PersistentFlags().Lookup("password"))
+	viper.BindPFlag("sslInsecureSkipVerify", rootCmd.PersistentFlags().Lookup("sslInsecureSkipVerify"))
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
-		os.Exit(-1)
+		os.Exit(1)
 	}
 }
 

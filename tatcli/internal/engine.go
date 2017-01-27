@@ -21,10 +21,11 @@ func Client() *tat.Client {
 	}
 
 	tc, err := tat.NewClient(tat.Options{
-		URL:      viper.GetString("url"),
-		Username: viper.GetString("username"),
-		Password: viper.GetString("password"),
-		Referer:  "tatcli.v." + tat.Version,
+		URL:                   viper.GetString("url"),
+		Username:              viper.GetString("username"),
+		Password:              viper.GetString("password"),
+		Referer:               "tatcli.v." + tat.Version,
+		SSLInsecureSkipVerify: viper.GetBool("sslInsecureSkipVerify"),
 	})
 
 	if err != nil {
