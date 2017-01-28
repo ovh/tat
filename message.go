@@ -981,6 +981,7 @@ func (c *Client) MessageCount(topic string, criteria *MessageCriteria) (*Message
 //MessageList lists messages on a topic according to criterias
 func (c *Client) MessageList(topic string, criteria *MessageCriteria) (*MessagesJSON, error) {
 
+	criteria.OnlyCount = "false"
 	body, err := c.messagesList(topic, criteria)
 	if err != nil {
 		return nil, err
