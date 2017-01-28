@@ -434,6 +434,57 @@ Use &amp;quot;tat2es [command] --help&amp;quot; for more information about a com
       <guid>https://ovh.github.io/tat/ecosystem/tat2xmpp/</guid>
       <description>
 
+&lt;h2 id=&#34;what-s-for&#34;&gt;What&amp;rsquo;s for?&lt;/h2&gt;
+
+&lt;p&gt;tat2xmpp allow you to:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;sync XMPP conference with a Tat topic, from conference to tat, from tat to conference, or both.&lt;/li&gt;
+&lt;li&gt;request Tat over XMPP&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;On your XMPP Client:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/tat help
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;will returns:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Begin conversation with &amp;quot;tat,&amp;quot; or &amp;quot;/tat&amp;quot;
+
+Simple request: &amp;quot;tat, ping&amp;quot;
+
+Request tat:
+ &amp;quot;/tat COUNT /Internal/Alerts?tag=NETWORK,label=open&amp;quot;
+ &amp;quot;/tat GET /Internal/Alerts?tag=PUBCLOUD-serv,PUBCLOUD-host&amp;amp;label=open&amp;quot;
+
+Request tat and format output:
+ &amp;quot;/tat COUNT /Internal/Alerts?tag=NETWORK,label=open format:dateUpdate,username,text&amp;quot;
+
+Default format:dateUpdate,username,text,labels
+
+You can use:
+id,text,topic,inReplyOfID,inReplyOfIDRoot,nbLikes,labels,
+votersUP,votersDown,nbVotesUP,nbVotesDown,userMentions,
+urls,tags,dateCreation,dateUpdate,username,fullname,nbReplies,tatwebuiURL
+
+User tat.system.jabber have to be RO on tat topic for requesting tat.
+
+Get aliases : &amp;quot;/tat aliases&amp;quot;, same as &amp;quot;/tat aliases common&amp;quot;
+Get aliases with a specific tag : &amp;quot;/tat aliases atag&amp;quot;
+
+Execute an alias : &amp;quot;/tat !myAlias arg1 arg2&amp;quot;
+
+If you add a tat message, with label &amp;quot;common&amp;quot; and text:
+&amp;quot;#tatbot #alias #alias:alert #get:/Internal/Alerts?tag=%s&amp;amp;label=%s #format:dateUpdate,text&amp;quot;
+you can execute it over XMPP as : &amp;quot;/tat !alert CD open&amp;quot;
+
+For a count request:
+&amp;quot;#tatbot #alias #alias:alert.count #count:/Internal/Alerts?tag=%s&amp;amp;label=%s&amp;quot;
+you can execute it over XMPP as : &amp;quot;/tat !alert.count CD open&amp;quot;
+
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;h2 id=&#34;tat-configuration&#34;&gt;TAT configuration&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;
@@ -455,10 +506,13 @@ export TAT2XMPP_HOOK_KEY=a-key-used-by-tat2xmpp
 export TAT2XMPP_USERNAME_TAT_ENGINE=tat.system.jabber
 export TAT2XMPP_XMPP_BOT_PASSWORD=password-of-bot-user-on-xmpp
 export TAT2XMPP_PRODUCTION=true
+export TAT2XMPP_ADMIN_TAT2XMPP=firstname.lastname@your-domain
 export TAT2XMPP_PASSWORD_TAT_ENGINE=very-long-tat-password-of-tat.system.jabber
 export TAT2XMPP_XMPP_BOT_JID=robot.tat@your-domain
 export TAT2XMPP_XMPP_SERVER=your-jabber-server:5222
 export TAT2XMPP_URL_TAT_ENGINE=http://tat.your-domain
+export TAT2XMPP_URL_TATWEBUI=https://tatwebui.your-domain/standardview/list
+export TAT2XMPP_XMPP_HELLO_WORLD=firstname.lastname@your-domain
 
 # Running TAT2XMPP
 ./tat2xmpp
@@ -490,17 +544,21 @@ Available Commands:
   version     Print the version.
 
 Flags:
+      --admin-tat2xmpp string        Admin tat2xmpp admina@jabber.xxx.net,adminb@jabber.xxx.net,
   -c, --configFile string            configuration file
       --hook-key string              Hook Key, for using POST http://&amp;lt;url&amp;gt;/hook endpoint, with Header TAT2XMPPKEY
-      --listen-port string           RunKPI Listen Port (default &amp;quot;8088&amp;quot;)
+      --listen-port string           Tat2XMPP Listen Port (default &amp;quot;8088&amp;quot;)
       --log-level string             Log Level : debug, info or warn
       --password-tat-engine string   Password Tat Engine
       --production                   Production mode
       --url-tat-engine string        URL Tat Engine (default &amp;quot;http://localhost:8080&amp;quot;)
+      --url-tatwebui string          TatwebUI base URL
       --username-tat-engine string   Username Tat Engine (default &amp;quot;tat.system.xmpp&amp;quot;)
       --xmpp-bot-jid string          XMPP Bot JID (default &amp;quot;tat@localhost&amp;quot;)
       --xmpp-bot-password string     XMPP Bot Password
       --xmpp-debug                   XMPP Debug
+      --xmpp-delay int               Delay between two sent messages (default 5)
+      --xmpp-hello-world string      Sending Hello World message to this jabber id
       --xmpp-insecure-skip-verify    XMPP InsecureSkipVerify (default true)
       --xmpp-notls                   XMPP No TLS (default true)
       --xmpp-server string           XMPP Server
