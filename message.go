@@ -1081,3 +1081,78 @@ func GetDateRef(pattern string) (time.Time, error) {
 	}
 	return dateRef, fmt.Errorf("Invalid pattern:%s", pattern)
 }
+
+// Format return string formatted message
+//  default format: format:dateUpdate,username,text,labels
+// Avalable fields:
+// id,text,topic,inReplyOfID,inReplyOfIDRoot,nbLikes,labels,
+// votersUP,votersDown,nbVotesUP,nbVotesDown,userMentions,
+// urls,tags,dateCreation,dateUpdate,username,fullname,nbReplies
+func (m *Message) Format(format string) (string, error) {
+
+	if format == "" {
+		format = "dateUpdate,username,text,labels"
+	}
+
+	labels := ""
+	for _, l := range m.Labels {
+		labels += l.Text + ","
+	}
+	if labels != "" {
+		// remove last ","
+		labels = strings.TrimSuffix(labels, ",")
+	}
+
+	f := strings.Split(format, ",")
+	if len(f) == 0 {
+		return "", fmt.Errorf("Invalid format:%s", format)
+	}
+	out := ""
+	for _, t := range f {
+		switch t {
+		case "id":
+			out += fmt.Sprintf("%s ", m.ID)
+		case "text":
+			out += fmt.Sprintf("%s ", m.Text)
+		case "topic":
+			out += fmt.Sprintf("%s ", m.Topic)
+		case "inReplyOfID":
+			out += fmt.Sprintf("inReplyOfID:%s ", m.InReplyOfID)
+		case "inReplyOfIDRoot":
+			out += fmt.Sprintf("inReplyOfIDRoot:%s ", m.InReplyOfIDRoot)
+		case "nbLikes":
+			out += fmt.Sprintf("nbLikes:%d ", m.NbLikes)
+		case "labels":
+			out += fmt.Sprintf("labels:%s ", labels)
+		case "votersUP":
+			out += fmt.Sprintf("votersUP:%s ", strings.Join(m.VotersUP, ","))
+		case "votersDown":
+			out += fmt.Sprintf("votersDown:%s ", strings.Join(m.VotersDown, ","))
+		case "nbVotesUP":
+			out += fmt.Sprintf("nbVotesUP:%d ", m.NbVotesUP)
+		case "nbVotesDown":
+			out += fmt.Sprintf("nbVotesDown:%d ", m.NbVotesDown)
+		case "userMentions":
+			out += fmt.Sprintf("%s ", strings.Join(m.UserMentions, ","))
+		case "urls":
+			out += fmt.Sprintf("url:%s ", strings.Join(m.Urls, ","))
+		case "tags":
+			out += fmt.Sprintf("tags:%s ", strings.Join(m.Tags, ","))
+		case "dateCreation":
+			out += fmt.Sprintf("%s ", time.Unix(int64(m.DateCreation), 0).Format(time.Stamp))
+		case "dateUpdate":
+			out += fmt.Sprintf("%s ", time.Unix(int64(m.DateUpdate), 0).Format(time.Stamp))
+		case "username":
+			out += fmt.Sprintf("%s ", m.Author.Username)
+		case "fullname":
+			out += fmt.Sprintf("%s ", m.Author.Fullname)
+		case "nbReplies":
+			out += fmt.Sprintf("nbReplies:%d ", m.NbReplies)
+		}
+	}
+
+	if out == "" {
+		return "", fmt.Errorf("Invalid format:%s", format)
+	}
+	return out, nil
+}
