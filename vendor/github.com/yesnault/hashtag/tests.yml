@@ -349,6 +349,10 @@ hashtags:
     text: "#From:dev~aa #From:aa~ff"
     expected: ["From:dev~aa", "From:aa~ff"]
 
+  - description: "Hashtag with %:"
+    text: "#From:dev%aa #From:aa%ff"
+    expected: ["From:dev%aa", "From:aa%ff"]
+
   - description: "Hashtag with ,:"
     text: "#From:dev,aa #From:aa,ff"
     expected: ["From:dev,aa", "From:aa,ff"]
