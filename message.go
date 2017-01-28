@@ -1087,8 +1087,8 @@ func GetDateRef(pattern string) (time.Time, error) {
 // Avalable fields:
 // id,text,topic,inReplyOfID,inReplyOfIDRoot,nbLikes,labels,
 // votersUP,votersDown,nbVotesUP,nbVotesDown,userMentions,
-// urls,tags,dateCreation,dateUpdate,username,fullname,nbReplies
-func (m *Message) Format(format string) (string, error) {
+// urls,tags,dateCreation,dateUpdate,username,fullname,nbReplies,tatwebuiURL
+func (m *Message) Format(format string, tatwebuiBaseURL string) (string, error) {
 
 	if format == "" {
 		format = "dateUpdate,username,text,labels"
@@ -1148,6 +1148,8 @@ func (m *Message) Format(format string) (string, error) {
 			out += fmt.Sprintf("%s ", m.Author.Fullname)
 		case "nbReplies":
 			out += fmt.Sprintf("nbReplies:%d ", m.NbReplies)
+		case "tatwebuiURL":
+			out += fmt.Sprintf("tatwebui:%s%s?idMessage=%s", tatwebuiBaseURL, m.Topic, m.ID)
 		}
 	}
 
