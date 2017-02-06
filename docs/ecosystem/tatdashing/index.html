@@ -702,6 +702,7 @@
 <ul>
 <li><a href="#compute-color-and-bg-color">Compute color and bg-color</a></li>
 <li><a href="#compute-value-s">Compute value(s)</a></li>
+<li><a href="#compute-value-s-label">Compute value(s) with label value</a></li>
 </ul></li>
 <li><a href="#examples">Examples</a></li>
 </ul></li>
@@ -800,7 +801,16 @@ Flags:
 <li>compute label &ldquo;value&rdquo; by</li>
 <li>count messages from /Internal/Alerts with tag=CD and notLabel=done and onlyMsgRoot=true to avoid counting exclude alert replay.</li>
 </ul>
+                
+<h3 id="compute-value-s-label">Compute value(s) with label value</h3>
 
+<p>This reply : #TatDashing #label:0:value #valuelabel:0:qos/Internal/Alerts?tag=CD&rdquo; will :</p>
+
+<ul>
+<li>compute &ldquo;value&rdquo; with</li>
+<li>value of the label "qos:xxx" from /Internal/Alerts with tag=CD.</li>
+</ul>
+                
 <h2 id="examples">Examples</h2>
 
 <p>Display alerts from /Internal/Alerts with tag=CD and notLabel=done. Don&rsquo;t forget onlyMsgRoot for exclude alert replay</p>
