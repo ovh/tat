@@ -647,16 +647,25 @@ Flags:
 
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;#label:color:08f1f4:0:10,ce352c&lt;/code&gt; : if value is &amp;gt;= 0 and value &amp;lt;= 10, color will be #08f1f4, else color will be #ce352c&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;#label:color:08f1f4:0:10,ce352c:11:20;fa6800&lt;/code&gt; : if value is &amp;gt;= 0 and value &amp;lt;= 10, color will be #08f1f4, else if value is &amp;gt;=11 and value &amp;lt;= 20, color will be #ce352c, else  color will be #fa6800&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;#label:color:08f1f4:0:10,ce352c:11:20,fa6800&lt;/code&gt; : if value is &amp;gt;= 0 and value &amp;lt;= 10, color will be #08f1f4, else if value is &amp;gt;=11 and value &amp;lt;= 20, color will be #ce352c, else  color will be #fa6800&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&#34;compute-value-s&#34;&gt;Compute value(s)&lt;/h3&gt;
 
-&lt;p&gt;This reply : #TatDashing #label:0:value #value:0:/Internal/Alerts?tag=CD&amp;amp;notLabel=done&amp;amp;onlyMsgRoot=true&amp;rdquo; will :&lt;/p&gt;
+&lt;p&gt;This reply : #TatDashing #label:0:value #value:0:/Internal/Alerts?tag=CD&amp;amp;notLabel=done&amp;amp;onlyMsgRoot=true will :&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;compute label &amp;ldquo;value&amp;rdquo; by&lt;/li&gt;
 &lt;li&gt;count messages from /Internal/Alerts with tag=CD and notLabel=done and onlyMsgRoot=true to avoid counting exclude alert replay.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;compute-value-s-with-label-value&#34;&gt;Compute value(s) with label value&lt;/h3&gt;
+
+&lt;p&gt;This reply : #TatDashing #label:0:value #valuelabel:0:qos/Internal/Alerts?tag=CD will :&lt;/p&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;compute &amp;ldquo;value&amp;rdquo; with&lt;/li&gt;
+&lt;li&gt;value of the label &amp;ldquo;qos:xxx&amp;rdquo; from /Internal/Alerts with tag=CD.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&#34;examples&#34;&gt;Examples&lt;/h2&gt;

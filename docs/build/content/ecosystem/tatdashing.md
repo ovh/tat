@@ -72,15 +72,22 @@ To use it, you have to :
 Example for compute label "color":
 
 * `#label:color:08f1f4:0:10,ce352c` : if value is >= 0 and value <= 10, color will be #08f1f4, else color will be #ce352c
-* `#label:color:08f1f4:0:10,ce352c:11:20;fa6800` : if value is >= 0 and value <= 10, color will be #08f1f4, else if value is >=11 and value <= 20, color will be #ce352c, else  color will be #fa6800
+* `#label:color:08f1f4:0:10,ce352c:11:20,fa6800` : if value is >= 0 and value <= 10, color will be #08f1f4, else if value is >=11 and value <= 20, color will be #ce352c, else  color will be #fa6800
 
 ### Compute value(s)
 
-This reply : #TatDashing #label:0:value #value:0:/Internal/Alerts?tag=CD&notLabel=done&onlyMsgRoot=true" will :
+This reply : #TatDashing #label:0:value #value:0:/Internal/Alerts?tag=CD&notLabel=done&onlyMsgRoot=true will :
 
 * compute label "value" by
 * count messages from /Internal/Alerts with tag=CD and notLabel=done and onlyMsgRoot=true to avoid counting exclude alert replay.
 
+
+### Compute value(s) with label value
+
+This reply : #TatDashing #label:0:value #valuelabel:0:qos/Internal/Alerts?tag=CD will :</p>
+
+* compute "value" with
+* value of the label "qos:xxx" from /Internal/Alerts with tag=CD.
 
 ## Examples
 
