@@ -51,7 +51,7 @@ func GetParam(ctx *gin.Context, paramName string) (string, error) {
 
 // AbortWithReturnError abort gin context and return JSON to user with error details
 func AbortWithReturnError(ctx *gin.Context, statusHTTP int, err error) {
-	ctx.JSON(statusHTTP, gin.H{"error:": err.Error()})
+	ctx.JSON(statusHTTP, gin.H{"error": err.Error()})
 	ctx.Abort()
 }
 
