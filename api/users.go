@@ -168,7 +168,7 @@ func (u *UsersController) Verify(ctx *gin.Context) {
 		if err != nil {
 			e := fmt.Sprintf("Error on verify token for username %s", username)
 			log.Errorf("%s %s", e, err.Error())
-			ctx.JSON(http.StatusInternalServerError, gin.H{"info": e})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e})
 		} else {
 			ctx.JSON(http.StatusOK, gin.H{
 				"message":  "Verification successful",
