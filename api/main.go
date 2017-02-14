@@ -55,7 +55,7 @@ var mainCmd = &cobra.Command{
 		router.Use(cors.Middleware(cors.Config{
 			Origins:         "*",
 			Methods:         "GET, PUT, POST, DELETE",
-			RequestHeaders:  "Origin, Authorization, Content-Type, Accept, Tat_Password, Tat_Username",
+			RequestHeaders:  "Origin, Authorization, Content-Type, Accept, Tat_Password, Tat_Username, Tat-Password, Tat-Username",
 			ExposedHeaders:  "Tat_Password, Tat_Username",
 			MaxAge:          50 * time.Second,
 			Credentials:     true,
