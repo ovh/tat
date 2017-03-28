@@ -201,12 +201,6 @@
 			"revisionTime": "2014-10-17T20:07:13Z"
 		},
 		{
-			"checksumSHA1": "6DVd4tXfoer2bc5pcEVOj0bNf7w=",
-			"path": "github.com/itsjamie/gin-cors",
-			"revision": "97b4a9da79331dfa2b6d35f4cdd1e50f5148859c",
-			"revisionTime": "2016-04-20T13:07:02Z"
-		},
-		{
 			"checksumSHA1": "p66d/SakJX9MxMlqBThFk7IMb/s=",
 			"path": "github.com/jinzhu/now",
 			"revision": "95f61531f9021a162633b50777cc1263d3064641",
@@ -403,6 +397,12 @@
 			"path": "gopkg.in/cheggaaa/pb.v1",
 			"revision": "d7e6ca3010b6f084d8056847f55d7f572f180678",
 			"revisionTime": "2016-11-21T09:29:06Z"
+		},
+		{
+			"checksumSHA1": "898hHXEIWfscNt2k3+ViOG06Z0I=",
+			"path": "gopkg.in/gin-contrib/cors.v1",
+			"revision": "cf4846e6a636a76237a28d9286f163c132e841bc",
+			"revisionTime": "2017-03-18T12:53:40Z"
 		},
 		{
 			"checksumSHA1": "39V1idWER42Lmcmg2Uy40wMzOlo=",

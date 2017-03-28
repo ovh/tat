@@ -84,6 +84,10 @@ func extractTatHeaders(ctx *gin.Context) (tatHeadersType, error) {
 			tatHeaders.username = v[0]
 		} else if strings.ToLower(k) == "x-"+tatHeaderPasswordLower {
 			tatHeaders.password = v[0]
+		} else if strings.ToLower(k) == "x-"+tatHeaderUsernameLowerDash {
+			tatHeaders.username = v[0]
+		} else if strings.ToLower(k) == "x-"+tatHeaderPasswordLowerDash {
+			tatHeaders.password = v[0]
 		}
 	}
 

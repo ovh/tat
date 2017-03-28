@@ -7,7 +7,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
-	cors "github.com/itsjamie/gin-cors"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/group"
@@ -51,16 +50,7 @@ var mainCmd = &cobra.Command{
 		//   - Logs to stdout.
 		//   - RFC3339 with UTC time format.
 		router.Use(ginrus(log.StandardLogger(), time.RFC3339, true))
-
-		router.Use(cors.Middleware(cors.Config{
-			Origins:         "*",
-			Methods:         "GET, PUT, POST, DELETE",
-			RequestHeaders:  "Origin, Authorization, Content-Type, Accept, Tat_Password, Tat_Username, Tat-Password, Tat-Username",
-			ExposedHeaders:  "Tat_Password, Tat_Username",
-			MaxAge:          50 * time.Second,
-			Credentials:     true,
-			ValidateHeaders: false,
-		}))
+		router.Use(corsMiddleware())
 
 		if err := store.NewStore(); err != nil {
 			log.Fatalf("Error trying to reach mongoDB. Please check your Tat Configuration and access to your MongoDB. Err: %s", err.Error())
@@ -96,6 +86,25 @@ var mainCmd = &cobra.Command{
 			log.Info("Error while running ListenAndServe: %s", err.Error())
 		}
 	},
+}
+
+func corsMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Tat_Password, Tat_Username, Tat-Password, Tat-Username")
+		c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Cache-Control", "max-age=50")
+
+		if c.Request.Method == "OPTIONS" {
+			fmt.Println("OPTIONS")
+			c.AbortWithStatus(200)
+		} else {
+			c.Next()
+		}
+	}
 }
 
 var versionNewLine bool
