@@ -91,12 +91,13 @@ var mainCmd = &cobra.Command{
 func corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
+		c.Writer.Header().Set("Access-Control-Max-Age", "0")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Tat_Password, Tat_Username, Tat-Password, Tat-Username")
 		c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Cache-Control", "max-age=50")
+		c.Writer.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		c.Writer.Header().Set("Expires", "0")
 
 		if c.Request.Method == "OPTIONS" {
 			fmt.Println("OPTIONS")
