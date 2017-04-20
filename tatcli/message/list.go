@@ -15,10 +15,10 @@ import (
 )
 
 var (
-	criteria         tat.MessageCriteria
-	stream           bool
-	execMsg, execErr []string
-	streamFormat     string
+	criteria            tat.MessageCriteria
+	stream, streamQuiet bool
+	execMsg, execErr    []string
+	streamFormat        string
 )
 
 func init() {
@@ -67,6 +67,7 @@ func init() {
 	cmdMessageList.Flags().StringVarP(&criteria.OnlyCount, "onlyCount", "", "", "--onlyCount=true: only count messages, without retrieve msg. limit, skip, treeview criterias are ignored.")
 	cmdMessageList.Flags().StringVarP(&criteria.SortBy, "sortBy", "", "", "--sortBy=-dateCreation: sort message. Use '-' to reverse sort. Default is --sortBy=-dateCreation. You can use: text, topic, inReplyOfID, inReplyOfIDRoot, nbLikes, labels, likers, votersUP, votersDown, nbVotesUP, nbVotesDown, userMentions, urls, tags, dateCreation, dateUpdate, author, nbReplies")
 	cmdMessageList.Flags().BoolVarP(&stream, "stream", "s", false, "stream messages --stream. Request tat each 10s, default sort: dateUpdate")
+	cmdMessageList.Flags().BoolVarP(&streamQuiet, "streamQuiet", "", false, "stream messages --stream --streamQuiet. Do not display error, but exec --execErr if necessary")
 	cmdMessageList.Flags().StringSliceVarP(&execMsg, "exec", "", nil, `--stream required. Exec a cmd on each new message: --stream --exec 'myLights --pulse blue --duration=1000' With only --onlyMsgCount=true : --exec min:max:cmda --exec min:max:cmdb, example: --exec 0:4:'cmdA' --exec 5::'cmdb'`)
 	cmdMessageList.Flags().StringSliceVarP(&execErr, "execErr", "", nil, `--stream required. Exec a cmd on each error while requesting tat: --stream --exec 'myLights --pulse blue --duration=1000' --execErr 'myLights --pulse red --duration=2000'`)
 	cmdMessageList.Flags().StringVarP(&streamFormat, "streamFormat", "", "$TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_TEXT", `--stream required. Format output. Available:  $TAT_MSG_ID $TAT_MSG_TEXT $TAT_MSG_TOPIC $TAT_MSG_INREPLYOFID $TAT_MSG_INREPLYOFIDROOT $TAT_MSG_NBLIKES $TAT_MSG_NBVOTESUP $TAT_MSG_NBVOTESDOWN $TAT_MSG_DATECREATION $TAT_MSG_DATECREATION_HUMAN $TAT_MSG_DATEUPDATE $TAT_MSG_DATEUPDATE_HUMAN $TAT_MSG_AUTHOR_USERNAME $TAT_MSG_NBREPLIES $TAT_MSG_LABELS $TAT_MSG_TAGS $TAT_MSG_LIKERS $TAT_MSG_VOTERSUP $TAT_MSG_VOTERSDOWN $TAT_MSG_USERMENTIONS $TAT_MSG_URLS`)
@@ -103,10 +104,11 @@ var cmdMessageList = &cobra.Command{
 func cmdMessageListStream(topic string) {
 	c := internal.Client()
 	lastTime := float64(time.Now().Unix())
-	lastID := ""
 	lastCount := -1
+	lastIds, newLastIds := []string{}, []string{}
 
 	for {
+		lastIds = newLastIds
 		criteria.Skip = 0
 		criteria.Limit = 10
 		criteria.SortBy = "dateUpdate"
@@ -142,9 +144,10 @@ func cmdMessageListStream(topic string) {
 		}
 
 		for _, m := range out.Messages {
-			if lastID != m.ID {
+			if !tat.ArrayContains(lastIds, m.ID) {
 				processMsg(m)
 				lastTime = m.DateUpdate
+				newLastIds = append(newLastIds, m.ID)
 			}
 		}
 
@@ -164,7 +167,10 @@ func processWait() {
 }
 
 func processExecError(err error) {
-	fmt.Printf("Error:%s", err)
+	if streamQuiet {
+		fmt.Printf("Error:%s", err)
+	}
+
 	for _, ex := range execErr {
 		execCmd(ex, nil)
 	}
