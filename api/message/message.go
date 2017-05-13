@@ -760,7 +760,6 @@ func getTree(messagesIn map[string][]tat.Message, criteria *tat.MessageCriteria,
 
 // Insert a new message on one topic
 func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyOfID string, dateCreation float64, labels []tat.Label, replies []string, repliesJSON []tat.MessageJSON, isNotificationFromMention bool, messageRoot *tat.Message) error {
-
 	if !isNotificationFromMention {
 		notificationsTopic := fmt.Sprintf("/Private/%s/Notifications", user.Username)
 		if strings.HasPrefix(topic.Topic, notificationsTopic) {
@@ -913,7 +912,7 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 	if len(repliesJSON) > 0 {
 		for _, r := range repliesJSON {
 			reply := tat.Message{}
-			Insert(&reply, user, topic, r.Text, idToReply, -1, r.Labels, nil, r.Messages, isNotificationFromMention, message)
+			Insert(&reply, user, topic, r.Text, idToReply, r.DateCreation, r.Labels, nil, r.Messages, isNotificationFromMention, message)
 		}
 	}
 	//Clean the cache for this topic
