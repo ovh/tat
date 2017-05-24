@@ -753,7 +753,7 @@ func (m *MessagesController) moveMessage(ctx *gin.Context, messageIn *tat.Messag
 
 	toTopic, err := topicDB.FindByTopic(messageIn.Option, true, false, false, &user)
 	if err != nil {
-		e := fmt.Sprintf("Topic destination %s does not exist", message.Topic)
+		e := fmt.Sprintf("Topic destination %s does not exist", messageIn.Option)
 		ctx.JSON(http.StatusNotFound, gin.H{"error": e})
 		return
 	}
