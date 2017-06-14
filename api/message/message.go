@@ -1661,8 +1661,10 @@ func MigrateMessagesToDedicatedTopic(topic *tat.Topic, limit int) (int, error) {
 	nMigrated := 0
 	for _, msgToMigrate := range msgsToMigrate {
 		if errInsert := store.Tat().Session.DB(store.DatabaseName).C(topic.Collection).Insert(msgToMigrate); errInsert != nil {
-			log.Errorf("MigrateMessagesToDedicatedTopic> getClMessages(toTopic).Insert(message), err: %s", errInsert)
-			return nMigrated, errInsert
+			if !strings.HasPrefix(errInsert.Error(), "E11000 duplicate key") {
+				log.Errorf("MigrateMessagesToDedicatedTopic> getClMessages(toTopic).Insert(message), err: %s", errInsert)
+				return nMigrated, errInsert
+			}
 		}
 		if errRemove := store.Tat().Session.DB(store.DatabaseName).C(store.CollectionDefaultMessages).RemoveId(msgToMigrate.ID); errRemove != nil {
 			log.Errorf("MigrateMessagesToDedicatedTopic> getClMessages(toTopic).RemoveId(message), err: %s", errRemove)
