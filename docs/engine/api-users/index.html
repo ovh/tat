@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="generator" content="Hugo 0.19-DEV" />
+    <meta name="generator" content="Hugo 0.20.6" />
     <meta name="description" content="">
 
 
@@ -930,15 +930,13 @@ Remove email and set user attribute IsSystem to true.
 This action returns a new password for this user.
 Warning: it is an irreversible action.</p>
 
-<p>Flag <code>canWriteNotifications</code> allows (or not if false) the <code>system user</code> to write inside private topics of user <code>/Private/username/Notifications</code></p>
-
 <p>Flag <code>canListUsersAsAdmin</code> allows this <code>system user</code> to view all user&rsquo;s fields (email, etc&hellip;)</p>
 
 <pre><code class="language-bash">curl -XPUT \
     -H &quot;Content-Type: application/json&quot; \
     -H &quot;Tat_username: userAdmin&quot; \
     -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{ &quot;username&quot;: &quot;usernameToConvert&quot;, &quot;canWriteNotifications&quot;: &quot;true&quot;, &quot;canListUsersAsAdmin&quot;: &quot;true&quot; }' \
+    -d '{ &quot;username&quot;: &quot;usernameToConvert&quot;, &quot;canListUsersAsAdmin&quot;: &quot;true&quot; }' \
     https://&lt;tatHostname&gt;:&lt;tatPort&gt;/user/convert
 </code></pre>
 
@@ -950,7 +948,7 @@ Warning: it is an irreversible action.</p>
     -H &quot;Content-Type: application/json&quot; \
     -H &quot;Tat_username: userAdmin&quot; \
     -H &quot;Tat_password: passwordAdmin&quot; \
-    -d '{ &quot;username&quot;: &quot;userSystem&quot;, &quot;canWriteNotifications&quot;: &quot;true&quot;, &quot;canListUsersAsAdmin&quot;: &quot;true&quot; }' \
+    -d '{ &quot;username&quot;: &quot;userSystem&quot;, &quot;canListUsersAsAdmin&quot;: &quot;true&quot; }' \
     https://&lt;tatHostname&gt;:&lt;tatPort&gt;/user/updatesystem
 </code></pre>
 
