@@ -34,7 +34,6 @@ type User struct {
 	IsAdmin                bool      `bson:"isAdmin" json:"isAdmin,omitempty"`
 	IsSystem               bool      `bson:"isSystem" json:"isSystem,omitempty"`
 	IsArchived             bool      `bson:"isArchived" json:"isArchived,omitempty"`
-	CanWriteNotifications  bool      `bson:"canWriteNotifications" json:"canWriteNotifications,omitempty"`
 	CanListUsersAsAdmin    bool      `bson:"canListUsersAsAdmin" json:"canListUsersAsAdmin,omitempty"`
 	FavoritesTopics        []string  `bson:"favoritesTopics" json:"favoritesTopics,omitempty"`
 	OffNotificationsTopics []string  `bson:"offNotificationsTopics" json:"offNotificationsTopics,omitempty"`
@@ -86,7 +85,7 @@ type UserCriteria struct {
 	Fullname        string
 	DateMinCreation string
 	DateMaxCreation string
-	SortBy		string
+	SortBy          string
 }
 
 //ContactsJSON represents a contact for a user, in contacts attribute on a user
@@ -115,9 +114,8 @@ type CheckTopicsUserJSON struct {
 
 // ConvertUserJSON is used to convert a user to a system user
 type ConvertUserJSON struct {
-	Username              string `json:"username" binding:"required"`
-	CanWriteNotifications bool   `json:"canWriteNotifications" binding:"required"`
-	CanListUsersAsAdmin   bool   `json:"canListUsersAsAdmin" binding:"required"`
+	Username            string `json:"username" binding:"required"`
+	CanListUsersAsAdmin bool   `json:"canListUsersAsAdmin" binding:"required"`
 }
 
 // RenameUserJSON is used for rename a user

@@ -10,17 +10,14 @@ import (
 
 var cmdUserUpdateSystem = &cobra.Command{
 	Use:   "updateSystemUser",
-	Short: "Update a system user (admin only): tatcli user updateSystemUser <username> <canWriteNotifications> <canListUsersAsAdmin>",
+	Short: "Update a system user (admin only): tatcli user updateSystemUser <username> <canListUsersAsAdmin>",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 3 {
-			canWriteNotifications, err := strconv.ParseBool(args[1])
-			internal.Check(err)
-			canListUsersAsAdmin, err := strconv.ParseBool(args[2])
+		if len(args) == 2 {
+			canListUsersAsAdmin, err := strconv.ParseBool(args[1])
 			internal.Check(err)
 			out, err := internal.Client().UserUpdateSystem(tat.ConvertUserJSON{
-				Username:              args[0],
-				CanWriteNotifications: canWriteNotifications,
-				CanListUsersAsAdmin:   canListUsersAsAdmin,
+				Username:            args[0],
+				CanListUsersAsAdmin: canListUsersAsAdmin,
 			})
 			internal.Check(err)
 			internal.Print(out)

@@ -759,18 +759,7 @@ func getTree(messagesIn map[string][]tat.Message, criteria *tat.MessageCriteria,
 }
 
 // Insert a new message on one topic
-func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyOfID string, dateCreation float64, labels []tat.Label, replies []string, repliesJSON []tat.MessageJSON, isNotificationFromMention bool, messageRoot *tat.Message) error {
-	if !isNotificationFromMention {
-		notificationsTopic := fmt.Sprintf("/Private/%s/Notifications", user.Username)
-		if strings.HasPrefix(topic.Topic, notificationsTopic) {
-			if !user.IsSystem {
-				return fmt.Errorf("You can't write on your notifications topic")
-			} else if user.IsSystem && !user.CanWriteNotifications {
-				return fmt.Errorf("This user system %s has no right to write on notifications topic", user.Username)
-			}
-		}
-	}
-
+func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyOfID string, dateCreation float64, labels []tat.Label, replies []string, repliesJSON []tat.MessageJSON, messageRoot *tat.Message) error {
 	message.Text = text
 	if message.Text == "" && (len(replies) > 0 || len(repliesJSON) > 0) {
 		// no error here
@@ -895,9 +884,6 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 			return err
 		}
 
-		if !strings.HasPrefix(topic.Topic, topicPrivate) {
-			insertNotifications(message, user)
-		}
 		go topicDB.UpdateTopicTags(&topic, message.Tags)
 		go topicDB.UpdateTopicLabels(&topic, message.Labels)
 		go topicDB.UpdateTopicLastMessage(&topic, now)
@@ -906,13 +892,13 @@ func Insert(message *tat.Message, user tat.User, topic tat.Topic, text, inReplyO
 	if len(replies) > 0 {
 		for _, textReply := range replies {
 			reply := tat.Message{}
-			Insert(&reply, user, topic, textReply, idToReply, -1, nil, nil, nil, isNotificationFromMention, message)
+			Insert(&reply, user, topic, textReply, idToReply, -1, nil, nil, nil, message)
 		}
 	}
 	if len(repliesJSON) > 0 {
 		for _, r := range repliesJSON {
 			reply := tat.Message{}
-			Insert(&reply, user, topic, r.Text, idToReply, r.DateCreation, r.Labels, nil, r.Messages, isNotificationFromMention, message)
+			Insert(&reply, user, topic, r.Text, idToReply, r.DateCreation, r.Labels, nil, r.Messages, message)
 		}
 	}
 	//Clean the cache for this topic
@@ -992,31 +978,6 @@ func extractUsersMentions(text string) []string {
 		}
 	}
 	return usernamesChecked
-}
-
-func insertNotifications(message *tat.Message, author tat.User) {
-	if len(message.UserMentions) == 0 {
-		return
-	}
-	for _, userMention := range message.UserMentions {
-		insertNotification(message, author, userMention)
-	}
-}
-
-func insertNotification(message *tat.Message, author tat.User, usernameMention string) {
-	notif := tat.Message{}
-	text := fmt.Sprintf("#mention #idMessage:%s #topic:%s %s", message.ID, message.Topic, message.Text)
-	topicname := fmt.Sprintf("/Private/%s/Notifications", usernameMention)
-	labels := []tat.Label{{Text: "unread", Color: "#d04437"}}
-	topic, err := topicDB.FindByTopic(topicname, false, false, false, nil)
-	if err != nil {
-		return
-	}
-
-	if err := Insert(&notif, author, *topic, text, "", -1, labels, nil, nil, true, nil); err != nil {
-		// not throw err here, just log
-		log.Errorf("Error while inserting notification message for %s, error: %s", usernameMention, err.Error())
-	}
 }
 
 func checkLabels(labels []tat.Label, labelsToAdd []tat.Label, labelsToRemove []string) []tat.Label {
@@ -1425,7 +1386,7 @@ func addOrRemoveFromTasks(message *tat.Message, action string, user tat.User, to
 		RemoveLabel(message, "done:"+user.Username, topic)
 	}
 
-	return Insert(msgReply, user, topic, text, idRoot, -1, nil, nil, nil, false, nil)
+	return Insert(msgReply, user, topic, text, idRoot, -1, nil, nil, nil, nil)
 }
 
 // AddToTasks add a message to user's tasks tat.Topic

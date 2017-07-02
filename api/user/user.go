@@ -83,12 +83,11 @@ func buildUserCriteria(criteria *tat.UserCriteria) (bson.M, error) {
 func getUserListField(isAdmin bool) bson.M {
 	if isAdmin {
 		return bson.M{"username": 1,
-			"fullname":              1,
-			"email":                 1,
-			"isAdmin":               1,
-			"dateCreation":          1,
-			"canWriteNotifications": 1,
-			"canListUsersAsAdmin":   1,
+			"fullname":            1,
+			"email":               1,
+			"isAdmin":             1,
+			"dateCreation":        1,
+			"canListUsersAsAdmin": 1,
 		}
 	}
 	return bson.M{"username": 1,
@@ -158,7 +157,6 @@ func Insert(user *tat.User) (string, error) {
 	user.Auth.EmailVerified = false
 	user.IsSystem = false
 	user.IsArchived = false
-	user.CanWriteNotifications = false
 	user.CanListUsersAsAdmin = false
 	nbUsers, err := CountUsers()
 	if err != nil {
@@ -171,7 +169,7 @@ func Insert(user *tat.User) (string, error) {
 		log.Infof("user %s is the first user, he is now admin", user.Username)
 		user.IsAdmin = true
 	}
-	tokenVerify := ""
+	var tokenVerify string
 	tokenVerify, user.Auth.HashedTokenVerify, err = generateUserPassword()
 	if err != nil {
 		log.Errorf("Error while generate Token Verify for new user %s", err)
@@ -256,7 +254,6 @@ var fieldsExceptAuth = bson.M{
 	"isAdmin":                1,
 	"isSystem":               1,
 	"isArchived":             1,
-	"canWriteNotifications":  1,
 	"canListUsersAsAdmin":    1,
 	"dateCreation":           1,
 	"favoritesTopics":        1,
@@ -691,19 +688,17 @@ func RemoveContact(user *tat.User, contactUsername string) error {
 }
 
 // ConvertToSystem set attribute IsSysetm to true and suffix mail with a random string. If
-// canWriteNotifications is true, this system user can write into /Private/username/Notifications topics
 // canListUsersAsAdmin is true, this system user can view all user's fields as an admin (email, etc...)
 // returns password, err
-func ConvertToSystem(user *tat.User, userAdmin string, canWriteNotifications, canListUsersAsAdmin bool) (string, error) {
+func ConvertToSystem(user *tat.User, userAdmin string, canListUsersAsAdmin bool) (string, error) {
 	email := fmt.Sprintf("%s$system$by$%s$%d", user.Email, userAdmin, time.Now().Unix())
 	err := store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$set": bson.M{
-			"email":                 email,
-			"isSystem":              true,
-			"canWriteNotifications": canWriteNotifications,
-			"canListUsersAsAdmin":   canListUsersAsAdmin,
-			"auth.emailVerified":    true,
+			"email":               email,
+			"isSystem":            true,
+			"canListUsersAsAdmin": canListUsersAsAdmin,
+			"auth.emailVerified":  true,
 		}})
 
 	if err != nil {
@@ -713,13 +708,12 @@ func ConvertToSystem(user *tat.User, userAdmin string, canWriteNotifications, ca
 	return regenerateAndStoreAuth(user)
 }
 
-// UpdateSystemUser updates flags CanWriteNotifications and CanListUsersAsAdmin
-func UpdateSystemUser(user *tat.User, canWriteNotifications, canListUsersAsAdmin bool) error {
+// UpdateSystemUser updates flags CanListUsersAsAdmin
+func UpdateSystemUser(user *tat.User, canListUsersAsAdmin bool) error {
 	return store.Tat().CUsers.Update(
 		bson.M{"_id": user.ID},
 		bson.M{"$set": bson.M{
-			"canWriteNotifications": canWriteNotifications,
-			"canListUsersAsAdmin":   canListUsersAsAdmin,
+			"canListUsersAsAdmin": canListUsersAsAdmin,
 		}})
 }
 
@@ -894,7 +888,7 @@ func CheckDefaultGroup(user *tat.User, fixDefaultGroup bool) string {
 // CheckTopics check default topics for user and creates them if fixTopics is true
 func CheckTopics(user *tat.User, fixTopics bool) string {
 	topicsInfo := ""
-	topicNames := [...]string{"", "Notifications"}
+	topicNames := [...]string{""}
 	for _, shortName := range topicNames {
 		topicName := fmt.Sprintf("/Private/%s", user.Username)
 		if shortName != "" {

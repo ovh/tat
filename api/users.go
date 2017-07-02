@@ -495,7 +495,7 @@ func (*UsersController) Convert(ctx *gin.Context) {
 		return
 	}
 
-	newPassword, err := userDB.ConvertToSystem(&userToConvert, getCtxUsername(ctx), convertJSON.CanWriteNotifications, convertJSON.CanListUsersAsAdmin)
+	newPassword, err := userDB.ConvertToSystem(&userToConvert, getCtxUsername(ctx), convertJSON.CanListUsersAsAdmin)
 	if err != nil {
 		AbortWithReturnError(ctx, http.StatusBadRequest, fmt.Errorf("Convert %s to system user failed", convertJSON.Username))
 		return
@@ -538,7 +538,7 @@ func (*UsersController) UpdateSystemUser(ctx *gin.Context) {
 		return
 	}
 
-	err2 := userDB.UpdateSystemUser(&userToConvert, convertJSON.CanWriteNotifications, convertJSON.CanListUsersAsAdmin)
+	err2 := userDB.UpdateSystemUser(&userToConvert, convertJSON.CanListUsersAsAdmin)
 	if err2 != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error while update system user %s", convertJSON.Username)})
 		return
@@ -701,7 +701,6 @@ func (*UsersController) Update(ctx *gin.Context) {
 // Check if user have his Private topics
 // /Private/username, /Private/username/Tasks
 func (u *UsersController) Check(ctx *gin.Context) {
-
 	var userJSON tat.CheckTopicsUserJSON
 	ctx.Bind(&userJSON)
 
