@@ -356,7 +356,7 @@ func (m *MessagesController) createSingle(ctx *gin.Context, messageIn *tat.Messa
 	}
 
 	// New root message or reply
-	err := messageDB.Insert(&message, *user, topic, text, idRef, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, messageIn.Messages, false, nil)
+	err := messageDB.Insert(&message, *user, topic, text, idRef, messageIn.DateCreation, messageIn.Labels, messageIn.Replies, messageIn.Messages, nil)
 	if err != nil {
 		log.Errorf("%s", err.Error())
 		return nil, http.StatusInternalServerError, err
