@@ -93,10 +93,10 @@
 			"revisionTime": "2016-12-04T22:13:08Z"
 		},
 		{
-			"checksumSHA1": "QU7qDysp2ueUh0UVa9CCxfmXN6I=",
+			"checksumSHA1": "En911lu7f/u83ScLGxAaTM2SJVE=",
 			"path": "github.com/gizak/termui",
-			"revision": "991cd3d3809135dc24daf6188dc6edcaf3d7d2d9",
-			"revisionTime": "2017-01-17T22:23:42Z"
+			"revision": "72304ddb9b4e9838426a021aad64a5a860e98324",
+			"revisionTime": "2017-05-02T14:12:00Z"
 		},
 		{
 			"checksumSHA1": "kBeNcaKk56FguvPSUCEaH6AxpRc=",
@@ -267,10 +267,10 @@
 			"revisionTime": "2017-01-07T17:14:51Z"
 		},
 		{
-			"checksumSHA1": "pcxo5ATo/IV/Co8/F4RmBTL+mQs=",
+			"checksumSHA1": "ygaqVZGjTkO28TNBBuUT8rnSNAo=",
 			"path": "github.com/nsf/termbox-go",
-			"revision": "abe82ce5fb7a42fbd6784a5ceb71aff977e09ed8",
-			"revisionTime": "2016-12-05T19:42:51Z"
+			"revision": "4163cd39dda1c0dda883a713640bc01e08951c24",
+			"revisionTime": "2017-06-11T15:59:04Z"
 		},
 		{
 			"checksumSHA1": "4+01HaD0/pVQLzk7nWmoJwolfrY=",
