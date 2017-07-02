@@ -204,8 +204,6 @@ Remove email and set user attribute IsSystem to true.
 This action returns a new password for this user.
 Warning: it is an irreversible action.
 
-Flag `canWriteNotifications` allows (or not if false) the `system user` to write inside private topics of user `/Private/username/Notifications`
-
 Flag `canListUsersAsAdmin` allows this `system user` to view all user's fields (email, etc...)
 
 ```bash
@@ -213,7 +211,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
     -H "Tat_password: passwordAdmin" \
-    -d '{ "username": "usernameToConvert", "canWriteNotifications": "true", "canListUsersAsAdmin": "true" }' \
+    -d '{ "username": "usernameToConvert", "canListUsersAsAdmin": "true" }' \
     https://<tatHostname>:<tatPort>/user/convert
 ```
 
@@ -225,7 +223,7 @@ curl -XPUT \
     -H "Content-Type: application/json" \
     -H "Tat_username: userAdmin" \
     -H "Tat_password: passwordAdmin" \
-    -d '{ "username": "userSystem", "canWriteNotifications": "true", "canListUsersAsAdmin": "true" }' \
+    -d '{ "username": "userSystem", "canListUsersAsAdmin": "true" }' \
     https://<tatHostname>:<tatPort>/user/updatesystem
 ```
 

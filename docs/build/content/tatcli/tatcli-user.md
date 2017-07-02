@@ -37,8 +37,8 @@ Available Commands:
   add                           Add a user: tatcli user add <username> <email> <fullname>
   reset                         Ask for Reset a password: tatcli user reset <username> <email>
   resetSystemUser               Reset password for a system user (admin only): tatcli user resetSystemUser <username>
-  convert                       Convert a user to a system user (admin only): tatcli user convert <username> <canWriteNotifications> <canListUsersAsAdmin>
-  updateSystemUser              Update a system user (admin only): tatcli user updateSystemUser <username> <canWriteNotifications> <canListUsersAsAdmin>
+  convert                       Convert a user to a system user (admin only): tatcli user convert <username> <canListUsersAsAdmin>
+  updateSystemUser              Update a system user (admin only): tatcli user updateSystemUser <username> <canListUsersAsAdmin>
   archive                       Archive a user (admin only): tatcli user archive <username>
   rename                        Rename username of a user (admin only): tatcli user rename <oldUsername> <newUsername>
   update                        Update Fullname and Email of a user (admin only): tatcli user update <username> <newEmail> <newFullname>
