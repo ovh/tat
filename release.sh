@@ -41,9 +41,6 @@ else
     sed -i.bak "s/const Version =.*/const Version = \"$version\"/g" types.go
     rm -f types.go.bak
 
-    sed -i.bak "s/TAT_VERSION=.*/TAT_VERSION=\"$version\" \&\& \\\/g" Dockerfile
-    rm -f Dockerfile.bak
-
     git commit -am "[auto] bump version to v$version"
     git tag -s "v$version"
 fi
