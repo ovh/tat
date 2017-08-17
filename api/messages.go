@@ -718,7 +718,7 @@ func (m *MessagesController) addOrRemoveTask(ctx *gin.Context, messageIn *tat.Me
 func (m *MessagesController) updateMessage(ctx *gin.Context, messageIn *tat.MessageJSON, message tat.Message, user tat.User, topic tat.Topic, isAdminOnTopic bool) {
 	var info string
 
-	if isAdminOnTopic && topic.CanUpdateAllMsg {
+	if isAdminOnTopic && topic.AdminCanDeleteAllMsg {
 		// ok, user is admin on topic, and admin can update all msg
 	} else {
 		if !topic.CanUpdateMsg && !topic.CanUpdateAllMsg {
