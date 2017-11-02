@@ -152,6 +152,41 @@ In standard View, theses messages look like:
 ![Dashing View in Standard View](/imgs/tatwebui-dashing-view-standardview1.png?width=80%)
 ![Dashing View in Standard View](/imgs/tatwebui-dashing-view-standardview2.png?width=80%)
 
+### Supported styles
+
+You can add your custom styles by adding labels to your message.
+Two types of style syntax are supported: an old syntax which is here for legacy support
+and a new syntax you should use from now on which can support almost every CSS style you want.
+
+#### Legacy support (old syntax)
+
+The dashing view provides legacy support for these properties (format: property-name: `syntax` - description):
+- bg-color: `bg-color` - When this property is present it will set the background color of the message as the label color
+- title-font-size: `title-font-size:[XX]px` - Set the title font size
+- value-font-size: `value-font-size:[XX]px` - Set the value font size
+- color: `color` - When this property is present it will set the color of the message as the label color
+- hide-bottom: `hide-bottom` - When this property is present it will hide the bottom of the message
+- url: `url` - When this property is present it will change the cursor to a pointer on the message
+- height: `height:[XX]px` - Set message height
+- width: `width:[XX]px` - Set message width
+- border-width: `border-width:[XX]px` - Set message border-width
+- border-style: `border-style:[style]` - Set message border-style
+- border-color: `border-color:[color]` - Set message border-color
+
+#### Modern syntax
+
+You can add almost every CSS property you want by following one of these two models:
+1. Apply a property to the message: `style:property: value;`
+2. Apply a property to a child node of the message: `style:selector { property: value; }`
+(`selector` must be set from the message's point of view: if you want to target the div > h3 of your message your selector
+must be `div > h3` and TaT Dashing will handle the rest to link this to the right message)
+
+Important notes:
+- Do not forget the `;` in those two models or your label will not be processed
+- Do not put a space character ` ` after `style:` or your label will not be processed
+- Always list one property in a label (for example do not make these labels : `property1: value1; property2: value2;`
+or `selector { property1: value1; property2: value2; }`) or your label will not be processed.
+Make multiple labels if you want to apply multiple properties.
 
 ### Legend
 
