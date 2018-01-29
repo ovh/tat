@@ -247,8 +247,11 @@ func init() {
 	flags.String("kafka-broker-addresses", "", "Ex: --kafka-broker-addresses=host:port,host2:port2")
 	viper.BindPFlag("kafka_broker_addresses", flags.Lookup("kafka-broker-addresses"))
 
-	flags.String("kafka-client-id", "", "Ex: --kafka-client-id=xxxx-yyyy")
-	viper.BindPFlag("kafka_client_id", flags.Lookup("kafka-client-id"))
+	flags.String("kafka-user", "", "Ex: --kafka-user=xxxx")
+	viper.BindPFlag("kafka_user", flags.Lookup("kafka-user"))
+
+	flags.String("kafka-password", "", "Ex: --kafka-password=xxxx")
+	viper.BindPFlag("kafka_password", flags.Lookup("kafka-password"))
 
 	flags.String("graylog-protocol", "", "Ex: --graylog-protocol=xxxx-yyyy")
 	viper.BindPFlag("graylog_protocol", flags.Lookup("graylog-protocol"))
