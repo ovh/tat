@@ -15,12 +15,18 @@ var producer sarama.SyncProducer
 var hookKafkaEnabled bool
 
 func initKafka() {
-	if viper.GetString("kafka_client_id") == "" || viper.GetString("kafka_broker_addresses") == "" {
+	if viper.GetString("kafka_user") == "" || viper.GetString("kafka_password") == "" || viper.GetString("kafka_broker_addresses") == "" {
 		log.Infof("No Kafka configured")
 		return
 	}
+
 	c := sarama.NewConfig()
-	c.ClientID = viper.GetString("kafka_client_id")
+	c.Producer.Return.Successes = true
+	c.Producer.Return.Errors = true
+	c.Net.TLS.Enable = true
+	c.Net.SASL.Enable = true
+	c.Net.SASL.User = viper.GetString("kafka_user")
+	c.Net.SASL.Password = viper.GetString("kafka_password")
 
 	var err error
 	producer, err = sarama.NewSyncProducer(strings.Split(viper.GetString("kafka_broker_addresses"), ","), c)
