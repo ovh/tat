@@ -14,7 +14,7 @@ import (
 
 const (
 	// DefaultMessageMaxSize is max size of message, can be overrided by topic
-	DefaultMessageMaxSize = 140
+	DefaultMessageMaxSize = 1000
 	// DefaultMessageMaxReplies is max number of replies on a message, can be overrided by topic
 	DefaultMessageMaxReplies = 30
 
