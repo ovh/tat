@@ -360,10 +360,9 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 		topic.AdminGroups = parentTopic.AdminGroups
 		topic.MaxLength = parentTopic.MaxLength
 
-		// overrideMessageMaxSizeFromParent always overrides parentTopic.MaxLength with its value if > 0
-		overrideMessageMaxSizeFromParent := viper.GetInt("override_message_max_size_from_parent")
-		if overrideMessageMaxSizeFromParent > 0 {
-			topic.MaxLength = overrideMessageMaxSizeFromParent
+		// If true, override_message_max_size_from_parent always overrides parentTopic.MaxLength with DefaultMessageMaxSize value
+		if viper.GetBool("override_message_max_size_from_parent") {
+			topic.MaxLength = tat.DefaultMessageMaxSize
 		}
 
 		topic.CanForceDate = parentTopic.CanForceDate

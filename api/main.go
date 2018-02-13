@@ -274,7 +274,7 @@ func init() {
 	flags.String("log-field-app-id", "", "Ex: --log_field_app_id=xxxx-yyyy")
 	viper.BindPFlag("log_field_app_id", flags.Lookup("log-field-app-id"))
 
-	flags.Int("override-message-max-size-from-parent", 0, "Override inherited max length of message (if value not null) from parent topic if there is a parent topic (in number of characters)")
+	flags.Bool("override-message-max-size-from-parent", false, "Override inherited max length of message from parent topic with default max length if there is a parent topic")
 	viper.BindPFlag("override_message_max_size_from_parent", flags.Lookup("override-message-max-size-from-parent"))
 }
 
