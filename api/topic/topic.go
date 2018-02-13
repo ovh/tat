@@ -16,6 +16,7 @@ import (
 	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/group"
 	"github.com/ovh/tat/api/store"
+	"github.com/spf13/viper"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -358,6 +359,13 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 		topic.AdminUsers = parentTopic.AdminUsers
 		topic.AdminGroups = parentTopic.AdminGroups
 		topic.MaxLength = parentTopic.MaxLength
+
+		// overrideMessageMaxSizeFromParent always overrides parentTopic.MaxLength with its value if > 0
+		overrideMessageMaxSizeFromParent := viper.GetInt("override_message_max_size_from_parent")
+		if overrideMessageMaxSizeFromParent > 0 {
+			topic.MaxLength = overrideMessageMaxSizeFromParent
+		}
+
 		topic.CanForceDate = parentTopic.CanForceDate
 		// topic.CanUpdateMsg can be set by user.createTopics for new users
 		// with CanUpdateMsg=true
