@@ -274,8 +274,8 @@ func init() {
 	flags.String("log-field-app-id", "", "Ex: --log_field_app_id=xxxx-yyyy")
 	viper.BindPFlag("log_field_app_id", flags.Lookup("log-field-app-id"))
 
-	flags.Int("message-max-size", 1000, "Default max length of messages in a newly created topic")
-	viper.BindPFlag("message_max_size", flags.Lookup("message-max-size"))
+	flags.Int("default-message-max-size", 1000, "Default max length of messages in a newly created topic")
+	viper.BindPFlag("default_message_max_size", flags.Lookup("default-message-max-size"))
 }
 
 func main() {
