@@ -16,6 +16,7 @@ import (
 	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/store"
 	topicDB "github.com/ovh/tat/api/topic"
+	"github.com/spf13/viper"
 	"github.com/yesnault/hashtag"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -1022,7 +1023,7 @@ func CheckAndFixText(message *tat.Message, topic tat.Topic) error {
 		return fmt.Errorf("Invalid Text:%s", message.Text)
 	}
 
-	maxLength := tat.DefaultMessageMaxSize
+	maxLength := viper.GetInt("message_max_size")
 	if topic.MaxLength > 0 {
 		maxLength = topic.MaxLength
 	}
