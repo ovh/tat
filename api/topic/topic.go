@@ -298,7 +298,7 @@ func InitPrivateTopic() {
 		Topic:                "/Private",
 		Description:          "Private Topics",
 		DateCreation:         time.Now().Unix(),
-		MaxLength:            viper.GetInt("message_max_size"),
+		MaxLength:            viper.GetInt("default_message_max_size"),
 		MaxReplies:           tat.DefaultMessageMaxReplies,
 		CanForceDate:         false,
 		CanUpdateMsg:         false,
@@ -344,8 +344,8 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 
 	topic.ID = bson.NewObjectId().Hex()
 	topic.DateCreation = time.Now().Unix()
-	topic.MaxLength = viper.GetInt("message_max_size") // topic MaxLenth messages
-	topic.MaxReplies = tat.DefaultMessageMaxReplies    // topic max replies on a message
+	topic.MaxLength = viper.GetInt("default_message_max_size") // topic MaxLenth messages
+	topic.MaxReplies = tat.DefaultMessageMaxReplies            // topic max replies on a message
 	topic.CanForceDate = false
 	topic.IsAutoComputeLabels = true
 	topic.IsAutoComputeTags = true
@@ -818,7 +818,7 @@ func SetParam(topic *tat.Topic, username string, recursive bool, maxLength, maxR
 	}
 
 	if maxLength <= 0 {
-		maxLength = viper.GetInt("message_max_size")
+		maxLength = viper.GetInt("default_message_max_size")
 	}
 
 	update := bson.M{

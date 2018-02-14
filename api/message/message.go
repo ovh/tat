@@ -1023,7 +1023,7 @@ func CheckAndFixText(message *tat.Message, topic tat.Topic) error {
 		return fmt.Errorf("Invalid Text:%s", message.Text)
 	}
 
-	maxLength := viper.GetInt("message_max_size")
+	maxLength := viper.GetInt("default_message_max_size")
 	if topic.MaxLength > 0 {
 		maxLength = topic.MaxLength
 	}
