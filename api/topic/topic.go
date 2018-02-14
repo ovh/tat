@@ -298,7 +298,7 @@ func InitPrivateTopic() {
 		Topic:                "/Private",
 		Description:          "Private Topics",
 		DateCreation:         time.Now().Unix(),
-		MaxLength:            tat.DefaultMessageMaxSize,
+		MaxLength:            viper.GetInt("message_max_size"),
 		MaxReplies:           tat.DefaultMessageMaxReplies,
 		CanForceDate:         false,
 		CanUpdateMsg:         false,
@@ -344,8 +344,8 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 
 	topic.ID = bson.NewObjectId().Hex()
 	topic.DateCreation = time.Now().Unix()
-	topic.MaxLength = tat.DefaultMessageMaxSize     // topic MaxLenth messages
-	topic.MaxReplies = tat.DefaultMessageMaxReplies // topic max replies on a message
+	topic.MaxLength = viper.GetInt("message_max_size") // topic MaxLenth messages
+	topic.MaxReplies = tat.DefaultMessageMaxReplies    // topic max replies on a message
 	topic.CanForceDate = false
 	topic.IsAutoComputeLabels = true
 	topic.IsAutoComputeTags = true
@@ -358,13 +358,6 @@ func Insert(topic *tat.Topic, u *tat.User) error {
 		topic.RWUsers = parentTopic.RWUsers
 		topic.AdminUsers = parentTopic.AdminUsers
 		topic.AdminGroups = parentTopic.AdminGroups
-		topic.MaxLength = parentTopic.MaxLength
-
-		// If true, override_message_max_size_from_parent always overrides parentTopic.MaxLength with DefaultMessageMaxSize value
-		if viper.GetBool("override_message_max_size_from_parent") {
-			topic.MaxLength = tat.DefaultMessageMaxSize
-		}
-
 		topic.CanForceDate = parentTopic.CanForceDate
 		// topic.CanUpdateMsg can be set by user.createTopics for new users
 		// with CanUpdateMsg=true
@@ -825,7 +818,7 @@ func SetParam(topic *tat.Topic, username string, recursive bool, maxLength, maxR
 	}
 
 	if maxLength <= 0 {
-		maxLength = tat.DefaultMessageMaxSize
+		maxLength = viper.GetInt("message_max_size")
 	}
 
 	update := bson.M{
