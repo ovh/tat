@@ -56,7 +56,7 @@ func buildGroupCriteria(criteria *tat.GroupCriteria, user *tat.User) (bson.M, er
 		queryNames := bson.M{}
 		queryNames["$or"] = []bson.M{}
 		for _, val := range strings.Split(criteria.Name, ",") {
-			queryNames["$or"] = append(queryNames["$or"].([]bson.M), bson.M{"name": val})
+			queryNames["$or"] = append(queryNames["$or"].([]bson.M), bson.M{"name": bson.M{"$regex": bson.RegEx{Pattern: "^" + val + "$", Options: ""}}})
 		}
 		query = append(query, queryNames)
 
