@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 )
 
@@ -92,8 +93,40 @@ type ParamTopicGroupJSON struct {
 }
 
 // GroupList returns groups
-func (c *Client) GroupList(skip, limit int) (*GroupsJSON, error) {
-	path := fmt.Sprintf("/groups?skip=%d&limit=%d", skip, limit)
+func (c *Client) GroupList(criteria *GroupCriteria) (*GroupsJSON, error) {
+	if c == nil {
+		return nil, ErrClientNotInitiliazed
+	}
+
+	if criteria == nil {
+		criteria = &GroupCriteria{
+			Skip:  0,
+			Limit: 100,
+		}
+	}
+
+	v := url.Values{}
+	v.Set("skip", strconv.Itoa(criteria.Skip))
+	v.Set("limit", strconv.Itoa(criteria.Limit))
+
+	if criteria.IDGroup != "" {
+		v.Set("idGroup", criteria.IDGroup)
+	}
+	if criteria.Name != "" {
+		v.Set("name", criteria.Name)
+	}
+	if criteria.Description != "" {
+		v.Set("description", criteria.Description)
+	}
+	if criteria.DateMinCreation != "" {
+		v.Set("dateMinCreation", criteria.DateMinCreation)
+	}
+	if criteria.DateMaxCreation != "" {
+		v.Set("dateMaxCreation", criteria.DateMaxCreation)
+	}
+
+	path := fmt.Sprintf("/groups?%s", v.Encode())
+
 	out, err := c.reqWant("GET", http.StatusOK, path, nil)
 	if err != nil {
 		ErrorLogFunc("Error while listing groups: %s", err)
