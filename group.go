@@ -24,6 +24,7 @@ type GroupCriteria struct {
 	Limit           int
 	IDGroup         string
 	Name            string
+	NameRegex       string
 	Description     string
 	DateMinCreation string
 	DateMaxCreation string
@@ -48,6 +49,9 @@ func (g *GroupCriteria) CacheKey() []string {
 	}
 	if g.Name != "" {
 		s = append(s, "name="+g.Name)
+	}
+	if g.NameRegex != "" {
+		s = append(s, "name_regex="+g.NameRegex)
 	}
 	if g.Description != "" {
 		s = append(s, "description="+g.Description)
@@ -114,6 +118,9 @@ func (c *Client) GroupList(criteria *GroupCriteria) (*GroupsJSON, error) {
 	}
 	if criteria.Name != "" {
 		v.Set("name", criteria.Name)
+	}
+	if criteria.NameRegex != "" {
+		v.Set("nameRegex", criteria.NameRegex)
 	}
 	if criteria.Description != "" {
 		v.Set("description", criteria.Description)

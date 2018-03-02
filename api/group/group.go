@@ -52,11 +52,18 @@ func buildGroupCriteria(criteria *tat.GroupCriteria, user *tat.User) (bson.M, er
 		}
 		query = append(query, queryIDGroups)
 	}
-	if criteria.Name != "" {
+	if criteria.Name != "" || criteria.NameRegex != "" {
 		queryNames := bson.M{}
 		queryNames["$or"] = []bson.M{}
-		for _, val := range strings.Split(criteria.Name, ",") {
-			queryNames["$or"] = append(queryNames["$or"].([]bson.M), bson.M{"name": bson.M{"$regex": bson.RegEx{Pattern: "^" + val + "$", Options: ""}}})
+		// Priority on criteria.Name if criteria.Name and criteria.NameRegex are both not empty
+		if criteria.Name != "" {
+			for _, val := range strings.Split(criteria.Name, ",") {
+				queryNames["$or"] = append(queryNames["$or"].([]bson.M), bson.M{"name": val})
+			}
+		} else if criteria.NameRegex != "" {
+			for _, val := range strings.Split(criteria.NameRegex, ",") {
+				queryNames["$or"] = append(queryNames["$or"].([]bson.M), bson.M{"name": bson.M{"$regex": bson.RegEx{Pattern: "^" + val + "$", Options: ""}}})
+			}
 		}
 		query = append(query, queryNames)
 
@@ -146,7 +153,7 @@ func ListGroups(criteria *tat.GroupCriteria, user *tat.User, isAdmin bool) (int,
 	}
 
 	selectedFields := bson.M{}
-	if criteria.Name == "" {
+	if criteria.Name == "" && criteria.NameRegex == "" {
 		selectedFields = bson.M{"name": 1, "description": 1, "users": 1, "adminUsers": 1, "dateCreation": 1}
 	}
 
