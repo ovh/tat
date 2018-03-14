@@ -43,7 +43,7 @@ func Init(t *testing.T) {
 	flag.StringVar(&dbAddr, "db-addr", "127.0.0.1:27017", "Address of the mongodb server")
 	flag.StringVar(&dbUser, "db-user", "", "User to authenticate with the mongodb server")
 	flag.StringVar(&dbPassword, "db-password", "", "Password to authenticate with the mongodb server")
-	flag.StringVar(&redisAddr, "redis-addr", "127.0.0.1:6379", "Address of the redis server")
+	flag.StringVar(&redisAddr, "redis-addr", "", "Address of the redis server (set to '127.0.0.1:6379' to use Redis with default values)")
 	flag.StringVar(&redisPassword, "redis-password", "", "Password to authenticate with the redis server")
 
 	flag.Parse()

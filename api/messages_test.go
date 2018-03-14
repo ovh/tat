@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"testing"
 
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/tests"
 	"github.com/stretchr/testify/assert"
-	"log"
 )
 
 var messagesCtrl = &MessagesController{}
@@ -57,13 +57,13 @@ func TestMessagesList(t *testing.T) {
 		t.Log(message.Info)
 	}
 
-	messages, err := client.MessageList(topic.Topic, nil)
+	messages, err := client.MessageList(topic.Topic, &tat.MessageCriteria{})
 	assert.NotNil(t, topic)
 	assert.NoError(t, err)
 
 	assert.Equal(t, 1, len(messages.Messages))
 
-	messages, err = client.MessageList(topic.Topic, nil)
+	messages, err = client.MessageList(topic.Topic, &tat.MessageCriteria{})
 	assert.NotNil(t, topic)
 	assert.NoError(t, err)
 
@@ -90,7 +90,7 @@ func TestMessagesList(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(message.Message.Labels), "this message should have 1 label")
 
-	messages, err = client.MessageList(topic.Topic, nil)
+	messages, err = client.MessageList(topic.Topic, &tat.MessageCriteria{})
 	assert.NotNil(t, topic)
 	assert.NoError(t, err)
 
@@ -112,7 +112,7 @@ func TestMessagesList(t *testing.T) {
 	_, err = client.MessageDelete(message.Message.ID, topic.Topic, false, false)
 	assert.NoError(t, err)
 
-	messages, err = client.MessageList(topic.Topic, nil)
+	messages, err = client.MessageList(topic.Topic, &tat.MessageCriteria{})
 	assert.NotNil(t, topic)
 	assert.NoError(t, err)
 
