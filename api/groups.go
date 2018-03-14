@@ -32,6 +32,7 @@ func (*GroupsController) buildCriteria(ctx *gin.Context) *tat.GroupCriteria {
 	c.Limit = limit
 	c.IDGroup = ctx.Query("idGroup")
 	c.Name = ctx.Query("name")
+	c.NameRegex = ctx.Query("nameRegex")
 	c.Description = ctx.Query("description")
 	c.DateMinCreation = ctx.Query("dateMinCreation")
 	c.DateMaxCreation = ctx.Query("dateMaxCreation")
