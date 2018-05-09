@@ -30,6 +30,10 @@ func sendWebHook(hook *tat.HookJSON, path string, topic tat.Topic, headerName, h
 
 	req, _ := http.NewRequest("POST", path, bytes.NewReader(data))
 
+	// The data sent is always JSON, set this header to allow consumers
+	// to parse the body of the request easily
+	req.Header.Add("Content-Type", "application/json")
+
 	if headerName != "" && headerValue != "" {
 		req.Header.Add(headerName, headerValue)
 	}
