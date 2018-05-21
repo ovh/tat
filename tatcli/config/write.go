@@ -60,6 +60,13 @@ func writeTemplate() {
 	jsonStr = append(jsonStr, '\n')
 	filename := internal.ConfigFile
 
+	// Stop everything if the file already exists
+	if _, err := os.Stat(filename); err == nil {
+		fmt.Printf("File %s already exists, please remove it before running this command\n", filename)
+		os.Exit(1)
+	}
+
+	// Create dir if it doesn't exist
 	dir := path.Dir(filename)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		internal.Check(os.Mkdir(dir, 0740))
