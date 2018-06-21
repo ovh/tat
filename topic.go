@@ -456,7 +456,7 @@ func (c *Client) topicActionOnUser(url string, want int, topic, username string,
 	}
 	out, err := c.simplePutAndGetBytes(url, want, t)
 	if err != nil {
-		ErrorLogFunc("Error removing on url: %s", url, err)
+		ErrorLogFunc("Error removing on url %s: %v", url, err)
 		return nil, err
 	}
 	return out, nil
