@@ -472,7 +472,7 @@ func (t *TopicsController) RemoveRwUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusCreated, "")
+	ctx.JSON(http.StatusOK, "")
 }
 
 // RemoveAdminUser removes an admin user on selected topic
@@ -489,7 +489,7 @@ func (t *TopicsController) RemoveAdminUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusCreated, "")
+	ctx.JSON(http.StatusOK, "")
 }
 
 // AddRoGroup add a readonly group on selected topic
