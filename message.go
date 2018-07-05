@@ -1060,7 +1060,7 @@ func (m *Message) ContainsTag(tag string) bool {
 
 func GetDateRef(pattern string) (time.Time, error) {
 	var dateRef time.Time
-	now.FirstDayMonday = true
+	now.WeekStartDay = time.Monday
 	switch pattern {
 	case "BeginningOfMinute":
 		return now.BeginningOfMinute(), nil
