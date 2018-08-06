@@ -1,6 +1,9 @@
 package hook
 
 import (
+	"fmt"
+	"strings"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
 	"github.com/spf13/viper"
@@ -19,5 +22,27 @@ func sendXMPP(hook *tat.HookJSON, path string, topic tat.Topic) error {
 	}
 	log.Debugf("sendXMPP: enter for post XMPP via tat2XMPP setted on topic %s", topic.Topic)
 
-	return sendWebHook(hook, viper.GetString("tat2xmpp_url")+"/hook", topic, tat.HookTat2XMPPHeaderKey, viper.GetString("tat2xmpp_key"))
+	// We split the XMPP servers and keys (comma separated lists)
+	tat2xmppServers := strings.Split(viper.GetString("tat2xmpp_url"), ",")
+	tat2xmppKeys := strings.Split(viper.GetString("tat2xmpp_key"), ",")
+
+	// We must have the same number of servers and keys: one key for one server
+	if len(tat2xmppServers) != len(tat2xmppKeys) {
+		return fmt.Errorf("the number of XMPP servers differs from the number of provided keys (%v servers and %v keys)", len(tat2xmppServers), len(tat2xmppKeys))
+	}
+
+	// Go through the servers and send the hook with the right key
+	// The right key for the right server is determined by the declaration order:
+	// the first server goes with the first key, the second server goes with the second key...
+	for index, tat2xmppServer := range tat2xmppServers {
+		errSendWebHook := sendWebHook(hook, tat2xmppServer+"/hook", topic, tat.HookTat2XMPPHeaderKey, tat2xmppKeys[index])
+		if errSendWebHook != nil {
+			// If an error is encountered, abort everything and return the error because we should not encounter any error
+			// even if we are sending the wrong destination to the wrong server (tat2xmpp will handle that and return no error)
+			// So an error is not normal and we should return it immediately
+			return errSendWebHook
+		}
+	}
+
+	return nil
 }
