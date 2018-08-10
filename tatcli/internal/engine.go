@@ -9,6 +9,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 var instance *tat.Client
@@ -20,10 +21,38 @@ func Client() *tat.Client {
 		return instance
 	}
 
+	// Init basic auth credentials
+	var basicAuthUsername, basicAuthPassword string
+	if viper.GetBool("basic-auth") {
+		// Only try to get basic auth credentials when --basic-auth flag is set
+
+		// First, try to get basic auth credentials from the configuration file
+		basicAuthUsername = viper.GetString("basicAuthUsername")
+		basicAuthPassword = viper.GetString("basicAuthPassword")
+
+		// If the username is not defined, ask the user to provide it
+		if basicAuthUsername == "" {
+			fmt.Println("No basic auth username found")
+			fmt.Print("Please enter your username: ")
+			fmt.Scan(&basicAuthUsername)
+		}
+
+		// If the password is not defined, ask the user to provide it
+		if basicAuthPassword == "" {
+			fmt.Printf("No basic auth password found for username %v\n", basicAuthUsername)
+			fmt.Printf("Please enter the password for username %v: ", basicAuthUsername)
+			pwd, errReadPassword := terminal.ReadPassword(0)
+			Check(errReadPassword)
+			basicAuthPassword = string(pwd)
+		}
+	}
+
 	tc, err := tat.NewClient(tat.Options{
 		URL:                   viper.GetString("url"),
 		Username:              viper.GetString("username"),
 		Password:              viper.GetString("password"),
+		BasicAuthUsername:     basicAuthUsername, // Always send the basic auth credentials (if --basic-auth is not set, the value will be empty)
+		BasicAuthPassword:     basicAuthPassword, // Always send the basic auth credentials (if --basic-auth is not set, the value will be empty)
 		Referer:               "tatcli.v." + tat.Version,
 		SSLInsecureSkipVerify: viper.GetBool("sslInsecureSkipVerify"),
 	})
@@ -38,6 +67,8 @@ func Client() *tat.Client {
 		tat.IsDebug = true
 	}
 
+	// Set the instance for future use and return it
+	instance = tc
 	return tc
 }
 

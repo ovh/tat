@@ -26,6 +26,9 @@ var (
 	// ShowStackTrace prints stacktrace on tatcli panic
 	ShowStackTrace bool
 
+	// BasicAuth enables basic auth support
+	BasicAuth bool
+
 	// URL of tat engine
 	URL string
 
