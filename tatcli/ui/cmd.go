@@ -2,6 +2,7 @@ package ui
 
 import (
 	"github.com/gizak/termui"
+	"github.com/ovh/tat/tatcli/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -25,6 +26,11 @@ Example:
 
 func runUI(args []string) {
 	ui := &tatui{}
+
+	// This forces a client init before starting the UI
+	// This way, if the client needs to ask for credentials, it will be done now
+	internal.Client().Version()
+
 	ui.init(args)
 	ui.draw(0)
 

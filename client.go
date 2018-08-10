@@ -18,6 +18,8 @@ import (
 type Client struct {
 	username              string
 	password              string
+	basicAuthUsername     string
+	basicAuthPassword     string
 	url                   string
 	referer               string
 	requestTimeout        time.Duration
@@ -29,6 +31,8 @@ type Client struct {
 type Options struct {
 	Username              string
 	Password              string
+	BasicAuthUsername     string
+	BasicAuthPassword     string
 	URL                   string
 	Referer               string
 	RequestTimeout        time.Duration
@@ -79,12 +83,23 @@ func NewClient(opts Options) (*Client, error) {
 		c.maxTries = opts.MaxTries
 	}
 
+	// Set basic auth credentials only if the username AND the password options have been provided
+	if opts.BasicAuthUsername != "" && opts.BasicAuthPassword != "" {
+		c.basicAuthUsername = opts.BasicAuthUsername
+		c.basicAuthPassword = opts.BasicAuthPassword
+	}
+
 	return c, nil
 }
 
 func (c *Client) initHeaders(req *http.Request) error {
 	if c == nil {
 		return ErrClientNotInitiliazed
+	}
+
+	// If the client is configured with basic auth credentials, add them to the request
+	if c.basicAuthUsername != "" && c.basicAuthPassword != "" {
+		req.SetBasicAuth(c.basicAuthUsername, c.basicAuthPassword)
 	}
 
 	req.Header.Set(TatHeaderUsername, c.username)
