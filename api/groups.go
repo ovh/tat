@@ -90,7 +90,7 @@ func (*GroupsController) preCheckUser(ctx *gin.Context, paramJSON *tat.ParamGrou
 
 	if !found {
 		e := errors.New("username " + paramJSON.Username + " does not exist")
-		ctx.AbortWithError(http.StatusInternalServerError, e)
+		ctx.AbortWithError(http.StatusBadRequest, e)
 		return tat.Group{}, e
 	}
 
