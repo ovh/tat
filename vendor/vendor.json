@@ -376,6 +376,12 @@
 			"revisionTime": "2017-01-28T13:25:12Z"
 		},
 		{
+			"checksumSHA1": "nqWNlnMmVpt628zzvyo6Yv2CX5Q=",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "9419663f5a44be8b34ca85f08abc5fe1be11f8a3",
+			"revisionTime": "2017-09-30T17:45:11Z"
+		},
+		{
 			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
 			"path": "golang.org/x/net/context",
 			"revision": "60c41d1de8da134c05b7b40154a9a82bf5b7edb9",
@@ -386,6 +392,12 @@
 			"path": "golang.org/x/sys/unix",
 			"revision": "d75a52659825e75fff6158388dddc6a5b04f9ba5",
 			"revisionTime": "2016-12-14T18:38:57Z"
+		},
+		{
+			"checksumSHA1": "pBPFzDGt3AVSRffB7ffiUnruFUk=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "ebfc5b4631820b793c9010c87fd8fef0f39eb082",
+			"revisionTime": "2017-10-06T15:06:24Z"
 		},
 		{
 			"checksumSHA1": "ziMb9+ANGRJSSIuxYdRbA+cDRBQ=",
