@@ -27,7 +27,7 @@
       <guid>https://ovh.github.io/tat/overview/introduction/</guid>
       <description>Tat, aka Text And Tags, is a communication tool - Human &amp;amp; Robot all together.
 Some use cases:
- Viewing Pull Requests, Build And Deployment in one place Alerting &amp;amp; Monitoring Overview Agile view as simple as a whiteboard with post-it Team Communication &amp;amp; Reporting facilities &amp;hellip;  Tat Engine exposes only an HTTP REST API. You can manipulate this API with Tat Command Line Interface, aka tatcli, see https://github.com/ovh/tat/tatcli.</description>
+ Viewing Pull Requests, Build And Deployment in one place Alerting &amp;amp; Monitoring Overview Agile view as simple as a whiteboard with post-it Team Communication &amp;amp; Reporting facilities &amp;hellip;  Tat Engine exposes only an HTTP REST API. You can manipulate this API with Tat Command Line Interface, aka tatcli, see https://github.com/ovh/tat/tree/master/tatcli.</description>
     </item>
     
     <item>
