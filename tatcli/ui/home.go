@@ -53,7 +53,7 @@ func (ui *tatui) initHomeLeft() {
                      |||                     |||
 
                        Tatcli Version: ` + tat.Version + `
-                    https://github.com/ovh/tat/tatcli
+                    https://github.com/ovh/tat/tree/master/tatcli
                 TAT Engine: https://github.com/ovh/tat
 								Current Tat Engine: ` + textURL + `
 								Current config file: ` + internal.ConfigFile + `
