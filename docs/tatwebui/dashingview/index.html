@@ -693,6 +693,11 @@
 <ul>
 <li><a href="#usage">Usage</a>
 <ul>
+<li><a href="#supported-styles">Supported styles</a>
+<ul>
+<li><a href="#legacy-support-old-syntax">Legacy support (old syntax)</a></li>
+<li><a href="#modern-syntax">Modern syntax</a></li>
+</ul></li>
 <li><a href="#legend">Legend</a></li>
 </ul></li>
 <li><a href="#configuration">Configuration</a></li>
@@ -856,6 +861,42 @@ tatcli msg add /Internal/YourTopic/Dashing &quot;#monitoring #item:Bar&quot;  \
 
 <p><img src="https://ovh.github.io/tat/imgs/tatwebui-dashing-view-standardview1.png?width=80%" alt="Dashing View in Standard View" />
 <img src="https://ovh.github.io/tat/imgs/tatwebui-dashing-view-standardview2.png?width=80%" alt="Dashing View in Standard View" /></p>
+
+<h3 id="supported-styles">Supported styles</h3>
+
+<p>You can add your custom styles by adding labels to your message.
+Two types of style syntax are supported: an old syntax which is here for legacy support
+and a new syntax you should use from now on which can support almost every CSS style you want.</p>
+
+<h4 id="legacy-support-old-syntax">Legacy support (old syntax)</h4>
+
+<p>The dashing view provides legacy support for these properties (format: property-name: <code>syntax</code> - description):
+- bg-color: <code>bg-color</code> - When this property is present it will set the background color of the message as the label color
+- title-font-size: <code>title-font-size:[XX]px</code> - Set the title font size
+- value-font-size: <code>value-font-size:[XX]px</code> - Set the value font size
+- color: <code>color</code> - When this property is present it will set the color of the message as the label color
+- hide-bottom: <code>hide-bottom</code> - When this property is present it will hide the bottom of the message
+- url: <code>url</code> - When this property is present it will change the cursor to a pointer on the message
+- height: <code>height:[XX]px</code> - Set message height
+- width: <code>width:[XX]px</code> - Set message width
+- border-width: <code>border-width:[XX]px</code> - Set message border-width
+- border-style: <code>border-style:[style]</code> - Set message border-style
+- border-color: <code>border-color:[color]</code> - Set message border-color</p>
+
+<h4 id="modern-syntax">Modern syntax</h4>
+
+<p>You can add almost every CSS property you want by following one of these two models:
+1. Apply a property to the message: <code>style:property: value;</code>
+2. Apply a property to a child node of the message: <code>style:selector { property: value; }</code>
+(<code>selector</code> must be set from the message&rsquo;s point of view: if you want to target the div &gt; h3 of your message your selector
+must be <code>div &gt; h3</code> and TaT Dashing will handle the rest to link this to the right message)</p>
+
+<p>Important notes:
+- Do not forget the <code>;</code> in those two models or your label will not be processed
+- Do not put a space character  after <code>style:</code> or your label will not be processed
+- Always list one property in a label (for example do not make these labels : <code>property1: value1; property2: value2;</code>
+or <code>selector { property1: value1; property2: value2; }</code>) or your label will not be processed.
+Make multiple labels if you want to apply multiple properties.</p>
 
 <h3 id="legend">Legend</h3>
 
