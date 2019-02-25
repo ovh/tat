@@ -422,7 +422,7 @@ func messageListFromCache(criteria *tat.MessageCriteria, topic *tat.Topic) ([]ta
 	}
 
 	if len(msgIDs) == 0 {
-		log.Debugf("messageListFromCache: len(msgIDs)== 0, return, err:", err)
+		log.Debugf("messageListFromCache: len(msgIDs)== 0, return, err: %v", err)
 		return []tat.Message{}, true, nil
 	}
 
@@ -941,7 +941,7 @@ func purgeReplies(idRoot string, topic tat.Topic) (bool, error) {
 	query = append(query, bson.M{"dateCreation": bson.M{"$lte": tat.TSFromDate(tat.DateFromFloat(msgLastKeep.DateCreation))}})
 	query = append(query, bson.M{"inReplyOfIDRoot": msgRoot.ID})
 	changeInfo, errd := store.GetCMessages(topic.Collection).RemoveAll(bson.M{"$and": query})
-	log.Debugf("purgeReplies: removed:%s", query, changeInfo.Removed)
+	log.Debugf("purgeReplies: %s, removed: %v", query, changeInfo.Removed)
 
 	if errd != nil {
 		log.Errorf("purgeReplies: Error while RemoveAll on topic %s, err:%s", topic.Topic, errd)

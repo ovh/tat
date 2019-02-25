@@ -79,7 +79,7 @@ func runHook(h *tat.HookJSON, f *tat.Filter, topic tat.Topic) {
 	}
 
 	if h.Hook.Action != "all" && h.Hook.Action != h.HookMessage.Action {
-		log.Debugf("Skip action:%s", h.Hook.Action, h)
+		log.Debugf("Skip action: %s, hook: %+v", h.Hook.Action, h)
 		return
 	}
 
