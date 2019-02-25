@@ -83,7 +83,7 @@ var mainCmd = &cobra.Command{
 		cache.TestInstanceAtStartup()
 
 		if err := s.ListenAndServe(); err != nil {
-			log.Info("Error while running ListenAndServe: %s", err.Error())
+			log.Infof("Error while running ListenAndServe: %s", err.Error())
 		}
 	},
 }

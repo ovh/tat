@@ -86,7 +86,7 @@ func NewStore() error {
 			if tupleHostname == hostname {
 				tupleTagName := t[1]
 				tupleTagValue := t[2]
-				log.Warnf("SelectServers attach %s on replicaSet with tagName %s and value %s and %s", hostname, tupleTagName, tupleTagValue)
+				log.Warnf("SelectServers attach %s on replicaSet with tagName %s and value %s", hostname, tupleTagName, tupleTagValue)
 				session.SelectServers(bson.D{{Name: tupleTagName, Value: tupleTagValue}})
 				break
 			}
