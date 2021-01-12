@@ -72,7 +72,7 @@ func NewStore() error {
 	}
 
 	session.Refresh()
-	session.SetMode(mgo.SecondaryPreferred, true)
+	session.SetMode(mgo.Eventual, true)
 	if viper.GetInt("db_ensure_safe_db_write") > 0 {
 		session.EnsureSafe(&mgo.Safe{W: viper.GetInt("db_ensure_safe_db_write"), FSync: true})
 	}
