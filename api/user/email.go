@@ -8,7 +8,7 @@ import (
 	"net/mail"
 	"net/smtp"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 

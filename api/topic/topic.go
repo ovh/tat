@@ -11,11 +11,11 @@ import (
 
 	"net/http"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/cache"
 	"github.com/ovh/tat/api/group"
 	"github.com/ovh/tat/api/store"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"

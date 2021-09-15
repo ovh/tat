@@ -3,9 +3,9 @@ package hook
 import (
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
 	topicDB "github.com/ovh/tat/api/topic"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 

@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/store"
 	userDB "github.com/ovh/tat/api/user"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 

@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/cache"
@@ -14,6 +13,7 @@ import (
 	"github.com/ovh/tat/api/message"
 	"github.com/ovh/tat/api/store"
 	"github.com/ovh/tat/api/topic"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

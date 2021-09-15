@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
 	groupDB "github.com/ovh/tat/api/group"
@@ -15,6 +14,7 @@ import (
 	presenceDB "github.com/ovh/tat/api/presence"
 	topicDB "github.com/ovh/tat/api/topic"
 	userDB "github.com/ovh/tat/api/user"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 

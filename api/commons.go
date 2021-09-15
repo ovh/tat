@@ -9,10 +9,10 @@ import (
 	"runtime"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
-	loghook "github.com/ovh/logrus-ovh-hook"
+	loghook "github.com/maximecaruchet/logrus-ovh-hook"
 	"github.com/ovh/tat"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
 	userDB "github.com/ovh/tat/api/user"

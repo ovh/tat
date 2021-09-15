@@ -9,10 +9,10 @@ import (
 
 	"net/http/httptest"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/store"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 

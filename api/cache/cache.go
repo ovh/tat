@@ -5,8 +5,8 @@ import (
 
 	"gopkg.in/redis.v4"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 

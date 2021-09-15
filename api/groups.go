@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"strconv"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
 	groupDB "github.com/ovh/tat/api/group"
 	topicDB "github.com/ovh/tat/api/topic"
 	userDB "github.com/ovh/tat/api/user"
+	log "github.com/sirupsen/logrus"
 )
 
 // GroupsController contains all methods about groups manipulation
