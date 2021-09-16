@@ -2,7 +2,9 @@
 package retrier
 
 import (
+	"context"
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -13,6 +15,7 @@ type Retrier struct {
 	class   Classifier
 	jitter  float64
 	rand    *rand.Rand
+	randMu  sync.Mutex
 }
 
 // New constructs a Retrier with the given backoff pattern and classifier. The length of the backoff pattern
@@ -31,15 +34,23 @@ func New(backoff []time.Duration, class Classifier) *Retrier {
 	}
 }
 
-// Run executes the given work function, then classifies its return value based on the classifier used
+// Run executes the given work function by executing RunCtx without context.Context.
+func (r *Retrier) Run(work func() error) error {
+	return r.RunCtx(context.Background(), func(ctx context.Context) error {
+		// never use ctx
+		return work()
+	})
+}
+
+// RunCtx executes the given work function, then classifies its return value based on the classifier used
 // to construct the Retrier. If the result is Succeed or Fail, the return value of the work function is
 // returned to the caller. If the result is Retry, then Run sleeps according to the its backoff policy
 // before retrying. If the total number of retries is exceeded then the return value of the work function
 // is returned to the caller regardless.
-func (r *Retrier) Run(work func() error) error {
+func (r *Retrier) RunCtx(ctx context.Context, work func(ctx context.Context) error) error {
 	retries := 0
 	for {
-		ret := work()
+		ret := work(ctx)
 
 		switch r.class.Classify(ret) {
 		case Succeed, Fail:
@@ -48,13 +59,30 @@ func (r *Retrier) Run(work func() error) error {
 			if retries >= len(r.backoff) {
 				return ret
 			}
-			time.Sleep(r.calcSleep(retries))
+
+			timeout := time.After(r.calcSleep(retries))
+			if err := r.sleep(ctx, timeout); err != nil {
+				return err
+			}
+
 			retries++
 		}
 	}
 }
 
+func (r *Retrier) sleep(ctx context.Context, t <-chan time.Time) error {
+	select {
+	case <-t:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+
 func (r *Retrier) calcSleep(i int) time.Duration {
+	// lock unsafe rand prng
+	r.randMu.Lock()
+	defer r.randMu.Unlock()
 	// take a random float in the range (-r.jitter, +r.jitter) and multiply it by the base amount
 	return r.backoff[i] + time.Duration(((r.rand.Float64()*2)-1)*r.jitter*float64(r.backoff[i]))
 }

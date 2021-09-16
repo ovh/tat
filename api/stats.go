@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/group"
@@ -17,6 +16,7 @@ import (
 	"github.com/ovh/tat/api/store"
 	"github.com/ovh/tat/api/topic"
 	"github.com/ovh/tat/api/user"
+	log "github.com/sirupsen/logrus"
 )
 
 // StatsController contains all methods about stats

@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/facebookgo/httpcontrol"
 	"github.com/ovh/tat"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 

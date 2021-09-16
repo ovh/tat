@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/hook"
@@ -15,6 +14,7 @@ import (
 	presenceDB "github.com/ovh/tat/api/presence"
 	topicDB "github.com/ovh/tat/api/topic"
 	userDB "github.com/ovh/tat/api/user"
+	log "github.com/sirupsen/logrus"
 )
 
 // MessagesController contains all methods about messages manipulation

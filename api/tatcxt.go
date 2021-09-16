@@ -3,9 +3,9 @@ package main
 import (
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
+	log "github.com/sirupsen/logrus"
 )
 
 var (

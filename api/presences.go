@@ -7,12 +7,12 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/ovh/tat"
 	presenceDB "github.com/ovh/tat/api/presence"
 	topicDB "github.com/ovh/tat/api/topic"
 	userDB "github.com/ovh/tat/api/user"
+	log "github.com/sirupsen/logrus"
 )
 
 // PresencesController contains all methods about presences manipulation

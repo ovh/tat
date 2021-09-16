@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ovh/tat"
 	"github.com/ovh/tat/api/store"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

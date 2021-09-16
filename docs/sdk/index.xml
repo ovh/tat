@@ -6,38 +6,38 @@
     <description>Recent content in Sdks on TAT - TextAndTag Documentation</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    
+
 	<atom:link href="https://ovh.github.io/tat/sdk/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+
+
     <item>
       <title>Tat SDK</title>
       <link>https://ovh.github.io/tat/sdk/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
+
       <guid>https://ovh.github.io/tat/sdk/</guid>
       <description>Chapter 5 Overview TAT SDK
 Godoc</description>
     </item>
-    
+
     <item>
       <title>Golang - A simple main example</title>
       <link>https://ovh.github.io/tat/sdk/golang-simple-main/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
+
       <guid>https://ovh.github.io/tat/sdk/golang-simple-main/</guid>
       <description>Usage  cd &amp;lt;directory-containing-main.go&amp;gt;/ go get -u github.com/ovh/tat build &amp;amp;&amp;amp; ./mycli-minimal -url=http://url-tat-engine -username=&amp;lt;tatUsername&amp;gt; -password=&amp;lt;tatPassword&amp;gt; /Internal/your/topic your message  File main.go package main import ( &amp;quot;flag&amp;quot; &amp;quot;fmt&amp;quot; &amp;quot;os&amp;quot; &amp;quot;strings&amp;quot; &amp;quot;github.com/ovh/tat&amp;quot; ) // taturl, username / password of tat engine var ( taturl string username string password string ) func main() { flag.StringVar(&amp;amp;taturl, &amp;quot;url&amp;quot;, &amp;quot;&amp;quot;, &amp;quot;URL of Tat Engine&amp;quot;) flag.StringVar(&amp;amp;username, &amp;quot;username&amp;quot;, &amp;quot;&amp;quot;, &amp;quot;tat username&amp;quot;) flag.StringVar(&amp;amp;password, &amp;quot;password&amp;quot;, &amp;quot;&amp;quot;, &amp;quot;tat password&amp;quot;) flag.Parse() client, err := tat.</description>
     </item>
-    
+
     <item>
       <title>Golang - Full Example</title>
       <link>https://ovh.github.io/tat/sdk/golang-full-example/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
+
       <guid>https://ovh.github.io/tat/sdk/golang-full-example/</guid>
       <description>Usage This example uses viper, cobra and tatcli config file.
-Usage: go build &amp;amp;&amp;amp; ./mycli-full demo /YouTopic/subTopic your message with a config file: go build &amp;amp;&amp;amp; ./mycli-full --configFile $HOME/.tatcli/config.local.json demo /YouTopic/subTopic your message  File main.go package main import ( &amp;quot;fmt&amp;quot; &amp;quot;os&amp;quot; log &amp;quot;github.com/Sirupsen/logrus&amp;quot; &amp;quot;github.com/ovh/tat&amp;quot; &amp;quot;github.com/spf13/cobra&amp;quot; &amp;quot;github.com/spf13/viper&amp;quot; ) var rootCmd = &amp;amp;cobra.Command{ Use: &amp;quot;mycli-full&amp;quot;, Long: `SDK Use Demo`, } // URL of tat engine, tat username and tat password var ( home = os.</description>
+Usage: go build &amp;amp;&amp;amp; ./mycli-full demo /YouTopic/subTopic your message with a config file: go build &amp;amp;&amp;amp; ./mycli-full --configFile $HOME/.tatcli/config.local.json demo /YouTopic/subTopic your message  File main.go package main import ( &amp;quot;fmt&amp;quot; &amp;quot;os&amp;quot; log &amp;quot;github.com/sirupsen/logrus&amp;quot; &amp;quot;github.com/ovh/tat&amp;quot; &amp;quot;github.com/spf13/cobra&amp;quot; &amp;quot;github.com/spf13/viper&amp;quot; ) var rootCmd = &amp;amp;cobra.Command{ Use: &amp;quot;mycli-full&amp;quot;, Long: `SDK Use Demo`, } // URL of tat engine, tat username and tat password var ( home = os.</description>
     </item>
-    
+
   </channel>
 </rss>

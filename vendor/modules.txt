@@ -1,0 +1,243 @@
+# github.com/Shopify/sarama v1.11.0
+## explicit
+github.com/Shopify/sarama
+# github.com/Shopify/toxiproxy v2.1.4+incompatible
+## explicit
+# github.com/asaskevich/govalidator v0.0.0-20170104211126-fdf19785fd35
+## explicit
+github.com/asaskevich/govalidator
+# github.com/briandowns/spinner v0.0.0-20161121172928-cd65e8bd7da2
+## explicit
+github.com/briandowns/spinner
+# github.com/davecgh/go-spew v1.1.1
+github.com/davecgh/go-spew/spew
+# github.com/eapache/go-resiliency v1.2.0
+github.com/eapache/go-resiliency/breaker
+github.com/eapache/go-resiliency/retrier
+# github.com/eapache/go-xerial-snappy v0.0.0-20160609142408-bb955e01b934
+## explicit
+github.com/eapache/go-xerial-snappy
+# github.com/eapache/queue v1.1.0
+## explicit
+github.com/eapache/queue
+# github.com/facebookgo/ensure v0.0.0-20200202191622-63f1cf65ac4c
+## explicit
+# github.com/facebookgo/freeport v0.0.0-20150612182905-d4adf43b75b9
+## explicit
+# github.com/facebookgo/httpcontrol v0.0.0-20150708234001-ccde4420e1fe
+## explicit
+github.com/facebookgo/httpcontrol
+# github.com/facebookgo/stack v0.0.0-20160209184415-751773369052
+## explicit
+# github.com/facebookgo/subset v0.0.0-20200203212716-c811ad88dec4
+## explicit
+# github.com/fatih/color v1.1.1-0.20170106221514-e8e01ee22a7d
+## explicit
+github.com/fatih/color
+# github.com/fsnotify/fsnotify v1.4.9
+github.com/fsnotify/fsnotify
+# github.com/garyburd/redigo v1.6.2
+## explicit
+# github.com/gin-gonic/gin v1.1.4
+## explicit
+github.com/gin-gonic/gin
+github.com/gin-gonic/gin/binding
+github.com/gin-gonic/gin/render
+# github.com/gizak/termui v2.2.1-0.20170502141200-72304ddb9b4e+incompatible
+## explicit
+github.com/gizak/termui
+# github.com/golang/protobuf v1.5.2
+github.com/golang/protobuf/proto
+# github.com/golang/snappy v0.0.0-20160529050041-d9eb7a3d35ec
+## explicit
+github.com/golang/snappy
+# github.com/google/go-github v2.0.1-0.20170119223912-c9c37fd6ce02+incompatible
+## explicit
+github.com/google/go-github/github
+# github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135
+## explicit
+github.com/google/go-querystring/query
+# github.com/hashicorp/hcl v0.0.0-20170120010730-39fa3a62ba92
+## explicit
+github.com/hashicorp/hcl
+github.com/hashicorp/hcl/hcl/ast
+github.com/hashicorp/hcl/hcl/parser
+github.com/hashicorp/hcl/hcl/scanner
+github.com/hashicorp/hcl/hcl/strconv
+github.com/hashicorp/hcl/hcl/token
+github.com/hashicorp/hcl/json/parser
+github.com/hashicorp/hcl/json/scanner
+github.com/hashicorp/hcl/json/token
+# github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf
+## explicit
+github.com/inconshreveable/go-update
+github.com/inconshreveable/go-update/internal/binarydist
+github.com/inconshreveable/go-update/internal/osext
+# github.com/inconshreveable/mousetrap v1.0.0
+## explicit
+github.com/inconshreveable/mousetrap
+# github.com/jinzhu/now v0.0.0-20180511015916-ed742868f2ae
+## explicit
+github.com/jinzhu/now
+# github.com/klauspost/crc32 v0.0.0-20161016154125-cb6bfca970f6
+## explicit
+github.com/klauspost/crc32
+# github.com/magiconair/properties v1.7.2-0.20170113111004-b3b15ef068fd
+## explicit
+github.com/magiconair/properties
+# github.com/manucorporat/sse v0.0.0-20160126180136-ee05b128a739
+## explicit
+github.com/manucorporat/sse
+# github.com/maruel/panicparse v0.0.0-20160720141634-ad661195ed0e
+## explicit
+github.com/maruel/panicparse/stack
+# github.com/maruel/ut v1.0.2
+## explicit
+# github.com/mattn/go-colorable v0.0.7
+## explicit
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.0-20161123143637-30a891c33c7c
+## explicit
+github.com/mattn/go-isatty
+# github.com/mattn/go-runewidth v0.0.2-0.20161012013512-737072b4e32b
+## explicit
+github.com/mattn/go-runewidth
+# github.com/maximecaruchet/logrus-ovh-hook v0.0.0-20210915084238-5b30a5b54a37
+## explicit
+github.com/maximecaruchet/logrus-ovh-hook
+# github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7
+## explicit
+github.com/mitchellh/go-wordwrap
+# github.com/mitchellh/mapstructure v0.0.0-20170118001303-ed105d635dfa
+## explicit
+github.com/mitchellh/mapstructure
+# github.com/mvdan/xurls v1.0.1-0.20170107171451-a3c802b2dc0a
+## explicit
+github.com/mvdan/xurls
+# github.com/nsf/termbox-go v0.0.0-20170611155904-4163cd39dda1
+## explicit
+github.com/nsf/termbox-go
+# github.com/olekukonko/tablewriter v0.0.0-20161229082115-44e365d423f4
+## explicit
+github.com/olekukonko/tablewriter
+# github.com/onsi/gomega v1.16.0
+## explicit
+# github.com/pelletier/go-buffruneio v0.1.0
+## explicit
+github.com/pelletier/go-buffruneio
+# github.com/pelletier/go-toml v0.4.1-0.20170116024911-a1f048ba2449
+## explicit
+github.com/pelletier/go-toml
+# github.com/pierrec/lz4 v0.0.0-20161206202305-5c9560bfa9ac
+## explicit
+github.com/pierrec/lz4
+# github.com/pierrec/xxHash v0.0.0-20160112165351-5a004441f897
+## explicit
+github.com/pierrec/xxHash/xxHash32
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
+# github.com/rcrowley/go-metrics v0.0.0-20161128210544-1f30fe9094a5
+## explicit
+github.com/rcrowley/go-metrics
+# github.com/sirupsen/logrus v1.8.1
+## explicit
+github.com/sirupsen/logrus
+# github.com/skratchdot/open-golang v0.0.0-20160302144031-75fb7ed4208c
+## explicit
+github.com/skratchdot/open-golang/open
+# github.com/spf13/afero v0.0.0-20170109225320-72b31426848c
+## explicit
+github.com/spf13/afero
+github.com/spf13/afero/mem
+# github.com/spf13/cast v0.0.0-20161225125648-56a7ecbeb18d
+## explicit
+github.com/spf13/cast
+# github.com/spf13/cobra v0.0.0-20170118185516-dc208f4211e7
+## explicit
+github.com/spf13/cobra
+# github.com/spf13/jwalterweatherman v0.0.0-20170109133355-fa7ca7e836cf
+## explicit
+github.com/spf13/jwalterweatherman
+# github.com/spf13/pflag v0.0.0-20170116163251-51268031d799
+## explicit
+github.com/spf13/pflag
+# github.com/spf13/viper v0.0.0-20161213093849-5ed0fc31f7f4
+## explicit
+github.com/spf13/viper
+# github.com/stretchr/testify v1.5.1
+## explicit
+github.com/stretchr/testify/assert
+# github.com/yesnault/hashtag v0.0.0-20170128132512-0679bce411de
+## explicit
+github.com/yesnault/hashtag
+# golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+## explicit
+golang.org/x/crypto/ssh/terminal
+# golang.org/x/net v0.0.0-20210428140749-89ef3d95e781
+golang.org/x/net/context
+# golang.org/x/sys v0.0.0-20210423082822-04245dca01da
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/text v0.3.6
+golang.org/x/text/transform
+golang.org/x/text/unicode/norm
+# google.golang.org/protobuf v1.26.0
+google.golang.org/protobuf/encoding/prototext
+google.golang.org/protobuf/encoding/protowire
+google.golang.org/protobuf/internal/descfmt
+google.golang.org/protobuf/internal/descopts
+google.golang.org/protobuf/internal/detrand
+google.golang.org/protobuf/internal/encoding/defval
+google.golang.org/protobuf/internal/encoding/messageset
+google.golang.org/protobuf/internal/encoding/tag
+google.golang.org/protobuf/internal/encoding/text
+google.golang.org/protobuf/internal/errors
+google.golang.org/protobuf/internal/filedesc
+google.golang.org/protobuf/internal/filetype
+google.golang.org/protobuf/internal/flags
+google.golang.org/protobuf/internal/genid
+google.golang.org/protobuf/internal/impl
+google.golang.org/protobuf/internal/order
+google.golang.org/protobuf/internal/pragma
+google.golang.org/protobuf/internal/set
+google.golang.org/protobuf/internal/strs
+google.golang.org/protobuf/internal/version
+google.golang.org/protobuf/proto
+google.golang.org/protobuf/reflect/protodesc
+google.golang.org/protobuf/reflect/protoreflect
+google.golang.org/protobuf/reflect/protoregistry
+google.golang.org/protobuf/runtime/protoiface
+google.golang.org/protobuf/runtime/protoimpl
+google.golang.org/protobuf/types/descriptorpb
+# gopkg.in/bsm/ratelimit.v1 v1.0.0-20160220154919-db14e161995a
+## explicit
+gopkg.in/bsm/ratelimit.v1
+# gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
+## explicit
+# gopkg.in/cheggaaa/pb.v1 v1.0.7
+## explicit
+gopkg.in/cheggaaa/pb.v1
+# gopkg.in/go-playground/assert.v1 v1.2.1
+## explicit
+# gopkg.in/go-playground/validator.v8 v8.18.1
+## explicit
+gopkg.in/go-playground/validator.v8
+# gopkg.in/mgo.v2 v2.0.0-20160818020120-3f83fa500528
+## explicit
+gopkg.in/mgo.v2
+gopkg.in/mgo.v2/bson
+gopkg.in/mgo.v2/internal/json
+gopkg.in/mgo.v2/internal/sasl
+gopkg.in/mgo.v2/internal/scram
+# gopkg.in/redis.v4 v4.2.4
+## explicit
+gopkg.in/redis.v4
+gopkg.in/redis.v4/internal
+gopkg.in/redis.v4/internal/consistenthash
+gopkg.in/redis.v4/internal/errors
+gopkg.in/redis.v4/internal/hashtag
+gopkg.in/redis.v4/internal/pool
+gopkg.in/redis.v4/internal/proto
+# gopkg.in/yaml.v2 v2.4.0
+gopkg.in/yaml.v2
